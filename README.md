@@ -5,7 +5,7 @@ A Go client library for the Honeybadger API.
 ## Installation
 
 ```bash
-go get github.com/honeybadger-io/honeybadger-api
+go get github.com/honeybadger-io/api-go
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ import (
     "fmt"
     "log"
 
-    hbapi "github.com/honeybadger-io/honeybadger-api"
+    hbapi "github.com/honeybadger-io/api-go"
 )
 
 func main() {
@@ -59,7 +59,7 @@ func main() {
 
 ## Documentation
 
-For more information about the Honeybadger API, see the [official documentation](https://docs.honeybadger.io/api/).
+For more information about the Honeybadger API, see the [official documentation](https://docs.honeybadger.io/api/#data-api).
 
 ## Development
 
