@@ -69,7 +69,7 @@ func (s *StatusPagesService) Update(ctx context.Context, accountID, statusPageID
 
 	reqBody := StatusPageRequest{StatusPage: params}
 
-	req, err := s.client.newRequest(ctx, "POST", path, reqBody)
+	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
 		return err
 	}

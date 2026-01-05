@@ -146,6 +146,30 @@ func TestStatusPagesCreate(t *testing.T) {
 	}
 }
 
+func TestStatusPagesUpdate(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "PUT" {
+			t.Errorf("expected PUT method, got %s", r.Method)
+		}
+		if r.URL.Path != "/v2/accounts/100/status_pages/1" {
+			t.Errorf("expected path /v2/accounts/100/status_pages/1, got %s", r.URL.Path)
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	params := StatusPageParams{Name: "Updated Status Page"}
+	err := client.StatusPages.Update(context.Background(), 100, 1, params)
+	if err != nil {
+		t.Fatalf("Update() error = %v", err)
+	}
+}
+
 func TestStatusPagesDelete(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "DELETE" {
