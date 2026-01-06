@@ -8,10 +8,12 @@ import (
 )
 
 func TestAccountsList(t *testing.T) {
-	mockAccounts := `[
-		{"id": 1, "email": "account1@example.com", "name": "Account 1"},
-		{"id": 2, "email": "account2@example.com", "name": "Account 2"}
-	]`
+	mockAccounts := `{
+		"results": [
+			{"id": "abc123", "email": "account1@example.com", "name": "Account 1"},
+			{"id": "def456", "email": "account2@example.com", "name": "Account 2"}
+		]
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -48,7 +50,7 @@ func TestAccountsList(t *testing.T) {
 func TestAccountsGet(t *testing.T) {
 	quotaConsumed := 45.5
 	mockAccount := `{
-		"id": 1,
+		"id": "abc123",
 		"email": "account@example.com",
 		"name": "My Account",
 		"quota_consumed": 45.5
@@ -72,7 +74,7 @@ func TestAccountsGet(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	account, err := client.Accounts.Get(context.Background(), 1)
+	account, err := client.Accounts.Get(context.Background(), "1")
 	if err != nil {
 		t.Fatalf("Get() error = %v", err)
 	}
@@ -110,7 +112,7 @@ func TestAccountsListUsers(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	users, err := client.Accounts.ListUsers(context.Background(), 1)
+	users, err := client.Accounts.ListUsers(context.Background(), "1")
 	if err != nil {
 		t.Fatalf("ListUsers() error = %v", err)
 	}

@@ -19,17 +19,17 @@ func (s *AccountsService) List(ctx context.Context) ([]Account, error) {
 		return nil, err
 	}
 
-	var accounts []Account
-	if err := s.client.do(ctx, req, &accounts); err != nil {
+	var response AccountListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return accounts, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single account by ID with quota and API stats
-func (s *AccountsService) Get(ctx context.Context, accountID int) (*Account, error) {
-	path := fmt.Sprintf("/accounts/%d", accountID)
+func (s *AccountsService) Get(ctx context.Context, accountID string) (*Account, error) {
+	path := fmt.Sprintf("/accounts/%s", accountID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -45,8 +45,8 @@ func (s *AccountsService) Get(ctx context.Context, accountID int) (*Account, err
 }
 
 // ListUsers retrieves all users for an account
-func (s *AccountsService) ListUsers(ctx context.Context, accountID int) ([]AccountUser, error) {
-	path := fmt.Sprintf("/accounts/%d/users", accountID)
+func (s *AccountsService) ListUsers(ctx context.Context, accountID string) ([]AccountUser, error) {
+	path := fmt.Sprintf("/accounts/%s/users", accountID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -62,8 +62,8 @@ func (s *AccountsService) ListUsers(ctx context.Context, accountID int) ([]Accou
 }
 
 // GetUser retrieves a single user by ID
-func (s *AccountsService) GetUser(ctx context.Context, accountID, userID int) (*AccountUser, error) {
-	path := fmt.Sprintf("/accounts/%d/users/%d", accountID, userID)
+func (s *AccountsService) GetUser(ctx context.Context, accountID string, userID int) (*AccountUser, error) {
+	path := fmt.Sprintf("/accounts/%s/users/%d", accountID, userID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -79,8 +79,8 @@ func (s *AccountsService) GetUser(ctx context.Context, accountID, userID int) (*
 }
 
 // UpdateUser updates a user's role
-func (s *AccountsService) UpdateUser(ctx context.Context, accountID, userID int, role string) (*AccountUser, error) {
-	path := fmt.Sprintf("/accounts/%d/users/%d", accountID, userID)
+func (s *AccountsService) UpdateUser(ctx context.Context, accountID string, userID int, role string) (*AccountUser, error) {
+	path := fmt.Sprintf("/accounts/%s/users/%d", accountID, userID)
 
 	reqBody := AccountUserUpdateRequest{}
 	reqBody.User.Role = role
@@ -99,8 +99,8 @@ func (s *AccountsService) UpdateUser(ctx context.Context, accountID, userID int,
 }
 
 // RemoveUser removes a user from an account
-func (s *AccountsService) RemoveUser(ctx context.Context, accountID, userID int) error {
-	path := fmt.Sprintf("/accounts/%d/users/%d", accountID, userID)
+func (s *AccountsService) RemoveUser(ctx context.Context, accountID string, userID int) error {
+	path := fmt.Sprintf("/accounts/%s/users/%d", accountID, userID)
 
 	req, err := s.client.newRequest(ctx, "DELETE", path, nil)
 	if err != nil {
@@ -111,8 +111,8 @@ func (s *AccountsService) RemoveUser(ctx context.Context, accountID, userID int)
 }
 
 // ListInvitations retrieves all invitations for an account
-func (s *AccountsService) ListInvitations(ctx context.Context, accountID int) ([]AccountInvitation, error) {
-	path := fmt.Sprintf("/accounts/%d/invitations", accountID)
+func (s *AccountsService) ListInvitations(ctx context.Context, accountID string) ([]AccountInvitation, error) {
+	path := fmt.Sprintf("/accounts/%s/invitations", accountID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -128,8 +128,8 @@ func (s *AccountsService) ListInvitations(ctx context.Context, accountID int) ([
 }
 
 // GetInvitation retrieves a single invitation by ID
-func (s *AccountsService) GetInvitation(ctx context.Context, accountID, invitationID int) (*AccountInvitation, error) {
-	path := fmt.Sprintf("/accounts/%d/invitations/%d", accountID, invitationID)
+func (s *AccountsService) GetInvitation(ctx context.Context, accountID string, invitationID int) (*AccountInvitation, error) {
+	path := fmt.Sprintf("/accounts/%s/invitations/%d", accountID, invitationID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -145,8 +145,8 @@ func (s *AccountsService) GetInvitation(ctx context.Context, accountID, invitati
 }
 
 // CreateInvitation creates a new account invitation
-func (s *AccountsService) CreateInvitation(ctx context.Context, accountID int, params AccountInvitationParams) (*AccountInvitation, error) {
-	path := fmt.Sprintf("/accounts/%d/invitations", accountID)
+func (s *AccountsService) CreateInvitation(ctx context.Context, accountID string, params AccountInvitationParams) (*AccountInvitation, error) {
+	path := fmt.Sprintf("/accounts/%s/invitations", accountID)
 
 	reqBody := AccountInvitationRequest{Invitation: params}
 
@@ -164,8 +164,8 @@ func (s *AccountsService) CreateInvitation(ctx context.Context, accountID int, p
 }
 
 // UpdateInvitation updates an existing account invitation
-func (s *AccountsService) UpdateInvitation(ctx context.Context, accountID, invitationID int, params AccountInvitationParams) (*AccountInvitation, error) {
-	path := fmt.Sprintf("/accounts/%d/invitations/%d", accountID, invitationID)
+func (s *AccountsService) UpdateInvitation(ctx context.Context, accountID string, invitationID int, params AccountInvitationParams) (*AccountInvitation, error) {
+	path := fmt.Sprintf("/accounts/%s/invitations/%d", accountID, invitationID)
 
 	reqBody := AccountInvitationRequest{Invitation: params}
 
@@ -183,8 +183,8 @@ func (s *AccountsService) UpdateInvitation(ctx context.Context, accountID, invit
 }
 
 // DeleteInvitation deletes an account invitation
-func (s *AccountsService) DeleteInvitation(ctx context.Context, accountID, invitationID int) error {
-	path := fmt.Sprintf("/accounts/%d/invitations/%d", accountID, invitationID)
+func (s *AccountsService) DeleteInvitation(ctx context.Context, accountID string, invitationID int) error {
+	path := fmt.Sprintf("/accounts/%s/invitations/%d", accountID, invitationID)
 
 	req, err := s.client.newRequest(ctx, "DELETE", path, nil)
 	if err != nil {

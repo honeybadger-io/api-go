@@ -44,7 +44,7 @@ type User struct {
 
 // Account represents a Honeybadger account
 type Account struct {
-	ID             int                    `json:"id"`
+	ID             string                 `json:"id"`
 	Email          string                 `json:"email"`
 	Name           string                 `json:"name"`
 	Active         *bool                  `json:"active,omitempty"`
@@ -89,6 +89,11 @@ type AccountInvitationParams struct {
 	Email   string `json:"email,omitempty"`
 	Role    string `json:"role,omitempty"` // Member, Billing, Admin, Owner
 	TeamIDs []int  `json:"team_ids,omitempty"`
+}
+
+// AccountListResponse represents the response for listing accounts
+type AccountListResponse struct {
+	Results []Account `json:"results"`
 }
 
 // StatusPage represents a status page
