@@ -44,45 +44,13 @@ type User struct {
 
 // Account represents a Honeybadger account
 type Account struct {
-	ID             string                 `json:"-"`
+	ID             string                 `json:"id"`
 	Email          string                 `json:"email"`
 	Name           string                 `json:"name"`
 	Active         *bool                  `json:"active,omitempty"`
 	Parked         *bool                  `json:"parked,omitempty"`
 	QuotaConsumed  *float64               `json:"quota_consumed,omitempty"` // Percentage
 	APIStats       map[string]interface{} `json:"api_stats,omitempty"`
-}
-
-// UnmarshalJSON implements json.Unmarshaler interface to handle Account.ID as both string and number
-func (a *Account) UnmarshalJSON(data []byte) error {
-	// Create a temporary struct with all the same fields but using a RawMessage for ID
-	type Alias Account
-	aux := &struct {
-		ID json.RawMessage `json:"id"`
-		*Alias
-	}{
-		Alias: (*Alias)(a),
-	}
-
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-
-	// Try to unmarshal ID as string first
-	var idStr string
-	if err := json.Unmarshal(aux.ID, &idStr); err == nil {
-		a.ID = idStr
-		return nil
-	}
-
-	// If that fails, try as number and convert to string
-	var idNum int
-	if err := json.Unmarshal(aux.ID, &idNum); err == nil {
-		a.ID = strconv.Itoa(idNum)
-		return nil
-	}
-
-	return fmt.Errorf("Account.ID: cannot unmarshal as string or number")
 }
 
 // AccountUser represents a user associated with an account
@@ -316,7 +284,6 @@ type Project struct {
 	FaultCount           int        `json:"fault_count"`
 	UnresolvedFaultCount int        `json:"unresolved_fault_count"`
 	Token                string     `json:"token"`
-	Owner                Account    `json:"owner"`
 	Sites                []Site     `json:"sites"`
 	Teams                []Team     `json:"teams"`
 	Users                []User     `json:"users"`
