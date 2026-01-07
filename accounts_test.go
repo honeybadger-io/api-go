@@ -89,10 +89,12 @@ func TestAccountsGet(t *testing.T) {
 }
 
 func TestAccountsListUsers(t *testing.T) {
-	mockUsers := `[
-		{"id": 1, "role": "Owner", "name": "User 1", "email": "user1@example.com"},
-		{"id": 2, "role": "Member", "name": "User 2", "email": "user2@example.com"}
-	]`
+	mockUsers := `{
+		"results": [
+			{"id": 1, "role": "Owner", "name": "User 1", "email": "user1@example.com"},
+			{"id": 2, "role": "Member", "name": "User 2", "email": "user2@example.com"}
+		]
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

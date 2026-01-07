@@ -8,10 +8,12 @@ import (
 )
 
 func TestTeamsList(t *testing.T) {
-	mockTeams := `[
-		{"id": 1, "name": "Engineering", "account_id": 100},
-		{"id": 2, "name": "Product", "account_id": 100}
-	]`
+	mockTeams := `{
+		"results": [
+			{"id": 1, "name": "Engineering", "account_id": 100},
+			{"id": 2, "name": "Product", "account_id": 100}
+		]
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

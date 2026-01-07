@@ -8,26 +8,28 @@ import (
 )
 
 func TestDeploymentsList(t *testing.T) {
-	mockDeployments := `[
-		{
-			"id": 1,
-			"created_at": "2013-04-30T13:12:51Z",
-			"environment": "production",
-			"local_username": "deploy",
-			"project_id": 123,
-			"repository": "some/repo",
-			"revision": "2013-04-29-take-2-16-g6cf7eae"
-		},
-		{
-			"id": 2,
-			"created_at": "2013-04-29T10:00:00Z",
-			"environment": "staging",
-			"local_username": "developer",
-			"project_id": 123,
-			"repository": "some/repo",
-			"revision": "2013-04-28-abc123"
-		}
-	]`
+	mockDeployments := `{
+		"results": [
+			{
+				"id": 1,
+				"created_at": "2013-04-30T13:12:51Z",
+				"environment": "production",
+				"local_username": "deploy",
+				"project_id": 123,
+				"repository": "some/repo",
+				"revision": "2013-04-29-take-2-16-g6cf7eae"
+			},
+			{
+				"id": 2,
+				"created_at": "2013-04-29T10:00:00Z",
+				"environment": "staging",
+				"local_username": "developer",
+				"project_id": 123,
+				"repository": "some/repo",
+				"revision": "2013-04-28-abc123"
+			}
+		]
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -97,7 +99,7 @@ func TestDeploymentsListWithOptions(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("[]"))
+		_, _ = w.Write([]byte(`{"results": []}`))
 	}))
 	defer server.Close()
 

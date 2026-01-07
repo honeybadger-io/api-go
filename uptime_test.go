@@ -8,19 +8,21 @@ import (
 )
 
 func TestUptimeList(t *testing.T) {
-	mockSites := `[
-		{
-			"id": "abc123",
-			"active": true,
-			"frequency": 5,
-			"last_checked_at": "2024-01-10T00:00:00Z",
-			"match": "200",
-			"match_type": "success",
-			"name": "My Site",
-			"state": "up",
-			"url": "https://example.com"
-		}
-	]`
+	mockSites := `{
+		"results": [
+			{
+				"id": "abc123",
+				"active": true,
+				"frequency": 5,
+				"last_checked_at": "2024-01-10T00:00:00Z",
+				"match": "200",
+				"match_type": "success",
+				"name": "My Site",
+				"state": "up",
+				"url": "https://example.com"
+			}
+		]
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

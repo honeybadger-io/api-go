@@ -10,30 +10,32 @@ import (
 func TestCheckInsList(t *testing.T) {
 	reportPeriod := "1 day"
 	gracePeriod := "5 minutes"
-	mockCheckIns := `[
-		{
-			"id": 1,
-			"name": "Daily Backup",
-			"slug": "daily-backup",
-			"schedule_type": "simple",
-			"report_period": "1 day",
-			"grace_period": "5 minutes",
-			"project_id": 123,
-			"created_at": "2024-01-01T00:00:00Z",
-			"last_check_in_at": "2024-01-10T00:00:00Z"
-		},
-		{
-			"id": 2,
-			"name": "Hourly Sync",
-			"slug": "hourly-sync",
-			"schedule_type": "cron",
-			"cron_schedule": "0 * * * *",
-			"cron_timezone": "UTC",
-			"project_id": 123,
-			"created_at": "2024-01-01T00:00:00Z",
-			"last_check_in_at": null
-		}
-	]`
+	mockCheckIns := `{
+		"results": [
+			{
+				"id": "1",
+				"name": "Daily Backup",
+				"slug": "daily-backup",
+				"schedule_type": "simple",
+				"report_period": "1 day",
+				"grace_period": "5 minutes",
+				"project_id": 123,
+				"created_at": "2024-01-01T00:00:00Z",
+				"last_check_in_at": "2024-01-10T00:00:00Z"
+			},
+			{
+				"id": "2",
+				"name": "Hourly Sync",
+				"slug": "hourly-sync",
+				"schedule_type": "cron",
+				"cron_schedule": "0 * * * *",
+				"cron_timezone": "UTC",
+				"project_id": 123,
+				"created_at": "2024-01-01T00:00:00Z",
+				"last_check_in_at": null
+			}
+		]
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -72,8 +74,8 @@ func TestCheckInsList(t *testing.T) {
 		t.Errorf("expected 2 check-ins, got %d", len(checkIns))
 	}
 
-	if checkIns[0].ID != 1 {
-		t.Errorf("expected first check-in ID 1, got %d", checkIns[0].ID)
+	if checkIns[0].ID != "1" {
+		t.Errorf("expected first check-in ID '1', got %s", checkIns[0].ID)
 	}
 
 	if checkIns[0].Name != "Daily Backup" {
@@ -91,7 +93,7 @@ func TestCheckInsList(t *testing.T) {
 
 func TestCheckInsGet(t *testing.T) {
 	mockCheckIn := `{
-		"id": 1,
+		"id": "1",
 		"name": "Daily Backup",
 		"slug": "daily-backup",
 		"schedule_type": "simple",
@@ -124,8 +126,8 @@ func TestCheckInsGet(t *testing.T) {
 		t.Fatalf("Get() error = %v", err)
 	}
 
-	if checkIn.ID != 1 {
-		t.Errorf("expected check-in ID 1, got %d", checkIn.ID)
+	if checkIn.ID != "1" {
+		t.Errorf("expected check-in ID '1', got %s", checkIn.ID)
 	}
 
 	if checkIn.Name != "Daily Backup" {
@@ -135,7 +137,7 @@ func TestCheckInsGet(t *testing.T) {
 
 func TestCheckInsCreate(t *testing.T) {
 	mockCheckIn := `{
-		"id": 1,
+		"id": "1",
 		"name": "New Check-In",
 		"slug": "new-check-in",
 		"schedule_type": "simple",
@@ -175,8 +177,8 @@ func TestCheckInsCreate(t *testing.T) {
 		t.Fatalf("Create() error = %v", err)
 	}
 
-	if checkIn.ID != 1 {
-		t.Errorf("expected check-in ID 1, got %d", checkIn.ID)
+	if checkIn.ID != "1" {
+		t.Errorf("expected check-in ID '1', got %s", checkIn.ID)
 	}
 
 	if checkIn.Name != "New Check-In" {
@@ -186,7 +188,7 @@ func TestCheckInsCreate(t *testing.T) {
 
 func TestCheckInsUpdate(t *testing.T) {
 	mockCheckIn := `{
-		"id": 1,
+		"id": "1",
 		"name": "Updated Check-In",
 		"slug": "updated-check-in",
 		"schedule_type": "simple",
