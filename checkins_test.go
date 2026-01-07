@@ -121,7 +121,7 @@ func TestCheckInsGet(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	checkIn, err := client.CheckIns.Get(context.Background(), 123, 1)
+	checkIn, err := client.CheckIns.Get(context.Background(), 123, "1")
 	if err != nil {
 		t.Fatalf("Get() error = %v", err)
 	}
@@ -222,7 +222,7 @@ func TestCheckInsUpdate(t *testing.T) {
 		ReportPeriod: &reportPeriod,
 	}
 
-	checkIn, err := client.CheckIns.Update(context.Background(), 123, 1, params)
+	checkIn, err := client.CheckIns.Update(context.Background(), 123, "1", params)
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
 	}
@@ -249,7 +249,7 @@ func TestCheckInsDelete(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	err := client.CheckIns.Delete(context.Background(), 123, 1)
+	err := client.CheckIns.Delete(context.Background(), 123, "1")
 	if err != nil {
 		t.Fatalf("Delete() error = %v", err)
 	}

@@ -28,8 +28,8 @@ func (s *CheckInsService) List(ctx context.Context, projectID int) ([]CheckIn, e
 }
 
 // Get retrieves a single check-in by ID
-func (s *CheckInsService) Get(ctx context.Context, projectID, checkInID int) (*CheckIn, error) {
-	path := fmt.Sprintf("/projects/%d/check_ins/%d", projectID, checkInID)
+func (s *CheckInsService) Get(ctx context.Context, projectID int, checkInID string) (*CheckIn, error) {
+	path := fmt.Sprintf("/projects/%d/check_ins/%s", projectID, checkInID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -64,8 +64,8 @@ func (s *CheckInsService) Create(ctx context.Context, projectID int, params Chec
 }
 
 // Update updates an existing check-in
-func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID int, params CheckInParams) (*CheckIn, error) {
-	path := fmt.Sprintf("/projects/%d/check_ins/%d", projectID, checkInID)
+func (s *CheckInsService) Update(ctx context.Context, projectID int, checkInID string, params CheckInParams) (*CheckIn, error) {
+	path := fmt.Sprintf("/projects/%d/check_ins/%s", projectID, checkInID)
 
 	reqBody := CheckInRequest{CheckIn: params}
 
@@ -108,8 +108,8 @@ func (s *CheckInsService) BulkUpdate(ctx context.Context, projectID int, checkIn
 }
 
 // Delete deletes a check-in
-func (s *CheckInsService) Delete(ctx context.Context, projectID, checkInID int) error {
-	path := fmt.Sprintf("/projects/%d/check_ins/%d", projectID, checkInID)
+func (s *CheckInsService) Delete(ctx context.Context, projectID int, checkInID string) error {
+	path := fmt.Sprintf("/projects/%d/check_ins/%s", projectID, checkInID)
 
 	req, err := s.client.newRequest(ctx, "DELETE", path, nil)
 	if err != nil {

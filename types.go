@@ -504,8 +504,8 @@ type CheckInBulkUpdateResponse struct {
 
 // CheckInBulkResult represents a single result in a bulk operation
 type CheckInBulkResult struct {
-	Success bool   `json:"success"`
-	ID      *int   `json:"id,omitempty"`
-	Slug    string `json:"slug,omitempty"`
-	Error   string `json:"error,omitempty"`
+	Success bool    `json:"success"`
+	ID      *string `json:"id,omitempty"`
+	Slug    string  `json:"slug,omitempty"`
+	Error   string  `json:"error,omitempty"`
 }
