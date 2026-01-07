@@ -11,18 +11,18 @@ func TestStatusPagesList(t *testing.T) {
 	mockStatusPages := `{
 		"results": [
 			{
-				"id": 1,
+				"id": "abc123",
 				"name": "Public Status",
-				"account_id": 100,
+				"account_id": "100",
 				"url": "https://status.example.com",
 				"created_at": "2024-01-01T00:00:00Z",
 				"sites": ["site1", "site2"],
 				"check_ins": ["check1"]
 			},
 			{
-				"id": 2,
+				"id": "def456",
 				"name": "Internal Status",
-				"account_id": 100,
+				"account_id": "100",
 				"url": "https://internal-status.example.com",
 				"created_at": "2024-01-02T00:00:00Z",
 				"sites": [],
@@ -49,7 +49,7 @@ func TestStatusPagesList(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	statusPages, err := client.StatusPages.List(context.Background(), 100)
+	statusPages, err := client.StatusPages.List(context.Background(), "100")
 	if err != nil {
 		t.Fatalf("List() error = %v", err)
 	}
@@ -69,9 +69,9 @@ func TestStatusPagesList(t *testing.T) {
 
 func TestStatusPagesGet(t *testing.T) {
 	mockStatusPage := `{
-		"id": 1,
+		"id": "abc123",
 		"name": "Public Status",
-		"account_id": 100,
+		"account_id": "100",
 		"url": "https://status.example.com",
 		"created_at": "2024-01-01T00:00:00Z",
 		"sites": ["site1"],
@@ -82,8 +82,8 @@ func TestStatusPagesGet(t *testing.T) {
 		if r.Method != "GET" {
 			t.Errorf("expected GET method, got %s", r.Method)
 		}
-		if r.URL.Path != "/v2/accounts/100/status_pages/1" {
-			t.Errorf("expected path /v2/accounts/100/status_pages/1, got %s", r.URL.Path)
+		if r.URL.Path != "/v2/accounts/100/status_pages/abc123" {
+			t.Errorf("expected path /v2/accounts/100/status_pages/abc123, got %s", r.URL.Path)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -96,7 +96,7 @@ func TestStatusPagesGet(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	statusPage, err := client.StatusPages.Get(context.Background(), 100, 1)
+	statusPage, err := client.StatusPages.Get(context.Background(), "100", "abc123")
 	if err != nil {
 		t.Fatalf("Get() error = %v", err)
 	}
@@ -108,9 +108,9 @@ func TestStatusPagesGet(t *testing.T) {
 
 func TestStatusPagesCreate(t *testing.T) {
 	mockStatusPage := `{
-		"id": 1,
+		"id": "new123",
 		"name": "New Status Page",
-		"account_id": 100,
+		"account_id": "100",
 		"url": "https://new-status.example.com",
 		"created_at": "2024-01-01T00:00:00Z",
 		"sites": [],
@@ -136,7 +136,7 @@ func TestStatusPagesCreate(t *testing.T) {
 		WithAuthToken("test-token")
 
 	params := StatusPageParams{Name: "New Status Page"}
-	statusPage, err := client.StatusPages.Create(context.Background(), 100, params)
+	statusPage, err := client.StatusPages.Create(context.Background(), "100", params)
 	if err != nil {
 		t.Fatalf("Create() error = %v", err)
 	}
@@ -151,8 +151,8 @@ func TestStatusPagesUpdate(t *testing.T) {
 		if r.Method != "PUT" {
 			t.Errorf("expected PUT method, got %s", r.Method)
 		}
-		if r.URL.Path != "/v2/accounts/100/status_pages/1" {
-			t.Errorf("expected path /v2/accounts/100/status_pages/1, got %s", r.URL.Path)
+		if r.URL.Path != "/v2/accounts/100/status_pages/abc123" {
+			t.Errorf("expected path /v2/accounts/100/status_pages/abc123, got %s", r.URL.Path)
 		}
 
 		w.WriteHeader(http.StatusNoContent)
@@ -164,7 +164,7 @@ func TestStatusPagesUpdate(t *testing.T) {
 		WithAuthToken("test-token")
 
 	params := StatusPageParams{Name: "Updated Status Page"}
-	err := client.StatusPages.Update(context.Background(), 100, 1, params)
+	err := client.StatusPages.Update(context.Background(), "100", "abc123", params)
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
 	}
@@ -175,8 +175,8 @@ func TestStatusPagesDelete(t *testing.T) {
 		if r.Method != "DELETE" {
 			t.Errorf("expected DELETE method, got %s", r.Method)
 		}
-		if r.URL.Path != "/v2/accounts/100/status_pages/1" {
-			t.Errorf("expected path /v2/accounts/100/status_pages/1, got %s", r.URL.Path)
+		if r.URL.Path != "/v2/accounts/100/status_pages/abc123" {
+			t.Errorf("expected path /v2/accounts/100/status_pages/abc123, got %s", r.URL.Path)
 		}
 
 		w.WriteHeader(http.StatusNoContent)
@@ -187,7 +187,7 @@ func TestStatusPagesDelete(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	err := client.StatusPages.Delete(context.Background(), 100, 1)
+	err := client.StatusPages.Delete(context.Background(), "100", "abc123")
 	if err != nil {
 		t.Fatalf("Delete() error = %v", err)
 	}

@@ -108,9 +108,9 @@ type AccountListResponse struct {
 
 // StatusPage represents a status page
 type StatusPage struct {
-	ID               int                    `json:"id"`
+	ID               string                 `json:"id"`
 	Name             string                 `json:"name"`
-	AccountID        int                    `json:"account_id"`
+	AccountID        string                 `json:"account_id"`
 	Domain           *string                `json:"domain"`
 	URL              string                 `json:"url"`
 	CreatedAt        time.Time              `json:"created_at"`

@@ -11,8 +11,8 @@ type StatusPagesService struct {
 }
 
 // List retrieves all status pages for an account
-func (s *StatusPagesService) List(ctx context.Context, accountID int) ([]StatusPage, error) {
-	path := fmt.Sprintf("/accounts/%d/status_pages", accountID)
+func (s *StatusPagesService) List(ctx context.Context, accountID string) ([]StatusPage, error) {
+	path := fmt.Sprintf("/accounts/%s/status_pages", accountID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -28,8 +28,8 @@ func (s *StatusPagesService) List(ctx context.Context, accountID int) ([]StatusP
 }
 
 // Get retrieves a single status page by ID
-func (s *StatusPagesService) Get(ctx context.Context, accountID, statusPageID int) (*StatusPage, error) {
-	path := fmt.Sprintf("/accounts/%d/status_pages/%d", accountID, statusPageID)
+func (s *StatusPagesService) Get(ctx context.Context, accountID string, statusPageID string) (*StatusPage, error) {
+	path := fmt.Sprintf("/accounts/%s/status_pages/%s", accountID, statusPageID)
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
 	if err != nil {
@@ -45,8 +45,8 @@ func (s *StatusPagesService) Get(ctx context.Context, accountID, statusPageID in
 }
 
 // Create creates a new status page
-func (s *StatusPagesService) Create(ctx context.Context, accountID int, params StatusPageParams) (*StatusPage, error) {
-	path := fmt.Sprintf("/accounts/%d/status_pages", accountID)
+func (s *StatusPagesService) Create(ctx context.Context, accountID string, params StatusPageParams) (*StatusPage, error) {
+	path := fmt.Sprintf("/accounts/%s/status_pages", accountID)
 
 	reqBody := StatusPageRequest{StatusPage: params}
 
@@ -64,8 +64,8 @@ func (s *StatusPagesService) Create(ctx context.Context, accountID int, params S
 }
 
 // Update updates an existing status page
-func (s *StatusPagesService) Update(ctx context.Context, accountID, statusPageID int, params StatusPageParams) error {
-	path := fmt.Sprintf("/accounts/%d/status_pages/%d", accountID, statusPageID)
+func (s *StatusPagesService) Update(ctx context.Context, accountID string, statusPageID string, params StatusPageParams) error {
+	path := fmt.Sprintf("/accounts/%s/status_pages/%s", accountID, statusPageID)
 
 	reqBody := StatusPageRequest{StatusPage: params}
 
@@ -79,8 +79,8 @@ func (s *StatusPagesService) Update(ctx context.Context, accountID, statusPageID
 }
 
 // Delete deletes a status page
-func (s *StatusPagesService) Delete(ctx context.Context, accountID, statusPageID int) error {
-	path := fmt.Sprintf("/accounts/%d/status_pages/%d", accountID, statusPageID)
+func (s *StatusPagesService) Delete(ctx context.Context, accountID string, statusPageID string) error {
+	path := fmt.Sprintf("/accounts/%s/status_pages/%s", accountID, statusPageID)
 
 	req, err := s.client.newRequest(ctx, "DELETE", path, nil)
 	if err != nil {
