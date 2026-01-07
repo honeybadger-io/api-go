@@ -53,12 +53,12 @@ func (s *AccountsService) ListUsers(ctx context.Context, accountID string) ([]Ac
 		return nil, err
 	}
 
-	var users []AccountUser
-	if err := s.client.do(ctx, req, &users); err != nil {
+	var response AccountUserListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return users, nil
+	return response.Results, nil
 }
 
 // GetUser retrieves a single user by ID
@@ -119,12 +119,12 @@ func (s *AccountsService) ListInvitations(ctx context.Context, accountID string)
 		return nil, err
 	}
 
-	var invitations []AccountInvitation
-	if err := s.client.do(ctx, req, &invitations); err != nil {
+	var response AccountInvitationListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return invitations, nil
+	return response.Results, nil
 }
 
 // GetInvitation retrieves a single invitation by ID

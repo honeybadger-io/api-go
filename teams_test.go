@@ -34,7 +34,7 @@ func TestTeamsList(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	teams, err := client.Teams.List(context.Background(), 100)
+	teams, err := client.Teams.List(context.Background(), "100")
 	if err != nil {
 		t.Fatalf("List() error = %v", err)
 	}
@@ -69,7 +69,7 @@ func TestTeamsCreate(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	team, err := client.Teams.Create(context.Background(), 100, "New Team")
+	team, err := client.Teams.Create(context.Background(), "100", "New Team")
 	if err != nil {
 		t.Fatalf("Create() error = %v", err)
 	}

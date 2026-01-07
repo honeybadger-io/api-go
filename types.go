@@ -61,6 +61,11 @@ type AccountUser struct {
 	Email string `json:"email"`
 }
 
+// AccountUserListResponse represents the response from listing account users
+type AccountUserListResponse struct {
+	Results []AccountUser `json:"results"`
+}
+
 // AccountUserUpdateRequest represents the request body for updating an account user
 type AccountUserUpdateRequest struct {
 	User struct {
@@ -77,6 +82,11 @@ type AccountInvitation struct {
 	TeamIDs   []int      `json:"team_ids"`
 	CreatedAt time.Time  `json:"created_at"`
 	AcceptedAt *time.Time `json:"accepted_at,omitempty"`
+}
+
+// AccountInvitationListResponse represents the response from listing account invitations
+type AccountInvitationListResponse struct {
+	Results []AccountInvitation `json:"results"`
 }
 
 // AccountInvitationRequest represents the request body for creating/updating an invitation
@@ -139,6 +149,11 @@ type Team struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
+// TeamListResponse represents the response from listing teams
+type TeamListResponse struct {
+	Results []Team `json:"results"`
+}
+
 // TeamRequest represents the request body for creating/updating a team
 type TeamRequest struct {
 	Team struct {
@@ -152,6 +167,11 @@ type TeamMember struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
 	Admin bool   `json:"admin"`
+}
+
+// TeamMemberListResponse represents the response from listing team members
+type TeamMemberListResponse struct {
+	Results []TeamMember `json:"results"`
 }
 
 // TeamMemberUpdateRequest represents the request body for updating a team member
@@ -182,6 +202,11 @@ type TeamInvitationParams struct {
 	Email   string  `json:"email,omitempty"`
 	Admin   *bool   `json:"admin,omitempty"`
 	Message *string `json:"message,omitempty"`
+}
+
+// TeamInvitationListResponse represents the response from listing team invitations
+type TeamInvitationListResponse struct {
+	Results []TeamInvitation `json:"results"`
 }
 
 // Environment represents a project environment
@@ -218,6 +243,11 @@ type Site struct {
 	URL           string     `json:"url"`
 }
 
+// SiteListResponse represents the response from listing sites
+type SiteListResponse struct {
+	Results []Site `json:"results"`
+}
+
 // SiteCreateRequest represents the request for creating a site
 type SiteCreateRequest struct {
 	Site SiteParams `json:"site"`
@@ -250,6 +280,11 @@ type Outage struct {
 	Headers   map[string]interface{} `json:"headers"`
 }
 
+// OutageListResponse represents the response from listing outages
+type OutageListResponse struct {
+	Results []Outage `json:"results"`
+}
+
 // OutageListOptions represents query parameters for listing outages
 type OutageListOptions struct {
 	CreatedAfter  int64 `url:"created_after,omitempty"`  // Unix timestamp
@@ -263,6 +298,11 @@ type UptimeCheck struct {
 	Duration  int       `json:"duration"` // milliseconds
 	Location  string    `json:"location"`
 	Up        bool      `json:"up"`
+}
+
+// UptimeCheckListResponse represents the response from listing uptime checks
+type UptimeCheckListResponse struct {
+	Results []UptimeCheck `json:"results"`
 }
 
 // UptimeCheckListOptions represents query parameters for listing uptime checks
@@ -405,6 +445,11 @@ type Deployment struct {
 	Revision      string    `json:"revision"`
 }
 
+// DeploymentListResponse represents the response from listing deployments
+type DeploymentListResponse struct {
+	Results []Deployment `json:"results"`
+}
+
 // DeploymentListOptions represents query parameters for listing deployments
 type DeploymentListOptions struct {
 	Environment   string `url:"environment,omitempty"`
@@ -416,7 +461,7 @@ type DeploymentListOptions struct {
 
 // CheckIn represents a check-in in Honeybadger
 type CheckIn struct {
-	ID            int        `json:"id"`
+	ID            string     `json:"id"`
 	Name          string     `json:"name"`
 	Slug          string     `json:"slug"`
 	ScheduleType  string     `json:"schedule_type"`  // "simple" or "cron"
@@ -427,6 +472,11 @@ type CheckIn struct {
 	ProjectID     int        `json:"project_id"`
 	CreatedAt     time.Time  `json:"created_at"`
 	LastCheckInAt *time.Time `json:"last_check_in_at"`
+}
+
+// CheckInListResponse represents the response from listing check-ins
+type CheckInListResponse struct {
+	Results []CheckIn `json:"results"`
 }
 
 // CheckInRequest represents the request body for creating/updating a check-in

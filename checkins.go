@@ -19,12 +19,12 @@ func (s *CheckInsService) List(ctx context.Context, projectID int) ([]CheckIn, e
 		return nil, err
 	}
 
-	var checkIns []CheckIn
-	if err := s.client.do(ctx, req, &checkIns); err != nil {
+	var response CheckInListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return checkIns, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single check-in by ID

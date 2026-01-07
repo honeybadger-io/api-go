@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"strconv"
 )
 
 // TeamsService provides methods for interacting with teams
@@ -13,11 +12,11 @@ type TeamsService struct {
 }
 
 // List retrieves all teams for an account
-func (s *TeamsService) List(ctx context.Context, accountID int) ([]Team, error) {
+func (s *TeamsService) List(ctx context.Context, accountID string) ([]Team, error) {
 	path := "/teams"
 
 	params := url.Values{}
-	params.Set("account_id", strconv.Itoa(accountID))
+	params.Set("account_id", accountID)
 	path += "?" + params.Encode()
 
 	req, err := s.client.newRequest(ctx, "GET", path, nil)
@@ -25,12 +24,12 @@ func (s *TeamsService) List(ctx context.Context, accountID int) ([]Team, error) 
 		return nil, err
 	}
 
-	var teams []Team
-	if err := s.client.do(ctx, req, &teams); err != nil {
+	var response TeamListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return teams, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single team by ID
@@ -51,11 +50,11 @@ func (s *TeamsService) Get(ctx context.Context, teamID int) (*Team, error) {
 }
 
 // Create creates a new team
-func (s *TeamsService) Create(ctx context.Context, accountID int, name string) (*Team, error) {
+func (s *TeamsService) Create(ctx context.Context, accountID string, name string) (*Team, error) {
 	path := "/teams"
 
 	params := url.Values{}
-	params.Set("account_id", strconv.Itoa(accountID))
+	params.Set("account_id", accountID)
 	path += "?" + params.Encode()
 
 	reqBody := TeamRequest{}
@@ -115,12 +114,12 @@ func (s *TeamsService) ListMembers(ctx context.Context, teamID int) ([]TeamMembe
 		return nil, err
 	}
 
-	var members []TeamMember
-	if err := s.client.do(ctx, req, &members); err != nil {
+	var response TeamMemberListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return members, nil
+	return response.Results, nil
 }
 
 // UpdateMember updates a team member's permissions
@@ -164,12 +163,12 @@ func (s *TeamsService) ListInvitations(ctx context.Context, teamID int) ([]TeamI
 		return nil, err
 	}
 
-	var invitations []TeamInvitation
-	if err := s.client.do(ctx, req, &invitations); err != nil {
+	var response TeamInvitationListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return invitations, nil
+	return response.Results, nil
 }
 
 // GetInvitation retrieves a single invitation by ID

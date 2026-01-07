@@ -21,12 +21,12 @@ func (s *UptimeService) List(ctx context.Context, projectID int) ([]Site, error)
 		return nil, err
 	}
 
-	var sites []Site
-	if err := s.client.do(ctx, req, &sites); err != nil {
+	var response SiteListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return sites, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single uptime site by ID
@@ -121,12 +121,12 @@ func (s *UptimeService) ListOutages(ctx context.Context, projectID int, siteID s
 		return nil, err
 	}
 
-	var outages []Outage
-	if err := s.client.do(ctx, req, &outages); err != nil {
+	var response OutageListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return outages, nil
+	return response.Results, nil
 }
 
 // ListUptimeChecks retrieves uptime checks for a specific site
@@ -154,10 +154,10 @@ func (s *UptimeService) ListUptimeChecks(ctx context.Context, projectID int, sit
 		return nil, err
 	}
 
-	var checks []UptimeCheck
-	if err := s.client.do(ctx, req, &checks); err != nil {
+	var response UptimeCheckListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return checks, nil
+	return response.Results, nil
 }

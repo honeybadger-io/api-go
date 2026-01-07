@@ -43,12 +43,12 @@ func (s *DeploymentsService) List(ctx context.Context, projectID int, options De
 		return nil, err
 	}
 
-	var deployments []Deployment
-	if err := s.client.do(ctx, req, &deployments); err != nil {
+	var response DeploymentListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return deployments, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single deployment by ID
