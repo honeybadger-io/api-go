@@ -16,9 +16,17 @@ type Client struct {
 	httpClient *http.Client
 
 	// Resource services
-	Projects *ProjectsService
-	Faults   *FaultsService
-	Insights *InsightsService
+	Projects     *ProjectsService
+	Faults       *FaultsService
+	Insights     *InsightsService
+	Comments     *CommentsService
+	Deployments  *DeploymentsService
+	CheckIns     *CheckInsService
+	Uptime       *UptimeService
+	Teams        *TeamsService
+	Environments *EnvironmentsService
+	Accounts     *AccountsService
+	StatusPages  *StatusPagesService
 }
 
 func NewClient() *Client {
@@ -33,6 +41,14 @@ func NewClient() *Client {
 	c.Projects = &ProjectsService{client: c}
 	c.Faults = &FaultsService{client: c}
 	c.Insights = &InsightsService{client: c}
+	c.Comments = &CommentsService{client: c}
+	c.Deployments = &DeploymentsService{client: c}
+	c.CheckIns = &CheckInsService{client: c}
+	c.Uptime = &UptimeService{client: c}
+	c.Teams = &TeamsService{client: c}
+	c.Environments = &EnvironmentsService{client: c}
+	c.Accounts = &AccountsService{client: c}
+	c.StatusPages = &StatusPagesService{client: c}
 	return c
 }
 
