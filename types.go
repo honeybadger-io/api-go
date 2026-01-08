@@ -461,17 +461,20 @@ type DeploymentListOptions struct {
 
 // CheckIn represents a check-in in Honeybadger
 type CheckIn struct {
-	ID            string     `json:"id"`
-	Name          string     `json:"name"`
-	Slug          string     `json:"slug"`
-	ScheduleType  string     `json:"schedule_type"`  // "simple" or "cron"
-	ReportPeriod  *string    `json:"report_period"`  // For simple schedules
-	GracePeriod   *string    `json:"grace_period"`   // Optional
-	CronSchedule  *string    `json:"cron_schedule"`  // For cron schedules
-	CronTimezone  *string    `json:"cron_timezone"`  // Optional, defaults to UTC
-	ProjectID     int        `json:"project_id"`
-	CreatedAt     time.Time  `json:"created_at"`
-	LastCheckInAt *time.Time `json:"last_check_in_at"`
+	ID           string     `json:"id"`
+	Name         string     `json:"name"`
+	Slug         string     `json:"slug"`
+	State        string     `json:"state"`           // e.g., "reporting", "missing"
+	ScheduleType string     `json:"schedule_type"`   // "simple" or "cron"
+	ReportPeriod *string    `json:"report_period"`   // For simple schedules
+	GracePeriod  *string    `json:"grace_period"`    // Optional
+	CronSchedule *string    `json:"cron_schedule"`   // For cron schedules
+	CronTimezone *string    `json:"cron_timezone"`   // Optional, defaults to UTC
+	ReportedAt   *time.Time `json:"reported_at"`     // Last check-in time
+	ExpectedAt   *time.Time `json:"expected_at"`     // Next expected check-in
+	MissedCount  int        `json:"missed_count"`    // Number of missed check-ins
+	URL          string     `json:"url"`             // API URL for reporting
+	DetailsURL   string     `json:"details_url"`     // Web UI URL
 }
 
 // CheckInListResponse represents the response from listing check-ins
