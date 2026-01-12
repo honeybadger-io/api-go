@@ -65,7 +65,7 @@ func (s *CommentsService) Create(ctx context.Context, projectID, faultID int, bo
 }
 
 // Update updates an existing comment
-func (s *CommentsService) Update(ctx context.Context, projectID, faultID, commentID int, body string) (*Comment, error) {
+func (s *CommentsService) Update(ctx context.Context, projectID, faultID, commentID int, body string) error {
 	path := fmt.Sprintf("/projects/%d/faults/%d/comments/%d", projectID, faultID, commentID)
 
 	reqBody := CommentRequest{}
@@ -73,15 +73,11 @@ func (s *CommentsService) Update(ctx context.Context, projectID, faultID, commen
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var comment Comment
-	if err := s.client.do(ctx, req, &comment); err != nil {
-		return nil, err
-	}
-
-	return &comment, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // Delete deletes a comment

@@ -74,7 +74,7 @@ func (s *TeamsService) Create(ctx context.Context, accountID string, name string
 }
 
 // Update updates an existing team
-func (s *TeamsService) Update(ctx context.Context, teamID int, name string) (*Team, error) {
+func (s *TeamsService) Update(ctx context.Context, teamID int, name string) error {
 	path := fmt.Sprintf("/teams/%d", teamID)
 
 	reqBody := TeamRequest{}
@@ -82,15 +82,11 @@ func (s *TeamsService) Update(ctx context.Context, teamID int, name string) (*Te
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var team Team
-	if err := s.client.do(ctx, req, &team); err != nil {
-		return nil, err
-	}
-
-	return &team, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // Delete deletes a team
@@ -123,7 +119,7 @@ func (s *TeamsService) ListMembers(ctx context.Context, teamID int) ([]TeamMembe
 }
 
 // UpdateMember updates a team member's permissions
-func (s *TeamsService) UpdateMember(ctx context.Context, teamID, memberID int, admin bool) (*TeamMember, error) {
+func (s *TeamsService) UpdateMember(ctx context.Context, teamID, memberID int, admin bool) error {
 	path := fmt.Sprintf("/teams/%d/team_members/%d", teamID, memberID)
 
 	reqBody := TeamMemberUpdateRequest{}
@@ -131,15 +127,11 @@ func (s *TeamsService) UpdateMember(ctx context.Context, teamID, memberID int, a
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var member TeamMember
-	if err := s.client.do(ctx, req, &member); err != nil {
-		return nil, err
-	}
-
-	return &member, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // RemoveMember removes a member from a team
@@ -208,22 +200,18 @@ func (s *TeamsService) CreateInvitation(ctx context.Context, teamID int, params 
 }
 
 // UpdateInvitation updates an existing team invitation
-func (s *TeamsService) UpdateInvitation(ctx context.Context, teamID, invitationID int, params TeamInvitationParams) (*TeamInvitation, error) {
+func (s *TeamsService) UpdateInvitation(ctx context.Context, teamID, invitationID int, params TeamInvitationParams) error {
 	path := fmt.Sprintf("/teams/%d/team_invitations/%d", teamID, invitationID)
 
 	reqBody := TeamInvitationRequest{TeamInvitation: params}
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var invitation TeamInvitation
-	if err := s.client.do(ctx, req, &invitation); err != nil {
-		return nil, err
-	}
-
-	return &invitation, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // DeleteInvitation deletes a team invitation

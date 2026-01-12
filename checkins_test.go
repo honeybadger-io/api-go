@@ -199,20 +199,6 @@ func TestCheckInsCreate(t *testing.T) {
 }
 
 func TestCheckInsUpdate(t *testing.T) {
-	mockCheckIn := `{
-		"id": "1",
-		"name": "Updated Check-In",
-		"slug": "updated-check-in",
-		"state": "reporting",
-		"schedule_type": "simple",
-		"report_period": "2 hours",
-		"reported_at": null,
-		"expected_at": null,
-		"missed_count": 0,
-		"url": "https://api.honeybadger.io/v1/check_in/updated-check-in",
-		"details_url": "https://app.honeybadger.io/projects/123/check_ins/1"
-	}`
-
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "PUT" {
 			t.Errorf("expected PUT method, got %s", r.Method)
@@ -221,9 +207,7 @@ func TestCheckInsUpdate(t *testing.T) {
 			t.Errorf("expected path /v2/projects/123/check_ins/1, got %s", r.URL.Path)
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(mockCheckIn))
+		w.WriteHeader(http.StatusNoContent)
 	}))
 	defer server.Close()
 
@@ -237,13 +221,9 @@ func TestCheckInsUpdate(t *testing.T) {
 		ReportPeriod: &reportPeriod,
 	}
 
-	checkIn, err := client.CheckIns.Update(context.Background(), 123, "1", params)
+	err := client.CheckIns.Update(context.Background(), 123, "1", params)
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
-	}
-
-	if checkIn.Name != "Updated Check-In" {
-		t.Errorf("expected check-in name 'Updated Check-In', got %s", checkIn.Name)
 	}
 }
 

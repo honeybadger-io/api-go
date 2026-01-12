@@ -64,22 +64,18 @@ func (s *CheckInsService) Create(ctx context.Context, projectID int, params Chec
 }
 
 // Update updates an existing check-in
-func (s *CheckInsService) Update(ctx context.Context, projectID int, checkInID string, params CheckInParams) (*CheckIn, error) {
+func (s *CheckInsService) Update(ctx context.Context, projectID int, checkInID string, params CheckInParams) error {
 	path := fmt.Sprintf("/projects/%d/check_ins/%s", projectID, checkInID)
 
 	reqBody := CheckInRequest{CheckIn: params}
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var checkIn CheckIn
-	if err := s.client.do(ctx, req, &checkIn); err != nil {
-		return nil, err
-	}
-
-	return &checkIn, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // BulkUpdate updates all check-ins for a project

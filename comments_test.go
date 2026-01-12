@@ -188,16 +188,6 @@ func TestCommentsCreate(t *testing.T) {
 }
 
 func TestCommentsUpdate(t *testing.T) {
-	mockComment := `{
-		"id": 1,
-		"fault_id": 100,
-		"event": "comment",
-		"source": "user",
-		"created_at": "2024-01-01T00:00:00Z",
-		"author": "Test User",
-		"body": "Updated comment"
-	}`
-
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "PUT" {
 			t.Errorf("expected PUT method, got %s", r.Method)
@@ -217,9 +207,7 @@ func TestCommentsUpdate(t *testing.T) {
 			t.Errorf("expected Basic Auth password to be empty, got %s", password)
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(mockComment))
+		w.WriteHeader(http.StatusNoContent)
 	}))
 	defer server.Close()
 
@@ -227,17 +215,9 @@ func TestCommentsUpdate(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	comment, err := client.Comments.Update(context.Background(), 123, 100, 1, "Updated comment")
+	err := client.Comments.Update(context.Background(), 123, 100, 1, "Updated comment")
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
-	}
-
-	if comment.ID != 1 {
-		t.Errorf("expected comment ID 1, got %d", comment.ID)
-	}
-
-	if comment.Body != "Updated comment" {
-		t.Errorf("expected comment body 'Updated comment', got %s", comment.Body)
 	}
 }
 

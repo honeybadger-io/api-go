@@ -79,7 +79,7 @@ func (s *AccountsService) GetUser(ctx context.Context, accountID string, userID 
 }
 
 // UpdateUser updates a user's role
-func (s *AccountsService) UpdateUser(ctx context.Context, accountID string, userID int, role string) (*AccountUser, error) {
+func (s *AccountsService) UpdateUser(ctx context.Context, accountID string, userID int, role string) error {
 	path := fmt.Sprintf("/accounts/%s/users/%d", accountID, userID)
 
 	reqBody := AccountUserUpdateRequest{}
@@ -87,15 +87,11 @@ func (s *AccountsService) UpdateUser(ctx context.Context, accountID string, user
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var user AccountUser
-	if err := s.client.do(ctx, req, &user); err != nil {
-		return nil, err
-	}
-
-	return &user, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // RemoveUser removes a user from an account
@@ -164,22 +160,18 @@ func (s *AccountsService) CreateInvitation(ctx context.Context, accountID string
 }
 
 // UpdateInvitation updates an existing account invitation
-func (s *AccountsService) UpdateInvitation(ctx context.Context, accountID string, invitationID int, params AccountInvitationParams) (*AccountInvitation, error) {
+func (s *AccountsService) UpdateInvitation(ctx context.Context, accountID string, invitationID int, params AccountInvitationParams) error {
 	path := fmt.Sprintf("/accounts/%s/invitations/%d", accountID, invitationID)
 
 	reqBody := AccountInvitationRequest{Invitation: params}
 
 	req, err := s.client.newRequest(ctx, "PUT", path, reqBody)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var invitation AccountInvitation
-	if err := s.client.do(ctx, req, &invitation); err != nil {
-		return nil, err
-	}
-
-	return &invitation, nil
+	// Update returns 204 No Content.
+	return s.client.do(ctx, req, nil)
 }
 
 // DeleteInvitation deletes an account invitation
