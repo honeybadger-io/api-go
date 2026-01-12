@@ -16,8 +16,13 @@ func TestStatusPagesList(t *testing.T) {
 				"account_id": "100",
 				"url": "https://status.example.com",
 				"created_at": "2024-01-01T00:00:00Z",
-				"sites": ["site1", "site2"],
-				"check_ins": ["check1"]
+				"sites": [
+					{"site_id": "site1", "display_name": "Main Site", "description": "", "state": "up", "last_checked_at": "2024-01-01T00:00:00Z"},
+					{"site_id": "site2", "display_name": "API", "description": "", "state": "up", "last_checked_at": "2024-01-01T00:00:00Z"}
+				],
+				"check_ins": [
+					{"check_in_id": "check1", "display_name": "Daily Backup", "description": "", "state": "reporting", "reported_at": "2024-01-01T00:00:00Z"}
+				]
 			},
 			{
 				"id": "def456",
@@ -74,8 +79,8 @@ func TestStatusPagesGet(t *testing.T) {
 		"account_id": "100",
 		"url": "https://status.example.com",
 		"created_at": "2024-01-01T00:00:00Z",
-		"sites": ["site1"],
-		"check_ins": ["check1"]
+		"sites": [{"site_id": "site1", "display_name": "Main Site", "description": "", "state": "up", "last_checked_at": "2024-01-01T00:00:00Z"}],
+		"check_ins": [{"check_in_id": "check1", "display_name": "Daily Backup", "description": "", "state": "reporting", "reported_at": "2024-01-01T00:00:00Z"}]
 	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

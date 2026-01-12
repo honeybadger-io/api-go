@@ -12,8 +12,8 @@ import (
 func TestListProjects(t *testing.T) {
 	mockProjects := `{
 		"results": [
-			{"id": 1, "name": "Project 1", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "abc123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 1, "email": "user@example.com", "name": "User 1"}, "sites": [], "teams": [], "users": []},
-			{"id": 2, "name": "Project 2", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "def456", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 2, "email": "user2@example.com", "name": "User 2"}, "sites": [], "teams": [], "users": []}
+			{"id": 1, "name": "Project 1", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "abc123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []},
+			{"id": 2, "name": "Project 2", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "def456", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}
 		]
 	}`
 
@@ -89,8 +89,8 @@ func TestListProjects_Error(t *testing.T) {
 func TestListProjects_WithAccountID(t *testing.T) {
 	mockProjects := `{
 		"results": [
-			{"id": 1, "name": "Project 1", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "abc123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 1, "email": "user@example.com", "name": "User 1"}, "sites": [], "teams": [], "users": []},
-			{"id": 2, "name": "Project 2", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "def456", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 2, "email": "user2@example.com", "name": "User 2"}, "sites": [], "teams": [], "users": []}
+			{"id": 1, "name": "Project 1", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "abc123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []},
+			{"id": 2, "name": "Project 2", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "def456", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}
 		]
 	}`
 
@@ -139,7 +139,7 @@ func TestListProjects_WithAccountID(t *testing.T) {
 }
 
 func TestGetProject(t *testing.T) {
-	mockProject := `{"id": 123, "name": "Test Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "abc123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 1, "email": "user@example.com", "name": "User 1"}, "sites": [], "teams": [], "users": []}`
+	mockProject := `{"id": 123, "name": "Test Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "abc123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -200,7 +200,7 @@ func TestGetProject_NotFound(t *testing.T) {
 }
 
 func TestCreateProject(t *testing.T) {
-	mockProject := `{"id": 456, "name": "New Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "xyz789", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 1, "email": "user@example.com", "name": "User 1"}, "sites": [], "teams": [], "users": []}`
+	mockProject := `{"id": 456, "name": "New Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "xyz789", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
@@ -378,7 +378,7 @@ func TestCreateProject_WithAllFields(t *testing.T) {
 			t.Errorf("expected user_search_field, got %v", project["user_search_field"])
 		}
 
-		mockProject := `{"id": 789, "name": "Full Featured Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "full123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 1, "email": "user@example.com", "name": "User 1"}, "sites": [], "teams": [], "users": []}`
+		mockProject := `{"id": 789, "name": "Full Featured Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "full123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}`
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		_, _ = w.Write([]byte(mockProject))
@@ -513,7 +513,7 @@ func TestCreateProject_PartialFields(t *testing.T) {
 			t.Error("user_url should not be present")
 		}
 
-		mockProject := `{"id": 456, "name": "Partial Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "partial123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "owner": {"id": 1, "email": "user@example.com", "name": "User 1"}, "sites": [], "teams": [], "users": []}`
+		mockProject := `{"id": 456, "name": "Partial Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "partial123", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}`
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 		_, _ = w.Write([]byte(mockProject))

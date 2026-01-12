@@ -16,23 +16,29 @@ func TestCheckInsList(t *testing.T) {
 				"id": "1",
 				"name": "Daily Backup",
 				"slug": "daily-backup",
+				"state": "reporting",
 				"schedule_type": "simple",
 				"report_period": "1 day",
 				"grace_period": "5 minutes",
-				"project_id": 123,
-				"created_at": "2024-01-01T00:00:00Z",
-				"last_check_in_at": "2024-01-10T00:00:00Z"
+				"reported_at": "2024-01-10T00:00:00Z",
+				"expected_at": "2024-01-11T00:00:00Z",
+				"missed_count": 0,
+				"url": "https://api.honeybadger.io/v1/check_in/daily-backup",
+				"details_url": "https://app.honeybadger.io/projects/123/check_ins/1"
 			},
 			{
 				"id": "2",
 				"name": "Hourly Sync",
 				"slug": "hourly-sync",
+				"state": "reporting",
 				"schedule_type": "cron",
 				"cron_schedule": "0 * * * *",
 				"cron_timezone": "UTC",
-				"project_id": 123,
-				"created_at": "2024-01-01T00:00:00Z",
-				"last_check_in_at": null
+				"reported_at": null,
+				"expected_at": null,
+				"missed_count": 0,
+				"url": "https://api.honeybadger.io/v1/check_in/hourly-sync",
+				"details_url": "https://app.honeybadger.io/projects/123/check_ins/2"
 			}
 		]
 	}`
@@ -96,11 +102,14 @@ func TestCheckInsGet(t *testing.T) {
 		"id": "1",
 		"name": "Daily Backup",
 		"slug": "daily-backup",
+		"state": "reporting",
 		"schedule_type": "simple",
 		"report_period": "1 day",
-		"project_id": 123,
-		"created_at": "2024-01-01T00:00:00Z",
-		"last_check_in_at": "2024-01-10T00:00:00Z"
+		"reported_at": "2024-01-10T00:00:00Z",
+		"expected_at": "2024-01-11T00:00:00Z",
+		"missed_count": 0,
+		"url": "https://api.honeybadger.io/v1/check_in/daily-backup",
+		"details_url": "https://app.honeybadger.io/projects/123/check_ins/1"
 	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -140,11 +149,14 @@ func TestCheckInsCreate(t *testing.T) {
 		"id": "1",
 		"name": "New Check-In",
 		"slug": "new-check-in",
+		"state": "missing",
 		"schedule_type": "simple",
 		"report_period": "1 hour",
-		"project_id": 123,
-		"created_at": "2024-01-01T00:00:00Z",
-		"last_check_in_at": null
+		"reported_at": null,
+		"expected_at": null,
+		"missed_count": 0,
+		"url": "https://api.honeybadger.io/v1/check_in/new-check-in",
+		"details_url": "https://app.honeybadger.io/projects/123/check_ins/1"
 	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -191,11 +203,14 @@ func TestCheckInsUpdate(t *testing.T) {
 		"id": "1",
 		"name": "Updated Check-In",
 		"slug": "updated-check-in",
+		"state": "reporting",
 		"schedule_type": "simple",
 		"report_period": "2 hours",
-		"project_id": 123,
-		"created_at": "2024-01-01T00:00:00Z",
-		"last_check_in_at": null
+		"reported_at": null,
+		"expected_at": null,
+		"missed_count": 0,
+		"url": "https://api.honeybadger.io/v1/check_in/updated-check-in",
+		"details_url": "https://app.honeybadger.io/projects/123/check_ins/1"
 	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

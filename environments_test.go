@@ -8,10 +8,13 @@ import (
 )
 
 func TestEnvironmentsList(t *testing.T) {
-	mockEnvironments := `[
-		{"id": 1, "project_id": 123, "name": "production", "notifications": true, "created_at": "2024-01-01T00:00:00Z", "updated_at": "2024-01-01T00:00:00Z"},
-		{"id": 2, "project_id": 123, "name": "staging", "notifications": false, "created_at": "2024-01-01T00:00:00Z", "updated_at": "2024-01-01T00:00:00Z"}
-	]`
+	mockEnvironments := `{
+		"results": [
+			{"id": 1, "project_id": 123, "name": "production", "notifications": true, "created_at": "2024-01-01T00:00:00Z", "updated_at": "2024-01-01T00:00:00Z"},
+			{"id": 2, "project_id": 123, "name": "staging", "notifications": false, "created_at": "2024-01-01T00:00:00Z", "updated_at": "2024-01-01T00:00:00Z"}
+		],
+		"links": {"self": "/v2/projects/123/environments"}
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {

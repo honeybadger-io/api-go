@@ -106,6 +106,24 @@ type AccountListResponse struct {
 	Results []Account `json:"results"`
 }
 
+// StatusPageSite represents a site linked to a status page
+type StatusPageSite struct {
+	SiteID        string     `json:"site_id"`
+	DisplayName   string     `json:"display_name"`
+	Description   string     `json:"description"`
+	State         string     `json:"state"`
+	LastCheckedAt *time.Time `json:"last_checked_at"`
+}
+
+// StatusPageCheckIn represents a check-in linked to a status page
+type StatusPageCheckIn struct {
+	CheckInID   string     `json:"check_in_id"`
+	DisplayName string     `json:"display_name"`
+	Description string     `json:"description"`
+	State       string     `json:"state"`
+	ReportedAt  *time.Time `json:"reported_at"`
+}
+
 // StatusPage represents a status page
 type StatusPage struct {
 	ID               string                 `json:"id"`
@@ -115,8 +133,8 @@ type StatusPage struct {
 	URL              string                 `json:"url"`
 	CreatedAt        time.Time              `json:"created_at"`
 	DomainVerifiedAt *time.Time             `json:"domain_verified_at"`
-	Sites            []string               `json:"sites"`     // Array of site IDs
-	CheckIns         []string               `json:"check_ins"` // Array of check-in slugs
+	Sites            []StatusPageSite       `json:"sites"`
+	CheckIns         []StatusPageCheckIn    `json:"check_ins"`
 	HideBranding     *bool                  `json:"hide_branding,omitempty"`
 	Features         map[string]interface{} `json:"features,omitempty"`
 }
@@ -131,14 +149,30 @@ type StatusPageRequest struct {
 	StatusPage StatusPageParams `json:"status_page"`
 }
 
+// StatusPageSiteParams represents parameters for a site in a status page request
+type StatusPageSiteParams struct {
+	SiteID      string `json:"site_id"`
+	DisplayName string `json:"display_name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Position    *int   `json:"position,omitempty"`
+}
+
+// StatusPageCheckInParams represents parameters for a check-in in a status page request
+type StatusPageCheckInParams struct {
+	CheckInID   string `json:"check_in_id"`
+	DisplayName string `json:"display_name,omitempty"`
+	Description string `json:"description,omitempty"`
+	Position    *int   `json:"position,omitempty"`
+}
+
 // StatusPageParams represents parameters for creating/updating a status page
 type StatusPageParams struct {
-	Name         string                 `json:"name,omitempty"`
-	Domain       *string                `json:"domain,omitempty"`
-	Sites        []string               `json:"sites,omitempty"`
-	CheckIns     []string               `json:"check_ins,omitempty"`
-	HideBranding *bool                  `json:"hide_branding,omitempty"`
-	Features     map[string]interface{} `json:"features,omitempty"`
+	Name         string                    `json:"name,omitempty"`
+	Domain       *string                   `json:"domain,omitempty"`
+	Sites        []StatusPageSiteParams    `json:"sites,omitempty"`
+	CheckIns     []StatusPageCheckInParams `json:"check_ins,omitempty"`
+	HideBranding *bool                     `json:"hide_branding,omitempty"`
+	Features     map[string]interface{}    `json:"features,omitempty"`
 }
 
 // Team represents a Honeybadger team
@@ -228,6 +262,11 @@ type EnvironmentRequest struct {
 type EnvironmentParams struct {
 	Name          string `json:"name,omitempty"`
 	Notifications *bool  `json:"notifications,omitempty"` // Defaults to true
+}
+
+// EnvironmentListResponse represents the API response for listing environments
+type EnvironmentListResponse struct {
+	Results []Environment `json:"results"`
 }
 
 // Site represents an uptime monitoring site
@@ -417,14 +456,13 @@ type ListResponse[T any] struct {
 
 // Comment represents a comment on a fault
 type Comment struct {
-	ID           int       `json:"id"`
-	FaultID      int       `json:"fault_id"`
-	Event        string    `json:"event"`
-	Source       string    `json:"source"`
-	NoticesCount int       `json:"notices_count"`
-	CreatedAt    time.Time `json:"created_at"`
-	Author       *User     `json:"author"`
-	Body         string    `json:"body"`
+	ID        int       `json:"id"`
+	FaultID   int       `json:"fault_id"`
+	Event     string    `json:"event"`
+	Source    string    `json:"source"`
+	CreatedAt time.Time `json:"created_at"`
+	Author    string    `json:"author"` // Author name as string
+	Body      string    `json:"body"`
 }
 
 // CommentRequest represents the request body for creating/updating a comment
@@ -432,6 +470,11 @@ type CommentRequest struct {
 	Comment struct {
 		Body string `json:"body"`
 	} `json:"comment"`
+}
+
+// CommentListResponse represents the API response for listing comments
+type CommentListResponse struct {
+	Results []Comment `json:"results"`
 }
 
 // Deployment represents a deployment in Honeybadger
@@ -500,15 +543,13 @@ type CheckInParams struct {
 
 // CheckInBulkUpdateResponse represents the response for bulk updating check-ins
 type CheckInBulkUpdateResponse struct {
-	Create []CheckInBulkResult `json:"create"`
-	Update []CheckInBulkResult `json:"update"`
-	Delete []CheckInBulkResult `json:"delete"`
+	Results []CheckInBulkResult `json:"results"`
 }
 
 // CheckInBulkResult represents a single result in a bulk operation
 type CheckInBulkResult struct {
-	Success bool    `json:"success"`
-	ID      *string `json:"id,omitempty"`
-	Slug    string  `json:"slug,omitempty"`
-	Error   string  `json:"error,omitempty"`
+	Operation string   `json:"operation"` // "create", "update", or "delete"
+	Slug      string   `json:"slug"`
+	Success   bool     `json:"success"`
+	Errors    []string `json:"errors,omitempty"`
 }

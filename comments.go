@@ -19,12 +19,12 @@ func (s *CommentsService) List(ctx context.Context, projectID, faultID int) ([]C
 		return nil, err
 	}
 
-	var comments []Comment
-	if err := s.client.do(ctx, req, &comments); err != nil {
+	var response CommentListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return comments, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single comment by ID

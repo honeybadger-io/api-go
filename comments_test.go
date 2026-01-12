@@ -8,28 +8,29 @@ import (
 )
 
 func TestCommentsList(t *testing.T) {
-	mockComments := `[
-		{
-			"id": 1,
-			"fault_id": 100,
-			"event": "comment",
-			"source": "user",
-			"notices_count": 5,
-			"created_at": "2024-01-01T00:00:00Z",
-			"author": {"id": 1, "email": "user@example.com", "name": "Test User"},
-			"body": "This is a comment"
-		},
-		{
-			"id": 2,
-			"fault_id": 100,
-			"event": "comment",
-			"source": "system",
-			"notices_count": 0,
-			"created_at": "2024-01-02T00:00:00Z",
-			"author": null,
-			"body": "Automated comment"
-		}
-	]`
+	mockComments := `{
+		"results": [
+			{
+				"id": 1,
+				"fault_id": 100,
+				"event": "comment",
+				"source": "user",
+				"created_at": "2024-01-01T00:00:00Z",
+				"author": "Test User",
+				"body": "This is a comment"
+			},
+			{
+				"id": 2,
+				"fault_id": 100,
+				"event": "comment",
+				"source": "system",
+				"created_at": "2024-01-02T00:00:00Z",
+				"author": "",
+				"body": "Automated comment"
+			}
+		],
+		"links": {"self": "/v2/projects/123/faults/100/comments"}
+	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -84,9 +85,8 @@ func TestCommentsGet(t *testing.T) {
 		"fault_id": 100,
 		"event": "comment",
 		"source": "user",
-		"notices_count": 5,
 		"created_at": "2024-01-01T00:00:00Z",
-		"author": {"id": 1, "email": "user@example.com", "name": "Test User"},
+		"author": "Test User",
 		"body": "This is a comment"
 	}`
 
@@ -139,9 +139,8 @@ func TestCommentsCreate(t *testing.T) {
 		"fault_id": 100,
 		"event": "comment",
 		"source": "user",
-		"notices_count": 0,
 		"created_at": "2024-01-01T00:00:00Z",
-		"author": {"id": 1, "email": "user@example.com", "name": "Test User"},
+		"author": "Test User",
 		"body": "New comment"
 	}`
 
@@ -194,9 +193,8 @@ func TestCommentsUpdate(t *testing.T) {
 		"fault_id": 100,
 		"event": "comment",
 		"source": "user",
-		"notices_count": 0,
 		"created_at": "2024-01-01T00:00:00Z",
-		"author": {"id": 1, "email": "user@example.com", "name": "Test User"},
+		"author": "Test User",
 		"body": "Updated comment"
 	}`
 

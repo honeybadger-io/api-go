@@ -19,12 +19,12 @@ func (s *EnvironmentsService) List(ctx context.Context, projectID int) ([]Enviro
 		return nil, err
 	}
 
-	var environments []Environment
-	if err := s.client.do(ctx, req, &environments); err != nil {
+	var response EnvironmentListResponse
+	if err := s.client.do(ctx, req, &response); err != nil {
 		return nil, err
 	}
 
-	return environments, nil
+	return response.Results, nil
 }
 
 // Get retrieves a single environment by ID
