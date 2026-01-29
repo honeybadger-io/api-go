@@ -83,6 +83,10 @@ func TestInsightsQuery(t *testing.T) {
 	if response.Meta.TotalRows != 2 {
 		t.Errorf("expected 2 total rows, got %d", response.Meta.TotalRows)
 	}
+
+	if response.Error != nil {
+		t.Errorf("expected no inline error, got %v", response.Error)
+	}
 }
 
 func TestInsightsQuery_WithAllOptions(t *testing.T) {
@@ -179,6 +183,50 @@ func TestInsightsQuery_ProjectNotFound(t *testing.T) {
 
 	if apiErr.StatusCode != 404 {
 		t.Errorf("expected status code 404, got %d", apiErr.StatusCode)
+	}
+}
+
+func TestInsightsQuery_InlineError(t *testing.T) {
+	mockResponse := `{
+		"results": [],
+		"meta": {
+			"query": "stats count()",
+			"fields": [],
+			"schema": [],
+			"rows": 0,
+			"total_rows": 0,
+			"start_at": "2024-01-01T00:00:00Z",
+			"end_at": "2024-01-01T03:00:00Z"
+		},
+		"error": {
+			"message": "query timed out"
+		}
+	}`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(mockResponse))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	response, err := client.Insights.Query(context.Background(), 123, InsightsQueryRequest{
+		Query: "stats count()",
+	})
+	if err != nil {
+		t.Fatalf("Query() error = %v", err)
+	}
+
+	if response.Error == nil {
+		t.Fatal("expected inline error, got nil")
+	}
+
+	if response.Error.Message != "query timed out" {
+		t.Errorf("expected error message 'query timed out', got %s", response.Error.Message)
 	}
 }
 

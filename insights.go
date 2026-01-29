@@ -28,10 +28,16 @@ type InsightsQueryMeta struct {
 	EndAt     string                   `json:"end_at"`
 }
 
+// InsightsQueryError represents an inline error in an insights query response
+type InsightsQueryError struct {
+	Message string `json:"message"`
+}
+
 // InsightsQueryResponse represents the response from an insights query
 type InsightsQueryResponse struct {
 	Results []map[string]interface{} `json:"results"`
 	Meta    InsightsQueryMeta        `json:"meta"`
+	Error   *InsightsQueryError      `json:"error,omitempty"`
 }
 
 // Query executes a BadgerQL query against the project's insights data.
