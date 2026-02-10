@@ -3,6 +3,8 @@ package honeybadgerapi
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -55,7 +57,7 @@ type AlarmTrigger struct {
 
 // AlarmHistoryResponse represents the API response for alarm history
 type AlarmHistoryResponse struct {
-	Triggers []AlarmTrigger `json:"triggers"`
+	Triggers []AlarmTrigger  `json:"triggers"`
 	Links    PaginationLinks `json:"links"`
 }
 
@@ -169,8 +171,12 @@ func (a *AlarmsService) Delete(ctx context.Context, projectID int, alarmID strin
 // GET /v2/projects/{projectID}/alarms/{alarmID}/history
 func (a *AlarmsService) History(ctx context.Context, projectID int, alarmID string, page int) (*AlarmHistoryResponse, error) {
 	path := fmt.Sprintf("/projects/%d/alarms/%s/history", projectID, alarmID)
+	params := url.Values{}
 	if page > 0 {
-		path = fmt.Sprintf("%s?page=%d", path, page)
+		params.Set("page", strconv.Itoa(page))
+	}
+	if len(params) > 0 {
+		path = fmt.Sprintf("%s?%s", path, params.Encode())
 	}
 
 	req, err := a.client.newRequest(ctx, "GET", path, nil)

@@ -329,3 +329,36 @@ func TestAlarmsHistory(t *testing.T) {
 		t.Errorf("expected first trigger state 'alarm', got %s", response.Triggers[0].State)
 	}
 }
+
+func TestAlarmsHistory_WithPage(t *testing.T) {
+	mockResponse := `{
+		"triggers": [],
+		"links": {"self": "", "next": "", "prev": ""}
+	}`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET method, got %s", r.Method)
+		}
+		if r.URL.Path != "/v2/projects/123/alarms/abc123/history" {
+			t.Errorf("expected path /v2/projects/123/alarms/abc123/history, got %s", r.URL.Path)
+		}
+		if r.URL.Query().Get("page") != "3" {
+			t.Errorf("expected page=3 query parameter, got %q", r.URL.Query().Get("page"))
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(mockResponse))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	_, err := client.Alarms.History(context.Background(), 123, "abc123", 3)
+	if err != nil {
+		t.Fatalf("History() error = %v", err)
+	}
+}
