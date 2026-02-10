@@ -20,6 +20,7 @@ type Client struct {
 	Faults       *FaultsService
 	Insights     *InsightsService
 	Dashboards   *DashboardsService
+	Alarms       *AlarmsService
 	Comments     *CommentsService
 	Deployments  *DeploymentsService
 	CheckIns     *CheckInsService
@@ -43,6 +44,7 @@ func NewClient() *Client {
 	c.Faults = &FaultsService{client: c}
 	c.Insights = &InsightsService{client: c}
 	c.Dashboards = &DashboardsService{client: c}
+	c.Alarms = &AlarmsService{client: c}
 	c.Comments = &CommentsService{client: c}
 	c.Deployments = &DeploymentsService{client: c}
 	c.CheckIns = &CheckInsService{client: c}
