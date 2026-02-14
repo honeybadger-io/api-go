@@ -15,9 +15,9 @@ type FaultsService struct {
 // FaultListOptions represents options for listing faults
 type FaultListOptions struct {
 	Q              string // Search string
-	CreatedAfter   int64  // Filter faults created after this time (Unix timestamp)
-	OccurredAfter  int64  // Filter faults that occurred after this time (Unix timestamp)
-	OccurredBefore int64  // Filter faults that occurred before this time (Unix timestamp)
+	CreatedAfter   int64  // Filter faults created after this time (seconds since Unix epoch)
+	OccurredAfter  int64  // Filter faults that occurred after this time (seconds since Unix epoch)
+	OccurredBefore int64  // Filter faults that occurred before this time (seconds since Unix epoch)
 	Limit          int    // Max 25
 	Order          string // "recent" or "frequent"
 	Page           int    // Page number for pagination
@@ -97,8 +97,8 @@ func (f *FaultsService) Get(ctx context.Context, projectID, faultID int) (*Fault
 
 // FaultListNoticesOptions represents options for listing notices for a fault
 type FaultListNoticesOptions struct {
-	CreatedAfter  int64 // Filter notices created after this time (Unix timestamp)
-	CreatedBefore int64 // Filter notices created before this time (Unix timestamp)
+	CreatedAfter  int64 // Filter notices created after this time (seconds since Unix epoch)
+	CreatedBefore int64 // Filter notices created before this time (seconds since Unix epoch)
 	Limit         int   // Max 25
 }
 
