@@ -24,11 +24,11 @@ func (s *DeploymentsService) List(ctx context.Context, projectID int, options De
 	if options.LocalUsername != "" {
 		params.Set("local_username", options.LocalUsername)
 	}
-	if options.CreatedAfter > 0 {
-		params.Set("created_after", strconv.FormatInt(options.CreatedAfter, 10))
+	if !options.CreatedAfter.IsZero() {
+		params.Set("created_after", strconv.FormatInt(options.CreatedAfter.Unix(), 10))
 	}
-	if options.CreatedBefore > 0 {
-		params.Set("created_before", strconv.FormatInt(options.CreatedBefore, 10))
+	if !options.CreatedBefore.IsZero() {
+		params.Set("created_before", strconv.FormatInt(options.CreatedBefore.Unix(), 10))
 	}
 	if options.Limit > 0 {
 		params.Set("limit", strconv.Itoa(options.Limit))

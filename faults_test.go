@@ -278,9 +278,9 @@ func TestFaultsList_WithTimestampOptions(t *testing.T) {
 	occurredBefore, _ := time.Parse(time.RFC3339, "2024-01-03T00:00:00Z")
 
 	options := FaultListOptions{
-		CreatedAfter:   createdAfter.Unix(),
-		OccurredAfter:  occurredAfter.Unix(),
-		OccurredBefore: occurredBefore.Unix(),
+		CreatedAfter:   createdAfter,
+		OccurredAfter:  occurredAfter,
+		OccurredBefore: occurredBefore,
 	}
 
 	_, err := client.Faults.List(context.Background(), 123, options)
@@ -596,8 +596,8 @@ func TestListNotices_WithOptions(t *testing.T) {
 	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
 	createdBefore, _ := time.Parse(time.RFC3339, "2024-01-02T00:00:00Z")
 	options := FaultListNoticesOptions{
-		CreatedAfter:  createdAfter.Unix(),
-		CreatedBefore: createdBefore.Unix(),
+		CreatedAfter:  createdAfter,
+		CreatedBefore: createdBefore,
 		Limit:         10,
 	}
 
@@ -921,7 +921,7 @@ func TestGetFaultCounts_WithOptions(t *testing.T) {
 	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
 	options := FaultListOptions{
 		Q:            "environment:production",
-		CreatedAfter: createdAfter.Unix(),
+		CreatedAfter: createdAfter,
 	}
 
 	_, err := client.Faults.GetCounts(context.Background(), 123, options)

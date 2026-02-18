@@ -326,9 +326,9 @@ type OutageListResponse struct {
 
 // OutageListOptions represents query parameters for listing outages
 type OutageListOptions struct {
-	CreatedAfter  int64 `url:"created_after,omitempty"`  // Unix timestamp
-	CreatedBefore int64 `url:"created_before,omitempty"` // Unix timestamp
-	Limit         int   `url:"limit,omitempty"`          // 1-25, default 25
+	CreatedAfter  time.Time // Filter outages created after this time
+	CreatedBefore time.Time // Filter outages created before this time
+	Limit         int       // 1-25, default 25
 }
 
 // UptimeCheck represents a single uptime check
@@ -346,9 +346,9 @@ type UptimeCheckListResponse struct {
 
 // UptimeCheckListOptions represents query parameters for listing uptime checks
 type UptimeCheckListOptions struct {
-	CreatedAfter  int64 `url:"created_after,omitempty"`  // Unix timestamp
-	CreatedBefore int64 `url:"created_before,omitempty"` // Unix timestamp
-	Limit         int   `url:"limit,omitempty"`          // 1-25, default 25
+	CreatedAfter  time.Time // Filter uptime checks created after this time
+	CreatedBefore time.Time // Filter uptime checks created before this time
+	Limit         int       // 1-25, default 25
 }
 
 // Project represents a Honeybadger project
@@ -495,11 +495,11 @@ type DeploymentListResponse struct {
 
 // DeploymentListOptions represents query parameters for listing deployments
 type DeploymentListOptions struct {
-	Environment   string `url:"environment,omitempty"`
-	LocalUsername string `url:"local_username,omitempty"`
-	CreatedAfter  int64  `url:"created_after,omitempty"`  // Unix timestamp
-	CreatedBefore int64  `url:"created_before,omitempty"` // Unix timestamp
-	Limit         int    `url:"limit,omitempty"`          // Max 25
+	Environment   string    // Filter by environment name
+	LocalUsername string    // Filter by local username
+	CreatedAfter  time.Time // Filter deployments created after this time
+	CreatedBefore time.Time // Filter deployments created before this time
+	Limit         int       // Max 25
 }
 
 // CheckIn represents a check-in in Honeybadger
