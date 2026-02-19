@@ -15,13 +15,13 @@ type FaultsService struct {
 
 // FaultListOptions represents options for listing faults
 type FaultListOptions struct {
-	Q              string     // Search string
-	CreatedAfter   *time.Time // Filter faults created after this time
-	OccurredAfter  *time.Time // Filter faults that occurred after this time
-	OccurredBefore *time.Time // Filter faults that occurred before this time
-	Limit          int        // Max 25
-	Order          string     // "recent" or "frequent"
-	Page           int        // Page number for pagination
+	Q              string    // Search string
+	CreatedAfter   time.Time // Filter faults created after this time
+	OccurredAfter  time.Time // Filter faults that occurred after this time
+	OccurredBefore time.Time // Filter faults that occurred before this time
+	Limit          int       // Max 25
+	Order          string    // "recent" or "frequent"
+	Page           int       // Page number for pagination
 }
 
 // FaultListResponse represents the API response for listing faults
@@ -40,14 +40,14 @@ func (f *FaultsService) List(ctx context.Context, projectID int, options FaultLi
 	if options.Q != "" {
 		params.Set("q", options.Q)
 	}
-	if options.CreatedAfter != nil {
-		params.Set("created_after", options.CreatedAfter.Format(time.RFC3339))
+	if !options.CreatedAfter.IsZero() {
+		params.Set("created_after", strconv.FormatInt(options.CreatedAfter.Unix(), 10))
 	}
-	if options.OccurredAfter != nil {
-		params.Set("occurred_after", options.OccurredAfter.Format(time.RFC3339))
+	if !options.OccurredAfter.IsZero() {
+		params.Set("occurred_after", strconv.FormatInt(options.OccurredAfter.Unix(), 10))
 	}
-	if options.OccurredBefore != nil {
-		params.Set("occurred_before", options.OccurredBefore.Format(time.RFC3339))
+	if !options.OccurredBefore.IsZero() {
+		params.Set("occurred_before", strconv.FormatInt(options.OccurredBefore.Unix(), 10))
 	}
 	if options.Limit > 0 {
 		params.Set("limit", strconv.Itoa(options.Limit))
@@ -98,9 +98,9 @@ func (f *FaultsService) Get(ctx context.Context, projectID, faultID int) (*Fault
 
 // FaultListNoticesOptions represents options for listing notices for a fault
 type FaultListNoticesOptions struct {
-	CreatedAfter  *time.Time // Filter notices created after this time
-	CreatedBefore *time.Time // Filter notices created before this time
-	Limit         int        // Max 25
+	CreatedAfter  time.Time // Filter notices created after this time
+	CreatedBefore time.Time // Filter notices created before this time
+	Limit         int       // Max 25
 }
 
 // FaultNoticesResponse represents the API response for listing fault notices
@@ -116,11 +116,11 @@ func (f *FaultsService) ListNotices(ctx context.Context, projectID, faultID int,
 
 	// Build query parameters using url.Values
 	params := url.Values{}
-	if options.CreatedAfter != nil {
-		params.Set("created_after", options.CreatedAfter.Format(time.RFC3339))
+	if !options.CreatedAfter.IsZero() {
+		params.Set("created_after", strconv.FormatInt(options.CreatedAfter.Unix(), 10))
 	}
-	if options.CreatedBefore != nil {
-		params.Set("created_before", options.CreatedBefore.Format(time.RFC3339))
+	if !options.CreatedBefore.IsZero() {
+		params.Set("created_before", strconv.FormatInt(options.CreatedBefore.Unix(), 10))
 	}
 	if options.Limit > 0 {
 		params.Set("limit", strconv.Itoa(options.Limit))
@@ -207,14 +207,14 @@ func (f *FaultsService) GetCounts(ctx context.Context, projectID int, options Fa
 	if options.Q != "" {
 		params.Set("q", options.Q)
 	}
-	if options.CreatedAfter != nil {
-		params.Set("created_after", options.CreatedAfter.Format(time.RFC3339))
+	if !options.CreatedAfter.IsZero() {
+		params.Set("created_after", strconv.FormatInt(options.CreatedAfter.Unix(), 10))
 	}
-	if options.OccurredAfter != nil {
-		params.Set("occurred_after", options.OccurredAfter.Format(time.RFC3339))
+	if !options.OccurredAfter.IsZero() {
+		params.Set("occurred_after", strconv.FormatInt(options.OccurredAfter.Unix(), 10))
 	}
-	if options.OccurredBefore != nil {
-		params.Set("occurred_before", options.OccurredBefore.Format(time.RFC3339))
+	if !options.OccurredBefore.IsZero() {
+		params.Set("occurred_before", strconv.FormatInt(options.OccurredBefore.Unix(), 10))
 	}
 
 	if len(params) > 0 {

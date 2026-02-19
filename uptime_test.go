@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestUptimeList(t *testing.T) {
@@ -169,5 +170,91 @@ func TestUptimeDelete(t *testing.T) {
 	err := client.Uptime.Delete(context.Background(), 123, "abc123")
 	if err != nil {
 		t.Fatalf("Delete() error = %v", err)
+	}
+}
+
+func TestUptimeListOutages_WithTimestampOptions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET method, got %s", r.Method)
+		}
+		if r.URL.Path != "/v2/projects/123/sites/abc123/outages" {
+			t.Errorf("expected path /v2/projects/123/sites/abc123/outages, got %s", r.URL.Path)
+		}
+
+		query := r.URL.Query()
+		if query.Get("created_after") != "1704067200" {
+			t.Errorf("expected created_after=1704067200 (Unix timestamp), got %s", query.Get("created_after"))
+		}
+		if query.Get("created_before") != "1704153600" {
+			t.Errorf("expected created_before=1704153600 (Unix timestamp), got %s", query.Get("created_before"))
+		}
+		if query.Get("limit") != "10" {
+			t.Errorf("expected limit=10, got %s", query.Get("limit"))
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"results": []}`))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
+	createdBefore, _ := time.Parse(time.RFC3339, "2024-01-02T00:00:00Z")
+
+	_, err := client.Uptime.ListOutages(context.Background(), 123, "abc123", OutageListOptions{
+		CreatedAfter:  createdAfter,
+		CreatedBefore: createdBefore,
+		Limit:         10,
+	})
+	if err != nil {
+		t.Fatalf("ListOutages() error = %v", err)
+	}
+}
+
+func TestUptimeListUptimeChecks_WithTimestampOptions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET method, got %s", r.Method)
+		}
+		if r.URL.Path != "/v2/projects/123/sites/abc123/uptime_checks" {
+			t.Errorf("expected path /v2/projects/123/sites/abc123/uptime_checks, got %s", r.URL.Path)
+		}
+
+		query := r.URL.Query()
+		if query.Get("created_after") != "1704067200" {
+			t.Errorf("expected created_after=1704067200 (Unix timestamp), got %s", query.Get("created_after"))
+		}
+		if query.Get("created_before") != "1704153600" {
+			t.Errorf("expected created_before=1704153600 (Unix timestamp), got %s", query.Get("created_before"))
+		}
+		if query.Get("limit") != "10" {
+			t.Errorf("expected limit=10, got %s", query.Get("limit"))
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"results": []}`))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
+	createdBefore, _ := time.Parse(time.RFC3339, "2024-01-02T00:00:00Z")
+
+	_, err := client.Uptime.ListUptimeChecks(context.Background(), 123, "abc123", UptimeCheckListOptions{
+		CreatedAfter:  createdAfter,
+		CreatedBefore: createdBefore,
+		Limit:         10,
+	})
+	if err != nil {
+		t.Fatalf("ListUptimeChecks() error = %v", err)
 	}
 }

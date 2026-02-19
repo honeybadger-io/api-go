@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestDeploymentsList(t *testing.T) {
@@ -110,6 +111,38 @@ func TestDeploymentsListWithOptions(t *testing.T) {
 	_, err := client.Deployments.List(context.Background(), 123, DeploymentListOptions{
 		Environment: "production",
 		Limit:       10,
+	})
+	if err != nil {
+		t.Fatalf("List() error = %v", err)
+	}
+}
+
+func TestDeploymentsListWithTimestampOptions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		query := r.URL.Query()
+		if query.Get("created_after") != "1704067200" {
+			t.Errorf("expected created_after=1704067200 (Unix timestamp), got %s", query.Get("created_after"))
+		}
+		if query.Get("created_before") != "1704153600" {
+			t.Errorf("expected created_before=1704153600 (Unix timestamp), got %s", query.Get("created_before"))
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"results": []}`))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
+	createdBefore, _ := time.Parse(time.RFC3339, "2024-01-02T00:00:00Z")
+
+	_, err := client.Deployments.List(context.Background(), 123, DeploymentListOptions{
+		CreatedAfter:  createdAfter,
+		CreatedBefore: createdBefore,
 	})
 	if err != nil {
 		t.Fatalf("List() error = %v", err)

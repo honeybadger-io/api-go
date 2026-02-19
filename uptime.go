@@ -102,11 +102,11 @@ func (s *UptimeService) ListOutages(ctx context.Context, projectID int, siteID s
 
 	// Build query parameters
 	params := url.Values{}
-	if options.CreatedAfter > 0 {
-		params.Set("created_after", strconv.FormatInt(options.CreatedAfter, 10))
+	if !options.CreatedAfter.IsZero() {
+		params.Set("created_after", strconv.FormatInt(options.CreatedAfter.Unix(), 10))
 	}
-	if options.CreatedBefore > 0 {
-		params.Set("created_before", strconv.FormatInt(options.CreatedBefore, 10))
+	if !options.CreatedBefore.IsZero() {
+		params.Set("created_before", strconv.FormatInt(options.CreatedBefore.Unix(), 10))
 	}
 	if options.Limit > 0 {
 		params.Set("limit", strconv.Itoa(options.Limit))
@@ -135,11 +135,11 @@ func (s *UptimeService) ListUptimeChecks(ctx context.Context, projectID int, sit
 
 	// Build query parameters
 	params := url.Values{}
-	if options.CreatedAfter > 0 {
-		params.Set("created_after", strconv.FormatInt(options.CreatedAfter, 10))
+	if !options.CreatedAfter.IsZero() {
+		params.Set("created_after", strconv.FormatInt(options.CreatedAfter.Unix(), 10))
 	}
-	if options.CreatedBefore > 0 {
-		params.Set("created_before", strconv.FormatInt(options.CreatedBefore, 10))
+	if !options.CreatedBefore.IsZero() {
+		params.Set("created_before", strconv.FormatInt(options.CreatedBefore.Unix(), 10))
 	}
 	if options.Limit > 0 {
 		params.Set("limit", strconv.Itoa(options.Limit))

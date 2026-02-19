@@ -249,6 +249,46 @@ func TestFaultsList_WithPage(t *testing.T) {
 	}
 }
 
+func TestFaultsList_WithTimestampOptions(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		query := r.URL.Query()
+
+		if query.Get("created_after") != "1704067200" {
+			t.Errorf("expected created_after=1704067200 (Unix timestamp), got %s", query.Get("created_after"))
+		}
+		if query.Get("occurred_after") != "1704153600" {
+			t.Errorf("expected occurred_after=1704153600 (Unix timestamp), got %s", query.Get("occurred_after"))
+		}
+		if query.Get("occurred_before") != "1704240000" {
+			t.Errorf("expected occurred_before=1704240000 (Unix timestamp), got %s", query.Get("occurred_before"))
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"results": []}`))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
+	occurredAfter, _ := time.Parse(time.RFC3339, "2024-01-02T00:00:00Z")
+	occurredBefore, _ := time.Parse(time.RFC3339, "2024-01-03T00:00:00Z")
+
+	options := FaultListOptions{
+		CreatedAfter:   createdAfter,
+		OccurredAfter:  occurredAfter,
+		OccurredBefore: occurredBefore,
+	}
+
+	_, err := client.Faults.List(context.Background(), 123, options)
+	if err != nil {
+		t.Fatalf("List() error = %v", err)
+	}
+}
+
 func TestFaultsList_Error(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -532,11 +572,12 @@ func TestListNotices(t *testing.T) {
 func TestListNotices_WithOptions(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		query := r.URL.Query()
-		if query.Get("created_after") != "2024-01-01T00:00:00Z" {
-			t.Errorf("expected created_after=2024-01-01T00:00:00Z, got %s", query.Get("created_after"))
+
+		if query.Get("created_after") != "1704067200" {
+			t.Errorf("expected created_after=1704067200 (Unix timestamp), got %s", query.Get("created_after"))
 		}
-		if query.Get("created_before") != "2024-01-02T00:00:00Z" {
-			t.Errorf("expected created_before=2024-01-02T00:00:00Z, got %s", query.Get("created_before"))
+		if query.Get("created_before") != "1704153600" {
+			t.Errorf("expected created_before=1704153600 (Unix timestamp), got %s", query.Get("created_before"))
 		}
 		if query.Get("limit") != "10" {
 			t.Errorf("expected limit=10, got %s", query.Get("limit"))
@@ -552,16 +593,13 @@ func TestListNotices_WithOptions(t *testing.T) {
 		WithBaseURL(server.URL).
 		WithAuthToken("test-token")
 
-	options := FaultListNoticesOptions{
-		CreatedAfter:  &time.Time{},
-		CreatedBefore: &time.Time{},
-		Limit:         10,
-	}
-	// Parse the time strings
 	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
 	createdBefore, _ := time.Parse(time.RFC3339, "2024-01-02T00:00:00Z")
-	options.CreatedAfter = &createdAfter
-	options.CreatedBefore = &createdBefore
+	options := FaultListNoticesOptions{
+		CreatedAfter:  createdAfter,
+		CreatedBefore: createdBefore,
+		Limit:         10,
+	}
 
 	_, err := client.Faults.ListNotices(context.Background(), 123, 456, options)
 	if err != nil {
@@ -865,8 +903,9 @@ func TestGetFaultCounts_WithOptions(t *testing.T) {
 		if query.Get("q") != "environment:production" {
 			t.Errorf("expected q=environment:production, got %s", query.Get("q"))
 		}
-		if query.Get("created_after") != "2024-01-01T00:00:00Z" {
-			t.Errorf("expected created_after=2024-01-01T00:00:00Z, got %s", query.Get("created_after"))
+
+		if query.Get("created_after") != "1704067200" {
+			t.Errorf("expected created_after=1704067200 (Unix timestamp), got %s", query.Get("created_after"))
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -882,7 +921,7 @@ func TestGetFaultCounts_WithOptions(t *testing.T) {
 	createdAfter, _ := time.Parse(time.RFC3339, "2024-01-01T00:00:00Z")
 	options := FaultListOptions{
 		Q:            "environment:production",
-		CreatedAfter: &createdAfter,
+		CreatedAfter: createdAfter,
 	}
 
 	_, err := client.Faults.GetCounts(context.Background(), 123, options)
