@@ -44,13 +44,13 @@ type User struct {
 
 // Account represents a Honeybadger account
 type Account struct {
-	ID             string                 `json:"id"`
-	Email          string                 `json:"email"`
-	Name           string                 `json:"name"`
-	Active         *bool                  `json:"active,omitempty"`
-	Parked         *bool                  `json:"parked,omitempty"`
-	QuotaConsumed  *float64               `json:"quota_consumed,omitempty"` // Percentage
-	APIStats       map[string]interface{} `json:"api_stats,omitempty"`
+	ID            string                 `json:"id"`
+	Email         string                 `json:"email"`
+	Name          string                 `json:"name"`
+	Active        *bool                  `json:"active,omitempty"`
+	Parked        *bool                  `json:"parked,omitempty"`
+	QuotaConsumed *float64               `json:"quota_consumed,omitempty"` // Percentage
+	APIStats      map[string]interface{} `json:"api_stats,omitempty"`
 }
 
 // AccountUser represents a user associated with an account
@@ -75,12 +75,12 @@ type AccountUserUpdateRequest struct {
 
 // AccountInvitation represents an invitation to join an account
 type AccountInvitation struct {
-	ID        int        `json:"id"`
-	Token     string     `json:"token"`
-	Email     string     `json:"email"`
-	Role      string     `json:"role"` // Member, Billing, Admin, Owner
-	TeamIDs   []int      `json:"team_ids"`
-	CreatedAt time.Time  `json:"created_at"`
+	ID         int        `json:"id"`
+	Token      string     `json:"token"`
+	Email      string     `json:"email"`
+	Role       string     `json:"role"` // Member, Billing, Admin, Owner
+	TeamIDs    []int      `json:"team_ids"`
+	CreatedAt  time.Time  `json:"created_at"`
 	AcceptedAt *time.Time `json:"accepted_at,omitempty"`
 }
 
@@ -217,13 +217,13 @@ type TeamMemberUpdateRequest struct {
 
 // TeamInvitation represents an invitation to join a team
 type TeamInvitation struct {
-	ID        int       `json:"id"`
-	Token     string    `json:"token"`
-	Email     string    `json:"email"`
-	Admin     bool      `json:"admin"`
-	CreatedAt time.Time `json:"created_at"`
+	ID         int        `json:"id"`
+	Token      string     `json:"token"`
+	Email      string     `json:"email"`
+	Admin      bool       `json:"admin"`
+	CreatedAt  time.Time  `json:"created_at"`
 	AcceptedAt *time.Time `json:"accepted_at"`
-	Message   *string   `json:"message"`
+	Message    *string    `json:"message"`
 }
 
 // TeamInvitationRequest represents the request body for creating/updating a team invitation
@@ -385,6 +385,7 @@ type Fault struct {
 	NoticesCountInRange *int       `json:"notices_count_in_range,omitempty"` // Added when fault list search query affects notice count
 	ProjectID           int        `json:"project_id"`
 	Resolved            bool       `json:"resolved"`
+	ResolveOnDeploy     bool       `json:"resolve_on_deploy"`
 	Tags                []string   `json:"tags"`
 	URL                 string     `json:"url"`
 }
@@ -507,17 +508,17 @@ type CheckIn struct {
 	ID           string     `json:"id"`
 	Name         string     `json:"name"`
 	Slug         string     `json:"slug"`
-	State        string     `json:"state"`           // e.g., "reporting", "missing"
-	ScheduleType string     `json:"schedule_type"`   // "simple" or "cron"
-	ReportPeriod *string    `json:"report_period"`   // For simple schedules
-	GracePeriod  *string    `json:"grace_period"`    // Optional
-	CronSchedule *string    `json:"cron_schedule"`   // For cron schedules
-	CronTimezone *string    `json:"cron_timezone"`   // Optional, defaults to UTC
-	ReportedAt   *time.Time `json:"reported_at"`     // Last check-in time
-	ExpectedAt   *time.Time `json:"expected_at"`     // Next expected check-in
-	MissedCount  int        `json:"missed_count"`    // Number of missed check-ins
-	URL          string     `json:"url"`             // API URL for reporting
-	DetailsURL   string     `json:"details_url"`     // Web UI URL
+	State        string     `json:"state"`         // e.g., "reporting", "missing"
+	ScheduleType string     `json:"schedule_type"` // "simple" or "cron"
+	ReportPeriod *string    `json:"report_period"` // For simple schedules
+	GracePeriod  *string    `json:"grace_period"`  // Optional
+	CronSchedule *string    `json:"cron_schedule"` // For cron schedules
+	CronTimezone *string    `json:"cron_timezone"` // Optional, defaults to UTC
+	ReportedAt   *time.Time `json:"reported_at"`   // Last check-in time
+	ExpectedAt   *time.Time `json:"expected_at"`   // Next expected check-in
+	MissedCount  int        `json:"missed_count"`  // Number of missed check-ins
+	URL          string     `json:"url"`           // API URL for reporting
+	DetailsURL   string     `json:"details_url"`   // Web UI URL
 }
 
 // CheckInListResponse represents the response from listing check-ins

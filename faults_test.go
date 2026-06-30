@@ -331,6 +331,7 @@ func TestGetFault(t *testing.T) {
 		"notices_count": 25,
 		"project_id": 123,
 		"resolved": false,
+		"resolve_on_deploy": true,
 		"tags": ["database", "production"],
 		"url": "https://app.honeybadger.io/projects/123/faults/456"
 	}`
@@ -383,6 +384,10 @@ func TestGetFault(t *testing.T) {
 
 	if fault.NoticesCount != 25 {
 		t.Errorf("expected notices count 25, got %d", fault.NoticesCount)
+	}
+
+	if fault.ResolveOnDeploy != true {
+		t.Errorf("expected fault resolve_on_deploy to be true, got %v", fault.ResolveOnDeploy)
 	}
 }
 
