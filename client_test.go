@@ -130,6 +130,22 @@ func TestNewRequest_BearerWinsOverBasic(t *testing.T) {
 	if got := req.Header.Get("Authorization"); got != "Bearer hbo_wins" {
 		t.Errorf("Authorization = %q, want %q", got, "Bearer hbo_wins")
 	}
+	if _, _, ok := req.BasicAuth(); ok {
+		t.Error("Basic Auth should not be set when Bearer is configured")
+	}
+}
+
+func TestNewRequest_NoAuth(t *testing.T) {
+	client := NewClient().WithBaseURL("https://api.example.com")
+
+	req, err := client.newRequest(context.Background(), "GET", "/projects", nil)
+	if err != nil {
+		t.Fatalf("newRequest() error = %v", err)
+	}
+
+	if got := req.Header.Get("Authorization"); got != "" {
+		t.Errorf("Authorization = %q, want empty when no token is configured", got)
+	}
 }
 
 func TestDo_Success(t *testing.T) {

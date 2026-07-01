@@ -107,7 +107,7 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body inter
 
 	if c.bearerToken != "" {
 		req.Header.Set("Authorization", "Bearer "+c.bearerToken)
-	} else {
+	} else if c.apiToken != "" {
 		req.SetBasicAuth(c.apiToken, "")
 	}
 	req.Header.Set("Content-Type", "application/json")
