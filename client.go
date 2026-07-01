@@ -11,9 +11,10 @@ import (
 )
 
 type Client struct {
-	baseURL    string
-	apiToken   string
-	httpClient *http.Client
+	baseURL     string
+	apiToken    string
+	bearerToken string
+	httpClient  *http.Client
 
 	// Resource services
 	Projects     *ProjectsService
@@ -56,9 +57,16 @@ func NewClient() *Client {
 	return c
 }
 
-// WithAuthToken sets the API token for the client
+// WithAuthToken sets a Personal Auth Token, sent as HTTP Basic auth.
 func (c *Client) WithAuthToken(apiToken string) *Client {
 	c.apiToken = apiToken
+	return c
+}
+
+// WithBearerToken sets an OAuth access token, sent as Authorization: Bearer.
+// Takes precedence over WithAuthToken when both are set.
+func (c *Client) WithBearerToken(token string) *Client {
+	c.bearerToken = token
 	return c
 }
 
@@ -97,8 +105,11 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body inter
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	// Set HTTP Basic Auth with token as username, no password
-	req.SetBasicAuth(c.apiToken, "")
+	if c.bearerToken != "" {
+		req.Header.Set("Authorization", "Bearer "+c.bearerToken)
+	} else if c.apiToken != "" {
+		req.SetBasicAuth(c.apiToken, "")
+	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
