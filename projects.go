@@ -86,7 +86,9 @@ type ProjectRequest struct {
 	UserSearchField       string `json:"user_search_field,omitempty"`
 }
 
-// Create creates a new project with the given parameters.
+// Create creates a new project with the given parameters. An empty accountID
+// omits the account_id parameter, and the API associates the project with the
+// first account the auth token has access to.
 //
 // Honeybadger API docs: https://docs.honeybadger.io/api/projects/#create-a-project
 //
@@ -96,7 +98,10 @@ func (p *ProjectsService) Create(ctx context.Context, accountID string, req Proj
 		"project": req,
 	}
 
-	path := fmt.Sprintf("/projects?account_id=%s", accountID)
+	path := "/projects"
+	if accountID != "" {
+		path = fmt.Sprintf("/projects?account_id=%s", accountID)
+	}
 	httpReq, err := p.client.newRequest(ctx, "POST", path, body)
 	if err != nil {
 		return nil, err

@@ -409,6 +409,38 @@ func TestCreateProject_WithAllFields(t *testing.T) {
 	}
 }
 
+func TestCreateProject_WithoutAccountID(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v2/projects" {
+			t.Errorf("expected path /v2/projects, got %s", r.URL.Path)
+		}
+		// The parameter must be absent, not blank: the API's default-account
+		// behavior is triggered by omission.
+		if r.URL.Query().Has("account_id") {
+			t.Errorf("expected no account_id query parameter, got raw query %q", r.URL.RawQuery)
+		}
+
+		mockProject := `{"id": 321, "name": "Default Account Project", "active": true, "created_at": "2024-01-01T00:00:00Z", "token": "tok321", "fault_count": 0, "unresolved_fault_count": 0, "environments": [], "sites": [], "teams": [], "users": []}`
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(mockProject))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	project, err := client.Projects.Create(context.Background(), "", ProjectRequest{Name: "Default Account Project"})
+	if err != nil {
+		t.Fatalf("CreateProject() error = %v", err)
+	}
+
+	if project.ID != 321 {
+		t.Errorf("expected project ID 321, got %d", project.ID)
+	}
+}
+
 func TestUpdateProject_WithAllFields(t *testing.T) {
 	resolveErrorsOnDeploy := false
 	disablePublicLinks := true
