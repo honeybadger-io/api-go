@@ -92,7 +92,7 @@ type ProjectRequest struct {
 //
 // Honeybadger API docs: https://docs.honeybadger.io/api/projects/#create-a-project
 //
-// POST /projects?account_id={accountID}
+// POST /projects[?account_id={accountID}]
 func (p *ProjectsService) Create(ctx context.Context, accountID string, req ProjectRequest) (*Project, error) {
 	body := map[string]interface{}{
 		"project": req,
