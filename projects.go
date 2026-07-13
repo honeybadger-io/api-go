@@ -100,7 +100,9 @@ func (p *ProjectsService) Create(ctx context.Context, accountID string, req Proj
 
 	path := "/projects"
 	if accountID != "" {
-		path = fmt.Sprintf("/projects?account_id=%s", accountID)
+		params := url.Values{}
+		params.Set("account_id", accountID)
+		path += "?" + params.Encode()
 	}
 	httpReq, err := p.client.newRequest(ctx, "POST", path, body)
 	if err != nil {
