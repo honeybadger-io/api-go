@@ -96,6 +96,45 @@ func (f *FaultsService) Get(ctx context.Context, projectID, faultID int) (*Fault
 	return &result, nil
 }
 
+// FaultUpdateRequest represents the request body for updating a fault
+type FaultUpdateRequest struct {
+	Fault FaultUpdateParams `json:"fault"`
+}
+
+// FaultUpdateParams represents the updatable fields of a fault
+type FaultUpdateParams struct {
+	Resolved        *bool          `json:"resolved,omitempty"`
+	Ignored         *bool          `json:"ignored,omitempty"`
+	AssigneeID      *Nullable[int] `json:"assignee_id,omitempty"`       // Value(id) to assign, Null[int]() to unassign
+	ResolveOnDeploy *bool          `json:"resolve_on_deploy,omitempty"` // Mark the fault to be resolved automatically on next deploy
+}
+
+// Update updates a fault's resolved, ignored, assignee, or resolve-on-deploy
+// state. Setting Resolved or Ignored to true in the same request takes
+// precedence over ResolveOnDeploy.
+//
+// Honeybadger API docs: https://docs.honeybadger.io/api/faults/#update-a-fault
+//
+// PUT /v2/projects/{projectID}/faults/{faultID}
+func (f *FaultsService) Update(ctx context.Context, projectID, faultID int, params FaultUpdateParams) (*UpdateResult, error) {
+	path := fmt.Sprintf("/projects/%d/faults/%d", projectID, faultID)
+
+	req, err := f.client.newRequest(ctx, "PUT", path, FaultUpdateRequest{Fault: params})
+	if err != nil {
+		return nil, err
+	}
+
+	// Update returns 204 No Content.
+	if err := f.client.do(ctx, req, nil); err != nil {
+		return nil, err
+	}
+
+	return &UpdateResult{
+		Success: true,
+		Message: fmt.Sprintf("Fault %d was successfully updated", faultID),
+	}, nil
+}
+
 // FaultListNoticesOptions represents options for listing notices for a fault
 type FaultListNoticesOptions struct {
 	CreatedAfter  time.Time // Filter notices created after this time

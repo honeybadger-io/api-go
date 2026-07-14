@@ -2,8 +2,10 @@ package honeybadgerapi
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -429,6 +431,110 @@ func TestGetFault_ProjectNotFound(t *testing.T) {
 		WithAuthToken("test-token")
 
 	_, err := client.Faults.Get(context.Background(), 999, 456)
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+
+	apiErr, ok := err.(*APIError)
+	if !ok {
+		t.Fatalf("expected APIError, got %T", err)
+	}
+
+	if apiErr.StatusCode != 404 {
+		t.Errorf("expected status code 404, got %d", apiErr.StatusCode)
+	}
+}
+
+func TestFaultsUpdate(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "PUT" {
+			t.Errorf("expected PUT method, got %s", r.Method)
+		}
+		if r.URL.Path != "/v2/projects/123/faults/456" {
+			t.Errorf("expected path /v2/projects/123/faults/456, got %s", r.URL.Path)
+		}
+		// Check Basic Auth
+		username, password, ok := r.BasicAuth()
+		if !ok {
+			t.Error("expected Basic Auth to be set")
+		}
+		if username != "test-token" {
+			t.Errorf("expected Basic Auth username test-token, got %s", username)
+		}
+		if password != "" {
+			t.Errorf("expected Basic Auth password to be empty, got %s", password)
+		}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("failed to read request body: %v", err)
+		}
+		expected := `{"fault":{"resolved":true,"assignee_id":789}}`
+		if strings.TrimSpace(string(body)) != expected {
+			t.Errorf("expected body %s, got %s", expected, string(body))
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	resolved := true
+	result, err := client.Faults.Update(context.Background(), 123, 456, FaultUpdateParams{
+		Resolved:   &resolved,
+		AssigneeID: Value(789),
+	})
+	if err != nil {
+		t.Fatalf("Update() error = %v", err)
+	}
+	if !result.Success {
+		t.Error("expected Success to be true")
+	}
+}
+
+func TestFaultsUpdate_Unassign(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("failed to read request body: %v", err)
+		}
+		expected := `{"fault":{"assignee_id":null}}`
+		if strings.TrimSpace(string(body)) != expected {
+			t.Errorf("expected body %s, got %s", expected, string(body))
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	_, err := client.Faults.Update(context.Background(), 123, 456, FaultUpdateParams{
+		AssigneeID: Null[int](),
+	})
+	if err != nil {
+		t.Fatalf("Update() error = %v", err)
+	}
+}
+
+func TestFaultsUpdate_NotFound(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		_, _ = w.Write([]byte(`{"errors": "Fault not found"}`))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	ignored := true
+	_, err := client.Faults.Update(context.Background(), 123, 999, FaultUpdateParams{Ignored: &ignored})
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
