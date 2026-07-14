@@ -23,14 +23,15 @@ func Null[T any]() *Nullable[T] {
 }
 
 // IsNull reports whether the Nullable represents an explicit JSON null.
+// A nil receiver (an omitted field) returns false.
 func (n *Nullable[T]) IsNull() bool {
-	return n.isNull
+	return n != nil && n.isNull
 }
 
 // Get returns the held value and true, or the zero value and false if the
-// Nullable represents null.
+// Nullable is nil (an omitted field) or represents null.
 func (n *Nullable[T]) Get() (T, bool) {
-	if n.isNull {
+	if n == nil || n.isNull {
 		var zero T
 		return zero, false
 	}

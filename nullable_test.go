@@ -80,4 +80,12 @@ func TestNullableAccessors(t *testing.T) {
 	if got, ok := n.Get(); ok || got != 0 {
 		t.Errorf("Null[int]().Get() = (%d, %t), want (0, false)", got, ok)
 	}
+
+	var omitted *Nullable[int]
+	if omitted.IsNull() {
+		t.Error("nil Nullable.IsNull() should be false")
+	}
+	if got, ok := omitted.Get(); ok || got != 0 {
+		t.Errorf("nil Nullable.Get() = (%d, %t), want (0, false)", got, ok)
+	}
 }
