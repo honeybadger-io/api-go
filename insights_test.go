@@ -2,6 +2,8 @@ package honeybadgerapi
 
 import (
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -127,6 +129,79 @@ func TestInsightsQuery_WithAllOptions(t *testing.T) {
 
 	if response.Meta.Query != "fields @ts, message::str" {
 		t.Errorf("expected query in meta, got %s", response.Meta.Query)
+	}
+}
+
+func TestInsightsQuery_WithStreamIDs(t *testing.T) {
+	var body map[string]interface{}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		raw, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(raw, &body)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"results": [], "meta": {"query": "stats count()", "rows": 0, "total_rows": 0}}`))
+	}))
+	defer server.Close()
+
+	client := NewClient().
+		WithBaseURL(server.URL).
+		WithAuthToken("test-token")
+
+	_, err := client.Insights.Query(context.Background(), 123, InsightsQueryRequest{
+		Query:     "stats count()",
+		StreamIDs: []string{"Oh3Y3WdMFvde", "MuHadpB4C9G4"},
+	})
+	if err != nil {
+		t.Fatalf("Query() error = %v", err)
+	}
+
+	got, ok := body["stream_ids"].([]interface{})
+	if !ok {
+		t.Fatalf("expected stream_ids array in request body, got %v", body["stream_ids"])
+	}
+	if len(got) != 2 || got[0] != "Oh3Y3WdMFvde" || got[1] != "MuHadpB4C9G4" {
+		t.Errorf("expected stream_ids [Oh3Y3WdMFvde MuHadpB4C9G4], got %v", got)
+	}
+}
+
+func TestInsightsQuery_OmitsEmptyStreamIDs(t *testing.T) {
+	cases := map[string][]string{
+		"nil slice":   nil,
+		"empty slice": {},
+	}
+
+	for name, streamIDs := range cases {
+		t.Run(name, func(t *testing.T) {
+			var body map[string]interface{}
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				raw, _ := io.ReadAll(r.Body)
+				_ = json.Unmarshal(raw, &body)
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"results": [], "meta": {"query": "stats count()", "rows": 0, "total_rows": 0}}`))
+			}))
+			defer server.Close()
+
+			client := NewClient().
+				WithBaseURL(server.URL).
+				WithAuthToken("test-token")
+
+			_, err := client.Insights.Query(context.Background(), 123, InsightsQueryRequest{
+				Query:     "stats count()",
+				StreamIDs: streamIDs,
+			})
+			if err != nil {
+				t.Fatalf("Query() error = %v", err)
+			}
+
+			if _, present := body["stream_ids"]; present {
+				t.Errorf("expected stream_ids omitted, got %v", body["stream_ids"])
+			}
+		})
 	}
 }
 

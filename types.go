@@ -269,6 +269,21 @@ type EnvironmentListResponse struct {
 	Results []Environment `json:"results"`
 }
 
+// Stream represents an Insights data stream for a project
+type Stream struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Slug      string    `json:"slug"`
+	Internal  bool      `json:"internal"`
+	ProjectID *int      `json:"project_id"` // null for account-level streams
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// StreamListResponse represents the API response for listing streams
+type StreamListResponse struct {
+	Results []Stream `json:"results"`
+}
+
 // Site represents an uptime monitoring site
 type Site struct {
 	ID            string     `json:"id"`
