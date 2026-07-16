@@ -30,6 +30,7 @@ type Client struct {
 	Environments *EnvironmentsService
 	Accounts     *AccountsService
 	StatusPages  *StatusPagesService
+	Streams      *StreamsService
 }
 
 func NewClient() *Client {
@@ -54,6 +55,7 @@ func NewClient() *Client {
 	c.Environments = &EnvironmentsService{client: c}
 	c.Accounts = &AccountsService{client: c}
 	c.StatusPages = &StatusPagesService{client: c}
+	c.Streams = &StreamsService{client: c}
 	return c
 }
 

@@ -15,6 +15,9 @@ type InsightsQueryRequest struct {
 	Query    string `json:"query"`
 	Ts       string `json:"ts,omitempty"`
 	Timezone string `json:"timezone,omitempty"`
+	// StreamIDs restricts the query to specific Insights streams, identified
+	// by stream ID (not slug). Empty means all streams for the project.
+	StreamIDs []string `json:"stream_ids,omitempty"`
 }
 
 // InsightsQueryMeta represents metadata about an insights query response
