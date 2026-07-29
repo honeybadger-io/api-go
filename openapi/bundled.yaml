@@ -1,0 +1,6152 @@
+# GENERATED — do not edit. Run `rake openapi:bundle`.
+#
+# Self-contained bundle of openapi/v3/openapi.yaml and everything it
+# references. Downstream clients consume this file; the split sources
+# under openapi/v3/ remain the thing you edit.
+---
+openapi: 3.1.0
+info:
+  title: Honeybadger API
+  description: |
+    The Honeybadger API v3 provides programmatic access to your Honeybadger data.
+
+    ## Authentication
+
+    All API requests require authentication via Bearer token or HTTP Basic authentication:
+
+    ```
+    Authorization: Bearer YOUR_API_TOKEN
+    ```
+
+    or
+
+    ```
+    Authorization: Basic base64(YOUR_API_TOKEN:)
+    ```
+
+    You can find your API token in your Honeybadger user settings.
+
+    ## Rate Limiting
+
+    API requests are rate limited to 360 requests per hour per user. Rate limit information
+    is returned in response headers:
+
+    - `X-RateLimit-Limit`: Maximum requests per hour
+    - `X-RateLimit-Remaining`: Remaining requests in current window
+    - `X-RateLimit-Reset`: Unix timestamp when the limit resets
+
+    ## Pagination
+
+    ### Offset-based Pagination
+
+    Most list endpoints use offset-based pagination with the following parameters:
+    - `page`: Page number (default: 1)
+    - `per_page`: Items per page (default: 25, max: 100)
+
+    ### Cursor-based Pagination
+
+    Time-series endpoints (notices, comments, deploys, etc.) use cursor-based pagination:
+    - `limit`: Items per page (default: 25, max: 100)
+    - `before`: Cursor for older items
+    - `after`: Cursor for newer items
+
+    ## Response Format
+
+    All responses follow a consistent envelope structure:
+
+    ```json
+    {
+      "data": { ... },
+      "meta": { "request_id": "..." }
+    }
+    ```
+
+    For collections:
+
+    ```json
+    {
+      "data": [ ... ],
+      "pagination": { ... },
+      "links": { ... },
+      "meta": { "request_id": "..." }
+    }
+    ```
+  version: 3.0.0
+  contact:
+    name: Honeybadger Support
+    email: support@honeybadger.io
+    url: https://www.honeybadger.io
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+servers:
+- url: https://app.honeybadger.io/v3
+  description: Production API
+security:
+- bearer_auth: []
+- basic_auth: []
+tags:
+- name: Accounts
+  description: Account management
+- name: Projects
+  description: Project management
+- name: Faults
+  description: Error/exception management
+- name: Notices
+  description: Individual error occurrences
+- name: Sites
+  description: Uptime monitoring
+- name: Check-ins
+  description: Cron/heartbeat monitoring
+- name: Teams
+  description: Team management
+- name: Status Pages
+  description: Public status page management
+- name: Alarms
+  description: Insights alarms
+- name: Channels
+  description: Notification channels and integrations
+- name: Comments
+  description: Comments on errors
+- name: Dashboards
+  description: Insights dashboards
+- name: Deploys
+  description: Deploy tracking
+- name: Environments
+  description: Per-environment project settings
+- name: Insights
+  description: Event querying with BadgerQL
+- name: Streams
+  description: Insights event streams
+paths:
+  "/accounts":
+    get:
+      operationId: listAccounts
+      summary: List accounts
+      description: Returns a list of accounts the authenticated user has access to.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Account"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+  "/accounts/{account_id}":
+    get:
+      operationId: getAccount
+      summary: Get an account
+      description: Returns a single account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Account"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/usage":
+    get:
+      operationId: getAccountUsage
+      summary: Get account usage
+      description: Returns usage statistics for the account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/members":
+    get:
+      operationId: listAccountMembers
+      summary: List account members
+      description: Returns a list of members for the account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/AccountMember"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/members/{member_id}":
+    get:
+      operationId: getAccountMember
+      summary: Get an account member
+      description: Returns a single account member.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: member_id
+        in: path
+        required: true
+        description: Member public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/AccountMember"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateAccountMember
+      summary: Update an account member
+      description: Updates a member's role or settings within the account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: member_id
+        in: path
+        required: true
+        description: Member public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/AccountMember"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteAccountMember
+      summary: Remove an account member
+      description: Removes a member from the account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: member_id
+        in: path
+        required: true
+        description: Member public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Member removed
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/invitations":
+    get:
+      operationId: listAccountInvitations
+      summary: List account invitations
+      description: Returns a list of pending invitations for the account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/AccountInvitation"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createAccountInvitation
+      summary: Create an invitation
+      description: Invites a user to the account.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '201':
+          description: Invitation created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/AccountInvitation"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/invitations/{invitation_id}":
+    get:
+      operationId: getAccountInvitation
+      summary: Get an invitation
+      description: Returns a single invitation.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: invitation_id
+        in: path
+        required: true
+        description: Invitation public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/AccountInvitation"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateAccountInvitation
+      summary: Update an invitation
+      description: Updates a pending invitation.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: invitation_id
+        in: path
+        required: true
+        description: Invitation public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/AccountInvitation"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteAccountInvitation
+      summary: Delete an invitation
+      description: Cancels a pending invitation.
+      tags:
+      - Accounts
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: invitation_id
+        in: path
+        required: true
+        description: Invitation public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Invitation deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects":
+    get:
+      operationId: listProjects
+      summary: List projects
+      description: Returns a list of projects for the account.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Project"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createProject
+      summary: Create a project
+      description: Creates a new project in the account.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Project"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}":
+    get:
+      operationId: getProject
+      summary: Get a project
+      description: Returns a single project.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Project"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateProject
+      summary: Update a project
+      description: Updates a project's settings.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Project"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteProject
+      summary: Delete a project
+      description: Permanently deletes a project and all its data.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      responses:
+        '204':
+          description: Project deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/stats":
+    get:
+      operationId: getProjectStats
+      summary: Get project stats
+      description: Returns statistics for a project.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults":
+    get:
+      operationId: listFaults
+      summary: List faults
+      description: Returns a list of faults for the project.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      - name: q
+        in: query
+        description: 'Search query. Filtering by environment, resolved and ignored
+          status is expressed here rather than as separate parameters — `environment:production`,
+          `is:resolved`, `is:ignored`, and each negatable with a leading `-`. See
+          the error search reference for the full filter list.
+
+          '
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Fault"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}":
+    get:
+      operationId: getFault
+      summary: Get a fault
+      description: Returns a single fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateFault
+      summary: Update a fault
+      description: Updates a fault's attributes.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteFault
+      summary: Delete a fault
+      description: Permanently deletes a fault and all its notices.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '204':
+          description: Fault deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/resolve":
+    post:
+      operationId: resolveFaults
+      summary: Resolve faults
+      description: Marks one or more faults as resolved.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fault_ids
+              properties:
+                fault_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/unresolve":
+    post:
+      operationId: unresolveFaults
+      summary: Unresolve faults
+      description: Marks one or more faults as unresolved.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fault_ids
+              properties:
+                fault_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/ignore":
+    post:
+      operationId: ignoreFaults
+      summary: Ignore faults
+      description: Marks one or more faults as ignored.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fault_ids
+              properties:
+                fault_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/unignore":
+    post:
+      operationId: unignoreFaults
+      summary: Unignore faults
+      description: Removes the ignored status from one or more faults.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - fault_ids
+              properties:
+                fault_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/snooze":
+    post:
+      operationId: snoozeFault
+      summary: Snooze a fault
+      description: Snoozes notifications for a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    delete:
+      operationId: unsnoozeFault
+      summary: Unsnooze a fault
+      description: Removes snooze from a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/assign":
+    post:
+      operationId: assignFault
+      summary: Assign a fault
+      description: Assigns a fault to a user.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    delete:
+      operationId: unassignFault
+      summary: Unassign a fault
+      description: Removes the assignment from a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/merge":
+    post:
+      operationId: mergeFaults
+      summary: Merge faults
+      description: Merges one or more source faults into the target fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - source_fault_ids
+              properties:
+                source_fault_ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/occurrences":
+    get:
+      operationId: listFaultOccurrences
+      summary: Get fault occurrence timeline
+      description: Returns occurrence counts over time for a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users":
+    get:
+      operationId: listFaultAffectedUsers
+      summary: Get affected users
+      description: Returns users affected by a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/pause_recording":
+    post:
+      operationId: pauseFaultRecording
+      summary: Pause fault recording
+      description: Pauses recording of new notices for a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/resume_recording":
+    post:
+      operationId: resumeFaultRecording
+      summary: Resume fault recording
+      description: Resumes recording of new notices for a fault.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/notices":
+    get:
+      operationId: listNotices
+      summary: List notices
+      description: Returns a list of notices for a fault.
+      tags:
+      - Notices
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/Before"
+      - "$ref": "#/components/parameters/After"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Notice"
+                  pagination:
+                    "$ref": "#/components/schemas/CursorPagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/notices/{uuid}":
+    get:
+      operationId: getNotice
+      summary: Get a notice
+      description: Returns a single notice by its token UUID, without needing to know
+        which project or fault it belongs to.
+      tags:
+      - Notices
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        description: Notice token UUID
+        schema:
+          type: string
+          format: uuid
+          example: 1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Notice"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments":
+    get:
+      operationId: listComments
+      summary: List comments
+      description: Returns a list of comments for a fault.
+      tags:
+      - Comments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/Before"
+      - "$ref": "#/components/parameters/After"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Comment"
+                  pagination:
+                    "$ref": "#/components/schemas/CursorPagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createComment
+      summary: Create a comment
+      description: Adds a comment to a fault.
+      tags:
+      - Comments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - body
+              properties:
+                body:
+                  type: string
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Comment"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments/{comment_id}":
+    get:
+      operationId: getComment
+      summary: Get a comment
+      description: Returns a single comment.
+      tags:
+      - Comments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      - name: comment_id
+        in: path
+        required: true
+        description: Comment public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Comment"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateComment
+      summary: Update a comment
+      description: Updates a comment's body.
+      tags:
+      - Comments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      - name: comment_id
+        in: path
+        required: true
+        description: Comment public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - body
+              properties:
+                body:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Comment"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteComment
+      summary: Delete a comment
+      description: Deletes a comment from a fault.
+      tags:
+      - Comments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      - name: comment_id
+        in: path
+        required: true
+        description: Comment public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Comment deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/sites":
+    get:
+      operationId: listSites
+      summary: List sites
+      description: Returns a list of uptime monitoring sites for the project.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Site"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createSite
+      summary: Create a site
+      description: Creates a new uptime monitoring site.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - url
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+      responses:
+        '201':
+          description: Site created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Site"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/sites/{site_id}":
+    get:
+      operationId: getSite
+      summary: Get a site
+      description: Returns a single uptime monitoring site.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: site_id
+        in: path
+        required: true
+        description: Site public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Site"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateSite
+      summary: Update a site
+      description: Updates an uptime monitoring site.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: site_id
+        in: path
+        required: true
+        description: Site public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Site"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteSite
+      summary: Delete a site
+      description: Deletes an uptime monitoring site.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: site_id
+        in: path
+        required: true
+        description: Site public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Site deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/sites/{site_id}/checks":
+    get:
+      operationId: listUptimeChecks
+      summary: List uptime checks
+      description: Returns a list of uptime check results for a site.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: site_id
+        in: path
+        required: true
+        description: Site public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/CreatedAfter"
+      - "$ref": "#/components/parameters/CreatedBefore"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/UptimeCheck"
+                  pagination:
+                    "$ref": "#/components/schemas/TimePagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/sites/{site_id}/outages":
+    get:
+      operationId: listOutages
+      summary: List outages
+      description: Returns a list of outages for a site.
+      tags:
+      - Sites
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: site_id
+        in: path
+        required: true
+        description: Site public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/CreatedAfter"
+      - "$ref": "#/components/parameters/CreatedBefore"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Outage"
+                  pagination:
+                    "$ref": "#/components/schemas/TimePagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/check_ins":
+    get:
+      operationId: listCheckIns
+      summary: List check-ins
+      description: Returns a list of check-ins for the project.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CheckIn"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createCheckIn
+      summary: Create a check-in
+      description: Creates a new check-in monitor.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                schedule_type:
+                  type: string
+                report_period:
+                  type: string
+                grace_period:
+                  type: string
+      responses:
+        '201':
+          description: Check-in created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/CheckIn"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/check_ins/bulk_update":
+    put:
+      operationId: bulkUpdateCheckIns
+      summary: Bulk update check-ins
+      description: Updates multiple check-ins at once.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CheckIn"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}":
+    get:
+      operationId: getCheckIn
+      summary: Get a check-in
+      description: Returns a single check-in.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: check_in_id
+        in: path
+        required: true
+        description: Check-in public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/CheckIn"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateCheckIn
+      summary: Update a check-in
+      description: Updates a check-in's settings.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: check_in_id
+        in: path
+        required: true
+        description: Check-in public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                schedule_type:
+                  type: string
+                report_period:
+                  type: string
+                grace_period:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/CheckIn"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteCheckIn
+      summary: Delete a check-in
+      description: Deletes a check-in monitor.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: check_in_id
+        in: path
+        required: true
+        description: Check-in public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Check-in deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}/events":
+    get:
+      operationId: listCheckInEvents
+      summary: List check-in events
+      description: Returns a list of events for a check-in.
+      tags:
+      - Check-ins
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: check_in_id
+        in: path
+        required: true
+        description: Check-in public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Limit"
+      - name: before
+        in: query
+        description: Unix timestamp; returns events older than it. Take it from the
+          `older` link. Events are always returned newest first, so the newest page
+          is the one requested without this parameter.
+        schema:
+          type: number
+          example: 1704067200
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CheckInEvent"
+                  pagination:
+                    "$ref": "#/components/schemas/CursorPagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/deploys":
+    get:
+      operationId: listDeploys
+      summary: List deploys
+      description: Returns a list of deploys for the project.
+      tags:
+      - Deploys
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/Before"
+      - "$ref": "#/components/parameters/After"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Deploy"
+                  pagination:
+                    "$ref": "#/components/schemas/CursorPagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/deploys/{deploy_id}":
+    get:
+      operationId: getDeploy
+      summary: Get a deploy
+      description: Returns a single deploy.
+      tags:
+      - Deploys
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: deploy_id
+        in: path
+        required: true
+        description: Deploy public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Deploy"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    delete:
+      operationId: deleteDeploy
+      summary: Delete a deploy
+      description: Deletes a deploy record.
+      tags:
+      - Deploys
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: deploy_id
+        in: path
+        required: true
+        description: Deploy public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deploy deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/environments":
+    get:
+      operationId: listEnvironments
+      summary: List environments
+      description: Returns a list of environments for the project.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Environment"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createEnvironment
+      summary: Create an environment
+      description: Creates a new environment for the project.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Environment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Environment"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/environments/{environment_id}":
+    get:
+      operationId: getEnvironment
+      summary: Get an environment
+      description: Returns a single environment.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: environment_id
+        in: path
+        required: true
+        description: Environment public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Environment"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateEnvironment
+      summary: Update an environment
+      description: Updates an environment's settings.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: environment_id
+        in: path
+        required: true
+        description: Environment public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Environment"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteEnvironment
+      summary: Delete an environment
+      description: Deletes an environment.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: environment_id
+        in: path
+        required: true
+        description: Environment public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Environment deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/environments/bulk_update":
+    patch:
+      operationId: bulkUpdateEnvironments
+      summary: Bulk update environments
+      description: Updates notification settings for multiple environments at once.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                environment_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Public IDs of environments to update
+                notifications:
+                  type: object
+                  description: Notification settings to apply
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      affected_count:
+                        type: integer
+                        description: Number of environments updated
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/environments/bulk_destroy":
+    delete:
+      operationId: bulkDeleteEnvironments
+      summary: Bulk delete environments
+      description: Deletes multiple environments at once.
+      tags:
+      - Environments
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                environment_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Public IDs of environments to delete
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      destroyed_count:
+                        type: integer
+                        description: Number of environments deleted
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/channels":
+    get:
+      operationId: listChannels
+      summary: List channels
+      description: Returns a list of notification channels for the project.
+      tags:
+      - Channels
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Channel"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/channels/{channel_id}":
+    get:
+      operationId: getChannel
+      summary: Get a channel
+      description: Returns a single notification channel.
+      tags:
+      - Channels
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: channel_id
+        in: path
+        required: true
+        description: Channel public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Channel"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateChannel
+      summary: Update a channel
+      description: Updates a notification channel's settings.
+      tags:
+      - Channels
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: channel_id
+        in: path
+        required: true
+        description: Channel public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Channel"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/dashboards":
+    get:
+      operationId: listDashboards
+      summary: List dashboards
+      description: Returns a list of Insights dashboards for the project.
+      tags:
+      - Dashboards
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Dashboard"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createDashboard
+      summary: Create a dashboard
+      description: Creates a new Insights dashboard.
+      tags:
+      - Dashboards
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Dashboard created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Dashboard"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/dashboards/{dashboard_id}":
+    get:
+      operationId: getDashboard
+      summary: Get a dashboard
+      description: Returns a single Insights dashboard.
+      tags:
+      - Dashboards
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: dashboard_id
+        in: path
+        required: true
+        description: Dashboard public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Dashboard"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateDashboard
+      summary: Update a dashboard
+      description: Updates an Insights dashboard.
+      tags:
+      - Dashboards
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: dashboard_id
+        in: path
+        required: true
+        description: Dashboard public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Dashboard"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteDashboard
+      summary: Delete a dashboard
+      description: Deletes an Insights dashboard.
+      tags:
+      - Dashboards
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: dashboard_id
+        in: path
+        required: true
+        description: Dashboard public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Dashboard deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/alarms":
+    get:
+      operationId: listAlarms
+      summary: List alarms
+      description: Returns a list of alarms for the project.
+      tags:
+      - Alarms
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Alarm"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createAlarm
+      summary: Create an alarm
+      description: Creates a new alarm for the project.
+      tags:
+      - Alarms
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Alarm created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Alarm"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}":
+    get:
+      operationId: getAlarm
+      summary: Get an alarm
+      description: Returns a single alarm.
+      tags:
+      - Alarms
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: alarm_id
+        in: path
+        required: true
+        description: Alarm public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Alarm"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateAlarm
+      summary: Update an alarm
+      description: Updates an alarm's settings.
+      tags:
+      - Alarms
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: alarm_id
+        in: path
+        required: true
+        description: Alarm public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Alarm"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteAlarm
+      summary: Delete an alarm
+      description: Deletes an alarm.
+      tags:
+      - Alarms
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: alarm_id
+        in: path
+        required: true
+        description: Alarm public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Alarm deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}/history":
+    get:
+      operationId: listAlarmHistory
+      summary: List alarm trigger history
+      description: Returns the trigger history for an alarm.
+      tags:
+      - Alarms
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: alarm_id
+        in: path
+        required: true
+        description: Alarm public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/teams":
+    get:
+      operationId: listTeams
+      summary: List teams
+      description: Returns a list of teams for the account.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Team"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createTeam
+      summary: Create a team
+      description: Creates a new team in the account.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Team"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/teams/{team_id}":
+    get:
+      operationId: getTeam
+      summary: Get a team
+      description: Returns a single team.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Team"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateTeam
+      summary: Update a team
+      description: Updates a team's settings.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Team"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteTeam
+      summary: Delete a team
+      description: Deletes a team.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Team deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/teams/{team_id}/members":
+    get:
+      operationId: listTeamMembers
+      summary: List team members
+      description: Returns a list of members for a team.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/User"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/teams/{team_id}/members/{member_id}":
+    get:
+      operationId: getTeamMember
+      summary: Get a team member
+      description: Returns a single team member.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - name: member_id
+        in: path
+        required: true
+        description: Member public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/User"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateTeamMember
+      summary: Update a team member
+      description: Updates a team member's role.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - name: member_id
+        in: path
+        required: true
+        description: Member public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/User"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteTeamMember
+      summary: Remove a team member
+      description: Removes a member from the team.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - name: member_id
+        in: path
+        required: true
+        description: Member public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Member removed
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/teams/{team_id}/invitations":
+    get:
+      operationId: listTeamInvitations
+      summary: List team invitations
+      description: Returns a list of pending invitations for a team.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TeamInvitation"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createTeamInvitation
+      summary: Create a team invitation
+      description: Invites a user to a team.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '201':
+          description: Invitation created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/TeamInvitation"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/teams/{team_id}/invitations/{invitation_id}":
+    get:
+      operationId: getTeamInvitation
+      summary: Get a team invitation
+      description: Returns a single team invitation.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - name: invitation_id
+        in: path
+        required: true
+        description: Invitation public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/TeamInvitation"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateTeamInvitation
+      summary: Update a team invitation
+      description: Updates a pending team invitation.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - name: invitation_id
+        in: path
+        required: true
+        description: Invitation public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/TeamInvitation"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteTeamInvitation
+      summary: Delete a team invitation
+      description: Cancels a pending team invitation.
+      tags:
+      - Teams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: team_id
+        in: path
+        required: true
+        description: Team public ID
+        schema:
+          type: string
+      - name: invitation_id
+        in: path
+        required: true
+        description: Invitation public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Invitation deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/status_pages":
+    get:
+      operationId: listStatusPages
+      summary: List status pages
+      description: Returns a list of status pages for the account.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StatusPage"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createStatusPage
+      summary: Create a status page
+      description: Creates a new status page.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Status page created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/StatusPage"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/status_pages/{status_page_id}":
+    get:
+      operationId: getStatusPage
+      summary: Get a status page
+      description: Returns a single status page.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/StatusPage"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateStatusPage
+      summary: Update a status page
+      description: Updates a status page's settings.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/StatusPage"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteStatusPage
+      summary: Delete a status page
+      description: Deletes a status page.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Status page deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/status_pages/{status_page_id}/incidents":
+    get:
+      operationId: listStatusPageIncidents
+      summary: List incidents
+      description: Returns a list of incidents for a status page.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/Before"
+      - "$ref": "#/components/parameters/After"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StatusPageIncident"
+                  pagination:
+                    "$ref": "#/components/schemas/CursorPagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createStatusPageIncident
+      summary: Create an incident
+      description: 'Creates a new incident on a status page. An incident is a container
+        for a thread of updates and needs at least one: its prose, status and severity
+        all come from the updates.'
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - incident
+              properties:
+                incident:
+                  type: object
+                  required:
+                  - title
+                  - updates
+                  properties:
+                    title:
+                      type: string
+                    build_type:
+                      type: string
+                      enum:
+                      - current
+                      - retroactive
+                      - scheduled_maintenance
+                    retro_should_notify:
+                      type: boolean
+                    retro_notify_message:
+                      type: string
+                    updates:
+                      type: array
+                      minItems: 1
+                      items:
+                        "$ref": "#/components/schemas/IncidentUpdateInput"
+      responses:
+        '201':
+          description: Incident created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/StatusPageIncident"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}":
+    get:
+      operationId: getStatusPageIncident
+      summary: Get an incident
+      description: Returns a single incident.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/StatusPageIncident"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateStatusPageIncident
+      summary: Update an incident
+      description: Updates an incident's details. current_status, current_severity
+        and closed_at are derived from the incident's updates and cannot be written
+        here; post or edit an update instead. build_type is fixed at creation.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - incident
+              properties:
+                incident:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    retro_should_notify:
+                      type: boolean
+                    retro_notify_message:
+                      type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/StatusPageIncident"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteStatusPageIncident
+      summary: Delete an incident
+      description: Deletes an incident from a status page.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Incident deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+  "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}/updates":
+    get:
+      operationId: listIncidentUpdates
+      summary: List incident updates
+      description: Returns a list of updates for an incident.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/Limit"
+      - "$ref": "#/components/parameters/Before"
+      - "$ref": "#/components/parameters/After"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/IncidentUpdate"
+                  pagination:
+                    "$ref": "#/components/schemas/CursorPagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    post:
+      operationId: createIncidentUpdate
+      summary: Create an incident update
+      description: Posts an update to an incident.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - update
+              properties:
+                update:
+                  "$ref": "#/components/schemas/IncidentUpdateInput"
+      responses:
+        '201':
+          description: Update created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/IncidentUpdate"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}/updates/{update_id}":
+    get:
+      operationId: getIncidentUpdate
+      summary: Get an incident update
+      description: Returns a single incident update.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      - name: update_id
+        in: path
+        required: true
+        description: Update public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/IncidentUpdate"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+    patch:
+      operationId: updateIncidentUpdate
+      summary: Update an incident update
+      description: Modifies an existing incident update.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      - name: update_id
+        in: path
+        required: true
+        description: Update public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - update
+              properties:
+                update:
+                  "$ref": "#/components/schemas/IncidentUpdateInput"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/IncidentUpdate"
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+    delete:
+      operationId: deleteIncidentUpdate
+      summary: Delete an incident update
+      description: Deletes an incident update. An incident must keep at least one
+        update, so deleting its only update returns 422.
+      tags:
+      - Status Pages
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - name: status_page_id
+        in: path
+        required: true
+        description: Status page public ID
+        schema:
+          type: string
+      - name: incident_id
+        in: path
+        required: true
+        description: Incident public ID
+        schema:
+          type: string
+      - name: update_id
+        in: path
+        required: true
+        description: Update public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Update deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+  "/accounts/{account_id}/projects/{project_id}/streams":
+    get:
+      operationId: listStreams
+      summary: List event streams
+      description: |
+        Returns the project's Insights event streams. A project is provisioned with a `default` stream carrying events your applications send and an `internal` stream carrying events Honeybadger generates about the project — errors, deploys, uptime checks and check-ins.
+
+        Provisioning is asynchronous, so a just-created project may return an empty or partial list for a short time. Retry before concluding that a stream is missing.
+
+        Listing streams is a prerequisite for querying: a query against an unselected stream returns nothing, which is indistinguishable from the events not existing.
+      tags:
+      - Streams
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Stream"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                  meta:
+                    type: object
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+        '429':
+          "$ref": "#/components/responses/RateLimitExceeded"
+  "/accounts/{account_id}/projects/{project_id}/insights/queries":
+    post:
+      operationId: runInsightsQuery
+      summary: Run an Insights query
+      description: |
+        Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
+
+        Selecting streams is part of the request, not the query: pass `stream_ids`, or omit it to search every stream on the project. An event class that lives on an unselected stream returns no rows, which looks exactly like the events not existing — so list the project's streams first. Unlike v2, an id that does not belong to the project is rejected rather than silently dropped, so a partial result can never be mistaken for a complete one.
+
+        See the BadgerQL reference for the query language.
+      tags:
+      - Insights
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - query
+              properties:
+                query:
+                  type: string
+                  description: BadgerQL query
+                  example: "@size > 0 | limit 10"
+                stream_ids:
+                  type: array
+                  description: 'Streams to search. Omit it, or pass an empty array,
+                    to search every stream on the project. Every id must belong to
+                    this project; repeated ids are deduplicated. A value that is not
+                    an array of strings is rejected with 422.
+
+                    '
+                  items:
+                    type: string
+                ts:
+                  type: string
+                  description: Time range for the query
+                  example: 1h
+                timezone:
+                  type: string
+                  description: Timezone for time bucketing and display
+                  example: UTC
+      responses:
+        '200':
+          description: 'The query result. Its shape is defined by the Insights query
+            service rather than by this API, and varies with the query — an aggregation
+            returns different fields from an event listing. It is passed through unchanged,
+            so this schema deliberately does not pin it.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    description: Query result, as returned by the query service
+                    additionalProperties: true
+                  meta:
+                    type: object
+        '422':
+          description: 'The query was rejected. For a syntax or semantic error, `error.message`
+            is the query service''s own message, since it is more specific than anything
+            this API could substitute, and the service may supply additional keys
+            alongside it. Also returned when `query` is missing or not a string, when
+            `stream_ids` is not an array of strings, or when a stream id does not
+            belong to the project.
+
+            '
+          content:
+            application/json:
+              schema:
+                allOf:
+                - "$ref": "#/components/schemas/Error"
+                - type: object
+                  properties:
+                    error:
+                      type: object
+                      additionalProperties: true
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '429':
+          "$ref": "#/components/responses/RateLimitExceeded"
+        '503':
+          description: The query service was unreachable or failed. Retry.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Error"
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      description: API token passed as Bearer token
+    basic_auth:
+      type: http
+      scheme: basic
+      description: API token as username, password can be blank
+  schemas:
+    Account:
+      type: object
+      description: A Honeybadger account
+      required:
+      - id
+      - name
+      - email
+      - active
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Ab3kL9
+        name:
+          type: string
+          description: Account name
+          example: Acme Corp
+        email:
+          type: string
+          format: email
+          description: Primary account email
+          example: billing@acme.com
+        active:
+          type: boolean
+          description: Whether the account is active
+        parked:
+          type: boolean
+          description: Whether the account is parked (temporarily inactive)
+        created_at:
+          type: string
+          format: date-time
+          description: When the account was created
+    AccountInvitation:
+      type: object
+      description: An invitation to join an account
+      required:
+      - id
+      - account_id
+      - email
+      - role
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Ai9nRx
+        account_id:
+          type: string
+          description: Public ID of the account
+          example: Ab3kL9
+        email:
+          type: string
+          description: Email address of the invitee
+          example: newmember@example.com
+        role:
+          type: string
+          description: Role granted upon acceptance
+          example: member
+        created_at:
+          type: string
+          format: date-time
+          description: When the invitation was created
+        accepted_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the invitation was accepted
+        created_by:
+          type:
+          - object
+          - 'null'
+          description: User who created the invitation
+          properties:
+            id:
+              type: string
+              description: Public ID of the user
+            name:
+              type: string
+              description: User name
+            email:
+              type: string
+              description: User email
+        accepted_by:
+          type:
+          - object
+          - 'null'
+          description: User who accepted the invitation
+          properties:
+            id:
+              type: string
+              description: Public ID of the user
+            name:
+              type: string
+              description: User name
+            email:
+              type: string
+              description: User email
+    AccountMember:
+      type: object
+      description: A member of an account
+      required:
+      - id
+      - account_id
+      - user_id
+      - role
+      - email
+      - name
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Am4wLq
+        account_id:
+          type: string
+          description: Public ID of the account
+          example: Ab3kL9
+        user_id:
+          type: string
+          description: Public ID of the user
+          example: Uz4wKm
+        role:
+          type: string
+          description: Member role in the account
+          example: admin
+        email:
+          type: string
+          description: Member email address
+          example: jane@example.com
+        name:
+          type: string
+          description: Member display name
+          example: Jane Smith
+        created_at:
+          type: string
+          format: date-time
+          description: When the member was added to the account
+    Alarm:
+      type: object
+      description: An Insights alarm
+      required:
+      - id
+      - project_id
+      - name
+      - state
+      properties:
+        id:
+          type: string
+          description: Alarm identifier (opticon observer root ID)
+          example: obs_abc123
+        project_id:
+          type: string
+          description: Public ID of the project this alarm belongs to
+          example: Xk9mZp
+        name:
+          type: string
+          description: Alarm name
+          example: High Error Rate
+        description:
+          type:
+          - string
+          - 'null'
+          description: Alarm description
+        state:
+          type: string
+          description: Current alarm state
+        query:
+          type: object
+          description: Query definition for the alarm
+        stream_ids:
+          type: array
+          items:
+            type: string
+          description: Associated stream identifiers
+        evaluation_period:
+          type: integer
+          description: Evaluation period in seconds
+        lookback_lag:
+          type: integer
+          description: Lookback lag in seconds
+        trigger_config:
+          type: object
+          description: Trigger configuration for the alarm
+        error:
+          type:
+          - string
+          - 'null'
+          description: Error message if the alarm is in an error state
+        last_checked_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the alarm was last evaluated
+        next_check_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the alarm will next be evaluated
+        created_at:
+          type: string
+          format: date-time
+          description: When the alarm was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the alarm was last updated
+        url:
+          type: string
+          description: URL to view the alarm in the dashboard
+    Channel:
+      type: object
+      description: A notification channel
+      required:
+      - id
+      - project_id
+      - type
+      - active
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Ch9wLp
+        project_id:
+          type: string
+          description: Public ID of the project this channel belongs to
+          example: Xk9mZp
+        type:
+          type: string
+          description: Channel type
+          example: slack
+        active:
+          type: boolean
+          description: Whether the channel is active
+        events:
+          type: array
+          items:
+            type: string
+          description: Event types this channel listens for
+        site_ids:
+          type: array
+          items:
+            type: string
+          description: Public IDs of sites this channel monitors
+        check_in_ids:
+          type: array
+          items:
+            type: string
+          description: Public IDs of check-ins this channel monitors
+        excluded_environments:
+          type: array
+          items:
+            type: string
+          description: Environment names excluded from notifications
+        created_at:
+          type: string
+          format: date-time
+          description: When the channel was created
+    CheckIn:
+      type: object
+      description: A scheduled task check-in monitor
+      required:
+      - id
+      - project_id
+      - name
+      - slug
+      - schedule_type
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Ci5xWq
+        project_id:
+          type: string
+          description: Public ID of the project this check-in belongs to
+          example: Xk9mZp
+        name:
+          type: string
+          description: Display name
+          example: Daily Backup
+        slug:
+          type: string
+          description: URL-safe identifier
+          example: daily-backup
+        schedule_type:
+          type: string
+          description: Type of schedule
+          enum:
+          - cron
+          - simple
+        state:
+          type: string
+          description: Current check-in state
+        reported_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the last report was received
+        expected_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the next report is expected
+        missed_count:
+          type: integer
+          description: Number of consecutive missed reports
+        grace_period:
+          type: integer
+          description: Grace period in minutes before alerting
+        report_url:
+          type: string
+          description: URL to ping when the task completes
+        created_at:
+          type: string
+          format: date-time
+          description: When the check-in was created
+        cron_schedule:
+          type:
+          - string
+          - 'null'
+          description: Cron expression (for cron schedule type)
+          example: 0 2 * * *
+        cron_timezone:
+          type:
+          - string
+          - 'null'
+          description: Timezone for cron schedule
+          example: America/New_York
+        report_period:
+          type:
+          - integer
+          - 'null'
+          description: Expected report period in minutes (for simple schedule type)
+    CheckInEvent:
+      type: object
+      description: A check-in event
+      required:
+      - check_in_id
+      - state
+      - created_at
+      properties:
+        check_in_id:
+          type: string
+          description: Public ID of the check-in
+          example: Ci5xWq
+        state:
+          type: string
+          description: The state the check-in entered
+          example: reporting
+        created_at:
+          type: string
+          format: date-time
+          description: When the event occurred
+        payload:
+          type:
+          - string
+          - 'null'
+          description: The payload reported with the check-in, as it was sent. Only
+            retained on plans with advanced check-ins.
+    Comment:
+      type: object
+      description: A comment on a fault
+      required:
+      - id
+      - fault_id
+      - body
+      - created_at
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Cm7pLx
+        fault_id:
+          type: string
+          description: Public ID of the fault this comment belongs to
+          example: Fq8nRz
+        author:
+          type:
+          - object
+          - 'null'
+          description: Author of the comment
+          properties:
+            id:
+              type:
+              - string
+              - 'null'
+              description: Public ID of the author
+            name:
+              type: string
+              description: Name of the author
+            email:
+              type: string
+              description: Email of the author
+        body:
+          type: string
+          description: Comment body text
+        source:
+          type: string
+          description: Source of the comment
+        event:
+          type: string
+          description: Event type associated with the comment
+        created_at:
+          type: string
+          format: date-time
+          description: When the comment was created
+    CursorPagination:
+      type: object
+      description: Cursor-based pagination information
+      required:
+      - limit
+      - has_older
+      - has_newer
+      properties:
+        limit:
+          type: integer
+          description: Maximum items per page
+          minimum: 1
+          maximum: 100
+          example: 25
+        has_older:
+          type: boolean
+          description: Whether there are older items available
+        has_newer:
+          type: boolean
+          description: Whether there are newer items available
+        oldest_cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor to fetch older items (use with `before` parameter)
+          example: eyJ0IjoxNzA0MDY3MjAwLCJpIjoiTm04cFF4In0
+        newest_cursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor to fetch newer items (use with `after` parameter)
+          example: eyJ0IjoxNzA0MTUzNjAwLCJpIjoiWGs5bVpwIn0
+    Dashboard:
+      type: object
+      description: An Insights dashboard
+      required:
+      - id
+      - project_id
+      - title
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Db4rKn
+        project_id:
+          type: string
+          description: Public ID of the project this dashboard belongs to
+          example: Xk9mZp
+        title:
+          type: string
+          description: Dashboard title
+          example: Performance Overview
+        widgets:
+          type: array
+          description: Dashboard widgets
+          items:
+            type: object
+        is_default:
+          type: boolean
+          description: Whether this is the default dashboard
+        shared:
+          type: boolean
+          description: Whether the dashboard is shared with all team members
+        created_at:
+          type: string
+          format: date-time
+          description: When the dashboard was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the dashboard was last updated
+    Deploy:
+      type: object
+      description: A deploy event
+      required:
+      - id
+      - project_id
+      - environment
+      - revision
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Dp2yNk
+        project_id:
+          type: string
+          description: Public ID of the project this deploy belongs to
+          example: Xk9mZp
+        environment:
+          type: string
+          description: Deploy environment
+          example: production
+        revision:
+          type: string
+          description: Source control revision
+          example: a1b2c3d4
+        branch:
+          type:
+          - string
+          - 'null'
+          description: Source control branch
+          example: main
+        repository_url:
+          type:
+          - string
+          - 'null'
+          description: URL of the source repository
+          example: https://github.com/acme/app
+        local_username:
+          type: string
+          description: Username of the person who triggered the deploy
+          example: jane
+        created_at:
+          type: string
+          format: date-time
+          description: When the deploy was recorded
+    Environment:
+      type: object
+      description: A project environment configuration
+      required:
+      - id
+      - project_id
+      - name
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: En6tRm
+        project_id:
+          type: string
+          description: Public ID of the project this environment belongs to
+          example: Xk9mZp
+        name:
+          type: string
+          description: Environment name
+          example: production
+        notifications:
+          type: object
+          description: Notification settings for this environment
+        created_at:
+          type: string
+          format: date-time
+          description: When the environment was created
+    Error:
+      type: object
+      description: API error response
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              enum:
+              - unauthorized
+              - access_denied
+              - not_found
+              - validation_error
+              - rate_limit_exceeded
+              - maintenance_mode
+              - invalid_id
+              - forbidden_attributes
+              - service_unavailable
+              - ambiguous_account
+            message:
+              type: string
+              description: Human-readable error message
+              example: Access denied
+            details:
+              type: array
+              description: Detailed validation errors (for validation_error)
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: Field name that failed validation
+                  message:
+                    type: string
+                    description: Validation error message
+        meta:
+          type: object
+          properties:
+            request_id:
+              type: string
+              description: Unique request identifier for debugging
+    Fault:
+      type: object
+      description: A unique error fingerprint (fault)
+      required:
+      - id
+      - project_id
+      - klass
+      - resolved
+      - ignored
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Fq8nRz
+        project_id:
+          type: string
+          description: Public ID of the project this fault belongs to
+          example: Xk9mZp
+        klass:
+          type: string
+          description: Error class name
+          example: NoMethodError
+        message:
+          type: string
+          description: Error message
+          example: undefined method 'foo' for nil:NilClass
+        component:
+          type:
+          - string
+          - 'null'
+          description: Component where the error occurred
+          example: UsersController
+        action:
+          type:
+          - string
+          - 'null'
+          description: Action where the error occurred
+          example: show
+        environment:
+          type: string
+          description: Environment name
+          example: production
+        resolved:
+          type: boolean
+          description: Whether the fault is resolved
+        ignored:
+          type: boolean
+          description: Whether the fault is ignored
+        created_at:
+          type: string
+          format: date-time
+          description: When the fault was first reported
+        last_notice_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the last notice was received
+        notices_count:
+          type: integer
+          description: Total number of notices for this fault
+        comments_count:
+          type: integer
+          description: Number of comments on this fault
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags assigned to this fault
+          example:
+          - critical
+          - backend
+        assignee:
+          type:
+          - object
+          - 'null'
+          description: User assigned to this fault
+          properties:
+            id:
+              type: string
+              description: Public ID of the assignee
+            name:
+              type: string
+              description: Name of the assignee
+            email:
+              type: string
+              description: Email of the assignee
+        deploy:
+          type:
+          - object
+          - 'null'
+          description: Deploy associated with this fault
+          properties:
+            id:
+              type: string
+              description: Public ID of the deploy
+            environment:
+              type: string
+              description: Deploy environment
+            revision:
+              type: string
+              description: Deploy revision
+            created_at:
+              type: string
+              format: date-time
+              description: When the deploy was created
+        tickets:
+          type: array
+          description: Issue tracker tickets linked to this fault
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                description: URL of the ticket
+              channel_id:
+                type: string
+                description: Public ID of the channel that created the ticket
+    IncidentUpdate:
+      type: object
+      description: An update to a status page incident. The incident's prose lives
+        here, and its current_status, current_severity and closed_at are derived from
+        its updates.
+      required:
+      - id
+      - incident_id
+      - status
+      - severity
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Iu6tMn
+        incident_id:
+          type: string
+          description: Public ID of the incident
+          example: In3pKr
+        message:
+          type:
+          - string
+          - 'null'
+          description: The update's prose
+          example: We have identified the cause and are rolling back.
+        status:
+          type: string
+          description: Status at the time of the update
+          enum:
+          - maintenance_scheduled
+          - in_maintenance
+          - maintenance_complete
+          - investigating
+          - identified
+          - resolving
+          - monitoring
+          - resolved
+        severity:
+          type: string
+          description: Severity at the time of the update
+          enum:
+          - problem_detected
+          - degraded_performance
+          - partial_outage
+          - outage
+          - operational
+        start_at:
+          type: string
+          format: date-time
+          description: When the update takes effect. A future time schedules it.
+        should_notify:
+          type:
+          - boolean
+          - 'null'
+          description: Whether the update is announced on the status page's connected
+            accounts
+        notified_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the announcement was sent
+        created_at:
+          type: string
+          format: date-time
+          description: When the update was posted
+        updated_at:
+          type: string
+          format: date-time
+          description: When the update was last changed
+    IncidentUpdateInput:
+      type: object
+      description: The writable fields of an incident update. status and severity
+        default to investigating and problem_detected. If neither start_at nor start_now
+        is given, the update starts now.
+      properties:
+        message:
+          type: string
+          description: The update's prose
+          example: We have identified the cause and are rolling back.
+        status:
+          type: string
+          enum:
+          - maintenance_scheduled
+          - in_maintenance
+          - maintenance_complete
+          - investigating
+          - identified
+          - resolving
+          - monitoring
+          - resolved
+        severity:
+          type: string
+          enum:
+          - problem_detected
+          - degraded_performance
+          - partial_outage
+          - outage
+          - operational
+        start_at:
+          type: string
+          format: date-time
+          description: When the update takes effect. Only a scheduled_maintenance
+            incident may set this in the future.
+        start_now:
+          type: boolean
+          description: Start the update immediately, ignoring start_at
+        should_notify:
+          type: boolean
+          description: Announce the update on the status page's connected accounts
+    Notice:
+      type: object
+      description: An individual error occurrence
+      required:
+      - id
+      - fault_id
+      - project_id
+      - message
+      - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The notice's token UUID, which addresses it globally
+          example: 1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b
+        fault_id:
+          type: string
+          description: Public ID of the fault this notice belongs to
+          example: Fq8nRz
+        project_id:
+          type: string
+          description: Public ID of the project
+          example: Xk9mZp
+        environment:
+          type: string
+          description: Environment name
+          example: production
+        message:
+          type: string
+          description: Error message
+          example: undefined method 'foo' for nil:NilClass
+        created_at:
+          type: string
+          format: date-time
+          description: When the notice was received
+        request:
+          type:
+          - object
+          - 'null'
+          description: Request details when the error occurred
+          properties:
+            url:
+              type: string
+              description: Request URL
+            component:
+              type: string
+              description: Controller or component name
+            action:
+              type: string
+              description: Action name
+            params:
+              type: object
+              description: Request parameters
+            session:
+              type: object
+              description: Session data
+        context:
+          type: object
+          description: Custom context data sent with the notice
+          additionalProperties: true
+        backtrace:
+          type: array
+          description: Stack trace frames
+          items:
+            type: object
+            properties:
+              file:
+                type: string
+              number:
+                type: string
+              method:
+                type: string
+    Outage:
+      type: object
+      description: An uptime outage period
+      required:
+      - id
+      - site_id
+      - down_at
+      - created_at
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Og5tNr
+        site_id:
+          type: string
+          description: Public ID of the site
+          example: St3vBn
+        down_at:
+          type: string
+          format: date-time
+          description: When the site went down
+        up_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the site came back up, or null while it is still down
+        duration_seconds:
+          type:
+          - integer
+          - 'null'
+          description: Duration of the outage in seconds
+        created_at:
+          type: string
+          format: date-time
+          description: When the outage record was created
+        details_url:
+          type: string
+          description: URL of the site's page in the Honeybadger UI
+    Pagination:
+      type: object
+      description: Offset-based pagination information
+      required:
+      - page
+      - per_page
+      - total_count
+      - total_pages
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          minimum: 1
+          example: 1
+        per_page:
+          type: integer
+          description: Items per page
+          minimum: 1
+          maximum: 100
+          example: 25
+        total_count:
+          type: integer
+          description: Total number of items across all pages
+          minimum: 0
+          example: 142
+        total_pages:
+          type: integer
+          description: Total number of pages
+          minimum: 0
+          example: 6
+    Project:
+      type: object
+      description: A Honeybadger project
+      required:
+      - id
+      - account_id
+      - name
+      - active
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Xk9mZp
+        account_id:
+          type: string
+          description: Public ID of the account this project belongs to
+          example: Ab3kL9
+        name:
+          type: string
+          description: Project name
+          example: My Rails App
+        token:
+          type: string
+          description: API key for error reporting (only shown to authorized users)
+          example: hbp_abc123...
+        active:
+          type: boolean
+          description: Whether the project is active
+        disable_public_links:
+          type: boolean
+          description: Whether public error links are disabled
+        environments:
+          type: array
+          items:
+            type: string
+          description: List of environment names seen in this project
+          example:
+          - production
+          - staging
+          - development
+        language:
+          type:
+          - string
+          - 'null'
+          description: Primary programming language
+          example: Ruby
+        fault_count:
+          type: integer
+          description: Total number of faults (errors) in this project
+        unresolved_fault_count:
+          type: integer
+          description: Number of unresolved faults
+        last_notice_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the last error was received
+        earliest_notice_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Earliest available notice (based on retention)
+        purge_days:
+          type:
+          - integer
+          - 'null'
+          description: Data retention period in days
+        created_at:
+          type: string
+          format: date-time
+          description: When the project was created
+    Site:
+      type: object
+      description: An uptime monitoring site
+      required:
+      - id
+      - project_id
+      - name
+      - url
+      - active
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: St3vBn
+        project_id:
+          type: string
+          description: Public ID of the project this site belongs to
+          example: Xk9mZp
+        name:
+          type: string
+          description: Display name for the site
+          example: Production App
+        url:
+          type: string
+          description: URL to monitor
+          example: https://app.example.com
+        active:
+          type: boolean
+          description: Whether monitoring is active
+        state:
+          type: string
+          description: Current state of the site
+          example: up
+        last_checked_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the site was last checked
+        match_type:
+          type: string
+          description: Type of response matching
+        match:
+          type: string
+          description: Value to match in the response
+        request_method:
+          type: string
+          description: HTTP method for checks
+          example: GET
+        frequency:
+          type: integer
+          description: Check frequency in seconds
+        locations:
+          type: array
+          items:
+            type: string
+          description: Monitoring locations
+          example:
+          - us-east-1
+          - eu-west-1
+        validate_ssl:
+          type: boolean
+          description: Whether to validate SSL certificates
+        request_headers:
+          type: object
+          description: Custom headers sent with check requests
+        request_body:
+          type:
+          - string
+          - 'null'
+          description: Request body for POST/PUT checks
+        outage_threshold:
+          type: integer
+          description: Number of failed checks before declaring an outage
+        timeout:
+          type: integer
+          description: Request timeout in seconds
+        created_at:
+          type: string
+          format: date-time
+          description: When the site was created
+    StatusPage:
+      type: object
+      description: A public status page
+      required:
+      - id
+      - account_id
+      - name
+      - url
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Sp7bMq
+        account_id:
+          type: string
+          description: Public ID of the account this status page belongs to
+          example: Ab3kL9
+        name:
+          type: string
+          description: Status page name
+          example: Acme Status
+        domain:
+          type:
+          - string
+          - 'null'
+          description: Custom domain for the status page
+          example: status.acme.com
+        url:
+          type: string
+          description: URL of the status page
+          example: https://acme.statuspage.honeybadger.io
+        created_at:
+          type: string
+          format: date-time
+          description: When the status page was created
+        domain_verified_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the custom domain was verified
+        sites:
+          type: array
+          description: Uptime sites displayed on the status page
+          items:
+            type: object
+            properties:
+              site_id:
+                type: string
+                description: Public ID of the site
+              display_name:
+                type: string
+                description: Display name on the status page
+              description:
+                type: string
+                description: Description shown on the status page
+              state:
+                type: string
+                description: Current state of the site
+              last_checked_at:
+                type: string
+                format: date-time
+                description: When the site was last checked
+        check_ins:
+          type: array
+          description: Check-ins displayed on the status page
+          items:
+            type: object
+            properties:
+              check_in_id:
+                type: string
+                description: Public ID of the check-in
+              display_name:
+                type: string
+                description: Display name on the status page
+              description:
+                type: string
+                description: Description shown on the status page
+              state:
+                type: string
+                description: Current state of the check-in
+              reported_at:
+                type: string
+                format: date-time
+                description: When the check-in last reported
+    StatusPageIncident:
+      type: object
+      description: 'An incident on a status page. An incident is a container for a
+        thread of updates: the prose lives on each update, and current_status, current_severity
+        and closed_at are derived from them and are never writable.'
+      required:
+      - id
+      - status_page_id
+      - title
+      - build_type
+      - updates
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: In3pKr
+        status_page_id:
+          type: string
+          description: Public ID of the status page
+          example: Sp7bMq
+        title:
+          type: string
+          description: Incident title
+          example: Database connectivity issues
+        build_type:
+          type: string
+          description: How the incident was opened
+          enum:
+          - current
+          - retroactive
+          - scheduled_maintenance
+        current_status:
+          type:
+          - string
+          - 'null'
+          description: Status of the update in effect now. Derived from the updates.
+          enum:
+          - maintenance_scheduled
+          - in_maintenance
+          - maintenance_complete
+          - investigating
+          - identified
+          - resolving
+          - monitoring
+          - resolved
+        current_severity:
+          type:
+          - string
+          - 'null'
+          description: Severity of the update in effect now. Derived from the updates.
+          enum:
+          - problem_detected
+          - degraded_performance
+          - partial_outage
+          - outage
+          - operational
+        start_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the incident starts. Derived from the updates.
+        closed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: 'When the incident closed, or null while it is open. Derived
+            from the updates: it is set once an update reaches resolved or maintenance_complete.'
+        created_at:
+          type: string
+          format: date-time
+          description: When the incident was created
+        updated_at:
+          type: string
+          format: date-time
+          description: When the incident was last updated
+        updates:
+          type: array
+          description: The incident's thread, newest first. Always at least one update.
+          items:
+            "$ref": "#/components/schemas/IncidentUpdate"
+    Team:
+      type: object
+      description: A team within an account
+      required:
+      - id
+      - account_id
+      - name
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Tm8qJv
+        account_id:
+          type: string
+          description: Public ID of the account this team belongs to
+          example: Ab3kL9
+        name:
+          type: string
+          description: Team name
+          example: Backend Team
+        created_at:
+          type: string
+          format: date-time
+          description: When the team was created
+        member_count:
+          type: integer
+          description: Number of members in the team
+        project_ids:
+          type: array
+          items:
+            type: string
+          description: Public IDs of projects assigned to this team
+    TimePagination:
+      type: object
+      description: Time-window pagination information
+      required:
+      - limit
+      - has_older
+      - has_newer
+      properties:
+        limit:
+          type: integer
+          description: Maximum items per page
+          minimum: 1
+          maximum: 100
+          example: 25
+        has_older:
+          type: boolean
+          description: Whether there are older items available (follow the `older`
+            link)
+        has_newer:
+          type: boolean
+          description: Whether there are newer items available (follow the `newer`
+            link)
+    TeamInvitation:
+      type: object
+      description: An invitation to join a team
+      required:
+      - id
+      - team_id
+      - email
+      - admin
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Ti2hNp
+        team_id:
+          type: string
+          description: Public ID of the team
+          example: Tm8qJv
+        email:
+          type: string
+          description: Email address of the invitee
+          example: newmember@example.com
+        admin:
+          type: boolean
+          description: Whether the invitation grants admin privileges
+        message:
+          type:
+          - string
+          - 'null'
+          description: Optional message included with the invitation
+        created_at:
+          type: string
+          format: date-time
+          description: When the invitation was created
+        accepted_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the invitation was accepted
+        created_by:
+          type:
+          - object
+          - 'null'
+          description: User who created the invitation
+          properties:
+            id:
+              type: string
+              description: Public ID of the user
+            name:
+              type: string
+              description: User name
+            email:
+              type: string
+              description: User email
+        accepted_by:
+          type:
+          - object
+          - 'null'
+          description: User who accepted the invitation
+          properties:
+            id:
+              type: string
+              description: Public ID of the user
+            name:
+              type: string
+              description: User name
+            email:
+              type: string
+              description: User email
+    TeamMember:
+      type: object
+      description: A member of a team
+      required:
+      - id
+      - team_id
+      - user_id
+      - admin
+      - name
+      - email
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Mm5rWk
+        team_id:
+          type: string
+          description: Public ID of the team
+          example: Tm8qJv
+        user_id:
+          type: string
+          description: Public ID of the user
+          example: Uz4wKm
+        admin:
+          type: boolean
+          description: Whether the member has admin privileges on the team
+        name:
+          type: string
+          description: Member name
+          example: Jane Smith
+        email:
+          type: string
+          description: Member email
+          example: jane@example.com
+        created_at:
+          type: string
+          format: date-time
+          description: When the member was added to the team
+    Stream:
+      type: object
+      description: An Insights event stream
+      properties:
+        id:
+          type: string
+          description: 'Stream identifier: 12 lowercase hex characters. Randomly assigned
+            rather than sequential, so unlike other v3 resources this is not a public
+            ID — it is the stream''s own identifier, and the value to pass as `stream_ids`
+            when querying.
+
+            '
+          pattern: "^[0-9a-f]{12}$"
+          example: a3f19c02b7de
+        name:
+          type: string
+          description: Display name
+          example: Default
+        slug:
+          type: string
+          description: Stable short name
+          enum:
+          - default
+          - internal
+        internal:
+          type: boolean
+          description: 'True for the stream carrying Honeybadger-generated event types
+            (`notice`, `deploy`, `uptime_check`, `check_in`). Those event classes
+            are only queryable when this stream is selected.
+
+            '
+        project_id:
+          type: string
+          description: Public ID of the project this stream belongs to
+          example: Xk9mZp
+        created_at:
+          type: string
+          format: date-time
+    UptimeCheck:
+      type: object
+      description: An individual uptime check result
+      required:
+      - created_at
+      - up
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          description: When the check was performed
+        duration:
+          type: number
+          description: Response time in milliseconds
+        location:
+          type: string
+          description: Monitoring location that performed the check
+          example: us-east-1
+        up:
+          type: boolean
+          description: Whether the site was up
+    User:
+      type: object
+      description: A Honeybadger user
+      required:
+      - id
+      - email
+      - name
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Uz4wKm
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: jane@example.com
+        name:
+          type: string
+          description: User display name
+          example: Jane Smith
+  parameters:
+    AccountId:
+      name: account_id
+      in: path
+      required: true
+      description: |
+        Account public ID, or the literal `me` for the account the API token belongs to. Using `me` means a client never has to call `GET /v3/accounts` before it can address a project.
+
+        `me` resolves only when the token covers exactly one account. A token covering several returns 422 with code `ambiguous_account`; list the accounts and pass a concrete id instead. Response `links` are always returned with the concrete id.
+      schema:
+        type: string
+        example: Ab3kL9
+    ProjectId:
+      name: project_id
+      in: path
+      required: true
+      description: Project public ID
+      schema:
+        type: string
+        example: Xk9mZp
+    FaultId:
+      name: fault_id
+      in: path
+      required: true
+      description: Fault public ID
+      schema:
+        type: string
+        example: Nm8pQx
+    Page:
+      name: page
+      in: query
+      description: Page number (1-indexed)
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      description: Items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Limit:
+      name: limit
+      in: query
+      description: Maximum items to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Before:
+      name: before
+      in: query
+      description: Cursor for fetching older items
+      schema:
+        type: string
+    After:
+      name: after
+      in: query
+      description: Cursor for fetching newer items
+      schema:
+        type: string
+    CreatedAfter:
+      name: created_after
+      in: query
+      description: Only return items created after this Unix timestamp
+      schema:
+        type: number
+        example: 1704067200
+    CreatedBefore:
+      name: created_before
+      in: query
+      description: Only return items created before this Unix timestamp
+      schema:
+        type: number
+        example: 1704153600
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: unauthorized
+              message: Access denied
+            meta:
+              request_id: abc123
+    Forbidden:
+      description: Access denied
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: access_denied
+              message: Access denied
+            meta:
+              request_id: abc123
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: not_found
+              message: Resource not found
+            meta:
+              request_id: abc123
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: validation_error
+              message: Name can't be blank
+              details:
+              - field: name
+                message: can't be blank
+            meta:
+              request_id: abc123
+    AmbiguousAccount:
+      description: 'The `me` account alias could not be resolved because the API token
+        covers more than one account. List the accounts and pass a concrete id. Only
+        returned when `account_id` is the literal `me`.
+
+        '
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: ambiguous_account
+              message: This credential covers more than one account, so "me" is ambiguous.
+            meta:
+              request_id: abc123
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: rate_limit_exceeded
+              message: Rate limit exceeded
+            meta:
+              request_id: abc123
