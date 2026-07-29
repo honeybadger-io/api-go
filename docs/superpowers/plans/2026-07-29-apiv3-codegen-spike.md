@@ -140,30 +140,9 @@ package gen
 Run: `go build ./... && go test ./...`
 Expected: both exit 0. The root package's existing ~100 tests pass unchanged — nothing in this task touches v2 code.
 
-- [ ] **Step 9: Verify the drift gate works**
+- [ ] **Step 9: Commit**
 
-Run: `make verify-generated`
-Expected: exits 0, no diff.
-
-Then prove it can fail. Run:
-
-```bash
-printf '\n# drift check\n' >> openapi/bundled.yaml
-make verify-generated; echo "EXIT:$?"
-git checkout openapi/bundled.yaml
-```
-
-Expected: a trailing-comment-only change produces no diff in generated output, so this may still exit 0. If it does, instead confirm the gate by editing a *schema*:
-
-```bash
-sed -i '' 's/description: Project name/description: Project name CHANGED/' openapi/bundled.yaml
-make verify-generated; echo "EXIT:$?"
-git checkout openapi/bundled.yaml && make generate
-```
-
-Expected: non-zero exit with a diff in `internal/gen/gen.go`, because descriptions become doc comments.
-
-- [ ] **Step 10: Commit**
+Commit **before** testing the drift gate. `git diff` ignores untracked files, so a gate tested against an untracked `internal/gen/gen.go` cannot fail and proves nothing.
 
 ```bash
 git add openapi/bundled.yaml openapi/codegen.yaml Makefile internal/gen/gen.go internal/gen/doc.go go.mod go.sum
@@ -174,6 +153,30 @@ parses natively, so no 3.0 downconversion is needed.
 
 Bumps the go directive to 1.24, forced by oapi-codegen/runtime v1.6.0."
 ```
+
+- [ ] **Step 10: Verify the drift gate actually fails when it should**
+
+Now that both files are tracked, confirm the clean case:
+
+Run: `make verify-generated`
+Expected: exits 0, no diff.
+
+Then prove it can fail. Edit a schema description, since descriptions become doc comments in generated output:
+
+```bash
+sed -i '' 's/description: Project name/description: Project name CHANGED/' openapi/bundled.yaml
+make verify-generated; echo "EXIT:$?"
+```
+
+Expected: non-zero exit, with a diff shown in `internal/gen/gen.go`.
+
+Restore and regenerate:
+
+```bash
+git checkout openapi/bundled.yaml && make generate && git diff --exit-code --stat internal/gen/gen.go
+```
+
+Expected: final command exits 0 — tree back to the committed state.
 
 ---
 
@@ -186,7 +189,7 @@ Stage 3's design depends on four claims about the generated types. This task tur
 
 **Interfaces:**
 - Consumes: package `gen` from Task 1 — types `Project`, `AccountInvitation`, `Error`, `Stream`.
-- Produces: nothing importable. Its output is knowledge, recorded in Task 4.
+- Produces: nothing importable. Its output is knowledge, recorded in Task 5.
 
 - [ ] **Step 1: Write the failing test file**
 
@@ -280,7 +283,7 @@ func TestUnknownFieldsIgnoredByDefault(t *testing.T) {
 
 Run: `go test ./internal/gen/ -v -run 'TestProjectIDIsOpaqueString|TestNullAndAbsentAreIndistinguishable|TestErrorEnvelopeCarriesCode|TestUnknownFieldsIgnoredByDefault'`
 
-Expected: all four PASS. Any FAIL is a real finding, not a test bug — record the actual behavior in Task 4 and adjust the assertion to match reality, keeping the comment explaining what was expected.
+Expected: all four PASS. Any FAIL is a real finding, not a test bug — record the actual behavior in Task 5 and adjust the assertion to match reality, keeping the comment explaining what was expected.
 
 Three generated shapes the tests above already account for, confirmed against real output:
 - `Error.Error` is a nested **anonymous** struct, not a named type. Field access compiles; the type simply cannot be named or constructed from another package. `Error.Error.Code` is a named enum type `ErrorErrorCode`, and comparing it to an untyped string literal is valid Go.
@@ -394,7 +397,20 @@ grep -n "ProjectDisplayName" internal/gen/gen.go | head -3
 
 Expected: at least one hit, inside `type Project struct`.
 
-If the overlay is silently ignored — no hits, exit 0 — that is the finding. Try `oapi-codegen`'s alternate spelling by moving the overlay under a top-level `overlay:` key instead of nesting it under `output-options`, regenerate, and check again. If neither applies it, stop and record in Task 4 that overlays are unavailable in v2.8.0, which forces stage 3 back to a choice between producer-spec annotations and a patch step.
+If the overlay is silently ignored — no hits, exit 0 — that is the finding. Do **not** try moving `overlay:` to the top level of the config: v2.8.0's config parser is strict and rejects unknown top-level keys, so `output-options.overlay` as written in Step 2 is the only valid placement.
+
+Instead, isolate which half failed by putting the extension directly in the vendored bundle:
+
+```bash
+cp openapi/bundled.yaml /tmp/bundled.backup.yaml
+# Add x-go-name next to Project.properties.name, then:
+make generate && grep -c "ProjectDisplayName" internal/gen/gen.go
+cp /tmp/bundled.backup.yaml openapi/bundled.yaml && make generate
+```
+
+`x-go-name` is honored on properties by v2.8.0 (`pkg/codegen/utils.go`, `Property.GoFieldName`). So:
+- Extension works inline but not via overlay → the overlay mechanism is the problem. Record that stage 3 needs producer-spec annotations or a patch step.
+- Extension fails inline too → the target path or extension name is wrong, not the mechanism. Fix and retry before concluding anything.
 
 - [ ] **Step 6: Run the test again**
 
@@ -418,14 +434,127 @@ producer spec in the honeybadger repo."
 
 ---
 
-### Task 4: CI drift gate and the decision record
+### Task 4: Evaluate `nullable-type` for three-state decoding
+
+The design concluded that null-vs-absent cannot be distinguished on decode. That holds for plain generation, but v2.8.0 has an `output-options: nullable-type` flag that emits `nullable.Nullable[T]` from `github.com/oapi-codegen/nullable` — a value type with an explicit present/null distinction. This task establishes whether it works, because it directly answers open question 3 in the design doc.
+
+**Files:**
+- Create: `internal/gen/nullable_behavior_test.go`
+- Modify: `openapi/codegen.yaml` (temporarily, then reverted or kept per outcome)
+
+**Interfaces:**
+- Consumes: package `gen` from Task 1.
+- Produces: a decision on whether `apiv3` response types can distinguish null from absent, recorded in Task 5.
+
+- [ ] **Step 1: Enable the option**
+
+In `openapi/codegen.yaml`, add to `output-options`:
+
+```yaml
+  nullable-type: true
+```
+
+- [ ] **Step 2: Regenerate and inspect what changed**
+
+Run: `make generate && grep -c "nullable.Nullable\[" internal/gen/gen.go`
+Expected: a non-zero count. Confirm the import landed:
+
+Run: `grep -n "oapi-codegen/nullable" internal/gen/gen.go`
+Expected: one hit in the import block.
+
+If the count is 0, the option had no effect on this spec — record that and revert. The spec uses 3.1 `type: [T, "null"]` unions rather than 3.0's `nullable: true`, and the generator may only honour the latter. That is the single most important thing this task can discover.
+
+- [ ] **Step 3: Resolve the new dependency**
+
+Run: `go mod tidy && go build ./...`
+Expected: both exit 0. `go.sum` gains `github.com/oapi-codegen/nullable`.
+
+- [ ] **Step 4: Write the test**
+
+Create `internal/gen/nullable_behavior_test.go`. Adjust the type and field to whatever `nullable.Nullable` actually landed on — find one with:
+`grep -n "nullable.Nullable\[" internal/gen/gen.go | head -5`
+
+```go
+package gen
+
+import (
+	"encoding/json"
+	"testing"
+)
+
+// Does nullable-type generation distinguish explicit null from an absent key?
+// This is the question the design doc's open question 3 asks.
+func TestNullableTypeDistinguishesNullFromAbsent(t *testing.T) {
+	// Replace AccountInvitation/AcceptedAt with a field that generated as
+	// nullable.Nullable[T], per the grep above.
+	var explicitNull AccountInvitation
+	if err := json.Unmarshal([]byte(`{"accepted_at":null}`), &explicitNull); err != nil {
+		t.Fatalf("decoding explicit null: %v", err)
+	}
+	var absent AccountInvitation
+	if err := json.Unmarshal([]byte(`{}`), &absent); err != nil {
+		t.Fatalf("decoding absent: %v", err)
+	}
+
+	if !explicitNull.AcceptedAt.IsSpecified() {
+		t.Error("explicit null: IsSpecified() = false, want true")
+	}
+	if !explicitNull.AcceptedAt.IsNull() {
+		t.Error("explicit null: IsNull() = false, want true")
+	}
+	if absent.AcceptedAt.IsSpecified() {
+		t.Error("absent: IsSpecified() = true, want false")
+	}
+}
+```
+
+- [ ] **Step 5: Run it**
+
+Run: `go test ./internal/gen/ -run TestNullableTypeDistinguishesNullFromAbsent -v`
+Expected: PASS, proving three-state decode is available.
+
+If the method names differ, check the actual API:
+`go doc github.com/oapi-codegen/nullable.Nullable`
+and use what exists. A compile error here is a naming problem, not a finding.
+
+- [ ] **Step 6: Decide and record**
+
+Two outcomes, both legitimate:
+- **Works** → keep `nullable-type: true`. Task 2's `TestNullAndAbsentAreIndistinguishable` will now fail, because behavior genuinely changed. Update that test to assert the new behavior and note in its comment that plain generation conflates the two. Run `go test ./...` and confirm green.
+- **No effect on this spec** → revert `nullable-type: true` from the config, delete `internal/gen/nullable_behavior_test.go`, regenerate, and confirm `go test ./...` is green with Task 2 unchanged.
+
+- [ ] **Step 7: Commit**
+
+For the "works" case:
+
+```bash
+git add openapi/codegen.yaml internal/gen/gen.go internal/gen/nullable_behavior_test.go internal/gen/characterization_test.go go.mod go.sum
+git commit -m "feat: generate nullable fields as nullable.Nullable[T]
+
+Three-state decode (absent, null, value) is available on response types
+after all, which the design doc had concluded was impossible."
+```
+
+For the "no effect" case:
+
+```bash
+git add openapi/codegen.yaml internal/gen/gen.go
+git commit -m "test: record that nullable-type does not apply to 3.1 null unions
+
+The option only honours 3.0-style nullable: true, so response types
+cannot distinguish null from absent. Config reverted."
+```
+
+---
+
+### Task 5: CI drift gate and the decision record
 
 **Files:**
 - Modify: `.github/workflows/test.yml`
 - Create: `docs/superpowers/decisions/2026-07-29-codegen-spike-findings.md`
 
 **Interfaces:**
-- Consumes: `make verify-generated` from Task 1; test results from Tasks 2 and 3.
+- Consumes: `make verify-generated` from Task 1; test results from Tasks 2, 3, and 4.
 - Produces: the stage 1 deliverable named in the design doc — a decision record plus a working, gated `make generate`.
 
 - [ ] **Step 1: Bump the CI Go version and add the drift gate**
@@ -458,7 +587,7 @@ Expected: both exit 0.
 
 - [ ] **Step 4: Write the decision record**
 
-Create `docs/superpowers/decisions/2026-07-29-codegen-spike-findings.md`. Fill every bracketed value from what actually happened in Tasks 1–3; do not copy expectations forward as results.
+Create `docs/superpowers/decisions/2026-07-29-codegen-spike-findings.md`. Fill every bracketed value from what actually happened in Tasks 1–4; do not copy expectations forward as results.
 
 ```markdown
 # Codegen spike findings
@@ -482,6 +611,7 @@ OpenAPI 3.1 bundle. No downconversion to 3.0.
 | Can overlays carry Go-specific mappings? | [Yes / No — from Task 3] | `TestOverlayAppliedToGeneratedCode` |
 | Are unknown fields rejected? | No, ignored by default | `TestUnknownFieldsIgnoredByDefault` |
 | Do required properties avoid pointers? | Yes — required become values, optional become pointers | `Project.Id string` vs `Project.Token *string` |
+| Does `nullable-type` give three-state decode? | [Yes / No effect — from Task 4] | `TestNullableTypeDistinguishesNullFromAbsent` |
 
 ## Consequences for stage 3
 
