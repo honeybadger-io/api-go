@@ -8,3 +8,6 @@ output-options:
   # Keep every schema, including ones no operation references yet. The bundle
   # is still growing; pruning would make regeneration output churn.
   skip-prune: true
+  # Go-specific mappings live here, not in the producer spec.
+  overlay:
+    path: openapi/overlay.yaml

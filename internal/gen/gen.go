@@ -977,8 +977,8 @@ type Project struct {
 	// LastNoticeAt When the last error was received
 	LastNoticeAt *time.Time `json:"last_notice_at,omitempty"`
 
-	// Name Project name
-	Name string `json:"name"`
+	// ProjectDisplayName Project name
+	ProjectDisplayName string `json:"name"`
 
 	// PurgeDays Data retention period in days
 	PurgeDays *int `json:"purge_days,omitempty"`

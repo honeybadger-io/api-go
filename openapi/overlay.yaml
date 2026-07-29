@@ -1,0 +1,11 @@
+overlay: 1.0.0
+info:
+  title: Go-specific mappings for api-go
+  version: 0.0.1
+actions:
+  # Proof of mechanism: force a distinctive Go type onto one field. If this
+  # appears in generated output, overlays can carry the mappings stage 3 needs
+  # without putting Go concerns in the producer spec.
+  - target: $.components.schemas.Project.properties.name
+    update:
+      x-go-name: ProjectDisplayName
