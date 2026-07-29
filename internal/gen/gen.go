@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/oapi-codegen/nullable"
 	"github.com/oapi-codegen/runtime"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
@@ -351,10 +352,10 @@ type Account struct {
 // AccountInvitation An invitation to join an account
 type AccountInvitation struct {
 	// AcceptedAt When the invitation was accepted
-	AcceptedAt *time.Time `json:"accepted_at,omitempty"`
+	AcceptedAt nullable.Nullable[time.Time] `json:"accepted_at,omitempty"`
 
 	// AcceptedBy User who accepted the invitation
-	AcceptedBy *struct {
+	AcceptedBy nullable.Nullable[struct {
 		// Email User email
 		Email *string `json:"email,omitempty"`
 
@@ -363,7 +364,7 @@ type AccountInvitation struct {
 
 		// Name User name
 		Name *string `json:"name,omitempty"`
-	} `json:"accepted_by,omitempty"`
+	}] `json:"accepted_by,omitempty"`
 
 	// AccountId Public ID of the account
 	AccountId string `json:"account_id"`
@@ -372,7 +373,7 @@ type AccountInvitation struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// CreatedBy User who created the invitation
-	CreatedBy *struct {
+	CreatedBy nullable.Nullable[struct {
 		// Email User email
 		Email *string `json:"email,omitempty"`
 
@@ -381,7 +382,7 @@ type AccountInvitation struct {
 
 		// Name User name
 		Name *string `json:"name,omitempty"`
-	} `json:"created_by,omitempty"`
+	}] `json:"created_by,omitempty"`
 
 	// Email Email address of the invitee
 	Email string `json:"email"`
@@ -423,10 +424,10 @@ type Alarm struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// Description Alarm description
-	Description *string `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description,omitempty"`
 
 	// Error Error message if the alarm is in an error state
-	Error *string `json:"error,omitempty"`
+	Error nullable.Nullable[string] `json:"error,omitempty"`
 
 	// EvaluationPeriod Evaluation period in seconds
 	EvaluationPeriod *int `json:"evaluation_period,omitempty"`
@@ -435,7 +436,7 @@ type Alarm struct {
 	Id string `json:"id"`
 
 	// LastCheckedAt When the alarm was last evaluated
-	LastCheckedAt *time.Time `json:"last_checked_at,omitempty"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
 	// LookbackLag Lookback lag in seconds
 	LookbackLag *int `json:"lookback_lag,omitempty"`
@@ -444,7 +445,7 @@ type Alarm struct {
 	Name string `json:"name"`
 
 	// NextCheckAt When the alarm will next be evaluated
-	NextCheckAt *time.Time `json:"next_check_at,omitempty"`
+	NextCheckAt nullable.Nullable[time.Time] `json:"next_check_at,omitempty"`
 
 	// ProjectId Public ID of the project this alarm belongs to
 	ProjectId string `json:"project_id"`
@@ -504,13 +505,13 @@ type CheckIn struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// CronSchedule Cron expression (for cron schedule type)
-	CronSchedule *string `json:"cron_schedule,omitempty"`
+	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
 	// CronTimezone Timezone for cron schedule
-	CronTimezone *string `json:"cron_timezone,omitempty"`
+	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// ExpectedAt When the next report is expected
-	ExpectedAt *time.Time `json:"expected_at,omitempty"`
+	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at,omitempty"`
 
 	// GracePeriod Grace period in minutes before alerting
 	GracePeriod *int `json:"grace_period,omitempty"`
@@ -528,13 +529,13 @@ type CheckIn struct {
 	ProjectId string `json:"project_id"`
 
 	// ReportPeriod Expected report period in minutes (for simple schedule type)
-	ReportPeriod *int `json:"report_period,omitempty"`
+	ReportPeriod nullable.Nullable[int] `json:"report_period,omitempty"`
 
 	// ReportUrl URL to ping when the task completes
 	ReportUrl *string `json:"report_url,omitempty"`
 
 	// ReportedAt When the last report was received
-	ReportedAt *time.Time `json:"reported_at,omitempty"`
+	ReportedAt nullable.Nullable[time.Time] `json:"reported_at,omitempty"`
 
 	// ScheduleType Type of schedule
 	ScheduleType CheckInScheduleType `json:"schedule_type"`
@@ -558,7 +559,7 @@ type CheckInEvent struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	// Payload The payload reported with the check-in, as it was sent. Only retained on plans with advanced check-ins.
-	Payload *string `json:"payload,omitempty"`
+	Payload nullable.Nullable[string] `json:"payload,omitempty"`
 
 	// State The state the check-in entered
 	State string `json:"state"`
@@ -567,16 +568,16 @@ type CheckInEvent struct {
 // Comment A comment on a fault
 type Comment struct {
 	// Author Author of the comment
-	Author *struct {
+	Author nullable.Nullable[struct {
 		// Email Email of the author
 		Email *string `json:"email,omitempty"`
 
 		// Id Public ID of the author
-		Id *string `json:"id,omitempty"`
+		Id nullable.Nullable[string] `json:"id,omitempty"`
 
 		// Name Name of the author
 		Name *string `json:"name,omitempty"`
-	} `json:"author,omitempty"`
+	}] `json:"author,omitempty"`
 
 	// Body Comment body text
 	Body string `json:"body"`
@@ -609,10 +610,10 @@ type CursorPagination struct {
 	Limit int `json:"limit"`
 
 	// NewestCursor Cursor to fetch newer items (use with `after` parameter)
-	NewestCursor *string `json:"newest_cursor,omitempty"`
+	NewestCursor nullable.Nullable[string] `json:"newest_cursor,omitempty"`
 
 	// OldestCursor Cursor to fetch older items (use with `before` parameter)
-	OldestCursor *string `json:"oldest_cursor,omitempty"`
+	OldestCursor nullable.Nullable[string] `json:"oldest_cursor,omitempty"`
 }
 
 // Dashboard An Insights dashboard
@@ -645,7 +646,7 @@ type Dashboard struct {
 // Deploy A deploy event
 type Deploy struct {
 	// Branch Source control branch
-	Branch *string `json:"branch,omitempty"`
+	Branch nullable.Nullable[string] `json:"branch,omitempty"`
 
 	// CreatedAt When the deploy was recorded
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -663,7 +664,7 @@ type Deploy struct {
 	ProjectId string `json:"project_id"`
 
 	// RepositoryUrl URL of the source repository
-	RepositoryUrl *string `json:"repository_url,omitempty"`
+	RepositoryUrl nullable.Nullable[string] `json:"repository_url,omitempty"`
 
 	// Revision Source control revision
 	Revision string `json:"revision"`
@@ -717,10 +718,10 @@ type ErrorErrorCode string
 // Fault A unique error fingerprint (fault)
 type Fault struct {
 	// Action Action where the error occurred
-	Action *string `json:"action,omitempty"`
+	Action nullable.Nullable[string] `json:"action,omitempty"`
 
 	// Assignee User assigned to this fault
-	Assignee *struct {
+	Assignee nullable.Nullable[struct {
 		// Email Email of the assignee
 		Email *string `json:"email,omitempty"`
 
@@ -729,19 +730,19 @@ type Fault struct {
 
 		// Name Name of the assignee
 		Name *string `json:"name,omitempty"`
-	} `json:"assignee,omitempty"`
+	}] `json:"assignee,omitempty"`
 
 	// CommentsCount Number of comments on this fault
 	CommentsCount *int `json:"comments_count,omitempty"`
 
 	// Component Component where the error occurred
-	Component *string `json:"component,omitempty"`
+	Component nullable.Nullable[string] `json:"component,omitempty"`
 
 	// CreatedAt When the fault was first reported
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// Deploy Deploy associated with this fault
-	Deploy *struct {
+	Deploy nullable.Nullable[struct {
 		// CreatedAt When the deploy was created
 		CreatedAt *time.Time `json:"created_at,omitempty"`
 
@@ -753,7 +754,7 @@ type Fault struct {
 
 		// Revision Deploy revision
 		Revision *string `json:"revision,omitempty"`
-	} `json:"deploy,omitempty"`
+	}] `json:"deploy,omitempty"`
 
 	// Environment Environment name
 	Environment *string `json:"environment,omitempty"`
@@ -768,7 +769,7 @@ type Fault struct {
 	Klass string `json:"klass"`
 
 	// LastNoticeAt When the last notice was received
-	LastNoticeAt *time.Time `json:"last_notice_at,omitempty"`
+	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
 
 	// Message Error message
 	Message *string `json:"message,omitempty"`
@@ -807,16 +808,16 @@ type IncidentUpdate struct {
 	IncidentId string `json:"incident_id"`
 
 	// Message The update's prose
-	Message *string `json:"message,omitempty"`
+	Message nullable.Nullable[string] `json:"message,omitempty"`
 
 	// NotifiedAt When the announcement was sent
-	NotifiedAt *time.Time `json:"notified_at,omitempty"`
+	NotifiedAt nullable.Nullable[time.Time] `json:"notified_at,omitempty"`
 
 	// Severity Severity at the time of the update
 	Severity IncidentUpdateSeverity `json:"severity"`
 
 	// ShouldNotify Whether the update is announced on the status page's connected accounts
-	ShouldNotify *bool `json:"should_notify,omitempty"`
+	ShouldNotify nullable.Nullable[bool] `json:"should_notify,omitempty"`
 
 	// StartAt When the update takes effect. A future time schedules it.
 	StartAt *time.Time `json:"start_at,omitempty"`
@@ -888,7 +889,7 @@ type Notice struct {
 	ProjectId string `json:"project_id"`
 
 	// Request Request details when the error occurred
-	Request *struct {
+	Request nullable.Nullable[struct {
 		// Action Action name
 		Action *string `json:"action,omitempty"`
 
@@ -903,7 +904,7 @@ type Notice struct {
 
 		// Url Request URL
 		Url *string `json:"url,omitempty"`
-	} `json:"request,omitempty"`
+	}] `json:"request,omitempty"`
 }
 
 // Outage An uptime outage period
@@ -918,7 +919,7 @@ type Outage struct {
 	DownAt time.Time `json:"down_at"`
 
 	// DurationSeconds Duration of the outage in seconds
-	DurationSeconds *int `json:"duration_seconds,omitempty"`
+	DurationSeconds nullable.Nullable[int] `json:"duration_seconds,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
@@ -927,7 +928,7 @@ type Outage struct {
 	SiteId string `json:"site_id"`
 
 	// UpAt When the site came back up, or null while it is still down
-	UpAt *time.Time `json:"up_at,omitempty"`
+	UpAt nullable.Nullable[time.Time] `json:"up_at,omitempty"`
 }
 
 // Pagination Offset-based pagination information
@@ -960,7 +961,7 @@ type Project struct {
 	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
 
 	// EarliestNoticeAt Earliest available notice (based on retention)
-	EarliestNoticeAt *time.Time `json:"earliest_notice_at,omitempty"`
+	EarliestNoticeAt nullable.Nullable[time.Time] `json:"earliest_notice_at,omitempty"`
 
 	// Environments List of environment names seen in this project
 	Environments *[]string `json:"environments,omitempty"`
@@ -972,16 +973,16 @@ type Project struct {
 	Id string `json:"id"`
 
 	// Language Primary programming language
-	Language *string `json:"language,omitempty"`
+	Language nullable.Nullable[string] `json:"language,omitempty"`
 
 	// LastNoticeAt When the last error was received
-	LastNoticeAt *time.Time `json:"last_notice_at,omitempty"`
+	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
 
 	// ProjectDisplayName Project name
 	ProjectDisplayName string `json:"name"`
 
 	// PurgeDays Data retention period in days
-	PurgeDays *int `json:"purge_days,omitempty"`
+	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
 
 	// Token API key for error reporting (only shown to authorized users)
 	Token *string `json:"token,omitempty"`
@@ -1005,7 +1006,7 @@ type Site struct {
 	Id string `json:"id"`
 
 	// LastCheckedAt When the site was last checked
-	LastCheckedAt *time.Time `json:"last_checked_at,omitempty"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
 	// Locations Monitoring locations
 	Locations *[]string `json:"locations,omitempty"`
@@ -1026,7 +1027,7 @@ type Site struct {
 	ProjectId string `json:"project_id"`
 
 	// RequestBody Request body for POST/PUT checks
-	RequestBody *string `json:"request_body,omitempty"`
+	RequestBody nullable.Nullable[string] `json:"request_body,omitempty"`
 
 	// RequestHeaders Custom headers sent with check requests
 	RequestHeaders *map[string]interface{} `json:"request_headers,omitempty"`
@@ -1074,10 +1075,10 @@ type StatusPage struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// Domain Custom domain for the status page
-	Domain *string `json:"domain,omitempty"`
+	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
 	// DomainVerifiedAt When the custom domain was verified
-	DomainVerifiedAt *time.Time `json:"domain_verified_at,omitempty"`
+	DomainVerifiedAt nullable.Nullable[time.Time] `json:"domain_verified_at,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
@@ -1113,22 +1114,22 @@ type StatusPageIncident struct {
 	BuildType StatusPageIncidentBuildType `json:"build_type"`
 
 	// ClosedAt When the incident closed, or null while it is open. Derived from the updates: it is set once an update reaches resolved or maintenance_complete.
-	ClosedAt *time.Time `json:"closed_at,omitempty"`
+	ClosedAt nullable.Nullable[time.Time] `json:"closed_at,omitempty"`
 
 	// CreatedAt When the incident was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// CurrentSeverity Severity of the update in effect now. Derived from the updates.
-	CurrentSeverity *StatusPageIncidentCurrentSeverity `json:"current_severity,omitempty"`
+	CurrentSeverity nullable.Nullable[StatusPageIncidentCurrentSeverity] `json:"current_severity,omitempty"`
 
 	// CurrentStatus Status of the update in effect now. Derived from the updates.
-	CurrentStatus *StatusPageIncidentCurrentStatus `json:"current_status,omitempty"`
+	CurrentStatus nullable.Nullable[StatusPageIncidentCurrentStatus] `json:"current_status,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
 
 	// StartAt When the incident starts. Derived from the updates.
-	StartAt *time.Time `json:"start_at,omitempty"`
+	StartAt nullable.Nullable[time.Time] `json:"start_at,omitempty"`
 
 	// StatusPageId Public ID of the status page
 	StatusPageId string `json:"status_page_id"`
@@ -1199,10 +1200,10 @@ type Team struct {
 // TeamInvitation An invitation to join a team
 type TeamInvitation struct {
 	// AcceptedAt When the invitation was accepted
-	AcceptedAt *time.Time `json:"accepted_at,omitempty"`
+	AcceptedAt nullable.Nullable[time.Time] `json:"accepted_at,omitempty"`
 
 	// AcceptedBy User who accepted the invitation
-	AcceptedBy *struct {
+	AcceptedBy nullable.Nullable[struct {
 		// Email User email
 		Email *string `json:"email,omitempty"`
 
@@ -1211,7 +1212,7 @@ type TeamInvitation struct {
 
 		// Name User name
 		Name *string `json:"name,omitempty"`
-	} `json:"accepted_by,omitempty"`
+	}] `json:"accepted_by,omitempty"`
 
 	// Admin Whether the invitation grants admin privileges
 	Admin bool `json:"admin"`
@@ -1220,7 +1221,7 @@ type TeamInvitation struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// CreatedBy User who created the invitation
-	CreatedBy *struct {
+	CreatedBy nullable.Nullable[struct {
 		// Email User email
 		Email *string `json:"email,omitempty"`
 
@@ -1229,7 +1230,7 @@ type TeamInvitation struct {
 
 		// Name User name
 		Name *string `json:"name,omitempty"`
-	} `json:"created_by,omitempty"`
+	}] `json:"created_by,omitempty"`
 
 	// Email Email address of the invitee
 	Email string `json:"email"`
@@ -1238,7 +1239,7 @@ type TeamInvitation struct {
 	Id string `json:"id"`
 
 	// Message Optional message included with the invitation
-	Message *string `json:"message,omitempty"`
+	Message nullable.Nullable[string] `json:"message,omitempty"`
 
 	// TeamId Public ID of the team
 	TeamId string `json:"team_id"`

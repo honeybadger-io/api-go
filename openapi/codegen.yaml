@@ -11,3 +11,4 @@ output-options:
   # Go-specific mappings live here, not in the producer spec.
   overlay:
     path: openapi/overlay.yaml
+  nullable-type: true

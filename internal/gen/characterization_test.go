@@ -27,28 +27,31 @@ func TestProjectIDIsOpaqueString(t *testing.T) {
 	}
 }
 
-// The design records that generated nullable fields cannot distinguish an
-// explicit null from an absent key. Stage 3 must not assume three-state
-// decoding. This test documents the limitation rather than asserting a fix.
-func TestNullAndAbsentAreIndistinguishable(t *testing.T) {
-	var explicitNull AccountInvitation
-	if err := json.Unmarshal([]byte(`{"accepted_at":null}`), &explicitNull); err != nil {
+// Fields that are optional but NOT nullable in the spec still generate as
+// plain pointers, and those conflate an explicit null with an absent key.
+//
+// Only properties declared `type: [T, "null"]` get nullable.Nullable[T] — see
+// TestNullableTypeDistinguishesNullFromAbsent. Project.token is optional with a
+// plain `type: string`, so it lands here. Stage 3 must not assume every
+// optional field carries three states; it depends on how the spec declares it.
+func TestOptionalNonNullableFieldsConflateNullAndAbsent(t *testing.T) {
+	var explicitNull Project
+	if err := json.Unmarshal([]byte(`{"token":null}`), &explicitNull); err != nil {
 		t.Fatalf("decoding explicit null: %v", err)
 	}
 
-	var absent AccountInvitation
+	var absent Project
 	if err := json.Unmarshal([]byte(`{}`), &absent); err != nil {
 		t.Fatalf("decoding absent field: %v", err)
 	}
 
-	if explicitNull.AcceptedAt != nil {
-		t.Errorf("explicit null gave non-nil %v; generator behavior changed", explicitNull.AcceptedAt)
+	if explicitNull.Token != nil {
+		t.Errorf("explicit null gave non-nil %v; generator behavior changed", *explicitNull.Token)
 	}
-	if absent.AcceptedAt != nil {
-		t.Errorf("absent gave non-nil %v", absent.AcceptedAt)
+	if absent.Token != nil {
+		t.Errorf("absent gave non-nil %v", *absent.Token)
 	}
-	// Both nil: the two cases are indistinguishable. If this ever fails,
-	// the generator gained three-state support and the design can be revisited.
+	// Both nil: indistinguishable for this class of field.
 }
 
 // The error envelope carries a machine-readable code. Stage 3's typed
