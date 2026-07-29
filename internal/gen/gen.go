@@ -1341,11 +1341,20 @@ type ProjectId = string
 // AmbiguousAccount API error response
 type AmbiguousAccount = Error
 
+// CredentialInQuery API error response
+type CredentialInQuery = Error
+
 // Forbidden API error response
 type Forbidden = Error
 
+// InsufficientScope API error response
+type InsufficientScope = Error
+
 // NotFound API error response
 type NotFound = Error
+
+// ProjectRestricted API error response
+type ProjectRestricted = Error
 
 // RateLimitExceeded API error response
 type RateLimitExceeded = Error
