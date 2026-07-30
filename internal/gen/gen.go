@@ -695,13 +695,7 @@ type Error struct {
 		Code ErrorErrorCode `json:"code"`
 
 		// Details Detailed validation errors (for validation_error)
-		Details *[]struct {
-			// Field Field name that failed validation
-			Field *string `json:"field,omitempty"`
-
-			// Message Validation error message
-			Message *string `json:"message,omitempty"`
-		} `json:"details,omitempty"`
+		Details *json.RawMessage `json:"details,omitempty"`
 
 		// Message Human-readable error message
 		Message string `json:"message"`
@@ -978,8 +972,8 @@ type Project struct {
 	// LastNoticeAt When the last error was received
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
 
-	// ProjectDisplayName Project name
-	ProjectDisplayName string `json:"name"`
+	// Name Project name
+	Name string `json:"name"`
 
 	// PurgeDays Data retention period in days
 	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`

@@ -58,26 +58,61 @@ func (r RateLimit) RetryAfter() time.Duration {
 // and the hook simply does not fire for those.
 type RequestIDHook func(ctx context.Context, status int, requestID string)
 
+// AccountMe is the account_id sentinel v3 resolves from the credential. It is
+// the default, which is why account ids do not appear in method signatures.
+//
+// It only resolves when the credential covers exactly one account. A credential
+// covering several returns 422 with code ambiguous_account; recover by listing
+// accounts and passing a concrete id through the AccountID option or
+// WithAccountID.
+const AccountMe = "me"
+
 // Client is a Honeybadger v3 API client. Construct it with NewClient and
 // configure it with the With* methods, which return the same client for
 // chaining.
 type Client struct {
-	baseURL     string
-	bearerToken string
-	httpClient  *http.Client
-	requestID   RequestIDHook
+	baseURL       string
+	bearerToken   string
+	httpClient    *http.Client
+	requestID     RequestIDHook
+	defaultAcctID string
 
 	mu        sync.RWMutex
 	rateLimit *RateLimit
+
+	// Projects handles the projects resource.
+	Projects *ProjectsService
 }
 
 // NewClient returns a client pointing at the production API with a 30 second
-// timeout.
+// timeout, resolving the account from the credential.
 func NewClient() *Client {
-	return &Client{
+	c := &Client{
 		baseURL:    DefaultBaseURL,
 		httpClient: &http.Client{Timeout: 30 * time.Second},
 	}
+	c.Projects = &ProjectsService{client: c}
+	return c
+}
+
+// WithAccountID sets the account every request uses, replacing the `me`
+// sentinel. Needed only for a credential covering more than one account; a
+// per-call AccountID option still takes precedence.
+func (c *Client) WithAccountID(id string) *Client {
+	c.defaultAcctID = id
+	return c
+}
+
+// accountID resolves which account a call should use: the per-call value, then
+// the client default, then the `me` sentinel.
+func (c *Client) accountID(perCall string) string {
+	if perCall != "" {
+		return perCall
+	}
+	if c.defaultAcctID != "" {
+		return c.defaultAcctID
+	}
+	return AccountMe
 }
 
 // WithBaseURL sets the API host. The version segment is optional: pass

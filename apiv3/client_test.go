@@ -50,8 +50,7 @@ func TestBearerTokenIsSent(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
 		gotPath = r.URL.Path
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(`{"data":[],"meta":{"request_id":"req_1"}}`))
+		writeJSON(w, 0, `{"data":[],"meta":{"request_id":"req_1"}}`)
 	}))
 	defer srv.Close()
 
@@ -75,7 +74,7 @@ func TestNoBasicAuthIsSent(t *testing.T) {
 	var gotAuth string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotAuth = r.Header.Get("Authorization")
-		_, _ = w.Write([]byte(`{"data":[]}`))
+		writeJSON(w, 0, `{"data":[]}`)
 	}))
 	defer srv.Close()
 
@@ -93,7 +92,7 @@ func TestRateLimitIsCaptured(t *testing.T) {
 		w.Header().Set("X-RateLimit-Limit", "360")
 		w.Header().Set("X-RateLimit-Remaining", "359")
 		w.Header().Set("X-RateLimit-Reset", "1784000000")
-		_, _ = w.Write([]byte(`{"data":[]}`))
+		writeJSON(w, 0, `{"data":[]}`)
 	}))
 	defer srv.Close()
 
@@ -118,7 +117,7 @@ func TestRateLimitIsCaptured(t *testing.T) {
 // not a header, and is absent on 204s and on operations with an empty meta.
 func TestRequestIDHookReceivesContext(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write([]byte(`{"data":[],"meta":{"request_id":"req_abc"}}`))
+		writeJSON(w, 0, `{"data":[],"meta":{"request_id":"req_abc"}}`)
 	}))
 	defer srv.Close()
 
