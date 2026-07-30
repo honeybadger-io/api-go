@@ -916,8 +916,8 @@ type Alarm struct {
 	// Error Error message if the alarm is in an error state
 	Error nullable.Nullable[string] `json:"error,omitempty"`
 
-	// EvaluationPeriod Evaluation period in seconds
-	EvaluationPeriod *int `json:"evaluation_period,omitempty"`
+	// EvaluationPeriod Window each evaluation covers, as a compact duration (5m, 10m, 1d).
+	EvaluationPeriod nullable.Nullable[string] `json:"evaluation_period,omitempty"`
 
 	// Id Alarm identifier (opticon observer root ID)
 	Id string `json:"id"`
@@ -925,8 +925,8 @@ type Alarm struct {
 	// LastCheckedAt When the alarm was last evaluated
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
-	// LookbackLag Lookback lag in seconds
-	LookbackLag *int `json:"lookback_lag,omitempty"`
+	// LookbackLag How far behind now the evaluation window ends. Same format as evaluation_period.
+	LookbackLag nullable.Nullable[string] `json:"lookback_lag,omitempty"`
 
 	// Name Alarm name
 	Name string `json:"name"`

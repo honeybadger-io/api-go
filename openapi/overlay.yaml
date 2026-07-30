@@ -97,10 +97,31 @@ actions:
   #
   # Same shape of error as the check-in periods, found the same way. AlarmCreateInput
   # already types query as a string, so the two halves of the spec disagree.
+  # evaluation_period and lookback_lag have the same problem in the other
+  # direction: declared integer, sent as the compact durations the API validates
+  # ("5m", "1d"). Spelling one out as "5 minutes" is rejected with
+  # `format is invalid`, so integer minutes was never the contract.
   - target: $.components.schemas.Alarm.properties.query
+    remove: true
+  - target: $.components.schemas.Alarm.properties.evaluation_period
+    remove: true
+  - target: $.components.schemas.Alarm.properties.lookback_lag
     remove: true
   - target: $.components.schemas.Alarm.properties
     update:
       query:
         type: string
         description: BadgerQL evaluated on each check
+      evaluation_period:
+        type:
+        - string
+        - 'null'
+        description: >-
+          Window each evaluation covers, as a compact duration (5m, 10m, 1d).
+      lookback_lag:
+        type:
+        - string
+        - 'null'
+        description: >-
+          How far behind now the evaluation window ends. Same format as
+          evaluation_period.
