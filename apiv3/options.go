@@ -1,5 +1,7 @@
 package apiv3
 
+import "github.com/honeybadger-io/api-go/internal/gen"
+
 // Option configures a single request. Options are variadic, so the common call
 // carries none:
 //
@@ -34,6 +36,36 @@ type requestOptions struct {
 	before    string
 	after     string
 	query     string
+}
+
+// applyOffset fills in offset paging params, leaving them nil when unset so the
+// API applies its own defaults rather than receiving page=0.
+func (ro requestOptions) applyOffset(page **gen.Page, perPage **gen.PerPage) {
+	if ro.page > 0 {
+		p := gen.Page(ro.page)
+		*page = &p
+	}
+	if ro.perPage > 0 {
+		pp := gen.PerPage(ro.perPage)
+		*perPage = &pp
+	}
+}
+
+// applyTimeSeries fills in time-ordered paging params, with the same
+// leave-it-nil rule.
+func (ro requestOptions) applyTimeSeries(limit **gen.Limit, before **gen.Before, after **gen.After) {
+	if ro.limit > 0 {
+		l := gen.Limit(ro.limit)
+		*limit = &l
+	}
+	if ro.before != "" {
+		b := gen.Before(ro.before)
+		*before = &b
+	}
+	if ro.after != "" {
+		a := gen.After(ro.after)
+		*after = &a
+	}
 }
 
 func resolve(opts []Option) requestOptions {

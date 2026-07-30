@@ -64,20 +64,9 @@ func (t *TokenInfo) HasScope(scope string) bool {
 //   - Gating features ahead of a 403: Scopes lets a caller check what is
 //     permitted rather than discovering it from a refusal.
 func (s *TokensService) Get(ctx context.Context) (*TokenInfo, error) {
-	var status int
-	body, err := s.client.do(ctx, func() (*http.Response, error) {
-		resp, err := s.client.gen().GetToken(ctx)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// Hand-decoded rather than reusing decodeSingle: the generated model for this
-	// response is an anonymous struct, so there is no named type to decode into.
+	// Decoded into a local type rather than the generated one: the generated model
+	// for this response is an anonymous struct, so there is no named type to
+	// decode into.
 	type payload struct {
 		Kind       string   `json:"kind"`
 		Name       *string  `json:"name"`
@@ -87,7 +76,9 @@ func (s *TokensService) Get(ctx context.Context) (*TokenInfo, error) {
 		ExpiresAt  *string  `json:"expires_at"`
 		LastUsedAt *string  `json:"last_used_at"`
 	}
-	data, err := decodeSingle[payload](status, body)
+	data, err := getOne[payload](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().GetToken(ctx)
+	})
 	if err != nil {
 		return nil, err
 	}

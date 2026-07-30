@@ -72,13 +72,8 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 		body.Timezone = &q.Timezone
 	}
 
-	var status int
-	raw, err := s.client.do(ctx, func() (*http.Response, error) {
-		resp, err := s.client.gen().RunInsightsQuery(ctx, s.client.accountID(ro.accountID), projectID, body)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
+	status, raw, err := s.client.do(ctx, func() (*http.Response, error) {
+		return s.client.gen().RunInsightsQuery(ctx, s.client.accountID(ro.accountID), projectID, body)
 	})
 	if err != nil {
 		return nil, err
@@ -112,33 +107,16 @@ func (s *InsightsService) ListStreams(ctx context.Context, projectID string, opt
 func (s *InsightsService) ListAllStreams(ctx context.Context, projectID string, opts ...ListAllOption) ([]Stream, error) {
 	ro := resolveListAll(opts)
 	return CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[Stream], error) {
-		pageOpts := ro
-		pageOpts.page = page
-		return s.listStreams(ctx, projectID, pageOpts)
+		ro.page = page
+		return s.listStreams(ctx, projectID, ro)
 	})
 }
 
 func (s *InsightsService) listStreams(ctx context.Context, projectID string, ro requestOptions) (*ListResponse[Stream], error) {
 	params := &gen.ListStreamsParams{}
-	if ro.page > 0 {
-		page := gen.Page(ro.page)
-		params.Page = &page
-	}
-	if ro.perPage > 0 {
-		perPage := gen.PerPage(ro.perPage)
-		params.PerPage = &perPage
-	}
+	ro.applyOffset(&params.Page, &params.PerPage)
 
-	var status int
-	body, err := s.client.do(ctx, func() (*http.Response, error) {
-		resp, err := s.client.gen().ListStreams(ctx, s.client.accountID(ro.accountID), projectID, params)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
+	return listOffset[Stream](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().ListStreams(ctx, s.client.accountID(ro.accountID), projectID, params)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return decodeOffsetList[Stream](status, body)
 }

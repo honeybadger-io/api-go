@@ -269,10 +269,10 @@ func (c *Client) authorize(ctx context.Context, req *http.Request) error {
 // losing the status, the body, the request id, and this package's typed errors.
 // Reading the response here keeps all of it, buffers the body exactly once, and
 // takes the rate-limit snapshot from the very response being reported on.
-func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) ([]byte, error) {
+func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int, []byte, error) {
 	resp, err := op()
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	defer func() {
 		_, _ = io.Copy(io.Discard, resp.Body)
@@ -293,7 +293,7 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) ([]b
 		apiErr := parseError(resp.StatusCode, body)
 		apiErr.Message = "reading response body: " + readErr.Error()
 		apiErr.RateLimit = rateLimit
-		return nil, apiErr
+		return resp.StatusCode, nil, apiErr
 	}
 
 	c.reportRequestID(ctx, resp.StatusCode, body)
@@ -301,9 +301,9 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) ([]b
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		apiErr := parseError(resp.StatusCode, body)
 		apiErr.RateLimit = rateLimit
-		return nil, apiErr
+		return resp.StatusCode, nil, apiErr
 	}
-	return body, nil
+	return resp.StatusCode, body, nil
 }
 
 // reportRequestID hands the body's request_id to the hook, if there is one and

@@ -23,8 +23,7 @@ func followTimeSeries[T any](ctx context.Context, c *Client, link string) (*List
 		return nil, err
 	}
 
-	var status int
-	body, err := c.do(ctx, func() (*http.Response, error) {
+	return listTimeSeries[T](ctx, c, func() (*http.Response, error) {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
 		if err != nil {
 			return nil, err
@@ -33,16 +32,8 @@ func followTimeSeries[T any](ctx context.Context, c *Client, link string) (*List
 		if err := c.authorize(ctx, req); err != nil {
 			return nil, err
 		}
-		resp, err := c.httpClient.Do(req)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
+		return c.httpClient.Do(req)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return decodeTimeSeriesList[T](status, body)
 }
 
 // validateLink resolves a navigation link and confirms it addresses the same

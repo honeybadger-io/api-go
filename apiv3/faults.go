@@ -31,56 +31,29 @@ func (s *FaultsService) List(ctx context.Context, projectID string, opts ...Opti
 func (s *FaultsService) ListAll(ctx context.Context, projectID string, opts ...ListAllOption) ([]Fault, error) {
 	ro := resolveListAll(opts)
 	return CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[Fault], error) {
-		pageOpts := ro
-		pageOpts.page = page
-		return s.list(ctx, projectID, pageOpts)
+		ro.page = page
+		return s.list(ctx, projectID, ro)
 	})
 }
 
 func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOptions) (*ListResponse[Fault], error) {
 	params := &gen.ListFaultsParams{}
+	ro.applyOffset(&params.Page, &params.PerPage)
 	if ro.query != "" {
 		params.Q = &ro.query
 	}
-	if ro.page > 0 {
-		page := gen.Page(ro.page)
-		params.Page = &page
-	}
-	if ro.perPage > 0 {
-		perPage := gen.PerPage(ro.perPage)
-		params.PerPage = &perPage
-	}
 
-	var status int
-	body, err := s.client.do(ctx, func() (*http.Response, error) {
-		resp, err := s.client.gen().ListFaults(ctx, s.client.accountID(ro.accountID), projectID, params)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
+	return listOffset[Fault](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().ListFaults(ctx, s.client.accountID(ro.accountID), projectID, params)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return decodeOffsetList[Fault](status, body)
 }
 
 // Get returns a single fault.
 func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts ...Option) (*Fault, error) {
 	ro := resolve(opts)
-
-	var status int
-	body, err := s.client.do(ctx, func() (*http.Response, error) {
-		resp, err := s.client.gen().GetFault(ctx, s.client.accountID(ro.accountID), projectID, faultID)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
+	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().GetFault(ctx, s.client.accountID(ro.accountID), projectID, faultID)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return decodeSingle[Fault](status, body)
 }
 
 // ListNotices returns one page of a fault's notices, newest first. Use Limit to
@@ -96,9 +69,9 @@ func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID stri
 // collections that page on a timestamp.
 func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID string, opts ...ListAllOption) ([]Notice, error) {
 	ro := resolveListAll(opts)
-	return CollectTimeSeries(ctx, func(ctx context.Context, url string) (*ListResponse[Notice], error) {
-		if url != "" {
-			return followTimeSeries[Notice](ctx, s.client, url)
+	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[Notice], error) {
+		if link != "" {
+			return followTimeSeries[Notice](ctx, s.client, link)
 		}
 		return s.listNotices(ctx, projectID, faultID, ro)
 	})
@@ -106,29 +79,9 @@ func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID s
 
 func (s *FaultsService) listNotices(ctx context.Context, projectID, faultID string, ro requestOptions) (*ListResponse[Notice], error) {
 	params := &gen.ListNoticesParams{}
-	if ro.limit > 0 {
-		limit := gen.Limit(ro.limit)
-		params.Limit = &limit
-	}
-	if ro.before != "" {
-		before := gen.Before(ro.before)
-		params.Before = &before
-	}
-	if ro.after != "" {
-		after := gen.After(ro.after)
-		params.After = &after
-	}
+	ro.applyTimeSeries(&params.Limit, &params.Before, &params.After)
 
-	var status int
-	body, err := s.client.do(ctx, func() (*http.Response, error) {
-		resp, err := s.client.gen().ListNotices(ctx, s.client.accountID(ro.accountID), projectID, faultID, params)
-		if resp != nil {
-			status = resp.StatusCode
-		}
-		return resp, err
+	return listTimeSeries[Notice](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().ListNotices(ctx, s.client.accountID(ro.accountID), projectID, faultID, params)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return decodeTimeSeriesList[Notice](status, body)
 }
