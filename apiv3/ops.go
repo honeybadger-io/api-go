@@ -32,6 +32,15 @@ func listOffset[T any](ctx context.Context, c *Client, op operation) (*ListRespo
 	return decodeOffsetList[T](status, body)
 }
 
+// noContent runs an operation that returns 204 with no body: deletes, and the
+// pause/resume toggles. Decoding is skipped rather than attempted, since an
+// empty body is the documented success case here and would otherwise look
+// malformed.
+func noContent(ctx context.Context, c *Client, op operation) error {
+	_, _, err := c.do(ctx, op)
+	return err
+}
+
 // listTimeSeries runs an operation returning a time-ordered collection.
 func listTimeSeries[T any](ctx context.Context, c *Client, op operation) (*ListResponse[T], error) {
 	status, body, err := c.do(ctx, op)
