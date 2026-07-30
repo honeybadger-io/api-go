@@ -42,7 +42,7 @@ func TestMeReachesTheRequestPath(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	if _, err := c.Projects.List(context.Background(), ProjectListOptions{}); err != nil {
+	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("List: %v", err)
 	}
 	if want := "/v3/accounts/me/projects"; gotPath != want {
@@ -59,7 +59,7 @@ func TestExplicitAccountReachesTheRequestPath(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Projects.List(context.Background(), ProjectListOptions{AccountID: "Ab3kL9"})
+	_, err := c.Projects.List(context.Background(), InAccount("Ab3kL9"))
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
@@ -77,7 +77,7 @@ func TestAmbiguousAccountIsTyped(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Projects.List(context.Background(), ProjectListOptions{})
+	_, err := c.Projects.List(context.Background())
 	if err == nil {
 		t.Fatal("want an error for a 422 ambiguous_account")
 	}

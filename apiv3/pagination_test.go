@@ -90,23 +90,49 @@ func TestCollectPagesPropagatesError(t *testing.T) {
 	}
 }
 
-// An empty page ends the walk even when the counts claim more, so a
-// miscounted total_pages cannot spin forever.
-func TestCollectPagesStopsOnEmptyPage(t *testing.T) {
-	calls := 0
+// An empty page while the metadata promises more is a server inconsistency.
+// Returning the partial result would look like a complete collection, which is
+// the worst outcome for a caller counting or summarising it.
+func TestCollectPagesRejectsEmptyPageWhenMorePromised(t *testing.T) {
 	fetch := func(ctx context.Context, page int) (*ListResponse[string], error) {
-		calls++
 		if page == 1 {
 			return offsetPage([]string{"a"}, 1, 1, 100), nil
 		}
 		return offsetPage(nil, page, 1, 100), nil
 	}
+	_, err := CollectPages(context.Background(), fetch)
+	if !errors.Is(err, ErrPaginationInconsistent) {
+		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
+	}
+}
+
+// An empty final page is fine: nothing more was promised.
+func TestCollectPagesAcceptsEmptyFinalPage(t *testing.T) {
+	fetch := func(ctx context.Context, page int) (*ListResponse[string], error) {
+		if page == 1 {
+			return offsetPage([]string{"a"}, 1, 1, 1), nil
+		}
+		t.Fatalf("fetched page %d past the end", page)
+		return nil, nil
+	}
 	got, err := CollectPages(context.Background(), fetch)
 	if err != nil {
 		t.Fatalf("CollectPages: %v", err)
 	}
-	if len(got) != 1 || calls != 2 {
-		t.Errorf("got %v after %d calls, want 1 item after 2 calls", got, calls)
+	if len(got) != 1 {
+		t.Errorf("got %v, want 1 item", got)
+	}
+}
+
+// A server stuck on page 1 would otherwise duplicate that page and then report
+// success with the rest missing.
+func TestCollectPagesRejectsNonAdvancingPage(t *testing.T) {
+	fetch := func(ctx context.Context, page int) (*ListResponse[string], error) {
+		return offsetPage([]string{"a"}, 1, 1, 10), nil // always says page 1
+	}
+	_, err := CollectPages(context.Background(), fetch)
+	if !errors.Is(err, ErrPaginationInconsistent) {
+		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
 	}
 }
 
@@ -170,25 +196,34 @@ func TestCollectCursorWalksBackwards(t *testing.T) {
 	}
 }
 
-// has_older true but no cursor to follow is a dead end, not a loop.
-func TestCollectCursorStopsWhenCursorMissing(t *testing.T) {
-	calls := 0
+// has_older says data remains, so a missing cursor means it is unreachable.
+// Stopping quietly would drop it without telling anyone.
+func TestCollectCursorRejectsMissingCursor(t *testing.T) {
 	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
-		calls++
 		return cursorPage([]string{"n1"}, true, ""), nil
 	}
-	got, err := CollectCursor(context.Background(), fetch)
-	if err != nil {
-		t.Fatalf("CollectCursor: %v", err)
-	}
-	if len(got) != 1 || calls != 1 {
-		t.Errorf("got %v after %d calls, want 1 item after 1 call", got, calls)
+	_, err := CollectCursor(context.Background(), fetch)
+	if !errors.Is(err, ErrPaginationInconsistent) {
+		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
 	}
 }
 
-// An explicit null cursor is the same dead end as an absent one. Worth its own
-// test because nullable.Nullable distinguishes the two and the walk must not.
-func TestCollectCursorStopsOnNullCursor(t *testing.T) {
+// A repeated cursor would loop, re-requesting the same page and appending
+// duplicates until the hard cap.
+func TestCollectCursorRejectsRepeatedCursor(t *testing.T) {
+	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
+		return cursorPage([]string{"n1"}, true, "same"), nil
+	}
+	_, err := CollectCursor(context.Background(), fetch)
+	if !errors.Is(err, ErrPaginationInconsistent) {
+		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
+	}
+}
+
+// An explicit null cursor is the same unreachable state as an absent one. Worth
+// its own test because nullable.Nullable distinguishes them and the walk must
+// treat both as inconsistent when has_older is set.
+func TestCollectCursorRejectsNullCursor(t *testing.T) {
 	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
 		return &ListResponse[string]{
 			Data: []string{"n1"},
@@ -197,6 +232,17 @@ func TestCollectCursorStopsOnNullCursor(t *testing.T) {
 				OldestCursor: nullable.NewNullNullable[string](),
 			},
 		}, nil
+	}
+	_, err := CollectCursor(context.Background(), fetch)
+	if !errors.Is(err, ErrPaginationInconsistent) {
+		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
+	}
+}
+
+// has_older false with a null cursor is the normal end of a walk.
+func TestCollectCursorStopsCleanlyAtEnd(t *testing.T) {
+	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
+		return cursorPage([]string{"n1"}, false, ""), nil
 	}
 	got, err := CollectCursor(context.Background(), fetch)
 	if err != nil {
@@ -207,6 +253,8 @@ func TestCollectCursorStopsOnNullCursor(t *testing.T) {
 	}
 }
 
+// Unique cursors forever: the repeated-cursor guard cannot catch this, so the
+// hard cap is what stops it.
 func TestCollectCursorEnforcesHardCap(t *testing.T) {
 	i := 0
 	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {

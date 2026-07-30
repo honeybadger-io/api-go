@@ -1,9 +1,7 @@
 // Package apiv3 is a client for the Honeybadger v3 API.
 //
 // It wraps generated code (internal/gen) with a hand-written surface: auth,
-// pagination, typed errors, and account handling. The generated layer is
-// private on purpose — its shape follows the OpenAPI bundle and is not a stable
-// API.
+// pagination, typed errors, and account handling.
 //
 // v3 rejects Honeybadger's older personal auth tokens. The accepted credentials
 // are scoped API tokens (`hbt_` personal, `hba_` account) and OAuth access
@@ -32,8 +30,22 @@ const DefaultBaseURL = "https://app.honeybadger.io/v3"
 
 const versionSegment = "/v3"
 
-// RateLimit is a snapshot of the rate-limit headers from the most recent
-// response. v3 allows 360 requests per hour.
+// maxBodyBytes caps how much of a response body is read. The largest documented
+// payloads are notice backtraces and Insights results, none of which approach
+// this. A body beyond it is a malfunction, and reading it unbounded would let a
+// single response exhaust memory.
+const maxBodyBytes = 64 << 20 // 64 MiB
+
+// AccountMe is the account_id sentinel v3 resolves from the credential. It is
+// the default, which is why account ids do not appear in method signatures.
+//
+// It only resolves when the credential covers exactly one account. A credential
+// covering several returns 422 with code ambiguous_account; recover by listing
+// accounts and passing a concrete id through InAccount or WithAccountID.
+const AccountMe = "me"
+
+// RateLimit is a snapshot of the rate-limit headers from a response. v3 allows
+// 360 requests per hour.
 type RateLimit struct {
 	Limit     int
 	Remaining int
@@ -58,18 +70,17 @@ func (r RateLimit) RetryAfter() time.Duration {
 // and the hook simply does not fire for those.
 type RequestIDHook func(ctx context.Context, status int, requestID string)
 
-// AccountMe is the account_id sentinel v3 resolves from the credential. It is
-// the default, which is why account ids do not appear in method signatures.
+// Client is a Honeybadger v3 API client.
 //
-// It only resolves when the credential covers exactly one account. A credential
-// covering several returns 422 with code ambiguous_account; recover by listing
-// accounts and passing a concrete id through the AccountID option or
-// WithAccountID.
-const AccountMe = "me"
-
-// Client is a Honeybadger v3 API client. Construct it with NewClient and
-// configure it with the With* methods, which return the same client for
-// chaining.
+// A Client is immutable once constructed. The With* methods each return a new
+// Client rather than modifying the receiver, so a configured client is safe to
+// share across goroutines and cannot have its credential changed underneath an
+// in-flight request. Build per-credential clients by chaining from a base:
+//
+//	base := apiv3.NewClient().WithBaseURL(apiURL)
+//	perRequest := base.WithBearerToken(tokenFromRequest)
+//
+// Both clients above are independent; configuring one never affects the other.
 type Client struct {
 	baseURL       string
 	bearerToken   string
@@ -77,6 +88,10 @@ type Client struct {
 	requestID     RequestIDHook
 	defaultAcctID string
 
+	// rateLimit is the only mutable state, and it is observational: it records
+	// the most recent response's headers for callers that want to check their
+	// budget. Errors carry their own snapshot, taken from the exact response
+	// that failed, so this is never used to explain a specific failure.
 	mu        sync.RWMutex
 	rateLimit *RateLimit
 
@@ -90,21 +105,85 @@ type Client struct {
 // NewClient returns a client pointing at the production API with a 30 second
 // timeout, resolving the account from the credential.
 func NewClient() *Client {
-	c := &Client{
+	return (&Client{
 		baseURL:    DefaultBaseURL,
 		httpClient: &http.Client{Timeout: 30 * time.Second},
+	}).rebind()
+}
+
+// clone copies the configuration into a fresh Client with its own services and
+// its own rate-limit state. Observational state is deliberately not carried
+// over: a differently-configured client, often a different credential, has a
+// different budget.
+func (c *Client) clone() *Client {
+	copied := &Client{
+		baseURL:       c.baseURL,
+		bearerToken:   c.bearerToken,
+		httpClient:    c.httpClient,
+		requestID:     c.requestID,
+		defaultAcctID: c.defaultAcctID,
 	}
+	return copied.rebind()
+}
+
+// rebind points the service structs at this client. Every constructor and
+// clone must call it, or a service would keep serving the client it came from.
+func (c *Client) rebind() *Client {
 	c.Projects = &ProjectsService{client: c}
 	c.Faults = &FaultsService{client: c}
 	return c
 }
 
-// WithAccountID sets the account every request uses, replacing the `me`
-// sentinel. Needed only for a credential covering more than one account; a
-// per-call AccountID option still takes precedence.
+// WithBaseURL returns a client using the given API host. The version segment is
+// optional: "https://app.honeybadger.io" and "https://app.honeybadger.io/v3"
+// behave identically. Omitting it matches the v2 client and the MCP server's
+// HONEYBADGER_API_URL.
+func (c *Client) WithBaseURL(baseURL string) *Client {
+	next := c.clone()
+	next.baseURL = baseURL
+	return next
+}
+
+// WithBearerToken returns a client using the given credential, sent as
+// `Authorization: Bearer <token>`.
+//
+// Accepts a scoped API token (`hbt_` or `hba_`) or an OAuth access token. There
+// is deliberately no Basic-auth equivalent: v3's documented challenge is
+// `WWW-Authenticate: Bearer`, and a single credential path keeps authorization
+// decisions in one place.
+func (c *Client) WithBearerToken(token string) *Client {
+	next := c.clone()
+	next.bearerToken = token
+	return next
+}
+
+// WithHTTPClient returns a client using the given HTTP client, for callers that
+// need their own transport, timeout, or instrumentation. A nil argument is
+// ignored, keeping the existing client rather than panicking on first use.
+func (c *Client) WithHTTPClient(hc *http.Client) *Client {
+	if hc == nil {
+		return c
+	}
+	next := c.clone()
+	next.httpClient = hc
+	return next
+}
+
+// WithRequestIDHook returns a client that reports the request_id from response
+// bodies. Useful for logging an identifier Honeybadger support can correlate.
+func (c *Client) WithRequestIDHook(hook RequestIDHook) *Client {
+	next := c.clone()
+	next.requestID = hook
+	return next
+}
+
+// WithAccountID returns a client that uses the given account for every request,
+// replacing the `me` sentinel. Needed only for a credential covering more than
+// one account; a per-call InAccount option still takes precedence.
 func (c *Client) WithAccountID(id string) *Client {
-	c.defaultAcctID = id
-	return c
+	next := c.clone()
+	next.defaultAcctID = id
+	return next
 }
 
 // accountID resolves which account a call should use: the per-call value, then
@@ -119,42 +198,12 @@ func (c *Client) accountID(perCall string) string {
 	return AccountMe
 }
 
-// WithBaseURL sets the API host. The version segment is optional: pass
-// "https://app.honeybadger.io" or "https://app.honeybadger.io/v3" and the
-// result is the same. Omitting it matches the v2 client and the MCP server's
-// HONEYBADGER_API_URL.
-func (c *Client) WithBaseURL(baseURL string) *Client {
-	c.baseURL = baseURL
-	return c
-}
-
-// WithBearerToken sets the credential, sent as `Authorization: Bearer <token>`.
-//
-// Accepts a scoped API token (`hbt_` or `hba_`) or an OAuth access token. There
-// is deliberately no Basic-auth equivalent: v3's documented challenge is
-// `WWW-Authenticate: Bearer`, and a single credential path keeps authorization
-// decisions in one place.
-func (c *Client) WithBearerToken(token string) *Client {
-	c.bearerToken = token
-	return c
-}
-
-// WithHTTPClient replaces the underlying HTTP client, for callers that need
-// their own transport, timeout, or instrumentation.
-func (c *Client) WithHTTPClient(hc *http.Client) *Client {
-	c.httpClient = hc
-	return c
-}
-
-// WithRequestIDHook registers a callback for the request_id in response bodies.
-// Useful for logging an identifier that Honeybadger support can correlate.
-func (c *Client) WithRequestIDHook(hook RequestIDHook) *Client {
-	c.requestID = hook
-	return c
-}
-
 // LastRateLimit returns a snapshot of the rate-limit headers from the most
-// recent response, or nil if no response has carried them yet.
+// recent response, or nil if no response has carried them.
+//
+// This is a budget indicator, not an explanation of any particular call. To
+// learn why one request was throttled, read Error.RateLimit, which is taken
+// from that request's own response.
 func (c *Client) LastRateLimit() *RateLimit {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
@@ -176,13 +225,13 @@ func (c *Client) serverURL() string {
 
 // gen builds a generated client bound to this client's transport and auth.
 //
-// It is constructed per call rather than cached because With* methods may run
-// in any order, and a cached client would capture a stale base URL or token.
-// Construction only assembles structs; it performs no I/O.
+// Constructed per call rather than cached: construction only assembles structs
+// and performs no I/O, and because the Client is immutable, every call sees a
+// coherent configuration.
 func (c *Client) gen() *gen.ClientWithResponses {
 	client, err := gen.NewClientWithResponses(
 		c.serverURL(),
-		gen.WithHTTPClient(&observer{client: c}),
+		gen.WithHTTPClient(c.httpClient),
 		gen.WithRequestEditorFn(c.authorize),
 	)
 	if err != nil {
@@ -204,56 +253,57 @@ func (c *Client) authorize(ctx context.Context, req *http.Request) error {
 	return nil
 }
 
-// observer wraps the HTTP client so responses can be inspected for rate-limit
-// headers and request ids. The generated code only exposes a request editor
-// hook, which cannot see responses.
-type observer struct {
-	client *Client
-}
-
-func (o *observer) Do(req *http.Request) (*http.Response, error) {
-	resp, err := o.client.httpClient.Do(req)
+// do runs a generated operation and returns its body.
+//
+// The facade deliberately calls the raw generated operations rather than their
+// *WithResponse wrappers. Those wrappers decode eagerly and, when a body does
+// not parse, return a bare json.SyntaxError with the response discarded —
+// losing the status, the body, the request id, and this package's typed errors.
+// Reading the response here keeps all of it, buffers the body exactly once, and
+// takes the rate-limit snapshot from the very response being reported on.
+func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) ([]byte, error) {
+	resp, err := op()
 	if err != nil {
 		return nil, err
 	}
-	o.client.recordRateLimit(resp)
-	o.client.reportRequestID(req.Context(), resp)
-	return resp, nil
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		_ = resp.Body.Close()
+	}()
+
+	rateLimit := readRateLimit(resp)
+	if rateLimit != nil {
+		c.mu.Lock()
+		c.rateLimit = rateLimit
+		c.mu.Unlock()
+	}
+
+	body, readErr := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes))
+	if readErr != nil {
+		// A truncated body must not be mistaken for a short one. Report the read
+		// failure with the status attached, rather than decoding what arrived.
+		apiErr := parseError(resp.StatusCode, body)
+		apiErr.Message = "reading response body: " + readErr.Error()
+		apiErr.RateLimit = rateLimit
+		return nil, apiErr
+	}
+
+	c.reportRequestID(ctx, resp.StatusCode, body)
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		apiErr := parseError(resp.StatusCode, body)
+		apiErr.RateLimit = rateLimit
+		return nil, apiErr
+	}
+	return body, nil
 }
 
-func (c *Client) recordRateLimit(resp *http.Response) {
-	limit, okLimit := atoiHeader(resp, "X-RateLimit-Limit")
-	remaining, okRemaining := atoiHeader(resp, "X-RateLimit-Remaining")
-	reset, okReset := atoiHeader(resp, "X-RateLimit-Reset")
-	if !okLimit && !okRemaining && !okReset {
+// reportRequestID hands the body's request_id to the hook, if there is one and
+// the body carries one.
+func (c *Client) reportRequestID(ctx context.Context, status int, body []byte) {
+	if c.requestID == nil || len(body) == 0 {
 		return
 	}
-
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	c.rateLimit = &RateLimit{
-		Limit:     limit,
-		Remaining: remaining,
-		Reset:     time.Unix(int64(reset), 0),
-	}
-}
-
-// reportRequestID reads request_id out of the response body and hands it to the
-// hook. The body is fully buffered and replaced, so the generated decoder still
-// sees it — generated code reads the body itself, and consuming it here without
-// restoring it would break every response.
-func (c *Client) reportRequestID(ctx context.Context, resp *http.Response) {
-	if c.requestID == nil || resp.Body == nil {
-		return
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	_ = resp.Body.Close()
-	resp.Body = io.NopCloser(strings.NewReader(string(body)))
-	if err != nil || len(body) == 0 {
-		return
-	}
-
 	var envelope struct {
 		Meta struct {
 			RequestID string `json:"request_id"`
@@ -262,7 +312,21 @@ func (c *Client) reportRequestID(ctx context.Context, resp *http.Response) {
 	if json.Unmarshal(body, &envelope) != nil || envelope.Meta.RequestID == "" {
 		return
 	}
-	c.requestID(ctx, resp.StatusCode, envelope.Meta.RequestID)
+	c.requestID(ctx, status, envelope.Meta.RequestID)
+}
+
+func readRateLimit(resp *http.Response) *RateLimit {
+	limit, okLimit := atoiHeader(resp, "X-RateLimit-Limit")
+	remaining, okRemaining := atoiHeader(resp, "X-RateLimit-Remaining")
+	reset, okReset := atoiHeader(resp, "X-RateLimit-Reset")
+	if !okLimit && !okRemaining && !okReset {
+		return nil
+	}
+	return &RateLimit{
+		Limit:     limit,
+		Remaining: remaining,
+		Reset:     time.Unix(int64(reset), 0),
+	}
 }
 
 func atoiHeader(resp *http.Response, name string) (int, bool) {

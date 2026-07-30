@@ -14,8 +14,8 @@ import (
 // hand-written copy that can drift.
 type Pagination = gen.Pagination
 
-// CursorPagination is cursor-based pagination, used by time-series endpoints
-// such as notices, comments, and deploys.
+// CursorPagination is opaque-cursor pagination, used by time-series endpoints
+// such as notices, comments, and deploys. Walk it with CollectCursor.
 type CursorPagination = gen.CursorPagination
 
 // maxPages bounds any pagination walk. Nothing legitimate needs this many
@@ -24,14 +24,26 @@ type CursorPagination = gen.CursorPagination
 // failing.
 const maxPages = 500
 
-// ErrTooManyPages is returned when a pagination walk exceeds maxPages, which
-// indicates the server never signalled the end of the collection.
-var ErrTooManyPages = errors.New("apiv3: pagination exceeded " + fmt.Sprint(maxPages) + " pages")
+var (
+	// ErrTooManyPages is returned when a walk exceeds maxPages, which means the
+	// server never signalled the end of the collection.
+	ErrTooManyPages = errors.New("apiv3: pagination exceeded " + fmt.Sprint(maxPages) + " pages")
+
+	// ErrPaginationInconsistent is returned when a server's pagination metadata
+	// contradicts itself: a page number that does not advance, a repeated
+	// cursor, an empty page while more are promised, or more items promised with
+	// no cursor to reach them.
+	//
+	// These are reported rather than absorbed. Absorbing them means returning a
+	// partial collection that looks complete, which is the worst outcome for a
+	// caller summarising or counting the results.
+	ErrPaginationInconsistent = errors.New("apiv3: server pagination metadata is inconsistent")
+)
 
 // ListResponse is one page of a collection.
 //
-// Exactly one of Pagination and Cursor is set, depending on which scheme the
-// endpoint uses. Both may be nil for an endpoint that returns a bare collection.
+// Exactly one of Pagination and Cursor is set, depending on the endpoint's
+// scheme. Both are nil for an endpoint that returns a bare collection.
 type ListResponse[T any] struct {
 	Data      []T
 	Links     map[string]any
@@ -53,9 +65,8 @@ type CursorFetcher[T any] func(ctx context.Context, before string) (*ListRespons
 
 // CollectPages walks an offset-paginated endpoint and returns every item.
 //
-// It stops at the last page reported by the server, or early if a page comes
-// back empty — a defence against an inconsistent total_pages. Errors from fetch
-// are returned as-is, so errors.Is against the apiv3 sentinels still works.
+// It reports ErrPaginationInconsistent rather than returning a partial result
+// when the server's metadata does not add up.
 func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error) {
 	var all []T
 
@@ -71,16 +82,34 @@ func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error)
 		if err != nil {
 			return nil, err
 		}
-		if resp == nil || len(resp.Data) == 0 {
+		if resp == nil {
+			return all, nil
+		}
+
+		// No pagination block means the endpoint returned everything at once.
+		if resp.Pagination == nil {
+			return append(all, resp.Data...), nil
+		}
+
+		// The server must be answering the page that was asked for. A server
+		// that keeps returning page 1 would otherwise duplicate that page and
+		// then report success with the rest missing.
+		if resp.Pagination.Page != 0 && resp.Pagination.Page != page {
+			return nil, fmt.Errorf("%w: requested page %d, server returned page %d",
+				ErrPaginationInconsistent, page, resp.Pagination.Page)
+		}
+
+		morePromised := page < resp.Pagination.TotalPages
+		if len(resp.Data) == 0 {
+			if morePromised {
+				return nil, fmt.Errorf("%w: page %d of %d was empty",
+					ErrPaginationInconsistent, page, resp.Pagination.TotalPages)
+			}
 			return all, nil
 		}
 		all = append(all, resp.Data...)
 
-		// No pagination block means the endpoint returned everything at once.
-		if resp.Pagination == nil {
-			return all, nil
-		}
-		if page >= resp.Pagination.TotalPages {
+		if !morePromised {
 			return all, nil
 		}
 	}
@@ -89,12 +118,13 @@ func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error)
 // CollectCursor walks a cursor-paginated endpoint from newest to oldest and
 // returns every item.
 //
-// It stops when the server reports no older items, or when it reports more but
-// supplies no cursor to reach them — an explicit null and an absent cursor are
-// both dead ends.
+// Like CollectPages, it reports inconsistency rather than truncating: a server
+// that promises older items but supplies no cursor, or repeats one, is a bug
+// worth surfacing.
 func CollectCursor[T any](ctx context.Context, fetch CursorFetcher[T]) ([]T, error) {
 	var all []T
 	before := ""
+	seen := make(map[string]bool)
 
 	for i := 0; ; i++ {
 		if err := ctx.Err(); err != nil {
@@ -108,7 +138,7 @@ func CollectCursor[T any](ctx context.Context, fetch CursorFetcher[T]) ([]T, err
 		if err != nil {
 			return nil, err
 		}
-		if resp == nil || len(resp.Data) == 0 {
+		if resp == nil {
 			return all, nil
 		}
 		all = append(all, resp.Data...)
@@ -116,12 +146,19 @@ func CollectCursor[T any](ctx context.Context, fetch CursorFetcher[T]) ([]T, err
 		if resp.Cursor == nil || !resp.Cursor.HasOlder {
 			return all, nil
 		}
-		// Get reports an error when the cursor is null or unspecified; both mean
-		// there is nothing further to follow.
+
+		// has_older says more data exists, so a missing or null cursor leaves no
+		// way to reach it. Silently stopping here would drop that data without
+		// telling anyone.
 		next, err := resp.Cursor.OldestCursor.Get()
 		if err != nil || next == "" {
-			return all, nil
+			return nil, fmt.Errorf("%w: has_older is true but oldest_cursor is absent or null",
+				ErrPaginationInconsistent)
 		}
+		if seen[next] {
+			return nil, fmt.Errorf("%w: cursor %q was returned twice", ErrPaginationInconsistent, next)
+		}
+		seen[next] = true
 		before = next
 	}
 }

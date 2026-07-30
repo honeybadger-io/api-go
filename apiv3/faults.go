@@ -2,6 +2,7 @@ package apiv3
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
 )
@@ -10,6 +11,9 @@ import (
 type Fault = gen.Fault
 
 // Notice is a single occurrence of a fault.
+//
+// Note a notice is addressed by its token UUID rather than the short opaque
+// public id every other v3 resource uses, so Notice.Id is a uuid.UUID.
 type Notice = gen.Notice
 
 // FaultsService handles the faults resource and its notices.
@@ -17,150 +21,111 @@ type FaultsService struct {
 	client *Client
 }
 
-// FaultListOptions are the options for listing faults.
-//
-// Query is v3's single filter parameter. Environment, resolved, and ignored
-// filters are expressed inside it rather than as separate fields —
-// "environment:production", "is:resolved", "is:ignored", each negatable with a
-// leading "-". This mirrors the API rather than inventing a friendlier surface
-// that would need updating whenever the filter language grows.
-type FaultListOptions struct {
-	Query     string
-	Page      int
-	PerPage   int
-	AccountID string
-}
-
-// FaultGetOptions are the options for fetching one fault.
-type FaultGetOptions struct {
-	AccountID string
-}
-
-// NoticeListOptions are the options for listing a fault's notices.
-//
-// Notices are cursor-paginated rather than offset-paginated. Before fetches
-// older notices, After fetches newer ones; leave both empty to start at the
-// newest.
-type NoticeListOptions struct {
-	Limit     int
-	Before    string
-	After     string
-	AccountID string
-}
-
-// List returns one page of faults for a project.
-func (s *FaultsService) List(ctx context.Context, projectID string, opts FaultListOptions) (*ListResponse[Fault], error) {
-	params := &gen.ListFaultsParams{}
-	if opts.Query != "" {
-		params.Q = &opts.Query
-	}
-	if opts.Page > 0 {
-		page := gen.Page(opts.Page)
-		params.Page = &page
-	}
-	if opts.PerPage > 0 {
-		perPage := gen.PerPage(opts.PerPage)
-		params.PerPage = &perPage
-	}
-
-	resp, err := s.client.gen().ListFaultsWithResponse(ctx, s.client.accountID(opts.AccountID), projectID, params)
-	if err != nil {
-		return nil, err
-	}
-	if err := s.client.checkResponse(resp.HTTPResponse, resp.Body); err != nil {
-		return nil, err
-	}
-	if resp.JSON200 == nil {
-		return nil, s.client.malformed(resp.HTTPResponse, resp.Body)
-	}
-
-	out := &ListResponse[Fault]{
-		Pagination: resp.JSON200.Pagination,
-		Links:      derefMap(resp.JSON200.Links),
-	}
-	if resp.JSON200.Data != nil {
-		out.Data = *resp.JSON200.Data
-	}
-	if resp.JSON200.Meta != nil && resp.JSON200.Meta.RequestId != nil {
-		out.RequestID = *resp.JSON200.Meta.RequestId
-	}
-	return out, nil
+// List returns one page of faults for a project. Use Search to filter, Page to
+// select which page, and InAccount to address a specific account.
+func (s *FaultsService) List(ctx context.Context, projectID string, opts ...Option) (*ListResponse[Fault], error) {
+	return s.list(ctx, projectID, resolve(opts))
 }
 
 // ListAll returns every fault matching the options, walking pagination.
-// opts.Page is ignored.
-func (s *FaultsService) ListAll(ctx context.Context, projectID string, opts FaultListOptions) ([]Fault, error) {
+func (s *FaultsService) ListAll(ctx context.Context, projectID string, opts ...ListAllOption) ([]Fault, error) {
+	ro := resolveListAll(opts)
 	return CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[Fault], error) {
-		pageOpts := opts
-		pageOpts.Page = page
-		return s.List(ctx, projectID, pageOpts)
+		pageOpts := ro
+		pageOpts.page = page
+		return s.list(ctx, projectID, pageOpts)
 	})
+}
+
+func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOptions) (*ListResponse[Fault], error) {
+	params := &gen.ListFaultsParams{}
+	if ro.query != "" {
+		params.Q = &ro.query
+	}
+	if ro.page > 0 {
+		page := gen.Page(ro.page)
+		params.Page = &page
+	}
+	if ro.perPage > 0 {
+		perPage := gen.PerPage(ro.perPage)
+		params.PerPage = &perPage
+	}
+
+	var status int
+	body, err := s.client.do(ctx, func() (*http.Response, error) {
+		resp, err := s.client.gen().ListFaults(ctx, s.client.accountID(ro.accountID), projectID, params)
+		if resp != nil {
+			status = resp.StatusCode
+		}
+		return resp, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return decodeOffsetList[Fault](status, body)
 }
 
 // Get returns a single fault.
-func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts FaultGetOptions) (*Fault, error) {
-	resp, err := s.client.gen().GetFaultWithResponse(ctx, s.client.accountID(opts.AccountID), projectID, faultID)
+func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts ...Option) (*Fault, error) {
+	ro := resolve(opts)
+
+	var status int
+	body, err := s.client.do(ctx, func() (*http.Response, error) {
+		resp, err := s.client.gen().GetFault(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+		if resp != nil {
+			status = resp.StatusCode
+		}
+		return resp, err
+	})
 	if err != nil {
 		return nil, err
 	}
-	if err := s.client.checkResponse(resp.HTTPResponse, resp.Body); err != nil {
-		return nil, err
-	}
-	if resp.JSON200 == nil || resp.JSON200.Data == nil {
-		return nil, s.client.malformed(resp.HTTPResponse, resp.Body)
-	}
-	return resp.JSON200.Data, nil
+	return decodeSingle[Fault](status, body)
 }
 
-// ListNotices returns one page of a fault's notices, newest first.
-func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID string, opts NoticeListOptions) (*ListResponse[Notice], error) {
+// ListNotices returns one page of a fault's notices, newest first. Use Limit to
+// size the page, and Before or After to position within the collection.
+func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID string, opts ...Option) (*ListResponse[Notice], error) {
+	return s.listNotices(ctx, projectID, faultID, resolve(opts))
+}
+
+// ListAllNotices returns every notice for a fault, following the cursor from
+// newest to oldest.
+func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID string, opts ...ListAllOption) ([]Notice, error) {
+	ro := resolveListAll(opts)
+	return CollectCursor(ctx, func(ctx context.Context, before string) (*ListResponse[Notice], error) {
+		pageOpts := ro
+		pageOpts.before = before
+		pageOpts.after = ""
+		return s.listNotices(ctx, projectID, faultID, pageOpts)
+	})
+}
+
+func (s *FaultsService) listNotices(ctx context.Context, projectID, faultID string, ro requestOptions) (*ListResponse[Notice], error) {
 	params := &gen.ListNoticesParams{}
-	if opts.Limit > 0 {
-		limit := gen.Limit(opts.Limit)
+	if ro.limit > 0 {
+		limit := gen.Limit(ro.limit)
 		params.Limit = &limit
 	}
-	if opts.Before != "" {
-		before := gen.Before(opts.Before)
+	if ro.before != "" {
+		before := gen.Before(ro.before)
 		params.Before = &before
 	}
-	if opts.After != "" {
-		after := gen.After(opts.After)
+	if ro.after != "" {
+		after := gen.After(ro.after)
 		params.After = &after
 	}
 
-	resp, err := s.client.gen().ListNoticesWithResponse(ctx, s.client.accountID(opts.AccountID), projectID, faultID, params)
+	var status int
+	body, err := s.client.do(ctx, func() (*http.Response, error) {
+		resp, err := s.client.gen().ListNotices(ctx, s.client.accountID(ro.accountID), projectID, faultID, params)
+		if resp != nil {
+			status = resp.StatusCode
+		}
+		return resp, err
+	})
 	if err != nil {
 		return nil, err
 	}
-	if err := s.client.checkResponse(resp.HTTPResponse, resp.Body); err != nil {
-		return nil, err
-	}
-	if resp.JSON200 == nil {
-		return nil, s.client.malformed(resp.HTTPResponse, resp.Body)
-	}
-
-	// Cursor endpoints put CursorPagination under the same "pagination" key that
-	// offset endpoints use for Pagination, so it lands in Cursor here.
-	out := &ListResponse[Notice]{
-		Cursor: resp.JSON200.Pagination,
-		Links:  derefMap(resp.JSON200.Links),
-	}
-	if resp.JSON200.Data != nil {
-		out.Data = *resp.JSON200.Data
-	}
-	if resp.JSON200.Meta != nil && resp.JSON200.Meta.RequestId != nil {
-		out.RequestID = *resp.JSON200.Meta.RequestId
-	}
-	return out, nil
-}
-
-// ListAllNotices returns every notice for a fault, walking the cursor from
-// newest to oldest. opts.Before and opts.After are ignored.
-func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID string, opts NoticeListOptions) ([]Notice, error) {
-	return CollectCursor(ctx, func(ctx context.Context, before string) (*ListResponse[Notice], error) {
-		pageOpts := opts
-		pageOpts.Before = before
-		pageOpts.After = ""
-		return s.ListNotices(ctx, projectID, faultID, pageOpts)
-	})
+	return decodeCursorList[Notice](status, body)
 }

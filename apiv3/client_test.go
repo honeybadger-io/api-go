@@ -55,14 +55,14 @@ func TestBearerTokenIsSent(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
-	if _, err := c.gen().ListAccountsWithResponse(context.Background(), nil); err != nil {
+	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
 
 	if want := "Bearer hbt_secret"; gotAuth != want {
 		t.Errorf("Authorization = %q, want %q", gotAuth, want)
 	}
-	if want := "/v3/accounts"; gotPath != want {
+	if want := "/v3/accounts/me/projects"; gotPath != want {
 		t.Errorf("path = %q, want %q", gotPath, want)
 	}
 }
@@ -79,7 +79,7 @@ func TestNoBasicAuthIsSent(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
-	if _, err := c.gen().ListAccountsWithResponse(context.Background(), nil); err != nil {
+	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
 	if _, _, ok := parseBasic(gotAuth); ok {
@@ -97,7 +97,7 @@ func TestRateLimitIsCaptured(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	if _, err := c.gen().ListAccountsWithResponse(context.Background(), nil); err != nil {
+	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
 
@@ -134,7 +134,7 @@ func TestRequestIDHookReceivesContext(t *testing.T) {
 		})
 
 	ctx := context.WithValue(context.Background(), ctxKey{}, "marker")
-	if _, err := c.gen().ListAccountsWithResponse(ctx, nil); err != nil {
+	if _, err := c.Projects.List(ctx); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
 
@@ -149,9 +149,11 @@ func TestRequestIDHookReceivesContext(t *testing.T) {
 	}
 }
 
+// Most operations declare meta as an optional, sometimes empty, object. The hook
+// must stay quiet rather than reporting an empty id.
 func TestRequestIDHookNotCalledWhenAbsent(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNoContent)
+		writeJSON(w, 0, `{"data":[],"meta":{}}`)
 	}))
 	defer srv.Close()
 
@@ -159,10 +161,10 @@ func TestRequestIDHookNotCalledWhenAbsent(t *testing.T) {
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").
 		WithRequestIDHook(func(ctx context.Context, status int, id string) { called = true })
 
-	if _, err := c.gen().ListAccountsWithResponse(context.Background(), nil); err != nil {
+	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
 	if called {
-		t.Error("hook fired for a 204 with no body; it should only fire when a request_id exists")
+		t.Error("hook fired for a response with no request_id")
 	}
 }

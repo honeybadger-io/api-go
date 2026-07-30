@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -31,7 +32,7 @@ func TestProjectsListDecodesEnvelope(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	resp, err := c.Projects.List(context.Background(), ProjectListOptions{Page: 2, PerPage: 50})
+	resp, err := c.Projects.List(context.Background(), Page(2, 50))
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
@@ -68,7 +69,7 @@ func TestProjectsListOmitsZeroValuedParams(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	if _, err := c.Projects.List(context.Background(), ProjectListOptions{}); err != nil {
+	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("List: %v", err)
 	}
 }
@@ -89,7 +90,7 @@ func TestProjectsListAllWalksPages(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	all, err := c.Projects.ListAll(context.Background(), ProjectListOptions{})
+	all, err := c.Projects.ListAll(context.Background())
 	if err != nil {
 		t.Fatalf("ListAll: %v", err)
 	}
@@ -109,7 +110,7 @@ func TestProjectsGet(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	p, err := c.Projects.Get(context.Background(), "Xk9mZp", ProjectGetOptions{})
+	p, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
@@ -125,7 +126,7 @@ func TestProjectsGetNotFoundIsTyped(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Projects.Get(context.Background(), "nope", ProjectGetOptions{})
+	_, err := c.Projects.Get(context.Background(), "nope")
 	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("err = %v, want ErrNotFound", err)
 	}
@@ -142,7 +143,7 @@ func TestProjectsGetInsufficientScopeNamesScope(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Projects.Get(context.Background(), "Xk9mZp", ProjectGetOptions{})
+	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if !errors.Is(err, ErrInsufficientScope) {
 		t.Fatalf("err = %v, want ErrInsufficientScope", err)
 	}
@@ -168,7 +169,7 @@ func TestProjectsListRateLimitedCarriesReset(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Projects.List(context.Background(), ProjectListOptions{})
+	_, err := c.Projects.List(context.Background())
 	if !errors.Is(err, ErrRateLimited) {
 		t.Fatalf("err = %v, want ErrRateLimited", err)
 	}
@@ -185,8 +186,10 @@ func TestProjectsListRateLimitedCarriesReset(t *testing.T) {
 	}
 }
 
-// A 200 whose body is not the documented envelope is an error, not a silent
-// empty result.
+// A 200 whose body is not the documented envelope must produce a typed error
+// that still carries the status and the raw body. Asserting only "some error"
+// would pass on the generated parser's bare json.SyntaxError, which discards
+// both.
 func TestProjectsGetMalformedBody(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 0, `<html>not json</html>`)
@@ -194,9 +197,66 @@ func TestProjectsGetMalformedBody(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Projects.Get(context.Background(), "Xk9mZp", ProjectGetOptions{})
+	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if err == nil {
 		t.Fatal("want an error for a non-JSON 200")
+	}
+
+	var apiErr *Error
+	if !asError(err, &apiErr) {
+		t.Fatalf("err = %T (%v), want *apiv3.Error", err, err)
+	}
+	if apiErr.StatusCode != http.StatusOK {
+		t.Errorf("StatusCode = %d, want 200 preserved", apiErr.StatusCode)
+	}
+	if !strings.Contains(string(apiErr.Body), "not json") {
+		t.Errorf("Body = %q, want the raw body preserved", apiErr.Body)
+	}
+	if !strings.Contains(apiErr.Error(), "did not match the documented envelope") {
+		t.Errorf("Error() = %q", apiErr.Error())
+	}
+}
+
+// The spec marks data optional, so {} decodes cleanly. Returning a zero-valued
+// Project would hand back an empty id as if it were real.
+func TestProjectsGetRejectsMissingDataMember(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"meta":{"request_id":"req_x"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
+	if err == nil {
+		t.Fatal("want an error when the response has no data member")
+	}
+	if !strings.Contains(err.Error(), "no data member") {
+		t.Errorf("err = %v, want it to name the missing data member", err)
+	}
+}
+
+// An error body that is not the documented envelope must still reach parseError
+// through a real call, not just in a unit test of parseError itself.
+func TestProxyErrorBodyStillTyped(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusBadGateway)
+		_, _ = w.Write([]byte("<html>502 Bad Gateway</html>"))
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	_, err := c.Projects.List(context.Background())
+
+	var apiErr *Error
+	if !asError(err, &apiErr) {
+		t.Fatalf("err = %T (%v), want *apiv3.Error", err, err)
+	}
+	if apiErr.StatusCode != http.StatusBadGateway {
+		t.Errorf("StatusCode = %d, want 502", apiErr.StatusCode)
+	}
+	if !strings.Contains(apiErr.Error(), "502") {
+		t.Errorf("Error() = %q, want it to mention the status", apiErr.Error())
 	}
 }
 

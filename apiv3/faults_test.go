@@ -18,9 +18,7 @@ func TestFaultsListSendsSearchQuery(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Faults.List(context.Background(), "Xk9mZp", FaultListOptions{
-		Query: "environment:production is:resolved",
-	})
+	_, err := c.Faults.List(context.Background(), "Xk9mZp", Search("environment:production is:resolved"))
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
@@ -43,7 +41,7 @@ func TestFaultsListDecodesFaults(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	resp, err := c.Faults.List(context.Background(), "Xk9mZp", FaultListOptions{})
+	resp, err := c.Faults.List(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
@@ -65,7 +63,7 @@ func TestFaultsGet(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "f1", FaultGetOptions{})
+	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "f1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
@@ -83,7 +81,7 @@ func TestFaultNullableFieldsAreThreeState(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "f1", FaultGetOptions{})
+	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "f1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
@@ -130,7 +128,7 @@ func TestFaultsListNoticesUsesCursorPagination(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	resp, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", "f1", NoticeListOptions{Limit: 10})
+	resp, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", "f1", Limit(10))
 	if err != nil {
 		t.Fatalf("ListNotices: %v", err)
 	}
@@ -169,7 +167,7 @@ func TestFaultsListAllNoticesFollowsCursor(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "f1", NoticeListOptions{Limit: 1})
+	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "f1", Limit(1))
 	if err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
@@ -181,9 +179,10 @@ func TestFaultsListAllNoticesFollowsCursor(t *testing.T) {
 	}
 }
 
-// ListAllNotices walks backwards from newest, so a caller's After is
-// meaningless and must not leak into the requests.
-func TestListAllNoticesIgnoresAfter(t *testing.T) {
+// ListAllNotices walks backwards from newest, so no cursor option can be
+// passed to it — After is not a ListAllOption, and the compiler enforces that.
+// This asserts the walk never sends one.
+func TestListAllNoticesSendsNoAfterCursor(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if got := r.URL.Query().Get("after"); got != "" {
 			t.Errorf("after = %q, want it dropped", got)
@@ -193,8 +192,7 @@ func TestListAllNoticesIgnoresAfter(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	if _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "f1",
-		NoticeListOptions{After: "cur_newer"}); err != nil {
+	if _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "f1"); err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
 }
@@ -207,7 +205,7 @@ func TestFaultsListInsufficientScope(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	_, err := c.Faults.List(context.Background(), "Xk9mZp", FaultListOptions{})
+	_, err := c.Faults.List(context.Background(), "Xk9mZp")
 	if !errors.Is(err, ErrInsufficientScope) {
 		t.Fatalf("err = %v, want ErrInsufficientScope", err)
 	}
