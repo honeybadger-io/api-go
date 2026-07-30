@@ -75,6 +75,20 @@ func TestBulkFaultChangeRefusesEmptySelection(t *testing.T) {
 
 // The path fault is the source and is destroyed; the body names the keeper. Sent
 // the wrong way round, a merge deletes the fault the caller meant to keep.
+// The whole project is a real intent, but it has to be stated. This must send an
+// empty body rather than a wildcard query: the search runs against notices, so
+// "*" would miss a fault whose notices are not searchable.
+func TestSelectAllFaultsSendsNoFilter(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, "")
+
+	if err := c.Faults.Unignore(context.Background(), "Xk9mZp", SelectAllFaults()); err != nil {
+		t.Fatalf("Unignore: %v", err)
+	}
+	if len(got.body) != 0 {
+		t.Errorf("body = %v, want no filter", got.body)
+	}
+}
+
 func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 	c, got := captureWrite(t, http.StatusAccepted, `{"data":{
 		"batch_id":"WksB67FpRY3bZQ","source_id":"2z4WtH9gARww","target_id":"OmDSjxQSys5k"}}`)

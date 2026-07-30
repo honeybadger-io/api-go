@@ -20,47 +20,65 @@ import (
 
 // FaultSelection chooses which faults a bulk state change applies to.
 //
-// Either name the faults or give a search query — not both, since the endpoint
-// applies the query only when no ids are sent, so a selection carrying both would
-// read as a filter that silently did nothing.
+// Its fields are unexported and it is built through the three constructors
+// below, so the three intents stay distinct: named faults, faults matching a
+// search, or every fault in the project. A struct with both ids and a query set
+// is not constructible, which matters because the spec and the app disagree about
+// what that would mean — the spec says the query is ignored when ids are present,
+// while the Rails side filters by query first and applies the ids to the result.
+// A destructive operation should not depend on which of those is true.
+//
+// The zero value is not a valid selection: see ErrEveryFault.
 type FaultSelection struct {
-	// FaultIDs are the faults to change. Ids outside the project select nothing.
-	FaultIDs []string
-
-	// Query is a fault search, in the same syntax as the fault listing's Search.
-	// Used only when FaultIDs is empty.
-	Query string
+	ids   []string
+	query string
+	all   bool
 }
 
-// SelectFaults changes the named faults.
+// SelectFaults changes the named faults. Ids outside the project select nothing.
 func SelectFaults(ids ...string) FaultSelection {
-	return FaultSelection{FaultIDs: ids}
+	return FaultSelection{ids: ids}
 }
 
-// SelectFaultsMatching changes every fault the search matches.
+// SelectFaultsMatching changes every fault the search matches, in the same syntax
+// as the fault listing's Search.
 func SelectFaultsMatching(query string) FaultSelection {
-	return FaultSelection{Query: query}
+	return FaultSelection{query: query}
 }
 
-// ErrEveryFault is returned when a bulk change would apply to the whole project.
+// SelectAllFaults changes every fault in the project.
+//
+// This sends no filter at all, which is what the endpoint treats as "everything".
+// A wildcard query is not the same thing: the search runs against notices, so a
+// fault whose notices are not searchable would be missed by "*" and caught here.
+func SelectAllFaults() FaultSelection {
+	return FaultSelection{all: true}
+}
+
+// ErrEveryFault is returned when a bulk change would apply to the whole project
+// without having asked to.
 //
 // The request body is optional and an absent one means "everything the filters
-// match", so an empty selection is not a no-op: it resolves, ignores, or
+// match", so the zero-value selection is not a no-op: it resolves, ignores or
 // unignores every fault in the project. That is a plausible typo and an
-// implausible intention, so it is refused here rather than sent. Pass
-// SelectFaultsMatching("*") if the whole project really is the intent.
+// implausible intention, so it is refused here rather than sent. Use
+// SelectAllFaults when the whole project really is the intent.
 var ErrEveryFault = errors.New(
 	"apiv3: a bulk fault change with no ids and no query applies to every fault in the project — " +
-		"name the faults with SelectFaults or filter them with SelectFaultsMatching")
+		"name the faults with SelectFaults, filter them with SelectFaultsMatching, or say so " +
+		"with SelectAllFaults")
 
 // body renders the selection, or refuses an unbounded one.
 func (sel FaultSelection) body() (*gen.ResolveFaultsJSONRequestBody, error) {
-	if len(sel.FaultIDs) > 0 {
-		ids := sel.FaultIDs
+	switch {
+	case len(sel.ids) > 0:
+		ids := sel.ids
 		return &gen.ResolveFaultsJSONRequestBody{FaultIds: &ids}, nil
-	}
-	if query := strings.TrimSpace(sel.Query); query != "" {
+	case strings.TrimSpace(sel.query) != "":
+		query := strings.TrimSpace(sel.query)
 		return &gen.ResolveFaultsJSONRequestBody{Q: &query}, nil
+	case sel.all:
+		return &gen.ResolveFaultsJSONRequestBody{}, nil
 	}
 	return nil, ErrEveryFault
 }

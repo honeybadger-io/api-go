@@ -118,6 +118,15 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   `account_id`, `name`, and `active` required on `Project`, but generated
   non-pointer fields silently become zero values when absent, so `{"data":{}}`
   would otherwise return a project with an empty id.
+- **The bulk endpoints' spec and the app disagree about ids plus query.** The spec
+  says `q` is "applied when fault_ids is omitted", implying ids win. The Rails
+  `bulk_collection` builds the query-filtered collection first and then applies
+  `fault_ids` to it, which intersects them. Either behaviour is defensible; a
+  destructive operation should not have two readings. `apiv3` makes the case
+  unrepresentable — `FaultSelection`'s fields are unexported and its constructors
+  set one or the other — so no api-go caller depends on the answer, but the spec
+  and the app should still be reconciled.
+
 - **The fault bulk endpoints promise time filters they do not declare.** All four
   say "omit to act on everything the query and time filters match", but they
   declare only `account_id` and `project_id`, and their body carries only
