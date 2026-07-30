@@ -10,9 +10,9 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
 | Branch | `scoped-api-tokens-v3` |
-| Commit | `7295ca79c` (rebased branch) |
+| Commit | `fb16b9143` (rebased branch) |
 | Vendored | 2026-07-29 |
-| sha256 | `a4a5cd6b0f16b77b0b2bfaefa5869a81e852a1d2185b262c6e62381c6a72f757` |
+| sha256 | `8103c20eff1ec28ab6debeb11d99a9f0cce44eae7b083e9f43606bc042d2766e` |
 
 Record the branch, commit, **and checksum** on every refresh. The bundle is
 **gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of
@@ -64,7 +64,6 @@ cannot send it — the method follows the spec rather than inventing fields, and
 
 | Operation | Declared | v2 also accepted |
 | --- | --- | --- |
-| `updateFault` | bare `type: object` | resolved, ignored, assignee, resolve-on-deploy |
 | `assignFault` | bare `type: object` | the assignee |
 | `createAlarm` / `updateAlarm` | `name` | query, evaluation period, trigger config, lookback lag, streams |
 | `createDashboard` / `updateDashboard` | `name` | title, default_ts, widgets |

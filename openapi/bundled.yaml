@@ -29,6 +29,18 @@ info:
 
     You can find your API token in your Honeybadger user settings.
 
+    ## Request bodies
+
+    Send the resource's fields at the top level of the body. There is no root
+    element:
+
+    ```json
+    {"name": "Billing API", "language": "ruby"}
+    ```
+
+    v1 and v2 wrapped bodies under the resource name (`{"project": {...}}`).
+    v3 does not, anywhere.
+
     ## Rate Limiting
 
     API requests are rate limited to 360 requests per hour per user. Rate limit information
@@ -1182,39 +1194,42 @@ paths:
     post:
       operationId: resolveFaults
       summary: Resolve faults
-      description: Marks one or more faults as resolved.
+      description: 'Marks faults as resolved. Send fault_ids to choose them, or omit
+        the body to resolve everything the filters match.
+
+        '
       tags:
       - Faults
       parameters:
       - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
               type: object
-              required:
-              - fault_ids
+              description: Selects the faults a bulk operation applies to
               properties:
                 fault_ids:
                   type: array
+                  description: 'Public IDs of the faults to change. Ids outside this
+                    project select nothing. Omit to act on everything the query and
+                    time filters match.
+
+                    '
                   items:
                     type: string
+                  example:
+                  - Ab3kL9
+                  - Zq7mN2
+                q:
+                  type: string
+                  description: Search query, applied when fault_ids is omitted
+                  example: is:unresolved
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: object
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Applied. No response body.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1228,39 +1243,42 @@ paths:
     post:
       operationId: unresolveFaults
       summary: Unresolve faults
-      description: Marks one or more faults as unresolved.
+      description: 'Marks faults as unresolved. Send fault_ids to choose them, or
+        omit the body to unresolve everything the filters match.
+
+        '
       tags:
       - Faults
       parameters:
       - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
               type: object
-              required:
-              - fault_ids
+              description: Selects the faults a bulk operation applies to
               properties:
                 fault_ids:
                   type: array
+                  description: 'Public IDs of the faults to change. Ids outside this
+                    project select nothing. Omit to act on everything the query and
+                    time filters match.
+
+                    '
                   items:
                     type: string
+                  example:
+                  - Ab3kL9
+                  - Zq7mN2
+                q:
+                  type: string
+                  description: Search query, applied when fault_ids is omitted
+                  example: is:unresolved
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: object
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Applied. No response body.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1274,39 +1292,43 @@ paths:
     post:
       operationId: ignoreFaults
       summary: Ignore faults
-      description: Marks one or more faults as ignored.
+      description: 'Marks faults as ignored, stopping data collection for them. Send
+        fault_ids to choose them, or omit the body to ignore everything the filters
+        match.
+
+        '
       tags:
       - Faults
       parameters:
       - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
               type: object
-              required:
-              - fault_ids
+              description: Selects the faults a bulk operation applies to
               properties:
                 fault_ids:
                   type: array
+                  description: 'Public IDs of the faults to change. Ids outside this
+                    project select nothing. Omit to act on everything the query and
+                    time filters match.
+
+                    '
                   items:
                     type: string
+                  example:
+                  - Ab3kL9
+                  - Zq7mN2
+                q:
+                  type: string
+                  description: Search query, applied when fault_ids is omitted
+                  example: is:unresolved
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: object
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Applied. No response body.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1320,39 +1342,42 @@ paths:
     post:
       operationId: unignoreFaults
       summary: Unignore faults
-      description: Removes the ignored status from one or more faults.
+      description: 'Removes the ignored status. Send fault_ids to choose the faults,
+        or omit the body to unignore everything the filters match.
+
+        '
       tags:
       - Faults
       parameters:
       - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
               type: object
-              required:
-              - fault_ids
+              description: Selects the faults a bulk operation applies to
               properties:
                 fault_ids:
                   type: array
+                  description: 'Public IDs of the faults to change. Ids outside this
+                    project select nothing. Omit to act on everything the query and
+                    time filters match.
+
+                    '
                   items:
                     type: string
+                  example:
+                  - Ab3kL9
+                  - Zq7mN2
+                q:
+                  type: string
+                  description: Search query, applied when fault_ids is omitted
+                  example: is:unresolved
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: object
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Applied. No response body.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1505,8 +1530,13 @@ paths:
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/merge":
     post:
       operationId: mergeFaults
-      summary: Merge faults
-      description: Merges one or more source faults into the target fault.
+      summary: Merge a fault into another
+      description: 'Merges the fault in the path into the one named by `target_fault_id`.
+        The path fault is the source: its notices move to the target and it is removed.
+        The merge runs in the background, so this answers 202 with a batch id rather
+        than the merged fault.
+
+        '
       tags:
       - Faults
       parameters:
@@ -1519,16 +1549,21 @@ paths:
           application/json:
             schema:
               type: object
+              description: Names the fault to merge into
               required:
-              - source_fault_ids
+              - target_fault_id
               properties:
-                source_fault_ids:
-                  type: array
-                  items:
-                    type: string
+                target_fault_id:
+                  type: string
+                  description: 'Public ID of the fault to keep. Must be in the same
+                    project as the fault in the path, which is the one being merged
+                    away.
+
+                    '
+                  example: Ab3kL9
       responses:
-        '200':
-          description: Success
+        '202':
+          description: Merge accepted and queued
           content:
             application/json:
               schema:
@@ -1537,7 +1572,26 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/Fault"
+                    type: object
+                    description: A queued merge
+                    required:
+                    - batch_id
+                    - source_id
+                    - target_id
+                    properties:
+                      batch_id:
+                        type: string
+                        description: Identifies the background merge
+                        example: WksB67FpRY3bZQ
+                      source_id:
+                        type: string
+                        description: Public ID of the fault merged away — the one
+                          from the path
+                        example: 2z4WtH9gARww
+                      target_id:
+                        type: string
+                        description: Public ID of the fault kept
+                        example: OmDSjxQSys5k
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -1825,12 +1879,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - body
-              properties:
-                body:
-                  type: string
+              "$ref": "#/components/schemas/CommentInput"
       responses:
         '201':
           description: Comment created
@@ -1915,12 +1964,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - body
-              properties:
-                body:
-                  type: string
+              "$ref": "#/components/schemas/CommentInput"
       responses:
         '200':
           description: Success
@@ -2335,8 +2379,13 @@ paths:
   "/accounts/{account_id}/projects/{project_id}/check_ins/bulk_update":
     put:
       operationId: bulkUpdateCheckIns
-      summary: Bulk update check-ins
-      description: Updates multiple check-ins at once.
+      summary: Replace the project's check-ins
+      description: 'Sets the project''s check-ins to exactly what the payload lists.
+        Entries are matched to existing check-ins by slug: a match is updated, a new
+        slug is created, and any check-in the payload does not name is DELETED. The
+        response reports the operation performed for each slug, including the deletions.
+
+        '
       tags:
       - Check-ins
       parameters:
@@ -5308,12 +5357,18 @@ components:
           description: Expected report period in minutes (for simple schedule type)
     CheckInBulkUpdateInput:
       type: object
-      description: A batch of check-ins to create or update
+      description: 'The project''s complete set of check-ins. This replaces rather
+        than merges: any check-in the project has and this payload does not name is
+        DELETED. Must be a non-empty array, and every entry needs a slug — an empty
+        payload is rejected rather than taken to mean "delete all of them".
+
+        '
       required:
       - check_ins
       properties:
         check_ins:
           type: array
+          minItems: 1
           items:
             allOf:
             - "$ref": "#/components/schemas/CheckInInput"
@@ -5450,6 +5505,16 @@ components:
           type: string
           format: date-time
           description: When the comment was created
+    CommentInput:
+      type: object
+      description: Writable comment attributes
+      required:
+      - body
+      properties:
+        body:
+          type: string
+          description: The comment text. `@mentions` notify the named project members.
+          example: Rolled back, watching for recurrence.
     Dashboard:
       type: object
       description: An Insights dashboard
@@ -5472,9 +5537,15 @@ components:
           example: Performance Overview
         widgets:
           type: array
-          description: Dashboard widgets
+          description: 'The dashboard''s widgets, in the same shape a write accepts
+            — the read and write forms are identical, including `config.streams` as
+            stream slugs (`stream_ids` exists only inside the model). Pointed at the
+            request schema''s definition rather than restated, because that definition
+            is app/data/schemas/dashboard_schema.json, the validator itself.
+
+            '
           items:
-            type: object
+            "$ref": "#/components/schemas/DashboardInput/properties/widgets/items"
         is_default:
           type: boolean
           description: Whether this is the default dashboard
@@ -6319,9 +6390,6 @@ components:
       required:
       - id
       - project_id
-      - klass
-      - resolved
-      - ignored
       properties:
         id:
           type: string
@@ -6431,6 +6499,18 @@ components:
               channel_id:
                 type: string
                 description: Public ID of the channel that created the ticket
+        resolve_on_deploy:
+          type: boolean
+          description: 'Whether this fault is waiting to be resolved by the next recorded
+            deploy. Absent for a fault on an inactive project.
+
+            '
+        notices_count_in_range:
+          type: integer
+          description: 'Notices inside the requested occurrence window. Present only
+            when the request supplied `occurred_after` or `occurred_before`.
+
+            '
     FaultAssignmentInput:
       type: object
       description: Who to assign a fault to
@@ -6467,6 +6547,12 @@ components:
           type: array
           items:
             type: string
+        resolve_on_deploy:
+          type: boolean
+          description: |
+            Resolve this fault the next time a deploy is recorded. Not a column on the fault — it is stored as a pending resolution — so it is applied after the update succeeds and is echoed back on the fault as `resolve_on_deploy`.
+
+            Setting it on a fault that is already resolved or ignored does nothing, since those states clear any pending resolution. Sending false removes a pending resolution.
     IncidentUpdate:
       type: object
       description: An update to a status page incident. The incident's prose lives
@@ -6601,8 +6687,13 @@ components:
           description: Public ID of the project
           example: Xk9mZp
         environment:
-          type: string
-          description: Environment name
+          type:
+          - string
+          - 'null'
+          description: 'Environment name, from the fault''s environment or the notice''s
+            own environment_name. Null when neither is set.
+
+            '
           example: production
         message:
           type: string

@@ -21,3 +21,25 @@ actions:
   - target: $.components.schemas.ErrorBody.properties.details
     update:
       x-go-type: json.RawMessage
+
+  # Dashboard.widgets.items points at DashboardInput/properties/widgets/items — a
+  # JSON Pointer into another schema's properties rather than a $ref to a named
+  # component. That is legal OpenAPI, and it says something true (the read and
+  # write forms of a widget are identical), but oapi-codegen cannot follow it:
+  #
+  #   unexpected reference depth: 7 for ref:
+  #   #/components/schemas/DashboardInput/properties/widgets/items
+  #
+  # Two actions rather than one: Overlay's update merges, so setting items on the
+  # widgets node would leave the $ref sitting beside the new type and resolvers
+  # prefer the $ref. Removing the node first is what makes the replacement stick.
+  #
+  # A plain object is what this generated before the spec added the pointer, and
+  # apiv3 hands widgets through as raw JSON in both directions anyway — the
+  # authority on their shape is the app's dashboard_schema.json, not this type.
+  - target: $.components.schemas.Dashboard.properties.widgets.items
+    remove: true
+  - target: $.components.schemas.Dashboard.properties.widgets
+    update:
+      items:
+        type: object

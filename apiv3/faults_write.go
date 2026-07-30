@@ -2,7 +2,9 @@ package apiv3
 
 import (
 	"context"
+	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
 )
@@ -16,48 +18,139 @@ import (
 // Update and Assign exist now: their request bodies used to be bare objects in
 // the spec, so there was nothing to build a typed method from.
 
+// FaultSelection chooses which faults a bulk state change applies to.
+//
+// Either name the faults or give a search query — not both, since the endpoint
+// applies the query only when no ids are sent, so a selection carrying both would
+// read as a filter that silently did nothing.
+type FaultSelection struct {
+	// FaultIDs are the faults to change. Ids outside the project select nothing.
+	FaultIDs []string
+
+	// Query is a fault search, in the same syntax as the fault listing's Search.
+	// Used only when FaultIDs is empty.
+	Query string
+}
+
+// SelectFaults changes the named faults.
+func SelectFaults(ids ...string) FaultSelection {
+	return FaultSelection{FaultIDs: ids}
+}
+
+// SelectFaultsMatching changes every fault the search matches.
+func SelectFaultsMatching(query string) FaultSelection {
+	return FaultSelection{Query: query}
+}
+
+// ErrEveryFault is returned when a bulk change would apply to the whole project.
+//
+// The request body is optional and an absent one means "everything the filters
+// match", so an empty selection is not a no-op: it resolves, ignores, or
+// unignores every fault in the project. That is a plausible typo and an
+// implausible intention, so it is refused here rather than sent. Pass
+// SelectFaultsMatching("*") if the whole project really is the intent.
+var ErrEveryFault = errors.New(
+	"apiv3: a bulk fault change with no ids and no query applies to every fault in the project — " +
+		"name the faults with SelectFaults or filter them with SelectFaultsMatching")
+
+// body renders the selection, or refuses an unbounded one.
+func (sel FaultSelection) body() (*gen.ResolveFaultsJSONRequestBody, error) {
+	if len(sel.FaultIDs) > 0 {
+		ids := sel.FaultIDs
+		return &gen.ResolveFaultsJSONRequestBody{FaultIds: &ids}, nil
+	}
+	if query := strings.TrimSpace(sel.Query); query != "" {
+		return &gen.ResolveFaultsJSONRequestBody{Q: &query}, nil
+	}
+	return nil, ErrEveryFault
+}
+
+// The four bulk endpoints share one body schema, so they share one Go type: the
+// generated Unresolve/Ignore/Unignore bodies are structurally identical and
+// convertible.
+
 // Resolve marks faults as resolved.
-func (s *FaultsService) Resolve(ctx context.Context, projectID string, faultIDs []string, opts ...Option) error {
+func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
 	ro := resolve(opts)
-	body := gen.ResolveFaultsJSONRequestBody{FaultIds: faultIDs}
+	body, err := sel.body()
+	if err != nil {
+		return err
+	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ResolveFaults(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().ResolveFaults(ctx, s.client.accountID(ro.accountID), projectID, *body)
 	})
 }
 
 // Unresolve returns faults to the unresolved state.
-func (s *FaultsService) Unresolve(ctx context.Context, projectID string, faultIDs []string, opts ...Option) error {
+func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
 	ro := resolve(opts)
-	body := gen.UnresolveFaultsJSONRequestBody{FaultIds: faultIDs}
+	body, err := sel.body()
+	if err != nil {
+		return err
+	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UnresolveFaults(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().UnresolveFaults(ctx, s.client.accountID(ro.accountID), projectID,
+			gen.UnresolveFaultsJSONRequestBody(*body))
 	})
 }
 
-// Ignore marks faults as ignored, suppressing their notifications.
-func (s *FaultsService) Ignore(ctx context.Context, projectID string, faultIDs []string, opts ...Option) error {
+// Ignore marks faults as ignored, which also stops collecting data for them.
+func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
 	ro := resolve(opts)
-	body := gen.IgnoreFaultsJSONRequestBody{FaultIds: faultIDs}
+	body, err := sel.body()
+	if err != nil {
+		return err
+	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().IgnoreFaults(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().IgnoreFaults(ctx, s.client.accountID(ro.accountID), projectID,
+			gen.IgnoreFaultsJSONRequestBody(*body))
 	})
 }
 
 // Unignore stops ignoring faults.
-func (s *FaultsService) Unignore(ctx context.Context, projectID string, faultIDs []string, opts ...Option) error {
+func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
 	ro := resolve(opts)
-	body := gen.UnignoreFaultsJSONRequestBody{FaultIds: faultIDs}
+	body, err := sel.body()
+	if err != nil {
+		return err
+	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UnignoreFaults(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().UnignoreFaults(ctx, s.client.accountID(ro.accountID), projectID,
+			gen.UnignoreFaultsJSONRequestBody(*body))
 	})
 }
 
-// Merge folds the source faults into the target fault.
-func (s *FaultsService) Merge(ctx context.Context, projectID, targetFaultID string, sourceFaultIDs []string, opts ...Option) error {
+// FaultMerge is a merge accepted for background processing.
+type FaultMerge struct {
+	// BatchID identifies the background merge.
+	BatchID string `json:"batch_id"`
+
+	// SourceID is the fault that was merged away.
+	SourceID string `json:"source_id"`
+
+	// TargetID is the fault that was kept.
+	TargetID string `json:"target_id"`
+}
+
+// ErrMergeIntoSelf is returned when both fault ids are the same.
+var ErrMergeIntoSelf = errors.New("apiv3: a fault cannot be merged into itself")
+
+// Merge folds sourceFaultID into targetFaultID.
+//
+// The source is destroyed: its notices move to the target and the fault itself is
+// removed. Passing the two the wrong way round therefore deletes the fault the
+// caller meant to keep, and nothing about the request would look wrong.
+//
+// The merge runs in the background, so a successful call means accepted, not
+// done, and the returned ids let a caller confirm the direction the API applied.
+func (s *FaultsService) Merge(ctx context.Context, projectID, sourceFaultID, targetFaultID string, opts ...Option) (*FaultMerge, error) {
+	if sourceFaultID == targetFaultID {
+		return nil, ErrMergeIntoSelf
+	}
 	ro := resolve(opts)
-	body := gen.MergeFaultsJSONRequestBody{SourceFaultIds: sourceFaultIDs}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().MergeFaults(ctx, s.client.accountID(ro.accountID), projectID, targetFaultID, body)
+	body := gen.MergeFaultsJSONRequestBody{TargetFaultId: targetFaultID}
+	return getOne[FaultMerge](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().MergeFaults(ctx, s.client.accountID(ro.accountID), projectID, sourceFaultID, body)
 	})
 }
 

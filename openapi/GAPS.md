@@ -1,6 +1,8 @@
 # v2 capabilities not expressible in v3
 
-> **Most of this list is closed.** The bundle at `7295ca79c` added the missing
+> **Most of this list is closed.** The bundle at `fb16b9143` closed
+> `resolve_on_deploy` and gave the fault bulk operations a `q` filter. The one
+> before it, `7295ca79c`, added the missing
 > write fields, three of the four missing endpoints, the fault ordering and time
 > filters, and extracted the error body into named schemas. What remains is at the
 > top; the closed items are kept below because the history explains why the client
@@ -12,11 +14,11 @@
 | --- | --- |
 | `get_project_report` has no v3 endpoint | No path matches `reports/`. The MCP tool stays on v2, needing a legacy numeric id nothing can now discover |
 | Integrations unconfirmed | `listChannels` looks like the replacement — same shape, and v2's own comment says "integrations (channels)" — but nobody has confirmed it |
-| `resolve_on_deploy` | Appears nowhere in the bundle. A capability v2 had and v3 does not |
 | Alarm updates are name and description only | `AlarmCreateInput` carries the query, trigger and evaluation settings; `AlarmUpdateInput` carries neither, so an alarm's behaviour cannot be changed after creation |
 | A check-in update requires the name | The update body is the same schema as create, with `name` required, so changing only a grace period means resending the name. A caller who does not know it must read first |
 | A project update requires the name | Same shape, same consequence |
-| Widget and trigger types are anonymous | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds |
+| Widget and trigger types are anonymous | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds — and would also remove the overlay below |
+| `Dashboard.widgets.items` breaks code generation | It `$ref`s `#/components/schemas/DashboardInput/properties/widgets/items`, a JSON Pointer into another schema's properties. Legal OpenAPI, and it says something true, but `oapi-codegen` refuses it: `unexpected reference depth: 7`. `openapi/overlay.yaml` rewrites the node to a plain object so generation can proceed. Extracting a named `DashboardWidget` component would fix this and the row above it at once |
 | Notices have no timestamp filters | Cursor-only (`limit`, `before`, `after`), so v2's `created_after`/`created_before` have no equivalent |
 | Channels carry less than v2 integrations did | v2's integration reported `options` and `filters`; the v3 `Channel` has neither, so per-integration configuration is no longer readable. The MCP tool says so in its description |
 | Writes replace rather than merge | Project, check-in and dashboard updates take the create schema, so an omitted field is a deletion, and `name` is required on all three. A dashboard update without its widgets would clear them; `apiv3` refuses rather than allowing it. A separate patch schema, or documented merge semantics, would remove a whole class of accidental data loss |
@@ -29,7 +31,7 @@ workaround. Discovered while porting `api-go`'s `apiv3` package and the MCP
 server onto the v3 bundle; every entry was verified against the vendored spec, not
 inferred.
 
-Bundle at time of writing: `scoped-api-tokens-v3` @ `01a704e5b`, 112 operations.
+Bundle at time of writing: `scoped-api-tokens-v3` @ `fb16b9143`, 115 operations.
 
 The client's behaviour where a gap exists is uniform: **refuse the request and say
 why**. Accepting a call and silently dropping what it cannot send would report
@@ -55,7 +57,7 @@ cannot be sent at all.
 
 | Operation | Declared | v2 also accepted |
 | --- | --- | --- |
-| `updateFault` | bare `type: object` | resolved, ignored, assignee, resolve-on-deploy |
+| `updateFault` | resolved, ignored, tags, assignee_id, resolve_on_deploy | — closed |
 | `assignFault` | bare `type: object` | the assignee |
 | `createAlarm` / `updateAlarm` | `name` | query, evaluation period, trigger config, lookback lag, streams, description |
 | `createDashboard` / `updateDashboard` | `name` | title, default_ts, widgets |
@@ -67,8 +69,12 @@ fires, so creating one leaves something broken in the account that looks real �
 the MCP tool refuses rather than half-doing it. A project with only a name is
 still a project, so that one proceeds and rejects only the unsettable fields.
 
-`resolve_on_deploy` deserves its own line: it appears **nowhere** in the bundle, so
-it is not a narrow schema but a missing capability.
+`resolve_on_deploy` was the sharpest of these — absent from the bundle entirely,
+so a missing capability rather than a narrow schema. `fb16b9143` added it to both
+`FaultInput` and `Fault`, and the MCP advertises it again. It is stored as a
+pending resolution rather than a column, and resolving or ignoring a fault clears
+it, so `update_fault` refuses to accept it together with `resolved` or `ignored`
+instead of letting whichever request ran last decide.
 
 ## 3. List parameters with no v3 equivalent
 

@@ -1084,7 +1084,7 @@ type CheckIn struct {
 // CheckInScheduleType Type of schedule
 type CheckInScheduleType string
 
-// CheckInBulkUpdateInput A batch of check-ins to create or update
+// CheckInBulkUpdateInput The project's complete set of check-ins. This replaces rather than merges: any check-in the project has and this payload does not name is DELETED. Must be a non-empty array, and every entry needs a slug — an empty payload is rejected rather than taken to mean "delete all of them".
 type CheckInBulkUpdateInput struct {
 	CheckIns []struct {
 		// CronSchedule Cron expression, required when `schedule_type` is `cron`
@@ -1184,6 +1184,12 @@ type Comment struct {
 	Source *string `json:"source,omitempty"`
 }
 
+// CommentInput Writable comment attributes
+type CommentInput struct {
+	// Body The comment text. `@mentions` notify the named project members.
+	Body string `json:"body"`
+}
+
 // Dashboard An Insights dashboard
 type Dashboard struct {
 	// CreatedAt When the dashboard was created
@@ -1207,7 +1213,7 @@ type Dashboard struct {
 	// UpdatedAt When the dashboard was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 
-	// Widgets Dashboard widgets
+	// Widgets The dashboard's widgets, in the same shape a write accepts — the read and write forms are identical, including `config.streams` as stream slugs (`stream_ids` exists only inside the model). Pointed at the request schema's definition rather than restated, because that definition is app/data/schemas/dashboard_schema.json, the validator itself.
 	Widgets *[]map[string]interface{} `json:"widgets,omitempty"`
 }
 
@@ -1379,10 +1385,10 @@ type Fault struct {
 	Id string `json:"id"`
 
 	// Ignored Whether the fault is ignored
-	Ignored bool `json:"ignored"`
+	Ignored *bool `json:"ignored,omitempty"`
 
 	// Klass Error class name
-	Klass string `json:"klass"`
+	Klass *string `json:"klass,omitempty"`
 
 	// LastNoticeAt When the last notice was received
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
@@ -1393,11 +1399,17 @@ type Fault struct {
 	// NoticesCount Total number of notices for this fault
 	NoticesCount *int `json:"notices_count,omitempty"`
 
+	// NoticesCountInRange Notices inside the requested occurrence window. Present only when the request supplied `occurred_after` or `occurred_before`.
+	NoticesCountInRange *int `json:"notices_count_in_range,omitempty"`
+
 	// ProjectId Public ID of the project this fault belongs to
 	ProjectId string `json:"project_id"`
 
+	// ResolveOnDeploy Whether this fault is waiting to be resolved by the next recorded deploy. Absent for a fault on an inactive project.
+	ResolveOnDeploy *bool `json:"resolve_on_deploy,omitempty"`
+
 	// Resolved Whether the fault is resolved
-	Resolved bool `json:"resolved"`
+	Resolved *bool `json:"resolved,omitempty"`
 
 	// Tags Tags assigned to this fault
 	Tags *[]string `json:"tags,omitempty"`
@@ -1423,8 +1435,13 @@ type FaultInput struct {
 	// AssigneeId Public ID of a user on the project. Null unassigns. A public ID that is not a member of this project is rejected with 422 rather than silently unassigning.
 	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
 	Ignored    *bool                     `json:"ignored,omitempty"`
-	Resolved   *bool                     `json:"resolved,omitempty"`
-	Tags       *[]string                 `json:"tags,omitempty"`
+
+	// ResolveOnDeploy Resolve this fault the next time a deploy is recorded. Not a column on the fault — it is stored as a pending resolution — so it is applied after the update succeeds and is echoed back on the fault as `resolve_on_deploy`.
+	//
+	// Setting it on a fault that is already resolved or ignored does nothing, since those states clear any pending resolution. Sending false removes a pending resolution.
+	ResolveOnDeploy *bool     `json:"resolve_on_deploy,omitempty"`
+	Resolved        *bool     `json:"resolved,omitempty"`
+	Tags            *[]string `json:"tags,omitempty"`
 }
 
 // IncidentUpdate An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
@@ -1504,8 +1521,8 @@ type Notice struct {
 	// CreatedAt When the notice was received
 	CreatedAt time.Time `json:"created_at"`
 
-	// Environment Environment name
-	Environment *string `json:"environment,omitempty"`
+	// Environment Environment name, from the fault's environment or the notice's own environment_name. Null when neither is set.
+	Environment nullable.Nullable[string] `json:"environment,omitempty"`
 
 	// FaultId Public ID of the fault this notice belongs to
 	FaultId string `json:"fault_id"`
@@ -2425,12 +2442,20 @@ type ListFaultsParamsOrder string
 
 // IgnoreFaultsJSONBody defines parameters for IgnoreFaults.
 type IgnoreFaultsJSONBody struct {
-	FaultIds []string `json:"fault_ids"`
+	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Q Search query, applied when fault_ids is omitted
+	Q *string `json:"q,omitempty"`
 }
 
 // ResolveFaultsJSONBody defines parameters for ResolveFaults.
 type ResolveFaultsJSONBody struct {
-	FaultIds []string `json:"fault_ids"`
+	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Q Search query, applied when fault_ids is omitted
+	Q *string `json:"q,omitempty"`
 }
 
 // GetFaultSummaryParams defines parameters for GetFaultSummary.
@@ -2450,12 +2475,20 @@ type GetFaultSummaryParams struct {
 
 // UnignoreFaultsJSONBody defines parameters for UnignoreFaults.
 type UnignoreFaultsJSONBody struct {
-	FaultIds []string `json:"fault_ids"`
+	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Q Search query, applied when fault_ids is omitted
+	Q *string `json:"q,omitempty"`
 }
 
 // UnresolveFaultsJSONBody defines parameters for UnresolveFaults.
 type UnresolveFaultsJSONBody struct {
-	FaultIds []string `json:"fault_ids"`
+	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Q Search query, applied when fault_ids is omitted
+	Q *string `json:"q,omitempty"`
 }
 
 // ListFaultAffectedUsersParams defines parameters for ListFaultAffectedUsers.
@@ -2476,19 +2509,10 @@ type ListCommentsParams struct {
 	After *After `form:"after,omitempty" json:"after,omitempty"`
 }
 
-// CreateCommentJSONBody defines parameters for CreateComment.
-type CreateCommentJSONBody struct {
-	Body string `json:"body"`
-}
-
-// UpdateCommentJSONBody defines parameters for UpdateComment.
-type UpdateCommentJSONBody struct {
-	Body string `json:"body"`
-}
-
 // MergeFaultsJSONBody defines parameters for MergeFaults.
 type MergeFaultsJSONBody struct {
-	SourceFaultIds []string `json:"source_fault_ids"`
+	// TargetFaultId Public ID of the fault to keep. Must be in the same project as the fault in the path, which is the one being merged away.
+	TargetFaultId string `json:"target_fault_id"`
 }
 
 // ListNoticesParams defines parameters for ListNotices.
@@ -2705,10 +2729,10 @@ type UpdateFaultJSONRequestBody = FaultInput
 type AssignFaultJSONRequestBody = FaultAssignmentInput
 
 // CreateCommentJSONRequestBody defines body for CreateComment for application/json ContentType.
-type CreateCommentJSONRequestBody CreateCommentJSONBody
+type CreateCommentJSONRequestBody = CommentInput
 
 // UpdateCommentJSONRequestBody defines body for UpdateComment for application/json ContentType.
-type UpdateCommentJSONRequestBody UpdateCommentJSONBody
+type UpdateCommentJSONRequestBody = CommentInput
 
 // MergeFaultsJSONRequestBody defines body for MergeFaults for application/json ContentType.
 type MergeFaultsJSONRequestBody MergeFaultsJSONBody
@@ -3132,18 +3156,18 @@ type ClientInterface interface {
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/check_ins (the `CreateCheckIn` operationId).
 	CreateCheckIn(ctx context.Context, accountId AccountId, projectId ProjectId, body CreateCheckInJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// BulkUpdateCheckInsWithBody Bulk update check-ins
+	// BulkUpdateCheckInsWithBody Replace the project's check-ins
 	//
-	// Updates multiple check-ins at once.
+	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /accounts/{account_id}/projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
 	BulkUpdateCheckInsWithBody(ctx context.Context, accountId AccountId, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// BulkUpdateCheckIns Bulk update check-ins
+	// BulkUpdateCheckIns Replace the project's check-ins
 	//
-	// Updates multiple check-ins at once.
+	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -3371,7 +3395,7 @@ type ClientInterface interface {
 
 	// IgnoreFaultsWithBody Ignore faults
 	//
-	// Marks one or more faults as ignored.
+	// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -3380,7 +3404,7 @@ type ClientInterface interface {
 
 	// IgnoreFaults Ignore faults
 	//
-	// Marks one or more faults as ignored.
+	// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -3389,7 +3413,7 @@ type ClientInterface interface {
 
 	// ResolveFaultsWithBody Resolve faults
 	//
-	// Marks one or more faults as resolved.
+	// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -3398,7 +3422,7 @@ type ClientInterface interface {
 
 	// ResolveFaults Resolve faults
 	//
-	// Marks one or more faults as resolved.
+	// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -3416,7 +3440,7 @@ type ClientInterface interface {
 
 	// UnignoreFaultsWithBody Unignore faults
 	//
-	// Removes the ignored status from one or more faults.
+	// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -3425,7 +3449,7 @@ type ClientInterface interface {
 
 	// UnignoreFaults Unignore faults
 	//
-	// Removes the ignored status from one or more faults.
+	// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -3434,7 +3458,7 @@ type ClientInterface interface {
 
 	// UnresolveFaultsWithBody Unresolve faults
 	//
-	// Marks one or more faults as unresolved.
+	// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -3443,7 +3467,7 @@ type ClientInterface interface {
 
 	// UnresolveFaults Unresolve faults
 	//
-	// Marks one or more faults as unresolved.
+	// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -3571,18 +3595,18 @@ type ClientInterface interface {
 	// Corresponds with PATCH /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments/{comment_id} (the `UpdateComment` operationId).
 	UpdateComment(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, commentId string, body UpdateCommentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// MergeFaultsWithBody Merge faults
+	// MergeFaultsWithBody Merge a fault into another
 	//
-	// Merges one or more source faults into the target fault.
+	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/merge (the `MergeFaults` operationId).
 	MergeFaultsWithBody(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// MergeFaults Merge faults
+	// MergeFaults Merge a fault into another
 	//
-	// Merges one or more source faults into the target fault.
+	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -4776,9 +4800,9 @@ func (c *Client) CreateCheckIn(ctx context.Context, accountId AccountId, project
 	return c.Client.Do(req)
 }
 
-// BulkUpdateCheckInsWithBody Bulk update check-ins
+// BulkUpdateCheckInsWithBody Replace the project's check-ins
 //
-// Updates multiple check-ins at once.
+// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes any type of body and a specified content type.
 //
@@ -4795,9 +4819,9 @@ func (c *Client) BulkUpdateCheckInsWithBody(ctx context.Context, accountId Accou
 	return c.Client.Do(req)
 }
 
-// BulkUpdateCheckIns Bulk update check-ins
+// BulkUpdateCheckIns Replace the project's check-ins
 //
-// Updates multiple check-ins at once.
+// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -5305,7 +5329,7 @@ func (c *Client) ListFaults(ctx context.Context, accountId AccountId, projectId 
 
 // IgnoreFaultsWithBody Ignore faults
 //
-// Marks one or more faults as ignored.
+// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 //
 // Takes any type of body and a specified content type.
 //
@@ -5324,7 +5348,7 @@ func (c *Client) IgnoreFaultsWithBody(ctx context.Context, accountId AccountId, 
 
 // IgnoreFaults Ignore faults
 //
-// Marks one or more faults as ignored.
+// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -5343,7 +5367,7 @@ func (c *Client) IgnoreFaults(ctx context.Context, accountId AccountId, projectI
 
 // ResolveFaultsWithBody Resolve faults
 //
-// Marks one or more faults as resolved.
+// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 //
 // Takes any type of body and a specified content type.
 //
@@ -5362,7 +5386,7 @@ func (c *Client) ResolveFaultsWithBody(ctx context.Context, accountId AccountId,
 
 // ResolveFaults Resolve faults
 //
-// Marks one or more faults as resolved.
+// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -5400,7 +5424,7 @@ func (c *Client) GetFaultSummary(ctx context.Context, accountId AccountId, proje
 
 // UnignoreFaultsWithBody Unignore faults
 //
-// Removes the ignored status from one or more faults.
+// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 //
 // Takes any type of body and a specified content type.
 //
@@ -5419,7 +5443,7 @@ func (c *Client) UnignoreFaultsWithBody(ctx context.Context, accountId AccountId
 
 // UnignoreFaults Unignore faults
 //
-// Removes the ignored status from one or more faults.
+// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -5438,7 +5462,7 @@ func (c *Client) UnignoreFaults(ctx context.Context, accountId AccountId, projec
 
 // UnresolveFaultsWithBody Unresolve faults
 //
-// Marks one or more faults as unresolved.
+// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 //
 // Takes any type of body and a specified content type.
 //
@@ -5457,7 +5481,7 @@ func (c *Client) UnresolveFaultsWithBody(ctx context.Context, accountId AccountI
 
 // UnresolveFaults Unresolve faults
 //
-// Marks one or more faults as unresolved.
+// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -5745,9 +5769,9 @@ func (c *Client) UpdateComment(ctx context.Context, accountId AccountId, project
 	return c.Client.Do(req)
 }
 
-// MergeFaultsWithBody Merge faults
+// MergeFaultsWithBody Merge a fault into another
 //
-// Merges one or more source faults into the target fault.
+// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 //
 // Takes any type of body and a specified content type.
 //
@@ -5764,9 +5788,9 @@ func (c *Client) MergeFaultsWithBody(ctx context.Context, accountId AccountId, p
 	return c.Client.Do(req)
 }
 
-// MergeFaults Merge faults
+// MergeFaults Merge a fault into another
 //
-// Merges one or more source faults into the target fault.
+// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -14114,18 +14138,18 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/check_ins (the `CreateCheckIn` operationId).
 	CreateCheckInWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, body CreateCheckInJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCheckInResponse, error)
 
-	// BulkUpdateCheckInsWithBodyWithResponse Bulk update check-ins
+	// BulkUpdateCheckInsWithBodyWithResponse Replace the project's check-ins
 	//
-	// Updates multiple check-ins at once.
+	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /accounts/{account_id}/projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
 	BulkUpdateCheckInsWithBodyWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkUpdateCheckInsResponse, error)
 
-	// BulkUpdateCheckInsWithResponse Bulk update check-ins
+	// BulkUpdateCheckInsWithResponse Replace the project's check-ins
 	//
-	// Updates multiple check-ins at once.
+	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14379,7 +14403,7 @@ type ClientWithResponsesInterface interface {
 
 	// IgnoreFaultsWithBodyWithResponse Ignore faults
 	//
-	// Marks one or more faults as ignored.
+	// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14388,7 +14412,7 @@ type ClientWithResponsesInterface interface {
 
 	// IgnoreFaultsWithResponse Ignore faults
 	//
-	// Marks one or more faults as ignored.
+	// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14397,7 +14421,7 @@ type ClientWithResponsesInterface interface {
 
 	// ResolveFaultsWithBodyWithResponse Resolve faults
 	//
-	// Marks one or more faults as resolved.
+	// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14406,7 +14430,7 @@ type ClientWithResponsesInterface interface {
 
 	// ResolveFaultsWithResponse Resolve faults
 	//
-	// Marks one or more faults as resolved.
+	// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14426,7 +14450,7 @@ type ClientWithResponsesInterface interface {
 
 	// UnignoreFaultsWithBodyWithResponse Unignore faults
 	//
-	// Removes the ignored status from one or more faults.
+	// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14435,7 +14459,7 @@ type ClientWithResponsesInterface interface {
 
 	// UnignoreFaultsWithResponse Unignore faults
 	//
-	// Removes the ignored status from one or more faults.
+	// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14444,7 +14468,7 @@ type ClientWithResponsesInterface interface {
 
 	// UnresolveFaultsWithBodyWithResponse Unresolve faults
 	//
-	// Marks one or more faults as unresolved.
+	// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14453,7 +14477,7 @@ type ClientWithResponsesInterface interface {
 
 	// UnresolveFaultsWithResponse Unresolve faults
 	//
-	// Marks one or more faults as unresolved.
+	// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -14595,18 +14619,18 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with PATCH /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments/{comment_id} (the `UpdateComment` operationId).
 	UpdateCommentWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, commentId string, body UpdateCommentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateCommentResponse, error)
 
-	// MergeFaultsWithBodyWithResponse Merge faults
+	// MergeFaultsWithBodyWithResponse Merge a fault into another
 	//
-	// Merges one or more source faults into the target fault.
+	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/merge (the `MergeFaults` operationId).
 	MergeFaultsWithBodyWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MergeFaultsResponse, error)
 
-	// MergeFaultsWithResponse Merge faults
+	// MergeFaultsWithResponse Merge a fault into another
 	//
-	// Merges one or more source faults into the target fault.
+	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18595,25 +18619,12 @@ func (r ListFaultsResponse) ContentType() string {
 type IgnoreFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *struct {
-		Data map[string]interface{} `json:"data"`
-		Meta *ResponseMeta          `json:"meta,omitempty"`
-	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r IgnoreFaultsResponse) GetJSON200() *struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
-} {
-	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -18663,25 +18674,12 @@ func (r IgnoreFaultsResponse) ContentType() string {
 type ResolveFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *struct {
-		Data map[string]interface{} `json:"data"`
-		Meta *ResponseMeta          `json:"meta,omitempty"`
-	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r ResolveFaultsResponse) GetJSON200() *struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
-} {
-	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -18832,25 +18830,12 @@ func (r GetFaultSummaryResponse) ContentType() string {
 type UnignoreFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *struct {
-		Data map[string]interface{} `json:"data"`
-		Meta *ResponseMeta          `json:"meta,omitempty"`
-	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r UnignoreFaultsResponse) GetJSON200() *struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
-} {
-	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -18900,25 +18885,12 @@ func (r UnignoreFaultsResponse) ContentType() string {
 type UnresolveFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *struct {
-		Data map[string]interface{} `json:"data"`
-		Meta *ResponseMeta          `json:"meta,omitempty"`
-	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-}
-
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r UnresolveFaultsResponse) GetJSON200() *struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
-} {
-	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -19716,10 +19688,19 @@ func (r UpdateCommentResponse) ContentType() string {
 type MergeFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *struct {
-		// Data A unique error fingerprint (fault)
-		Data Fault         `json:"data"`
+	// JSON202 the response for an HTTP 202 `application/json` response
+	JSON202 *struct {
+		// Data A queued merge
+		Data struct {
+			// BatchId Identifies the background merge
+			BatchId string `json:"batch_id"`
+
+			// SourceId Public ID of the fault merged away — the one from the path
+			SourceId string `json:"source_id"`
+
+			// TargetId Public ID of the fault kept
+			TargetId string `json:"target_id"`
+		} `json:"data"`
 		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
@@ -19730,13 +19711,22 @@ type MergeFaultsResponse struct {
 	JSON422 *AmbiguousAccount
 }
 
-// GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r MergeFaultsResponse) GetJSON200() *struct {
-	// Data A unique error fingerprint (fault)
-	Data Fault         `json:"data"`
+// GetJSON202 returns the response for an HTTP 202 `application/json` response
+func (r MergeFaultsResponse) GetJSON202() *struct {
+	// Data A queued merge
+	Data struct {
+		// BatchId Identifies the background merge
+		BatchId string `json:"batch_id"`
+
+		// SourceId Public ID of the fault merged away — the one from the path
+		SourceId string `json:"source_id"`
+
+		// TargetId Public ID of the fault kept
+		TargetId string `json:"target_id"`
+	} `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
-	return r.JSON200
+	return r.JSON202
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -23808,9 +23798,9 @@ func (c *ClientWithResponses) CreateCheckInWithResponse(ctx context.Context, acc
 	return ParseCreateCheckInResponse(rsp)
 }
 
-// BulkUpdateCheckInsWithBodyWithResponse Bulk update check-ins
+// BulkUpdateCheckInsWithBodyWithResponse Replace the project's check-ins
 //
-// Updates multiple check-ins at once.
+// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -23823,9 +23813,9 @@ func (c *ClientWithResponses) BulkUpdateCheckInsWithBodyWithResponse(ctx context
 	return ParseBulkUpdateCheckInsResponse(rsp)
 }
 
-// BulkUpdateCheckInsWithResponse Bulk update check-ins
+// BulkUpdateCheckInsWithResponse Replace the project's check-ins
 //
-// Updates multiple check-ins at once.
+// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24247,7 +24237,7 @@ func (c *ClientWithResponses) ListFaultsWithResponse(ctx context.Context, accoun
 
 // IgnoreFaultsWithBodyWithResponse Ignore faults
 //
-// Marks one or more faults as ignored.
+// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24262,7 +24252,7 @@ func (c *ClientWithResponses) IgnoreFaultsWithBodyWithResponse(ctx context.Conte
 
 // IgnoreFaultsWithResponse Ignore faults
 //
-// Marks one or more faults as ignored.
+// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, or omit the body to ignore everything the filters match.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24277,7 +24267,7 @@ func (c *ClientWithResponses) IgnoreFaultsWithResponse(ctx context.Context, acco
 
 // ResolveFaultsWithBodyWithResponse Resolve faults
 //
-// Marks one or more faults as resolved.
+// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24292,7 +24282,7 @@ func (c *ClientWithResponses) ResolveFaultsWithBodyWithResponse(ctx context.Cont
 
 // ResolveFaultsWithResponse Resolve faults
 //
-// Marks one or more faults as resolved.
+// Marks faults as resolved. Send fault_ids to choose them, or omit the body to resolve everything the filters match.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24324,7 +24314,7 @@ func (c *ClientWithResponses) GetFaultSummaryWithResponse(ctx context.Context, a
 
 // UnignoreFaultsWithBodyWithResponse Unignore faults
 //
-// Removes the ignored status from one or more faults.
+// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24339,7 +24329,7 @@ func (c *ClientWithResponses) UnignoreFaultsWithBodyWithResponse(ctx context.Con
 
 // UnignoreFaultsWithResponse Unignore faults
 //
-// Removes the ignored status from one or more faults.
+// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24354,7 +24344,7 @@ func (c *ClientWithResponses) UnignoreFaultsWithResponse(ctx context.Context, ac
 
 // UnresolveFaultsWithBodyWithResponse Unresolve faults
 //
-// Marks one or more faults as unresolved.
+// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24369,7 +24359,7 @@ func (c *ClientWithResponses) UnresolveFaultsWithBodyWithResponse(ctx context.Co
 
 // UnresolveFaultsWithResponse Unresolve faults
 //
-// Marks one or more faults as unresolved.
+// Marks faults as unresolved. Send fault_ids to choose them, or omit the body to unresolve everything the filters match.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24607,9 +24597,9 @@ func (c *ClientWithResponses) UpdateCommentWithResponse(ctx context.Context, acc
 	return ParseUpdateCommentResponse(rsp)
 }
 
-// MergeFaultsWithBodyWithResponse Merge faults
+// MergeFaultsWithBodyWithResponse Merge a fault into another
 //
-// Merges one or more source faults into the target fault.
+// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -24622,9 +24612,9 @@ func (c *ClientWithResponses) MergeFaultsWithBodyWithResponse(ctx context.Contex
 	return ParseMergeFaultsResponse(rsp)
 }
 
-// MergeFaultsWithResponse Merge faults
+// MergeFaultsWithResponse Merge a fault into another
 //
-// Merges one or more source faults into the target fault.
+// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -28065,15 +28055,8 @@ func ParseIgnoreFaultsResponse(rsp *http.Response) (*IgnoreFaultsResponse, error
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Data map[string]interface{} `json:"data"`
-			Meta *ResponseMeta          `json:"meta,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
+	case rsp.StatusCode == 200:
+		break // No content-type
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -28115,15 +28098,8 @@ func ParseResolveFaultsResponse(rsp *http.Response) (*ResolveFaultsResponse, err
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Data map[string]interface{} `json:"data"`
-			Meta *ResponseMeta          `json:"meta,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
+	case rsp.StatusCode == 200:
+		break // No content-type
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -28235,15 +28211,8 @@ func ParseUnignoreFaultsResponse(rsp *http.Response) (*UnignoreFaultsResponse, e
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Data map[string]interface{} `json:"data"`
-			Meta *ResponseMeta          `json:"meta,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
+	case rsp.StatusCode == 200:
+		break // No content-type
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -28285,15 +28254,8 @@ func ParseUnresolveFaultsResponse(rsp *http.Response) (*UnresolveFaultsResponse,
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Data map[string]interface{} `json:"data"`
-			Meta *ResponseMeta          `json:"meta,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
+	case rsp.StatusCode == 200:
+		break // No content-type
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -28884,16 +28846,25 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 202:
 		var dest struct {
-			// Data A unique error fingerprint (fault)
-			Data Fault         `json:"data"`
+			// Data A queued merge
+			Data struct {
+				// BatchId Identifies the background merge
+				BatchId string `json:"batch_id"`
+
+				// SourceId Public ID of the fault merged away — the one from the path
+				SourceId string `json:"source_id"`
+
+				// TargetId Public ID of the fault kept
+				TargetId string `json:"target_id"`
+			} `json:"data"`
 			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
+		response.JSON202 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized

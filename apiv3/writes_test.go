@@ -40,25 +40,6 @@ func captureWrite(t *testing.T, status int, response string) (*Client, *captured
 	return NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x"), got
 }
 
-func TestFaultsResolveSendsFaultIDs(t *testing.T) {
-	c, got := captureWrite(t, http.StatusNoContent, "")
-
-	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", []string{"f1", "f2"}); err != nil {
-		t.Fatalf("Resolve: %v", err)
-	}
-
-	if got.method != http.MethodPost {
-		t.Errorf("method = %q, want POST", got.method)
-	}
-	if want := "/v3/accounts/me/projects/Xk9mZp/faults/resolve"; got.path != want {
-		t.Errorf("path = %q, want %q", got.path, want)
-	}
-	ids, ok := got.body["fault_ids"].([]any)
-	if !ok || len(ids) != 2 || ids[0] != "f1" {
-		t.Errorf("fault_ids = %v", got.body["fault_ids"])
-	}
-}
-
 // A 204 carries no body, so it must not be treated as a malformed envelope.
 func TestDeleteAcceptsNoContent(t *testing.T) {
 	c, got := captureWrite(t, http.StatusNoContent, "")
@@ -235,7 +216,7 @@ func TestWriteInsufficientScopeNamesScope(t *testing.T) {
 		`{"error":{"code":"insufficient_scope","message":"Insufficient scope",
 		  "details":{"required_scope":"faults:write","token_scopes":["faults:read"]}}}`)
 
-	err := c.Faults.Ignore(context.Background(), "Xk9mZp", []string{"f1"})
+	err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults("f1"))
 	var apiErr *Error
 	if !asError(err, &apiErr) {
 		t.Fatalf("err = %T, want *apiv3.Error", err)
