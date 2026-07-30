@@ -15,14 +15,15 @@
 | `get_project_report` has no v3 endpoint | No path matches `reports/`. The MCP tool stays on v2, needing a legacy numeric id nothing can now discover |
 | Integrations unconfirmed | `listChannels` looks like the replacement — same shape, and v2's own comment says "integrations (channels)" — but nobody has confirmed it |
 | Alarm updates are name and description only | `AlarmCreateInput` carries the query, trigger and evaluation settings; `AlarmUpdateInput` carries neither, so an alarm's behaviour cannot be changed after creation |
-| A check-in update requires the name | The update body is the same schema as create, with `name` required, so changing only a grace period means resending the name. A caller who does not know it must read first |
+| A check-in update requires the name | The update body is the same schema as create, with `name` required, so changing only a grace period means resending the name. A caller who does not know it must read first. Verified against a real server: the update **merges** — sending only name and grace_period left `report_period` and `slug` intact — so it is the required `name` that is the burden, not field loss |
 | A project update requires the name | Same shape, same consequence |
 | Widget and trigger types are anonymous | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds — and would also remove the overlay below |
 | `Dashboard.widgets.items` breaks code generation | It `$ref`s `#/components/schemas/DashboardInput/properties/widgets/items`, a JSON Pointer into another schema's properties. Legal OpenAPI, and it says something true, but `oapi-codegen` refuses it: `unexpected reference depth: 7`. `openapi/overlay.yaml` rewrites the node to a plain object so generation can proceed. Extracting a named `DashboardWidget` component would fix this and the row above it at once |
 | Notices have no timestamp filters | Cursor-only (`limit`, `before`, `after`), so v2's `created_after`/`created_before` have no equivalent |
 | Channels carry less than v2 integrations did | v2's integration reported `options` and `filters`; the v3 `Channel` has neither, so per-integration configuration is no longer readable. The MCP tool says so in its description |
 | Fault update semantics are unstated | `updateFault` says only "Updates a fault's attributes". `FaultInput` has no required fields, which implies a merge, and every other replace-semantics body requires `name` — but nothing says so. It matters because the MCP sends `resolve_on_deploy` on its own: under replace semantics that call would also clear the fault's tags and unassign it. Proceeding on the merge reading, since the alternative makes the field unusable, but this wants one sentence in the spec |
-| Writes replace rather than merge | Project, check-in and dashboard updates take the create schema, so an omitted field is a deletion, and `name` is required on all three. A dashboard update without its widgets would clear them; `apiv3` refuses rather than allowing it. A separate patch schema, or documented merge semantics, would remove a whole class of accidental data loss |
+| Writes replace rather than merge — but only some of them | Verified against a real server, the three differ: a **check-in** update merges (omitted fields survive); a **dashboard** update replaces (`config["widgets"] = data["widgets"].map` overwrites wholesale, and omitting widgets would clear them, which is why `apiv3` refuses it); a **project** update's omitted settings cannot be observed at all because the read model does not return them. All three take the create schema and require `name`, so the schema says "replace" uniformly while the behaviour does not. Documenting per-resource semantics — or adding a patch schema — would remove the guesswork |
+| Dashboard widget ids are regenerated when omitted | `widget_hash["id"] ||= SecureRandom.uuid`, so a caller that reads a dashboard, edits a widget and sends it back without its `id` silently gets new widget identities. Verified: a round-trip changed `3a86735f…` to `3dcc065f…` |
 
 ## Closed
 
@@ -110,6 +111,26 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
 `name` on the way out.
 
 ## 6. Schema inconsistencies worth a second look
+
+- **`update_alarm` cannot succeed with only a name.** `observer_params` derives
+  `lookback_duration` from `params[:evaluation_period]`, so an update that does
+  not resend the evaluation period fails with `lookback_duration: can't be
+  blank`. `AlarmUpdateInput` declares only name and description, so a client
+  following the spec always gets a 422. Either the schema should carry the
+  observer fields, or the server should default them from the existing observer.
+
+- **A failed alarm update still commits the name.** `AlarmService#update` runs
+  `alarm.update(...)` unconditionally, after `update_observer` has already
+  returned errors, so a 422 leaves the alarm renamed while the query and trigger
+  are unchanged. Verified: a name-only update answered 422 and the name changed
+  anyway. A partial write reported as a failure is worse than either outcome on
+  its own — the caller has no way to know what landed.
+
+- **The project settings are write-only.** `updateProject` permits
+  `resolve_errors_on_deploy`, `user_url`, `source_url`, `user_search_field` and
+  more, but `V3::ProjectPresenter` returns none of them. A caller can set them and
+  can never read them back, so it cannot confirm a write or read current values
+  before a partial update.
 
 - **`Alarm.query` declares an object and renders a string.** The presenter reads
   `observer_payload&.dig("query")`, which is BadgerQL text. `AlarmCreateInput`
