@@ -18,6 +18,8 @@
 | A project update requires the name | Same shape, same consequence |
 | Widget and trigger types are anonymous | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds |
 | Notices have no timestamp filters | Cursor-only (`limit`, `before`, `after`), so v2's `created_after`/`created_before` have no equivalent |
+| Channels carry less than v2 integrations did | v2's integration reported `options` and `filters`; the v3 `Channel` has neither, so per-integration configuration is no longer readable. The MCP tool says so in its description |
+| Writes replace rather than merge | Project, check-in and dashboard updates take the create schema, so an omitted field is a deletion, and `name` is required on all three. A dashboard update without its widgets would clear them; `apiv3` refuses rather than allowing it. A separate patch schema, or documented merge semantics, would remove a whole class of accidental data loss |
 
 ## Closed
 
