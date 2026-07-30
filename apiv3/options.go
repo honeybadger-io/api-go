@@ -14,9 +14,12 @@ type Option interface {
 	apply(*requestOptions)
 }
 
-// ListAllOption configures a ListAll call. Every Option except paging is also a
-// ListAllOption; Page deliberately is not, because ListAll starts at the first
-// page by definition.
+// ListAllOption configures a ListAll call. Every Option except positioning is
+// also a ListAllOption; Page, Before, and After deliberately are not, because
+// ListAll walks the whole collection from the start by definition.
+//
+// Because ListAllOption embeds Option, anything returning a ListAllOption can be
+// passed to either kind of call.
 type ListAllOption interface {
 	Option
 	listAll()
@@ -62,7 +65,7 @@ func (o accountOption) listAll()                 {}
 // InAccount addresses a specific account instead of resolving one from the
 // credential. Needed when a credential covers more than one account, which is
 // the case that returns ambiguous_account.
-func InAccount(accountID string) accountOption {
+func InAccount(accountID string) ListAllOption {
 	return accountOption{id: accountID}
 }
 
@@ -83,7 +86,7 @@ func (o pageOption) apply(ro *requestOptions) {
 // Page is not a ListAllOption: ListAll walks from the first page by definition,
 // so a page number there would be silently ignored. The compiler rejects it
 // instead.
-func Page(page, perPage int) pageOption {
+func Page(page, perPage int) Option {
 	return pageOption{page: page, perPage: perPage}
 }
 
@@ -93,10 +96,10 @@ type limitOption struct{ n int }
 func (o limitOption) apply(ro *requestOptions) { ro.limit = o.n }
 func (o limitOption) listAll()                 {}
 
-// Limit caps how many items a single request returns, for cursor-paginated
+// Limit caps how many items a single request returns, for time-ordered
 // collections. It caps at 100 and defaults to 25 when zero. On a ListAll call it
 // sets the size of each underlying request rather than a total.
-func Limit(n int) limitOption {
+func Limit(n int) ListAllOption {
 	return limitOption{n: n}
 }
 
@@ -112,18 +115,19 @@ func (o cursorOption) apply(ro *requestOptions) {
 }
 
 // Before requests items older than the given cursor, taken from a previous
-// response's Cursor.OldestCursor.
+// response's TimeSeries.OldestCursor.
 //
-// Not a ListAllOption: ListAll follows cursors itself from the newest item.
-func Before(cursor string) cursorOption {
+// Not a ListAllOption: ListAll walks the collection itself, following links.older
+// from the newest page.
+func Before(cursor string) Option {
 	return cursorOption{before: cursor}
 }
 
 // After requests items newer than the given cursor, taken from a previous
-// response's Cursor.NewestCursor.
+// response's TimeSeries.NewestCursor.
 //
 // Not a ListAllOption, for the same reason as Before.
-func After(cursor string) cursorOption {
+func After(cursor string) Option {
 	return cursorOption{after: cursor}
 }
 
@@ -139,6 +143,6 @@ func (o searchOption) listAll()                 {}
 // as separate parameters — "environment:production", "is:resolved",
 // "is:ignored", each negatable with a leading "-". This mirrors the API instead
 // of inventing a surface that would need updating as the filter language grows.
-func Search(query string) searchOption {
+func Search(query string) ListAllOption {
 	return searchOption{q: query}
 }
