@@ -2,6 +2,7 @@ package apiv3
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"testing"
@@ -293,4 +294,23 @@ func equalInt(a, b []int) bool {
 		}
 	}
 	return true
+}
+
+// An empty collection must marshal as [] rather than null: a caller seeing null
+// has to distinguish "none" from "something went wrong", and the MCP server hands
+// this straight to an LLM, which reads null as trouble.
+func TestCollectPagesReturnsEmptyNotNil(t *testing.T) {
+	got, err := CollectPages(context.Background(),
+		func(ctx context.Context, page int) (*ListResponse[Project], error) {
+			return &ListResponse[Project]{Data: nil}, nil
+		})
+	if err != nil {
+		t.Fatalf("CollectPages: %v", err)
+	}
+	if got == nil {
+		t.Fatal("got nil slice, want empty")
+	}
+	if encoded, _ := json.Marshal(got); string(encoded) != "[]" {
+		t.Errorf("marshalled as %s, want []", encoded)
+	}
 }

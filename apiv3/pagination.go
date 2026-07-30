@@ -94,7 +94,10 @@ type TimeSeriesFetcher[T any] func(ctx context.Context, url string) (*ListRespon
 // It reports ErrPaginationInconsistent rather than returning a partial result
 // when the server's metadata does not add up.
 func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error) {
-	var all []T
+	// Non-nil so an empty collection marshals as [] rather than null. A caller
+	// deciding what to do about null has to distinguish "none" from "failed",
+	// and for the MCP server that reaches an LLM, which reads null as trouble.
+	all := []T{}
 
 	for page := 1; ; page++ {
 		if err := ctx.Err(); err != nil {
@@ -149,7 +152,8 @@ func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error)
 // that works for both cursor-paged and timestamp-paged collections, since the
 // latter leave the cursor fields null.
 func CollectTimeSeries[T any](ctx context.Context, fetch TimeSeriesFetcher[T]) ([]T, error) {
-	var all []T
+	// Non-nil for the same reason as CollectPages: [] rather than null.
+	all := []T{}
 	next := ""
 	seen := make(map[string]bool)
 
