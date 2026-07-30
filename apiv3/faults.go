@@ -56,6 +56,21 @@ func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts
 	})
 }
 
+// AffectedUsers returns the users a fault has affected.
+//
+// Untyped because the endpoint's data member is an unspecified object in the
+// spec, so there is no shape to model.
+func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID string, opts ...Option) (map[string]any, error) {
+	ro := resolve(opts)
+	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().ListFaultAffectedUsers(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+	})
+	if err != nil {
+		return nil, err
+	}
+	return *data, nil
+}
+
 // ListNotices returns one page of a fault's notices, newest first. Use Limit to
 // size the page, and Before or After to position within the collection.
 func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID string, opts ...Option) (*ListResponse[Notice], error) {

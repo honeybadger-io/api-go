@@ -106,6 +106,15 @@ type Client struct {
 
 	// Insights runs BadgerQL queries and lists event streams.
 	Insights *InsightsService
+
+	// CheckIns handles cron and heartbeat monitors and their events.
+	CheckIns *CheckInsService
+
+	// Alarms handles Insights alarms.
+	Alarms *AlarmsService
+
+	// Dashboards handles Insights dashboards.
+	Dashboards *DashboardsService
 }
 
 // NewClient returns a client pointing at the production API with a 30 second
@@ -139,6 +148,9 @@ func (c *Client) rebind() *Client {
 	c.Faults = &FaultsService{client: c}
 	c.Tokens = &TokensService{client: c}
 	c.Insights = &InsightsService{client: c}
+	c.CheckIns = &CheckInsService{client: c}
+	c.Alarms = &AlarmsService{client: c}
+	c.Dashboards = &DashboardsService{client: c}
 	return c
 }
 
