@@ -69,7 +69,17 @@ precision is coarser than two minutes — paging by it would skip or repeat even
 `apiv3` does not expose the parameter and walks by following links instead. Wants
 `int64`, or an opaque cursor like the other time-ordered collections.
 
-## 5. Schema inconsistencies worth a second look
+## 5. The same field under two names
+
+`Dashboard` is read as `title` and written as `name` — `Dashboard.title` in the
+response schema, `name` in `createDashboard`/`updateDashboard`. A client has to
+translate between them for one resource, and a caller reading a dashboard cannot
+use the field name it just received to write one back.
+
+The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
+`name` on the way out.
+
+## 6. Schema inconsistencies worth a second look
 
 - **`data` is optional on single-resource responses**, so `{}` decodes as a valid
   project with an empty id. `apiv3` treats a missing `data` member as an error, but

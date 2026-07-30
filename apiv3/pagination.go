@@ -61,21 +61,24 @@ var (
 //
 // Exactly one of Pagination and TimeSeries is set, depending on the endpoint's
 // scheme. Both are nil for an endpoint that returns a bare collection.
+//
+// Tagged because callers serialise this straight back out — the MCP server
+// returns it as tool output — and Go-cased keys would leak into that payload.
 type ListResponse[T any] struct {
-	Data      []T
-	RequestID string
+	Data      []T    `json:"data"`
+	RequestID string `json:"request_id,omitempty"`
 
 	// Pagination is set for offset-paginated endpoints (page / per_page).
-	Pagination *Pagination
+	Pagination *Pagination `json:"pagination,omitempty"`
 
 	// TimeSeries is set for time-ordered endpoints (limit / before / after).
-	TimeSeries *TimeSeriesPagination
+	TimeSeries *TimeSeriesPagination `json:"time_series,omitempty"`
 
 	// TimeSeriesLinks are the navigation links for a time-ordered endpoint.
-	TimeSeriesLinks *TimeSeriesLinks
+	TimeSeriesLinks *TimeSeriesLinks `json:"time_series_links,omitempty"`
 
 	// Links are the navigation links for an offset-paginated endpoint.
-	Links *OffsetLinks
+	Links *OffsetLinks `json:"links,omitempty"`
 }
 
 // PageFetcher retrieves a single page by 1-indexed page number.
