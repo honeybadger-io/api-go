@@ -112,6 +112,29 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
 
 ## 6. Schema inconsistencies worth a second look
 
+- **No OAuth client can create a project, and every one of them can delete
+  projects.** `createProject` is the only operation in the catalog requiring a
+  `:create` scope — every other create maps to `:write` (`createAlarm` →
+  `alarms:write`, `createCheckIn` → `checkins:write`).
+
+  This is not about old grants. Doorkeeper declares `default_scopes :read, :write`
+  and **no `optional_scopes`**, so a granular scope cannot be requested or issued
+  at all; every `oauth_applications` row is `read write`. Every token therefore
+  goes through `Api::LegacyScopes` expansion, and `V1["write"]` does not include
+  `projects:create` — so `createProject` is unreachable for all OAuth clients,
+  permanently, while `projects:write` keeps `updateProject` and `deleteProject`
+  available.
+
+  Verified end to end: with a token issued minutes earlier, the MCP hides
+  `create_project` and still offers `delete_project`. The scope filtering is
+  correct; the catalog and the OAuth configuration disagree.
+
+  Either `projects:create` should join `V1["write"]` — the same carve-out
+  reasoning the `uptime:*` rename already used, since v2 write grants could create
+  projects — or Doorkeeper needs to offer the granular catalog as optional scopes
+  so a client can ask for it. Until one of those lands, the destructive half of
+  project management is the only half OAuth can reach.
+
 - **`update_alarm` cannot succeed with only a name.** `observer_params` derives
   `lookback_duration` from `params[:evaluation_period]`, so an update that does
   not resend the evaluation period fails with `lookback_duration: can't be
