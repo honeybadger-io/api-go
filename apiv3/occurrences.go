@@ -58,28 +58,36 @@ func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o O
 	return *data, nil
 }
 
-// AccountOccurrences returns notice counts over time across every project the
-// credential can reach.
-//
-// This is the all-projects report v2 offered, which had no v3 equivalent until
-// recently. Note it is account-scoped rather than global: a credential covering
-// several accounts reports on one of them, chosen the same way as everywhere else.
-func (s *ProjectsService) AccountOccurrences(ctx context.Context, o OccurrenceOptions) (map[string]any, error) {
-	params := &gen.ListAccountOccurrencesParams{}
-	if o.Period != "" {
-		period := gen.ListAccountOccurrencesParamsPeriod(o.Period)
-		params.Period = &period
-	}
-	if o.Environment != "" {
-		env := gen.OccurrenceEnvironment(o.Environment)
-		params.Environment = &env
-	}
+// OccurrenceSeries is one project's notice counts, bucketed over the requested
+// window. Both ends of the window are inclusive, so a series carries one bucket
+// more than the period name suggests.
+type OccurrenceSeries = gen.OccurrenceSeries
 
-	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ListAccountOccurrences(ctx, s.client.accountID(o.AccountID), params)
+// AccountOccurrences returns notice counts over time for every project the
+// credential can reach, walking pagination.
+//
+// This is the all-projects report v2 offered. Note two differences: it is
+// account-scoped rather than global, so a credential covering several accounts
+// reports on one of them; and it returns a series per project rather than a
+// single object, which is why it is a collection here.
+func (s *ProjectsService) AccountOccurrences(ctx context.Context, o OccurrenceOptions) ([]OccurrenceSeries, error) {
+	return CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[OccurrenceSeries], error) {
+		params := &gen.ListAccountOccurrencesParams{}
+		if page > 0 {
+			p := gen.Page(page)
+			params.Page = &p
+		}
+		if o.Period != "" {
+			period := gen.ListAccountOccurrencesParamsPeriod(o.Period)
+			params.Period = &period
+		}
+		if o.Environment != "" {
+			env := gen.OccurrenceEnvironment(o.Environment)
+			params.Environment = &env
+		}
+
+		return listOffset[OccurrenceSeries](ctx, s.client, func() (*http.Response, error) {
+			return s.client.gen().ListAccountOccurrences(ctx, s.client.accountID(o.AccountID), params)
+		})
 	})
-	if err != nil {
-		return nil, err
-	}
-	return *data, nil
 }

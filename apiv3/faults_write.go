@@ -144,6 +144,15 @@ func (s *FaultsService) Summary(ctx context.Context, projectID string, opts ...O
 	if ro.query != "" {
 		params.Q = &ro.query
 	}
+	if ro.createdAfter != 0 {
+		params.CreatedAfter = &ro.createdAfter
+	}
+	if ro.occurredAfter != 0 {
+		params.OccurredAfter = &ro.occurredAfter
+	}
+	if ro.occurredBefore != 0 {
+		params.OccurredBefore = &ro.occurredBefore
+	}
 
 	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetFaultSummary(ctx, s.client.accountID(ro.accountID), projectID, params)

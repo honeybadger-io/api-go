@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
@@ -227,20 +228,24 @@ func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmPar
 	})
 }
 
+// AlarmUpdateParams are the fields an alarm update can change.
+//
+// Pointers rather than strings so absent and empty are distinguishable: leaving a
+// field nil keeps it, while pointing at "" clears it. With plain strings there
+// would be no way to remove a description.
+type AlarmUpdateParams struct {
+	Name        *string
+	Description *string
+}
+
 // Update changes an alarm's name or description.
 //
 // Those are the only fields the update schema declares — unlike create, which
-// takes the query, trigger and evaluation settings. Changing an alarm's
-// behaviour is therefore not yet possible through the API.
-func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, name, description string, opts ...Option) (*Alarm, error) {
+// takes the query, trigger and evaluation settings. Changing an alarm's behaviour
+// is therefore not possible through the API; delete and recreate it.
+func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams, opts ...Option) (*Alarm, error) {
 	ro := resolve(opts)
-	var body gen.AlarmUpdateInput
-	if name != "" {
-		body.Name = &name
-	}
-	if description != "" {
-		body.Description = &description
-	}
+	body := gen.AlarmUpdateInput{Name: p.Name, Description: p.Description}
 
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateAlarm(ctx, s.client.accountID(ro.accountID), projectID, alarmID, body)
@@ -269,10 +274,20 @@ type DashboardParams struct {
 	// DefaultTs is the dashboard's default time range, such as "P1D" or "week".
 	DefaultTs string
 
-	// Widgets is a JSON array of widget objects. Nil sends an empty array, which
-	// is what the schema requires for a dashboard with no widgets.
+	// Widgets is a JSON array of widget objects. Nil sends an empty array on
+	// create; on update it is an error, because the write replaces the dashboard
+	// rather than merging into it.
 	Widgets json.RawMessage
 }
+
+// ErrReplacesDashboard is returned by Dashboards.Update when Widgets is nil.
+//
+// The update body is the whole resource, so a nil widget array would clear the
+// dashboard's widgets rather than leave them alone. Read the dashboard first and
+// pass its widgets back, changed or not.
+var ErrReplacesDashboard = errors.New(
+	"apiv3: a dashboard update replaces rather than merges, so Widgets must be supplied — " +
+		"read the dashboard first and pass its widgets back")
 
 // body builds the request payload.
 //
@@ -312,8 +327,17 @@ func (s *DashboardsService) Create(ctx context.Context, projectID string, p Dash
 	})
 }
 
-// Update changes a dashboard. Title is required, as it is on create.
+// Update changes a dashboard.
+//
+// Title and Widgets are both required: the update body is the whole resource, so
+// anything omitted is cleared rather than kept. DefaultTs has the same hazard —
+// leaving it empty resets a custom time range — so pass the current value along
+// with the change.
 func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID string, p DashboardParams, opts ...Option) (*Dashboard, error) {
+	if len(p.Widgets) == 0 {
+		return nil, ErrReplacesDashboard
+	}
+
 	ro := resolve(opts)
 	raw, err := p.body()
 	if err != nil {

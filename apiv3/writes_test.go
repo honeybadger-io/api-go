@@ -7,8 +7,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
+	"time"
 )
 
 // captureWrite records what a write actually put on the wire, which is the only
@@ -376,5 +378,108 @@ func TestFaultsAssignAndUnassign(t *testing.T) {
 	}
 	if got2.method != http.MethodDelete {
 		t.Errorf("unassign method = %q, want DELETE", got2.method)
+	}
+}
+
+// A dashboard update replaces rather than merges, so omitting widgets would clear
+// them. The client refuses instead of silently emptying the dashboard.
+func TestDashboardsUpdateRefusesWithoutWidgets(t *testing.T) {
+	c, _ := captureWrite(t, http.StatusOK, `{"data":{"id":"d1","title":"Ops"}}`)
+
+	_, err := c.Dashboards.Update(context.Background(), "Xk9mZp", "d1",
+		DashboardParams{Title: "Ops"})
+	if !errors.Is(err, ErrReplacesDashboard) {
+		t.Fatalf("err = %v, want ErrReplacesDashboard", err)
+	}
+}
+
+// Create is different: a new dashboard legitimately has no widgets, and the schema
+// requires the field, so an empty array is correct there.
+func TestDashboardsCreateAllowsNoWidgets(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"d1","title":"Ops"}}`)
+
+	if _, err := c.Dashboards.Create(context.Background(), "Xk9mZp",
+		DashboardParams{Title: "Ops"}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if arr, ok := got.body["widgets"].([]any); !ok || len(arr) != 0 {
+		t.Errorf("widgets = %v, want []", got.body["widgets"])
+	}
+}
+
+// An alarm's description must be clearable, which needs absent and empty to be
+// distinguishable.
+func TestAlarmsUpdateCanClearDescription(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"a1","name":"Spike"}}`)
+
+	empty := ""
+	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1",
+		AlarmUpdateParams{Description: &empty}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	v, present := got.body["description"]
+	if !present {
+		t.Fatal("description was dropped; an empty value is how a caller clears it")
+	}
+	if v != "" {
+		t.Errorf("description = %v, want empty", v)
+	}
+	// A nil name must stay absent rather than blanking the alarm's name.
+	if _, present := got.body["name"]; present {
+		t.Error("name was sent though it was not supplied")
+	}
+}
+
+// The fault listing's filters must reach the query string.
+func TestFaultsListSendsOrderAndTimeFilters(t *testing.T) {
+	var query url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		query = r.URL.Query()
+		writeJSON(w, 0, `{"data":[]}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	at := time.Unix(1704067200, 500*1000*1000) // fractional seconds are significant
+
+	_, err := c.Faults.ListAll(context.Background(), "Xk9mZp",
+		OrderBy("frequent"), CreatedAfter(at), OccurredAfter(at), OccurredBefore(at))
+	if err != nil {
+		t.Fatalf("ListAll: %v", err)
+	}
+
+	if got := query.Get("order"); got != "frequent" {
+		t.Errorf("order = %q, want frequent", got)
+	}
+	for _, field := range []string{"created_after", "occurred_after", "occurred_before"} {
+		if got := query.Get(field); got != "1704067200.5" {
+			t.Errorf("%s = %q, want 1704067200.5 with the fraction intact", field, got)
+		}
+	}
+}
+
+// The counts endpoint takes the same filters, and previously ignored all but q.
+func TestFaultsSummarySendsTimeFilters(t *testing.T) {
+	var query url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		query = r.URL.Query()
+		writeJSON(w, 0, `{"data":{"total":1}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	at := time.Unix(1704067200, 0)
+
+	if _, err := c.Faults.Summary(context.Background(), "Xk9mZp",
+		Search("is:unresolved"), OccurredAfter(at)); err != nil {
+		t.Fatalf("Summary: %v", err)
+	}
+
+	if got := query.Get("q"); got != "is:unresolved" {
+		t.Errorf("q = %q", got)
+	}
+	if got := query.Get("occurred_after"); got == "" {
+		t.Error("occurred_after was not sent; the filter would be silently ignored")
 	}
 }

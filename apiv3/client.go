@@ -115,6 +115,9 @@ type Client struct {
 
 	// Dashboards handles Insights dashboards.
 	Dashboards *DashboardsService
+
+	// Channels handles notification channels, which v2 called integrations.
+	Channels *ChannelsService
 }
 
 // NewClient returns a client pointing at the production API with a 30 second
@@ -151,6 +154,7 @@ func (c *Client) rebind() *Client {
 	c.CheckIns = &CheckInsService{client: c}
 	c.Alarms = &AlarmsService{client: c}
 	c.Dashboards = &DashboardsService{client: c}
+	c.Channels = &ChannelsService{client: c}
 	return c
 }
 

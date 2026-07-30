@@ -1,6 +1,10 @@
 package apiv3
 
-import "github.com/honeybadger-io/api-go/internal/gen"
+import (
+	"time"
+
+	"github.com/honeybadger-io/api-go/internal/gen"
+)
 
 // Option configures a single request. Options are variadic, so the common call
 // carries none:
@@ -36,6 +40,13 @@ type requestOptions struct {
 	before    string
 	after     string
 	query     string
+	order     string
+
+	// Time filters, as Unix seconds. Zero means unset — these endpoints have no
+	// meaningful use for the epoch.
+	createdAfter   float64
+	occurredAfter  float64
+	occurredBefore float64
 }
 
 // applyOffset fills in offset paging params, leaving them nil when unset so the
@@ -177,4 +188,52 @@ func (o searchOption) listAll()                 {}
 // of inventing a surface that would need updating as the filter language grows.
 func Search(query string) ListAllOption {
 	return searchOption{q: query}
+}
+
+// orderOption sorts a fault listing.
+type orderOption struct{ by string }
+
+func (o orderOption) apply(ro *requestOptions) { ro.order = o.by }
+func (o orderOption) listAll()                 {}
+
+// OrderBy sorts a fault listing: "recent" or "frequent".
+func OrderBy(order string) ListAllOption {
+	return orderOption{by: order}
+}
+
+// timeOption filters by one of the timestamp parameters.
+type timeOption struct {
+	field string
+	at    time.Time
+}
+
+func (o timeOption) apply(ro *requestOptions) {
+	seconds := float64(o.at.UnixNano()) / float64(time.Second)
+	switch o.field {
+	case "created_after":
+		ro.createdAfter = seconds
+	case "occurred_after":
+		ro.occurredAfter = seconds
+	case "occurred_before":
+		ro.occurredBefore = seconds
+	}
+}
+func (o timeOption) listAll() {}
+
+// CreatedAfter filters to items created after the given time.
+//
+// Sent as Unix seconds with the fractional part intact, which the API documents
+// as significant.
+func CreatedAfter(at time.Time) ListAllOption {
+	return timeOption{field: "created_after", at: at}
+}
+
+// OccurredAfter filters to faults that last occurred after the given time.
+func OccurredAfter(at time.Time) ListAllOption {
+	return timeOption{field: "occurred_after", at: at}
+}
+
+// OccurredBefore filters to faults that last occurred before the given time.
+func OccurredBefore(at time.Time) ListAllOption {
+	return timeOption{field: "occurred_before", at: at}
 }

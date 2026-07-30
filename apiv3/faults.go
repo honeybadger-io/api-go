@@ -42,6 +42,19 @@ func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOp
 	if ro.query != "" {
 		params.Q = &ro.query
 	}
+	if ro.order != "" {
+		order := gen.ListFaultsParamsOrder(ro.order)
+		params.Order = &order
+	}
+	if ro.createdAfter != 0 {
+		params.CreatedAfter = &ro.createdAfter
+	}
+	if ro.occurredAfter != 0 {
+		params.OccurredAfter = &ro.occurredAfter
+	}
+	if ro.occurredBefore != 0 {
+		params.OccurredBefore = &ro.occurredBefore
+	}
 
 	return listOffset[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ListFaults(ctx, s.client.accountID(ro.accountID), projectID, params)

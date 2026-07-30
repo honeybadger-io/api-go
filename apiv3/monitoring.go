@@ -103,3 +103,35 @@ func (s *DashboardsService) Get(ctx context.Context, projectID, dashboardID stri
 		return s.client.gen().GetDashboard(ctx, s.client.accountID(ro.accountID), projectID, dashboardID)
 	})
 }
+
+// Channel is a notification channel — a Slack hook, an email destination, and so
+// on. v2 called these integrations.
+type Channel = gen.Channel
+
+// ChannelsService handles notification channels.
+type ChannelsService struct {
+	client *Client
+}
+
+// List returns one page of a project's notification channels.
+func (s *ChannelsService) List(ctx context.Context, projectID string, opts ...Option) (*ListResponse[Channel], error) {
+	return s.list(ctx, projectID, resolve(opts))
+}
+
+// ListAll returns every channel for the project, walking pagination.
+func (s *ChannelsService) ListAll(ctx context.Context, projectID string, opts ...ListAllOption) ([]Channel, error) {
+	ro := resolveListAll(opts)
+	return CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[Channel], error) {
+		ro.page = page
+		return s.list(ctx, projectID, ro)
+	})
+}
+
+func (s *ChannelsService) list(ctx context.Context, projectID string, ro requestOptions) (*ListResponse[Channel], error) {
+	params := &gen.ListChannelsParams{}
+	ro.applyOffset(&params.Page, &params.PerPage)
+
+	return listOffset[Channel](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().ListChannels(ctx, s.client.accountID(ro.accountID), projectID, params)
+	})
+}
