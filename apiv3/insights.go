@@ -3,6 +3,7 @@ package apiv3
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
@@ -81,19 +82,59 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 		return nil, err
 	}
 
+	// Data is decoded in two steps because the API sends it two ways. The spec
+	// says object, and that is what a corrected server sends. What it sends today
+	// is a JSON *string* holding the object: the query service returns its result
+	// already encoded, v2 passed that through with `render json: result` so it
+	// stayed valid, and v3 wraps it in an envelope — `{data: result}.to_json`
+	// escapes the string rather than embedding it, so the payload arrives
+	// double-encoded.
+	//
+	// Decoding as RawMessage first accepts both, and unwrapping one level of
+	// string leaves callers with the object the spec promises either way. Remove
+	// the unwrapping once the server embeds the result properly; the object path
+	// needs no change when that happens.
 	var envelope struct {
-		Data map[string]any `json:"data"`
-		Meta map[string]any `json:"meta"`
+		Data json.RawMessage `json:"data"`
+		Meta map[string]any  `json:"meta"`
 	}
 	if err := json.Unmarshal(raw, &envelope); err != nil {
 		return nil, malformed(status, raw, err)
 	}
 
-	result := &InsightsResult{Data: envelope.Data, Meta: envelope.Meta}
+	data, err := decodeInsightsData(envelope.Data)
+	if err != nil {
+		return nil, malformed(status, raw, err)
+	}
+
+	result := &InsightsResult{Data: data, Meta: envelope.Meta}
 	if id, ok := envelope.Meta["request_id"].(string); ok {
 		result.RequestID = id
 	}
 	return result, nil
+}
+
+// decodeInsightsData reads the query result, unwrapping the double-encoded form.
+func decodeInsightsData(raw json.RawMessage) (map[string]any, error) {
+	if len(raw) == 0 {
+		return nil, nil
+	}
+
+	var data map[string]any
+	if err := json.Unmarshal(raw, &data); err == nil {
+		return data, nil
+	}
+
+	// Not an object. A JSON string is the double-encoded case; anything else is
+	// genuinely unreadable and the original error is the honest one to report.
+	var encoded string
+	if err := json.Unmarshal(raw, &encoded); err != nil {
+		return nil, fmt.Errorf("query result was neither an object nor an encoded one: %w", err)
+	}
+	if err := json.Unmarshal([]byte(encoded), &data); err != nil {
+		return nil, fmt.Errorf("query result was a string but not encoded JSON: %w", err)
+	}
+	return data, nil
 }
 
 // ListStreams returns one page of the project's event streams.

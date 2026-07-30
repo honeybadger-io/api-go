@@ -184,3 +184,44 @@ func TestListStreams(t *testing.T) {
 		t.Errorf("second stream internal = %v, want true", resp.Data[1].Internal)
 	}
 }
+
+// The API sends the query result two ways: the object the spec documents, and a
+// JSON string holding that object, which is what the v3 envelope produces today.
+// Both must land on the same result — a caller should not have to know which
+// server it reached.
+func TestInsightsQueryAcceptsBothEncodings(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		body string
+	}{
+		{"object, as the spec documents", `{"data":{"results":[{"count":7}]},"meta":{"request_id":"r1"}}`},
+		{"string, as the envelope sends today", `{"data":"{\"results\":[{\"count\":7}]}","meta":{"request_id":"r1"}}`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c, _ := captureWrite(t, http.StatusOK, tc.body)
+
+			got, err := c.Insights.Query(context.Background(), "Xk9mZp",
+				InsightsQuery{Query: "stats count()"})
+			if err != nil {
+				t.Fatalf("Query: %v", err)
+			}
+			results, ok := got.Data["results"].([]any)
+			if !ok || len(results) != 1 {
+				t.Fatalf("Data = %#v, want one result", got.Data)
+			}
+			if got.RequestID != "r1" {
+				t.Errorf("RequestID = %q", got.RequestID)
+			}
+		})
+	}
+}
+
+// A string that is not encoded JSON is a real failure and must not be swallowed.
+func TestInsightsQueryRejectsUnreadableData(t *testing.T) {
+	c, _ := captureWrite(t, http.StatusOK, `{"data":"not json at all"}`)
+
+	if _, err := c.Insights.Query(context.Background(), "Xk9mZp",
+		InsightsQuery{Query: "stats count()"}); err == nil {
+		t.Fatal("err = nil, want a decode failure")
+	}
+}
