@@ -249,18 +249,23 @@ func (c *Client) serverURL() string {
 
 // gen builds a generated client bound to this client's transport and auth.
 //
+// The plain *gen.Client, not the *WithResponses wrapper. This package decodes
+// every response itself — the generated decoders discard the body once they fail
+// to match a documented shape, which is exactly the case worth reporting — so
+// the wrapper would have advertised an intent the code does not have.
+//
 // Constructed per call rather than cached: construction only assembles structs
 // and performs no I/O, and because the Client is immutable, every call sees a
 // coherent configuration.
-func (c *Client) gen() *gen.ClientWithResponses {
-	client, err := gen.NewClientWithResponses(
+func (c *Client) gen() *gen.Client {
+	client, err := gen.NewClient(
 		c.serverURL(),
 		gen.WithHTTPClient(c.httpClient),
 		gen.WithRequestEditorFn(c.authorize),
 	)
 	if err != nil {
-		// NewClientWithResponses only fails if a ClientOption fails. Neither of
-		// the options above can, so this is unreachable.
+		// NewClient only fails if a ClientOption fails. Neither of the options
+		// above can, so this is unreachable.
 		panic("apiv3: constructing generated client: " + err.Error())
 	}
 	return client

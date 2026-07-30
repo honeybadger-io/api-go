@@ -15,7 +15,7 @@
 # codegen.yaml stay relative to this directory.
 OAPI_CODEGEN := bin/oapi-codegen
 
-.PHONY: generate verify-generated test tools clean-tools
+.PHONY: generate verify-generated verify-spec update-spec-checksum verify test tools clean-tools
 
 # GOWORK=off because the tools module is deliberately outside the workspace: it
 # exists to hold a dependency the library must not inherit.
@@ -40,6 +40,34 @@ generate: $(OAPI_CODEGEN)
 # Fails when the committed generated code does not match the committed spec.
 verify-generated: generate
 	git diff --exit-code --stat internal/gen/gen.go apiv3/scopes_gen.go
+
+# Fails when the vendored spec is not the one the provenance table describes.
+#
+# The bundle is gitignored upstream — it is a build artifact of `rake
+# openapi:bundle`, not a tracked file — so there is no remote blob to diff
+# against and the checksum is the only way to answer "is this still the spec we
+# think it is". Recording it only in README prose meant nothing checked it; the
+# artifact changed twice during one vendoring session, once mid-copy.
+#
+# Refresh with `make update-spec-checksum` when vendoring deliberately.
+verify-spec:
+	@actual=`shasum -a 256 openapi/bundled.yaml | awk '{print $$1}'`; \
+	expected=`cat openapi/bundled.yaml.sha256`; \
+	if [ "$$actual" != "$$expected" ]; then \
+		echo "openapi/bundled.yaml does not match its recorded checksum."; \
+		echo "  recorded: $$expected"; \
+		echo "  actual:   $$actual"; \
+		echo "Vendoring a new bundle? Run make update-spec-checksum and update the"; \
+		echo "provenance table in openapi/README.md in the same commit."; \
+		exit 1; \
+	fi; \
+	echo "openapi/bundled.yaml matches its recorded checksum"
+
+update-spec-checksum:
+	shasum -a 256 openapi/bundled.yaml | awk '{print $$1}' > openapi/bundled.yaml.sha256
+
+# Everything CI should gate on.
+verify: verify-spec verify-generated test
 
 test:
 	go test ./...

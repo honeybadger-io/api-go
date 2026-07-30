@@ -19,6 +19,12 @@ Record the branch, commit, **and checksum** on every refresh. The bundle is
 `rake openapi:bundle`, not a tracked file — so there is no upstream blob to diff
 against.
 
+The checksum is machine-checked: `openapi/bundled.yaml.sha256` holds it and
+`make verify-spec` compares the two, so a bundle that quietly changed underneath
+the provenance table fails the build instead of being described by a stale table.
+Use `make update-spec-checksum` when vendoring deliberately, in the same commit
+as the table update. `make verify` runs it alongside the codegen drift gate.
+
 The commit alone is not enough. The artifact is regenerated whenever anyone runs
 the rake task, so the same commit can produce different bundles: during this
 vendoring the source file changed twice within a few minutes, once mid-copy. The
@@ -32,6 +38,7 @@ rake openapi:bundle
 
 # Here:
 cp <honeybadger>/openapi/v3/bundled.yaml openapi/bundled.yaml
+make update-spec-checksum
 make generate
 go test ./...
 ```
