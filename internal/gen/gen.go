@@ -39,16 +39,26 @@ func (e CheckInScheduleType) Valid() bool {
 
 // Defines values for ErrorErrorCode.
 const (
-	ErrorErrorCodeAccessDenied        ErrorErrorCode = "access_denied"
-	ErrorErrorCodeAmbiguousAccount    ErrorErrorCode = "ambiguous_account"
-	ErrorErrorCodeForbiddenAttributes ErrorErrorCode = "forbidden_attributes"
-	ErrorErrorCodeInvalidId           ErrorErrorCode = "invalid_id"
-	ErrorErrorCodeMaintenanceMode     ErrorErrorCode = "maintenance_mode"
-	ErrorErrorCodeNotFound            ErrorErrorCode = "not_found"
-	ErrorErrorCodeRateLimitExceeded   ErrorErrorCode = "rate_limit_exceeded"
-	ErrorErrorCodeServiceUnavailable  ErrorErrorCode = "service_unavailable"
-	ErrorErrorCodeUnauthorized        ErrorErrorCode = "unauthorized"
-	ErrorErrorCodeValidationError     ErrorErrorCode = "validation_error"
+	ErrorErrorCodeAccessDenied          ErrorErrorCode = "access_denied"
+	ErrorErrorCodeAccountInactive       ErrorErrorCode = "account_inactive"
+	ErrorErrorCodeAccountParked         ErrorErrorCode = "account_parked"
+	ErrorErrorCodeAmbiguousAccount      ErrorErrorCode = "ambiguous_account"
+	ErrorErrorCodeCredentialInQuery     ErrorErrorCode = "credential_in_query"
+	ErrorErrorCodeDeleteFailed          ErrorErrorCode = "delete_failed"
+	ErrorErrorCodeFeatureUnavailable    ErrorErrorCode = "feature_unavailable"
+	ErrorErrorCodeForbiddenAttributes   ErrorErrorCode = "forbidden_attributes"
+	ErrorErrorCodeInsufficientScope     ErrorErrorCode = "insufficient_scope"
+	ErrorErrorCodeInvalidId             ErrorErrorCode = "invalid_id"
+	ErrorErrorCodeLimitReached          ErrorErrorCode = "limit_reached"
+	ErrorErrorCodeMaintenanceMode       ErrorErrorCode = "maintenance_mode"
+	ErrorErrorCodeNotFound              ErrorErrorCode = "not_found"
+	ErrorErrorCodeProjectRestricted     ErrorErrorCode = "project_restricted"
+	ErrorErrorCodeRateLimitExceeded     ErrorErrorCode = "rate_limit_exceeded"
+	ErrorErrorCodeRequiresUserToken     ErrorErrorCode = "requires_user_token"
+	ErrorErrorCodeServiceUnavailable    ErrorErrorCode = "service_unavailable"
+	ErrorErrorCodeUnauthorized          ErrorErrorCode = "unauthorized"
+	ErrorErrorCodeUnsupportedAuthScheme ErrorErrorCode = "unsupported_auth_scheme"
+	ErrorErrorCodeValidationError       ErrorErrorCode = "validation_error"
 )
 
 // Valid indicates whether the value is a known member of the ErrorErrorCode enum.
@@ -56,21 +66,41 @@ func (e ErrorErrorCode) Valid() bool {
 	switch e {
 	case ErrorErrorCodeAccessDenied:
 		return true
+	case ErrorErrorCodeAccountInactive:
+		return true
+	case ErrorErrorCodeAccountParked:
+		return true
 	case ErrorErrorCodeAmbiguousAccount:
+		return true
+	case ErrorErrorCodeCredentialInQuery:
+		return true
+	case ErrorErrorCodeDeleteFailed:
+		return true
+	case ErrorErrorCodeFeatureUnavailable:
 		return true
 	case ErrorErrorCodeForbiddenAttributes:
 		return true
+	case ErrorErrorCodeInsufficientScope:
+		return true
 	case ErrorErrorCodeInvalidId:
+		return true
+	case ErrorErrorCodeLimitReached:
 		return true
 	case ErrorErrorCodeMaintenanceMode:
 		return true
 	case ErrorErrorCodeNotFound:
 		return true
+	case ErrorErrorCodeProjectRestricted:
+		return true
 	case ErrorErrorCodeRateLimitExceeded:
+		return true
+	case ErrorErrorCodeRequiresUserToken:
 		return true
 	case ErrorErrorCodeServiceUnavailable:
 		return true
 	case ErrorErrorCodeUnauthorized:
+		return true
+	case ErrorErrorCodeUnsupportedAuthScheme:
 		return true
 	case ErrorErrorCodeValidationError:
 		return true
@@ -322,6 +352,27 @@ func (e CreateStatusPageIncidentJSONBodyIncidentBuildType) Valid() bool {
 	case CreateStatusPageIncidentJSONBodyIncidentBuildTypeRetroactive:
 		return true
 	case CreateStatusPageIncidentJSONBodyIncidentBuildTypeScheduledMaintenance:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GetToken200JSONResponseBodyDataKind.
+const (
+	GetToken200JSONResponseBodyDataKindAccount GetToken200JSONResponseBodyDataKind = "account"
+	GetToken200JSONResponseBodyDataKindOauth   GetToken200JSONResponseBodyDataKind = "oauth"
+	GetToken200JSONResponseBodyDataKindUser    GetToken200JSONResponseBodyDataKind = "user"
+)
+
+// Valid indicates whether the value is a known member of the GetToken200JSONResponseBodyDataKind enum.
+func (e GetToken200JSONResponseBodyDataKind) Valid() bool {
+	switch e {
+	case GetToken200JSONResponseBodyDataKindAccount:
+		return true
+	case GetToken200JSONResponseBodyDataKindOauth:
+		return true
+	case GetToken200JSONResponseBodyDataKindUser:
 		return true
 	default:
 		return false
@@ -596,24 +647,6 @@ type Comment struct {
 
 	// Source Source of the comment
 	Source *string `json:"source,omitempty"`
-}
-
-// CursorPagination Cursor-based pagination information
-type CursorPagination struct {
-	// HasNewer Whether there are newer items available
-	HasNewer bool `json:"has_newer"`
-
-	// HasOlder Whether there are older items available
-	HasOlder bool `json:"has_older"`
-
-	// Limit Maximum items per page
-	Limit int `json:"limit"`
-
-	// NewestCursor Cursor to fetch newer items (use with `after` parameter)
-	NewestCursor nullable.Nullable[string] `json:"newest_cursor,omitempty"`
-
-	// OldestCursor Cursor to fetch older items (use with `before` parameter)
-	OldestCursor nullable.Nullable[string] `json:"oldest_cursor,omitempty"`
 }
 
 // Dashboard An Insights dashboard
@@ -899,6 +932,24 @@ type Notice struct {
 		// Url Request URL
 		Url *string `json:"url,omitempty"`
 	}] `json:"request,omitempty"`
+}
+
+// OffsetLinks Navigation links for a numbered-page collection
+type OffsetLinks struct {
+	// First First page
+	First *string `json:"first,omitempty"`
+
+	// Last Last page
+	Last *string `json:"last,omitempty"`
+
+	// Next Next page, or null on the last page
+	Next nullable.Nullable[string] `json:"next,omitempty"`
+
+	// Prev Previous page, or null on the first page
+	Prev nullable.Nullable[string] `json:"prev,omitempty"`
+
+	// Self This page
+	Self string `json:"self"`
 }
 
 // Outage An uptime outage period
@@ -1263,16 +1314,34 @@ type TeamMember struct {
 	UserId string `json:"user_id"`
 }
 
-// TimePagination Time-window pagination information
-type TimePagination struct {
-	// HasNewer Whether there are newer items available (follow the `newer` link)
+// TimeSeriesLinks Navigation links for a time-ordered collection
+type TimeSeriesLinks struct {
+	// Newer Page of newer items, or null when none exist. Always null on one-directional collections, which are documented as such.
+	Newer nullable.Nullable[string] `json:"newer,omitempty"`
+
+	// Older Page of older items, or null when none exist
+	Older nullable.Nullable[string] `json:"older,omitempty"`
+
+	// Self This page
+	Self string `json:"self"`
+}
+
+// TimeSeriesPagination Pagination for a time-ordered collection
+type TimeSeriesPagination struct {
+	// HasNewer Whether newer items exist. When true, follow `links.newer`.
 	HasNewer bool `json:"has_newer"`
 
-	// HasOlder Whether there are older items available (follow the `older` link)
+	// HasOlder Whether older items exist. When true, follow `links.older`.
 	HasOlder bool `json:"has_older"`
 
 	// Limit Maximum items per page
 	Limit int `json:"limit"`
+
+	// NewestCursor Opaque cursor for the newest item on this page, to be passed as `after`. Absent or null on collections that page on a timestamp rather than a cursor, and on one-directional collections; use `links.newer` instead.
+	NewestCursor nullable.Nullable[string] `json:"newest_cursor,omitempty"`
+
+	// OldestCursor Opaque cursor for the oldest item on this page, to be passed as `before`. Absent or null on collections that page on a timestamp rather than a cursor; use `links.older` instead.
+	OldestCursor nullable.Nullable[string] `json:"oldest_cursor,omitempty"`
 }
 
 // UptimeCheck An individual uptime check result
@@ -1335,20 +1404,11 @@ type ProjectId = string
 // AmbiguousAccount API error response
 type AmbiguousAccount = Error
 
-// CredentialInQuery API error response
-type CredentialInQuery = Error
-
 // Forbidden API error response
 type Forbidden = Error
 
-// InsufficientScope API error response
-type InsufficientScope = Error
-
 // NotFound API error response
 type NotFound = Error
-
-// ProjectRestricted API error response
-type ProjectRestricted = Error
 
 // RateLimitExceeded API error response
 type RateLimitExceeded = Error
@@ -1416,15 +1476,6 @@ type UpdateProjectJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
 
-// ListAlarmsParams defines parameters for ListAlarms.
-type ListAlarmsParams struct {
-	// Page Page number (1-indexed)
-	Page *Page `form:"page,omitempty" json:"page,omitempty"`
-
-	// PerPage Items per page
-	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
-}
-
 // CreateAlarmJSONBody defines parameters for CreateAlarm.
 type CreateAlarmJSONBody struct {
 	Name string `json:"name"`
@@ -1439,9 +1490,6 @@ type UpdateAlarmJSONBody struct {
 type ListAlarmHistoryParams struct {
 	// Page Page number (1-indexed)
 	Page *Page `form:"page,omitempty" json:"page,omitempty"`
-
-	// PerPage Items per page
-	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
 // ListChannelsParams defines parameters for ListChannels.
@@ -1489,8 +1537,8 @@ type ListCheckInEventsParams struct {
 	// Limit Maximum items to return
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// Before Unix timestamp; returns events older than it. Take it from the `older` link. Events are always returned newest first, so the newest page is the one requested without this parameter.
-	Before *float32 `form:"before,omitempty" json:"before,omitempty"`
+	// CreatedBefore Only return items created before this Unix timestamp
+	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
 // ListDashboardsParams defines parameters for ListDashboards.
@@ -1829,6 +1877,9 @@ type ListTeamMembersParams struct {
 
 // UpdateTeamMemberJSONBody defines parameters for UpdateTeamMember.
 type UpdateTeamMemberJSONBody = map[string]interface{}
+
+// GetToken200JSONResponseBodyDataKind defines parameters for GetToken.
+type GetToken200JSONResponseBodyDataKind string
 
 // CreateAccountInvitationJSONRequestBody defines body for CreateAccountInvitation for application/json ContentType.
 type CreateAccountInvitationJSONRequestBody CreateAccountInvitationJSONBody
@@ -2193,10 +2244,12 @@ type ClientInterface interface {
 
 	// ListAlarms List alarms
 	//
-	// Returns a list of alarms for the project.
+	// Returns every alarm on the project.
+	//
+	// Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
 	//
 	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/alarms (the `ListAlarms` operationId).
-	ListAlarms(ctx context.Context, accountId AccountId, projectId ProjectId, params *ListAlarmsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListAlarms(ctx context.Context, accountId AccountId, projectId ProjectId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateAlarmWithBody Create an alarm
 	//
@@ -2251,6 +2304,8 @@ type ClientInterface interface {
 	// ListAlarmHistory List alarm trigger history
 	//
 	// Returns the trigger history for an alarm.
+	//
+	// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
 	//
 	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}/history (the `ListAlarmHistory` operationId).
 	ListAlarmHistory(ctx context.Context, accountId AccountId, projectId ProjectId, alarmId string, params *ListAlarmHistoryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -2364,7 +2419,9 @@ type ClientInterface interface {
 
 	// ListCheckInEvents List check-in events
 	//
-	// Returns a list of events for a check-in.
+	// Returns a check-in's events, newest first.
+	//
+	// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 	//
 	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}/events (the `ListCheckInEvents` operationId).
 	ListCheckInEvents(ctx context.Context, accountId AccountId, projectId ProjectId, checkInId string, params *ListCheckInEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -3252,6 +3309,15 @@ type ClientInterface interface {
 	//
 	// Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 	GetNotice(ctx context.Context, uuid openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetToken Describe the current credential
+	//
+	// Reports what the credential making the request is and what it can reach.
+	// Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
+	// `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+	//
+	// Corresponds with GET /token (the `GetToken` operationId).
+	GetToken(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // ListAccounts List accounts
@@ -3633,11 +3699,13 @@ func (c *Client) UpdateProject(ctx context.Context, accountId AccountId, project
 
 // ListAlarms List alarms
 //
-// Returns a list of alarms for the project.
+// Returns every alarm on the project.
+//
+// Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
 //
 // Corresponds with GET /accounts/{account_id}/projects/{project_id}/alarms (the `ListAlarms` operationId).
-func (c *Client) ListAlarms(ctx context.Context, accountId AccountId, projectId ProjectId, params *ListAlarmsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListAlarmsRequest(c.Server, accountId, projectId, params)
+func (c *Client) ListAlarms(ctx context.Context, accountId AccountId, projectId ProjectId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAlarmsRequest(c.Server, accountId, projectId)
 	if err != nil {
 		return nil, err
 	}
@@ -3761,6 +3829,8 @@ func (c *Client) UpdateAlarm(ctx context.Context, accountId AccountId, projectId
 // ListAlarmHistory List alarm trigger history
 //
 // Returns the trigger history for an alarm.
+//
+// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
 //
 // Corresponds with GET /accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}/history (the `ListAlarmHistory` operationId).
 func (c *Client) ListAlarmHistory(ctx context.Context, accountId AccountId, projectId ProjectId, alarmId string, params *ListAlarmHistoryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -4014,7 +4084,9 @@ func (c *Client) UpdateCheckIn(ctx context.Context, accountId AccountId, project
 
 // ListCheckInEvents List check-in events
 //
-// Returns a list of events for a check-in.
+// Returns a check-in's events, newest first.
+//
+// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 //
 // Corresponds with GET /accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}/events (the `ListCheckInEvents` operationId).
 func (c *Client) ListCheckInEvents(ctx context.Context, accountId AccountId, projectId ProjectId, checkInId string, params *ListCheckInEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -5993,6 +6065,25 @@ func (c *Client) GetNotice(ctx context.Context, uuid openapi_types.UUID, reqEdit
 	return c.Client.Do(req)
 }
 
+// GetToken Describe the current credential
+//
+// Reports what the credential making the request is and what it can reach.
+// Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
+// `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+//
+// Corresponds with GET /token (the `GetToken` operationId).
+func (c *Client) GetToken(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTokenRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // NewListAccountsRequest constructs an http.Request for the ListAccounts method
 func NewListAccountsRequest(server string, params *ListAccountsParams) (*http.Request, error) {
 	var err error
@@ -6815,7 +6906,7 @@ func NewUpdateProjectRequestWithBody(server string, accountId AccountId, project
 }
 
 // NewListAlarmsRequest constructs an http.Request for the ListAlarms method
-func NewListAlarmsRequest(server string, accountId AccountId, projectId ProjectId, params *ListAlarmsParams) (*http.Request, error) {
+func NewListAlarmsRequest(server string, accountId AccountId, projectId ProjectId) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -6845,45 +6936,6 @@ func NewListAlarmsRequest(server string, accountId AccountId, projectId ProjectI
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-		// queryValues collects non-styled parameters (passthrough, JSON)
-		// that are safe to round-trip through url.Values.Encode().
-		queryValues := queryURL.Query()
-		// rawQueryFragments collects pre-encoded query fragments from
-		// styled parameters, preserving literal commas as delimiters
-		// per the OpenAPI spec (e.g. "color=blue,black,brown").
-		var rawQueryFragments []string
-
-		if params.Page != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if params.PerPage != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if encoded := queryValues.Encode(); encoded != "" {
-			rawQueryFragments = append(rawQueryFragments, encoded)
-		}
-		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -7157,18 +7209,6 @@ func NewListAlarmHistoryRequest(server string, accountId AccountId, projectId Pr
 		if params.Page != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if params.PerPage != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -7787,9 +7827,9 @@ func NewListCheckInEventsRequest(server string, accountId AccountId, projectId P
 
 		}
 
-		if params.Before != nil {
+		if params.CreatedBefore != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "before", *params.Before, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -12464,6 +12504,33 @@ func NewGetNoticeRequest(server string, uuid openapi_types.UUID) (*http.Request,
 	return req, nil
 }
 
+// NewGetTokenRequest constructs an http.Request for the GetToken method
+func NewGetTokenRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/token")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -12699,12 +12766,14 @@ type ClientWithResponsesInterface interface {
 
 	// ListAlarmsWithResponse List alarms
 	//
-	// Returns a list of alarms for the project.
+	// Returns every alarm on the project.
+	//
+	// Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/alarms (the `ListAlarms` operationId).
-	ListAlarmsWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, params *ListAlarmsParams, reqEditors ...RequestEditorFn) (*ListAlarmsResponse, error)
+	ListAlarmsWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, reqEditors ...RequestEditorFn) (*ListAlarmsResponse, error)
 
 	// CreateAlarmWithBodyWithResponse Create an alarm
 	//
@@ -12763,6 +12832,8 @@ type ClientWithResponsesInterface interface {
 	// ListAlarmHistoryWithResponse List alarm trigger history
 	//
 	// Returns the trigger history for an alarm.
+	//
+	// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -12888,7 +12959,9 @@ type ClientWithResponsesInterface interface {
 
 	// ListCheckInEventsWithResponse List check-in events
 	//
-	// Returns a list of events for a check-in.
+	// Returns a check-in's events, newest first.
+	//
+	// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -13878,6 +13951,17 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 	GetNoticeWithResponse(ctx context.Context, uuid openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetNoticeResponse, error)
+
+	// GetTokenWithResponse Describe the current credential
+	//
+	// Reports what the credential making the request is and what it can reach.
+	// Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
+	// `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /token (the `GetToken` operationId).
+	GetTokenWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTokenResponse, error)
 }
 
 type ListAccountsResponse struct {
@@ -13885,8 +13969,10 @@ type ListAccountsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Account              `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Account `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -13900,8 +13986,10 @@ type ListAccountsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAccountsResponse) GetJSON200() *struct {
-	Data  *[]Account              `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Account `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -14025,8 +14113,10 @@ type ListAccountInvitationsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]AccountInvitation    `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]AccountInvitation `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -14044,8 +14134,10 @@ type ListAccountInvitationsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAccountInvitationsResponse) GetJSON200() *struct {
-	Data  *[]AccountInvitation    `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]AccountInvitation `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -14375,8 +14467,10 @@ type ListAccountMembersResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]AccountMember        `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]AccountMember `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -14394,8 +14488,10 @@ type ListAccountMembersResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAccountMembersResponse) GetJSON200() *struct {
-	Data  *[]AccountMember        `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]AccountMember `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -14658,8 +14754,10 @@ type ListProjectsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Project              `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Project `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -14677,8 +14775,10 @@ type ListProjectsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListProjectsResponse) GetJSON200() *struct {
-	Data  *[]Project              `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Project `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -15008,14 +15108,10 @@ type ListAlarmsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Alarm                `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
-		Meta  *struct {
+		Data *[]Alarm `json:"data,omitempty"`
+		Meta *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
-
-		// Pagination Offset-based pagination information
-		Pagination *Pagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15027,14 +15123,10 @@ type ListAlarmsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAlarmsResponse) GetJSON200() *struct {
-	Data  *[]Alarm                `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
-	Meta  *struct {
+	Data *[]Alarm `json:"data,omitempty"`
+	Meta *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
-
-	// Pagination Offset-based pagination information
-	Pagination *Pagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15358,14 +15450,16 @@ type ListAlarmHistoryResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]map[string]interface{} `json:"data,omitempty"`
-		Links *map[string]interface{}   `json:"links,omitempty"`
-		Meta  *struct {
+		Data *[]map[string]interface{} `json:"data,omitempty"`
+		Meta *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Offset-based pagination information
-		Pagination *Pagination `json:"pagination,omitempty"`
+		// Pagination The query service's paging object, passed through
+		Pagination *struct {
+			Page       *int `json:"page,omitempty"`
+			TotalPages *int `json:"total_pages,omitempty"`
+		} `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15377,14 +15471,16 @@ type ListAlarmHistoryResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAlarmHistoryResponse) GetJSON200() *struct {
-	Data  *[]map[string]interface{} `json:"data,omitempty"`
-	Links *map[string]interface{}   `json:"links,omitempty"`
-	Meta  *struct {
+	Data *[]map[string]interface{} `json:"data,omitempty"`
+	Meta *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Offset-based pagination information
-	Pagination *Pagination `json:"pagination,omitempty"`
+	// Pagination The query service's paging object, passed through
+	Pagination *struct {
+		Page       *int `json:"page,omitempty"`
+		TotalPages *int `json:"total_pages,omitempty"`
+	} `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15438,8 +15534,10 @@ type ListChannelsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Channel              `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Channel `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -15457,8 +15555,10 @@ type ListChannelsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListChannelsResponse) GetJSON200() *struct {
-	Data  *[]Channel              `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Channel `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -15666,8 +15766,10 @@ type ListCheckInsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]CheckIn              `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]CheckIn `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -15685,8 +15787,10 @@ type ListCheckInsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListCheckInsResponse) GetJSON200() *struct {
-	Data  *[]CheckIn              `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]CheckIn `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -16088,14 +16192,16 @@ type ListCheckInEventsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]CheckInEvent         `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]CheckInEvent `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Cursor-based pagination information
-		Pagination *CursorPagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16107,14 +16213,16 @@ type ListCheckInEventsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListCheckInEventsResponse) GetJSON200() *struct {
-	Data  *[]CheckInEvent         `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]CheckInEvent `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Cursor-based pagination information
-	Pagination *CursorPagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16168,8 +16276,10 @@ type ListDashboardsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Dashboard            `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Dashboard `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -16187,8 +16297,10 @@ type ListDashboardsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListDashboardsResponse) GetJSON200() *struct {
-	Data  *[]Dashboard            `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Dashboard `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -16518,14 +16630,16 @@ type ListDeploysResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Deploy               `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Deploy `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Cursor-based pagination information
-		Pagination *CursorPagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16537,14 +16651,16 @@ type ListDeploysResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListDeploysResponse) GetJSON200() *struct {
-	Data  *[]Deploy               `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Deploy `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Cursor-based pagination information
-	Pagination *CursorPagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16727,8 +16843,10 @@ type ListEnvironmentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Environment          `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Environment `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -16746,8 +16864,10 @@ type ListEnvironmentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListEnvironmentsResponse) GetJSON200() *struct {
-	Data  *[]Environment          `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Environment `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -17233,8 +17353,10 @@ type ListFaultsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Fault                `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Fault `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -17252,8 +17374,10 @@ type ListFaultsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListFaultsResponse) GetJSON200() *struct {
-	Data  *[]Fault                `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Fault `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -18024,14 +18148,16 @@ type ListCommentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Comment              `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Comment `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Cursor-based pagination information
-		Pagination *CursorPagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18043,14 +18169,16 @@ type ListCommentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListCommentsResponse) GetJSON200() *struct {
-	Data  *[]Comment              `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Comment `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Cursor-based pagination information
-	Pagination *CursorPagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18455,14 +18583,16 @@ type ListNoticesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Notice               `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Notice `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Cursor-based pagination information
-		Pagination *CursorPagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18474,14 +18604,16 @@ type ListNoticesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListNoticesResponse) GetJSON200() *struct {
-	Data  *[]Notice               `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Notice `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Cursor-based pagination information
-	Pagination *CursorPagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18898,6 +19030,11 @@ func (r SnoozeFaultResponse) ContentType() string {
 	return ""
 }
 
+// RunInsightsQueryResponse403Headers the declared response headers of an HTTP 403 response for RunInsightsQuery
+type RunInsightsQueryResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type RunInsightsQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18925,6 +19062,8 @@ type RunInsightsQueryResponse struct {
 	JSON429 *RateLimitExceeded
 	// JSON503 the response for an HTTP 503 `application/json` response
 	JSON503 *Error
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *RunInsightsQueryResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19006,8 +19145,10 @@ type ListSitesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Site                 `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Site `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -19025,8 +19166,10 @@ type ListSitesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListSitesResponse) GetJSON200() *struct {
-	Data  *[]Site                 `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Site `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -19356,14 +19499,16 @@ type ListUptimeChecksResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]UptimeCheck          `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]UptimeCheck `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Time-window pagination information
-		Pagination *TimePagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19375,14 +19520,16 @@ type ListUptimeChecksResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListUptimeChecksResponse) GetJSON200() *struct {
-	Data  *[]UptimeCheck          `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]UptimeCheck `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Time-window pagination information
-	Pagination *TimePagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -19436,14 +19583,16 @@ type ListOutagesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Outage               `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Outage `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Time-window pagination information
-		Pagination *TimePagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19455,14 +19604,16 @@ type ListOutagesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListOutagesResponse) GetJSON200() *struct {
-	Data  *[]Outage               `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Outage `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Time-window pagination information
-	Pagination *TimePagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -19583,13 +19734,20 @@ func (r GetProjectStatsResponse) ContentType() string {
 	return ""
 }
 
+// ListStreamsResponse403Headers the declared response headers of an HTTP 403 response for ListStreams
+type ListStreamsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListStreamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Stream               `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Stream `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks            `json:"links,omitempty"`
 		Meta  *map[string]interface{} `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
@@ -19605,12 +19763,16 @@ type ListStreamsResponse struct {
 	JSON422 *AmbiguousAccount
 	// JSON429 the response for an HTTP 429 `application/json` response
 	JSON429 *RateLimitExceeded
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListStreamsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListStreamsResponse) GetJSON200() *struct {
-	Data  *[]Stream               `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Stream `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks            `json:"links,omitempty"`
 	Meta  *map[string]interface{} `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
@@ -19678,8 +19840,10 @@ type ListStatusPagesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]StatusPage           `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]StatusPage `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -19697,8 +19861,10 @@ type ListStatusPagesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListStatusPagesResponse) GetJSON200() *struct {
-	Data  *[]StatusPage           `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]StatusPage `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -20028,14 +20194,16 @@ type ListStatusPageIncidentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]StatusPageIncident   `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]StatusPageIncident `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Cursor-based pagination information
-		Pagination *CursorPagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20047,14 +20215,16 @@ type ListStatusPageIncidentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListStatusPageIncidentsResponse) GetJSON200() *struct {
-	Data  *[]StatusPageIncident   `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]StatusPageIncident `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Cursor-based pagination information
-	Pagination *CursorPagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20378,14 +20548,16 @@ type ListIncidentUpdatesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]IncidentUpdate       `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]IncidentUpdate `json:"data,omitempty"`
+
+		// Links Navigation links for a time-ordered collection
+		Links *TimeSeriesLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
 
-		// Pagination Cursor-based pagination information
-		Pagination *CursorPagination `json:"pagination,omitempty"`
+		// Pagination Pagination for a time-ordered collection
+		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20397,14 +20569,16 @@ type ListIncidentUpdatesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListIncidentUpdatesResponse) GetJSON200() *struct {
-	Data  *[]IncidentUpdate       `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]IncidentUpdate `json:"data,omitempty"`
+
+	// Links Navigation links for a time-ordered collection
+	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
 
-	// Pagination Cursor-based pagination information
-	Pagination *CursorPagination `json:"pagination,omitempty"`
+	// Pagination Pagination for a time-ordered collection
+	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20728,8 +20902,10 @@ type ListTeamsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]Team                 `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]Team `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -20747,8 +20923,10 @@ type ListTeamsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamsResponse) GetJSON200() *struct {
-	Data  *[]Team                 `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]Team `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -21078,8 +21256,10 @@ type ListTeamInvitationsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]TeamInvitation       `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]TeamInvitation `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -21097,8 +21277,10 @@ type ListTeamInvitationsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamInvitationsResponse) GetJSON200() *struct {
-	Data  *[]TeamInvitation       `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]TeamInvitation `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -21428,8 +21610,10 @@ type ListTeamMembersResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data  *[]User                 `json:"data,omitempty"`
-		Links *map[string]interface{} `json:"links,omitempty"`
+		Data *[]User `json:"data,omitempty"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks `json:"links,omitempty"`
 		Meta  *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -21447,8 +21631,10 @@ type ListTeamMembersResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamMembersResponse) GetJSON200() *struct {
-	Data  *[]User                 `json:"data,omitempty"`
-	Links *map[string]interface{} `json:"links,omitempty"`
+	Data *[]User `json:"data,omitempty"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks `json:"links,omitempty"`
 	Meta  *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -21845,6 +22031,98 @@ func (r GetNoticeResponse) ContentType() string {
 	return ""
 }
 
+type GetTokenResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Data *struct {
+			// AccountId public_id of the account the credential is bound to.
+			AccountId *string                      `json:"account_id,omitempty"`
+			ExpiresAt nullable.Nullable[time.Time] `json:"expires_at,omitempty"`
+
+			// Kind `user` and `account` are scoped API tokens. `oauth` is an access token issued to an application acting for a user.
+			Kind       *GetToken200JSONResponseBodyDataKind `json:"kind,omitempty"`
+			LastUsedAt nullable.Nullable[time.Time]         `json:"last_used_at,omitempty"`
+
+			// Name The token's name, or for an OAuth grant the name of the application holding it.
+			Name nullable.Nullable[string] `json:"name,omitempty"`
+
+			// ProjectIds public_ids of the projects the credential can reach. Empty for a credential bound to an account with no visible projects; every project in the account when unrestricted.
+			ProjectIds *[]string `json:"project_ids,omitempty"`
+
+			// Scopes Granular permissions. For an OAuth grant these are its legacy `read`/`write` aliases expanded to the API surface as it stood when the grant was consented to.
+			Scopes *[]string `json:"scopes,omitempty"`
+		} `json:"data,omitempty"`
+		Meta *struct {
+			RequestId *string `json:"request_id,omitempty"`
+		} `json:"meta,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetTokenResponse) GetJSON200() *struct {
+	Data *struct {
+		// AccountId public_id of the account the credential is bound to.
+		AccountId *string                      `json:"account_id,omitempty"`
+		ExpiresAt nullable.Nullable[time.Time] `json:"expires_at,omitempty"`
+
+		// Kind `user` and `account` are scoped API tokens. `oauth` is an access token issued to an application acting for a user.
+		Kind       *GetToken200JSONResponseBodyDataKind `json:"kind,omitempty"`
+		LastUsedAt nullable.Nullable[time.Time]         `json:"last_used_at,omitempty"`
+
+		// Name The token's name, or for an OAuth grant the name of the application holding it.
+		Name nullable.Nullable[string] `json:"name,omitempty"`
+
+		// ProjectIds public_ids of the projects the credential can reach. Empty for a credential bound to an account with no visible projects; every project in the account when unrestricted.
+		ProjectIds *[]string `json:"project_ids,omitempty"`
+
+		// Scopes Granular permissions. For an OAuth grant these are its legacy `read`/`write` aliases expanded to the API surface as it stood when the grant was consented to.
+		Scopes *[]string `json:"scopes,omitempty"`
+	} `json:"data,omitempty"`
+	Meta *struct {
+		RequestId *string `json:"request_id,omitempty"`
+	} `json:"meta,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetTokenResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetBody returns the raw response body bytes
+func (r GetTokenResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTokenResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTokenResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTokenResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // ListAccountsWithResponse List accounts
 //
 // Returns a list of accounts the authenticated user has access to.
@@ -22162,13 +22440,15 @@ func (c *ClientWithResponses) UpdateProjectWithResponse(ctx context.Context, acc
 
 // ListAlarmsWithResponse List alarms
 //
-// Returns a list of alarms for the project.
+// Returns every alarm on the project.
+//
+// Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
 //
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /accounts/{account_id}/projects/{project_id}/alarms (the `ListAlarms` operationId).
-func (c *ClientWithResponses) ListAlarmsWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, params *ListAlarmsParams, reqEditors ...RequestEditorFn) (*ListAlarmsResponse, error) {
-	rsp, err := c.ListAlarms(ctx, accountId, projectId, params, reqEditors...)
+func (c *ClientWithResponses) ListAlarmsWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, reqEditors ...RequestEditorFn) (*ListAlarmsResponse, error) {
+	rsp, err := c.ListAlarms(ctx, accountId, projectId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -22268,6 +22548,8 @@ func (c *ClientWithResponses) UpdateAlarmWithResponse(ctx context.Context, accou
 // ListAlarmHistoryWithResponse List alarm trigger history
 //
 // Returns the trigger history for an alarm.
+//
+// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -22477,7 +22759,9 @@ func (c *ClientWithResponses) UpdateCheckInWithResponse(ctx context.Context, acc
 
 // ListCheckInEventsWithResponse List check-in events
 //
-// Returns a list of events for a check-in.
+// Returns a check-in's events, newest first.
+//
+// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -24122,6 +24406,23 @@ func (c *ClientWithResponses) GetNoticeWithResponse(ctx context.Context, uuid op
 	return ParseGetNoticeResponse(rsp)
 }
 
+// GetTokenWithResponse Describe the current credential
+//
+// Reports what the credential making the request is and what it can reach.
+// Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
+// `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /token (the `GetToken` operationId).
+func (c *ClientWithResponses) GetTokenWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTokenResponse, error) {
+	rsp, err := c.GetToken(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTokenResponse(rsp)
+}
+
 // ParseListAccountsResponse parses an HTTP response from a ListAccountsWithResponse call
 func ParseListAccountsResponse(rsp *http.Response) (*ListAccountsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -24138,8 +24439,10 @@ func ParseListAccountsResponse(rsp *http.Response) (*ListAccountsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Account              `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Account `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -24233,8 +24536,10 @@ func ParseListAccountInvitationsResponse(rsp *http.Response) (*ListAccountInvita
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]AccountInvitation    `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]AccountInvitation `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -24484,8 +24789,10 @@ func ParseListAccountMembersResponse(rsp *http.Response) (*ListAccountMembersRes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]AccountMember        `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]AccountMember `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -24689,8 +24996,10 @@ func ParseListProjectsResponse(rsp *http.Response) (*ListProjectsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Project              `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Project `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -24940,14 +25249,10 @@ func ParseListAlarmsResponse(rsp *http.Response) (*ListAlarmsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Alarm                `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
-			Meta  *struct {
+			Data *[]Alarm `json:"data,omitempty"`
+			Meta *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
-
-			// Pagination Offset-based pagination information
-			Pagination *Pagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25191,14 +25496,16 @@ func ParseListAlarmHistoryResponse(rsp *http.Response) (*ListAlarmHistoryRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]map[string]interface{} `json:"data,omitempty"`
-			Links *map[string]interface{}   `json:"links,omitempty"`
-			Meta  *struct {
+			Data *[]map[string]interface{} `json:"data,omitempty"`
+			Meta *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Offset-based pagination information
-			Pagination *Pagination `json:"pagination,omitempty"`
+			// Pagination The query service's paging object, passed through
+			Pagination *struct {
+				Page       *int `json:"page,omitempty"`
+				TotalPages *int `json:"total_pages,omitempty"`
+			} `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25247,8 +25554,10 @@ func ParseListChannelsResponse(rsp *http.Response) (*ListChannelsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Channel              `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Channel `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -25409,8 +25718,10 @@ func ParseListCheckInsResponse(rsp *http.Response) (*ListCheckInsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]CheckIn              `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]CheckIn `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -25712,14 +26023,16 @@ func ParseListCheckInEventsResponse(rsp *http.Response) (*ListCheckInEventsRespo
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]CheckInEvent         `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]CheckInEvent `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Cursor-based pagination information
-			Pagination *CursorPagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25768,8 +26081,10 @@ func ParseListDashboardsResponse(rsp *http.Response) (*ListDashboardsResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Dashboard            `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Dashboard `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -26019,14 +26334,16 @@ func ParseListDeploysResponse(rsp *http.Response) (*ListDeploysResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Deploy               `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Deploy `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Cursor-based pagination information
-			Pagination *CursorPagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26171,8 +26488,10 @@ func ParseListEnvironmentsResponse(rsp *http.Response) (*ListEnvironmentsRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Environment          `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Environment `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -26532,8 +26851,10 @@ func ParseListFaultsResponse(rsp *http.Response) (*ListFaultsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Fault                `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Fault `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -27103,14 +27424,16 @@ func ParseListCommentsResponse(rsp *http.Response) (*ListCommentsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Comment              `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Comment `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Cursor-based pagination information
-			Pagination *CursorPagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27414,14 +27737,16 @@ func ParseListNoticesResponse(rsp *http.Response) (*ListNoticesResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Notice               `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Notice `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Cursor-based pagination information
-			Pagination *CursorPagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27793,6 +28118,19 @@ func ParseRunInsightsQueryResponse(rsp *http.Response) (*RunInsightsQueryRespons
 
 	}
 
+	switch {
+	case rsp.StatusCode == 403:
+		var headers RunInsightsQueryResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
+	}
+
 	return response, nil
 }
 
@@ -27812,8 +28150,10 @@ func ParseListSitesResponse(rsp *http.Response) (*ListSitesResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Site                 `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Site `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -28063,14 +28403,16 @@ func ParseListUptimeChecksResponse(rsp *http.Response) (*ListUptimeChecksRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]UptimeCheck          `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]UptimeCheck `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Time-window pagination information
-			Pagination *TimePagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28119,14 +28461,16 @@ func ParseListOutagesResponse(rsp *http.Response) (*ListOutagesResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Outage               `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Outage `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Time-window pagination information
-			Pagination *TimePagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28227,8 +28571,10 @@ func ParseListStreamsResponse(rsp *http.Response) (*ListStreamsResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Stream               `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Stream `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks            `json:"links,omitempty"`
 			Meta  *map[string]interface{} `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
@@ -28276,6 +28622,19 @@ func ParseListStreamsResponse(rsp *http.Response) (*ListStreamsResponse, error) 
 
 	}
 
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListStreamsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
+	}
+
 	return response, nil
 }
 
@@ -28295,8 +28654,10 @@ func ParseListStatusPagesResponse(rsp *http.Response) (*ListStatusPagesResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]StatusPage           `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]StatusPage `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -28546,14 +28907,16 @@ func ParseListStatusPageIncidentsResponse(rsp *http.Response) (*ListStatusPageIn
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]StatusPageIncident   `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]StatusPageIncident `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Cursor-based pagination information
-			Pagination *CursorPagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28797,14 +29160,16 @@ func ParseListIncidentUpdatesResponse(rsp *http.Response) (*ListIncidentUpdatesR
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]IncidentUpdate       `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]IncidentUpdate `json:"data,omitempty"`
+
+			// Links Navigation links for a time-ordered collection
+			Links *TimeSeriesLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
 
-			// Pagination Cursor-based pagination information
-			Pagination *CursorPagination `json:"pagination,omitempty"`
+			// Pagination Pagination for a time-ordered collection
+			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29048,8 +29413,10 @@ func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]Team                 `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]Team `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -29299,8 +29666,10 @@ func ParseListTeamInvitationsResponse(rsp *http.Response) (*ListTeamInvitationsR
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]TeamInvitation       `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]TeamInvitation `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -29550,8 +29919,10 @@ func ParseListTeamMembersResponse(rsp *http.Response) (*ListTeamMembersResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data  *[]User                 `json:"data,omitempty"`
-			Links *map[string]interface{} `json:"links,omitempty"`
+			Data *[]User `json:"data,omitempty"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks `json:"links,omitempty"`
 			Meta  *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -29831,6 +30202,61 @@ func ParseGetNoticeResponse(rsp *http.Response) (*GetNoticeResponse, error) {
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTokenResponse parses an HTTP response from a GetTokenWithResponse call
+func ParseGetTokenResponse(rsp *http.Response) (*GetTokenResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTokenResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data *struct {
+				// AccountId public_id of the account the credential is bound to.
+				AccountId *string                      `json:"account_id,omitempty"`
+				ExpiresAt nullable.Nullable[time.Time] `json:"expires_at,omitempty"`
+
+				// Kind `user` and `account` are scoped API tokens. `oauth` is an access token issued to an application acting for a user.
+				Kind       *GetToken200JSONResponseBodyDataKind `json:"kind,omitempty"`
+				LastUsedAt nullable.Nullable[time.Time]         `json:"last_used_at,omitempty"`
+
+				// Name The token's name, or for an OAuth grant the name of the application holding it.
+				Name nullable.Nullable[string] `json:"name,omitempty"`
+
+				// ProjectIds public_ids of the projects the credential can reach. Empty for a credential bound to an account with no visible projects; every project in the account when unrestricted.
+				ProjectIds *[]string `json:"project_ids,omitempty"`
+
+				// Scopes Granular permissions. For an OAuth grant these are its legacy `read`/`write` aliases expanded to the API surface as it stood when the grant was consented to.
+				Scopes *[]string `json:"scopes,omitempty"`
+			} `json:"data,omitempty"`
+			Meta *struct {
+				RequestId *string `json:"request_id,omitempty"`
+			} `json:"meta,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
 
 	}
 

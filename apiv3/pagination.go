@@ -14,9 +14,18 @@ import (
 // hand-written copy that can drift.
 type Pagination = gen.Pagination
 
-// CursorPagination is opaque-cursor pagination, used by time-series endpoints
-// such as notices, comments, and deploys. Walk it with CollectCursor.
-type CursorPagination = gen.CursorPagination
+// TimeSeriesPagination is pagination for a time-ordered collection: notices,
+// comments, deploys, check-in events, uptime checks, outages.
+//
+// v3 unified what were previously two separate schemes. Cursor-paged
+// collections populate OldestCursor and NewestCursor; collections that page on a
+// timestamp leave them absent or null. Both kinds report HasOlder and HasNewer
+// and supply links to follow, so following links works for either — which is
+// what CollectTimeSeries does.
+type TimeSeriesPagination = gen.TimeSeriesPagination
+
+// TimeSeriesLinks are the navigation links for a time-ordered collection.
+type TimeSeriesLinks = gen.TimeSeriesLinks
 
 // maxPages bounds any pagination walk. Nothing legitimate needs this many
 // requests — the rate limit is 360/hour — so hitting it means the server's
@@ -30,38 +39,49 @@ var (
 	ErrTooManyPages = errors.New("apiv3: pagination exceeded " + fmt.Sprint(maxPages) + " pages")
 
 	// ErrPaginationInconsistent is returned when a server's pagination metadata
-	// contradicts itself: a page number that does not advance, a repeated
-	// cursor, an empty page while more are promised, or more items promised with
-	// no cursor to reach them.
+	// contradicts itself: a page number that does not advance, a repeated link,
+	// an empty page while more are promised, or more items promised with no way
+	// to reach them.
 	//
 	// These are reported rather than absorbed. Absorbing them means returning a
 	// partial collection that looks complete, which is the worst outcome for a
 	// caller summarising or counting the results.
 	ErrPaginationInconsistent = errors.New("apiv3: server pagination metadata is inconsistent")
+
+	// ErrUntrustedLink is returned when a pagination link points at a different
+	// host than the configured base URL. Following it would send the credential
+	// somewhere it was not issued for.
+	ErrUntrustedLink = errors.New("apiv3: pagination link points at an untrusted host")
 )
 
 // ListResponse is one page of a collection.
 //
-// Exactly one of Pagination and Cursor is set, depending on the endpoint's
+// Exactly one of Pagination and TimeSeries is set, depending on the endpoint's
 // scheme. Both are nil for an endpoint that returns a bare collection.
 type ListResponse[T any] struct {
 	Data      []T
-	Links     map[string]any
 	RequestID string
 
 	// Pagination is set for offset-paginated endpoints (page / per_page).
 	Pagination *Pagination
 
-	// Cursor is set for cursor-paginated endpoints (limit / before / after).
-	Cursor *CursorPagination
+	// TimeSeries is set for time-ordered endpoints (limit / before / after).
+	TimeSeries *TimeSeriesPagination
+
+	// TimeSeriesLinks are the navigation links for a time-ordered endpoint.
+	TimeSeriesLinks *TimeSeriesLinks
+
+	// Links holds an offset endpoint's untyped links object.
+	Links map[string]any
 }
 
 // PageFetcher retrieves a single page by 1-indexed page number.
 type PageFetcher[T any] func(ctx context.Context, page int) (*ListResponse[T], error)
 
-// CursorFetcher retrieves a page older than the given cursor. The first call
-// receives an empty cursor, meaning "start at the newest".
-type CursorFetcher[T any] func(ctx context.Context, before string) (*ListResponse[T], error)
+// TimeSeriesFetcher retrieves a page of a time-ordered collection. The first call
+// receives an empty url, meaning "the newest page"; later calls receive the
+// `older` link from the previous response.
+type TimeSeriesFetcher[T any] func(ctx context.Context, url string) (*ListResponse[T], error)
 
 // CollectPages walks an offset-paginated endpoint and returns every item.
 //
@@ -115,15 +135,16 @@ func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error)
 	}
 }
 
-// CollectCursor walks a cursor-paginated endpoint from newest to oldest and
+// CollectTimeSeries walks a time-ordered endpoint from newest to oldest and
 // returns every item.
 //
-// Like CollectPages, it reports inconsistency rather than truncating: a server
-// that promises older items but supplies no cursor, or repeats one, is a bug
-// worth surfacing.
-func CollectCursor[T any](ctx context.Context, fetch CursorFetcher[T]) ([]T, error) {
+// It follows links.older rather than cursors. The spec instructs exactly that —
+// "when has_older is true, follow links.older" — and it is the only mechanism
+// that works for both cursor-paged and timestamp-paged collections, since the
+// latter leave the cursor fields null.
+func CollectTimeSeries[T any](ctx context.Context, fetch TimeSeriesFetcher[T]) ([]T, error) {
 	var all []T
-	before := ""
+	next := ""
 	seen := make(map[string]bool)
 
 	for i := 0; ; i++ {
@@ -134,7 +155,7 @@ func CollectCursor[T any](ctx context.Context, fetch CursorFetcher[T]) ([]T, err
 			return nil, ErrTooManyPages
 		}
 
-		resp, err := fetch(ctx, before)
+		resp, err := fetch(ctx, next)
 		if err != nil {
 			return nil, err
 		}
@@ -143,22 +164,25 @@ func CollectCursor[T any](ctx context.Context, fetch CursorFetcher[T]) ([]T, err
 		}
 		all = append(all, resp.Data...)
 
-		if resp.Cursor == nil || !resp.Cursor.HasOlder {
+		if resp.TimeSeries == nil || !resp.TimeSeries.HasOlder {
 			return all, nil
 		}
 
-		// has_older says more data exists, so a missing or null cursor leaves no
-		// way to reach it. Silently stopping here would drop that data without
-		// telling anyone.
-		next, err := resp.Cursor.OldestCursor.Get()
-		if err != nil || next == "" {
-			return nil, fmt.Errorf("%w: has_older is true but oldest_cursor is absent or null",
+		// has_older says more data exists, so no link to follow leaves it
+		// unreachable. Stopping quietly would drop it without telling anyone.
+		if resp.TimeSeriesLinks == nil {
+			return nil, fmt.Errorf("%w: has_older is true but the response carries no links",
 				ErrPaginationInconsistent)
 		}
-		if seen[next] {
-			return nil, fmt.Errorf("%w: cursor %q was returned twice", ErrPaginationInconsistent, next)
+		older, err := resp.TimeSeriesLinks.Older.Get()
+		if err != nil || older == "" {
+			return nil, fmt.Errorf("%w: has_older is true but links.older is absent or null",
+				ErrPaginationInconsistent)
 		}
-		seen[next] = true
-		before = next
+		if seen[older] {
+			return nil, fmt.Errorf("%w: link %q was returned twice", ErrPaginationInconsistent, older)
+		}
+		seen[older] = true
+		next = older
 	}
 }

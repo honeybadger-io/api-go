@@ -10,14 +10,19 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
 | Branch | `scoped-api-tokens-v3` |
-| Commit | `4fc37ce2852f9f4d1a9ee607bfe58f8f2af1211d` |
+| Commit | `db59097aa562394d51f8d25b2e49630de5c5acff` |
 | Vendored | 2026-07-29 |
+| sha256 | `3d94288f5194efdf60b6d7173d9b5ba98da085b710553e50f93ddd63f11b07be` |
 
-Record the branch and commit on every refresh. The bundle is **gitignored in the
-source repo** (`.gitignore:86`) — it is a build artifact of `rake openapi:bundle`,
-not a tracked file — so there is no upstream blob to diff against. Without a
-recorded commit there is no way to tell which version of the spec generated the
-code in `internal/gen`.
+Record the branch, commit, **and checksum** on every refresh. The bundle is
+**gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of
+`rake openapi:bundle`, not a tracked file — so there is no upstream blob to diff
+against.
+
+The commit alone is not enough. The artifact is regenerated whenever anyone runs
+the rake task, so the same commit can produce different bundles: during this
+vendoring the source file changed twice within a few minutes, once mid-copy. The
+checksum is what makes "is my copy still what I think it is" answerable.
 
 ## Refreshing
 
@@ -47,21 +52,30 @@ never carries Go-shaped annotations.
 
 ## Known spec issues
 
-Two problems in the current bundle that `apiv3` has to work around. Both are
-pinned by tests in `internal/gen/` so they surface if the spec changes.
+One problem remains in the current bundle, pinned by a test in `internal/gen/` so
+it surfaces if the spec changes.
 
-1. **`Error.details` is typed as an array but used as an object.** The schema
-   declares `details: {type: array, items: {field, message}}` for validation
-   errors, while the `InsufficientScope` response's example is
-   `details: {required_scope: "faults:write", token_scopes: [...]}`. Decoding a
-   real 403 into the generated type fails outright.
+**`Error.details` is typed as an array but used as an object.** The schema
+declares `details: {type: array, items: {field, message}}` for validation errors,
+while the `insufficient_scope` example under the `Forbidden` response sends
+`details: {required_scope: "faults:write", token_scopes: [...]}`. Both cannot
+hold. `overlay.yaml` retypes the field as `json.RawMessage` so generated code
+accepts either, and `apiv3` decides which it received.
 
-2. **Three error codes are missing from the `code` enum.**
-   `insufficient_scope`, `credential_in_query`, and `project_restricted` appear
-   in response descriptions and examples, but `Error.error.code`'s enum still
-   lists only ten values, so the generated `ErrorErrorCode` constants cannot
-   express them.
+`apiv3` also treats `code` as an open string rather than the generated enum. The
+enum has grown from 10 to 20 values during v3's development, so a closed set would
+silently drop codes the client has not caught up with.
 
-Consequence for `apiv3`: treat `code` as an open string rather than a closed
-enum, and decode `details` leniently. Both are the resilient choice regardless
-of whether the spec is fixed.
+### Fixed since first vendoring
+
+- **Basic auth removed** — `security` is `bearer_auth` only, and a Basic attempt
+  now answers `unsupported_auth_scheme`.
+- **The error enum gained the missing codes** — `insufficient_scope`,
+  `credential_in_query`, and `project_restricted` are declared, along with
+  `requires_user_token`, `account_inactive`, `account_parked`,
+  `feature_unavailable`, `delete_failed`, and `limit_reached`.
+- **The two time-series pagination schemes collapsed into one.**
+  `CursorPagination` and `TimePagination` became `TimeSeriesPagination` with a
+  typed `TimeSeriesLinks`, so one walker covers every time-ordered collection.
+- **`GET /v3/token` added** — credential introspection requiring no scope,
+  returning kind, scopes, account_id, and project_ids.

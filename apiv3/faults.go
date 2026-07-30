@@ -89,15 +89,18 @@ func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID stri
 	return s.listNotices(ctx, projectID, faultID, resolve(opts))
 }
 
-// ListAllNotices returns every notice for a fault, following the cursor from
-// newest to oldest.
+// ListAllNotices returns every notice for a fault, walking from newest to oldest.
+//
+// After the first page it follows links.older rather than re-deriving a cursor,
+// which is what the spec instructs and the only mechanism that also works for
+// collections that page on a timestamp.
 func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID string, opts ...ListAllOption) ([]Notice, error) {
 	ro := resolveListAll(opts)
-	return CollectCursor(ctx, func(ctx context.Context, before string) (*ListResponse[Notice], error) {
-		pageOpts := ro
-		pageOpts.before = before
-		pageOpts.after = ""
-		return s.listNotices(ctx, projectID, faultID, pageOpts)
+	return CollectTimeSeries(ctx, func(ctx context.Context, url string) (*ListResponse[Notice], error) {
+		if url != "" {
+			return followTimeSeries[Notice](ctx, s.client, url)
+		}
+		return s.listNotices(ctx, projectID, faultID, ro)
 	})
 }
 
@@ -127,5 +130,5 @@ func (s *FaultsService) listNotices(ctx context.Context, projectID, faultID stri
 	if err != nil {
 		return nil, err
 	}
-	return decodeCursorList[Notice](status, body)
+	return decodeTimeSeriesList[Notice](status, body)
 }

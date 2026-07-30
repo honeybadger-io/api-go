@@ -40,6 +40,9 @@ func TestServicesFollowTheClone(t *testing.T) {
 	if derived.Faults.client != derived {
 		t.Error("Faults still points at the original client")
 	}
+	if derived.Tokens.client != derived {
+		t.Error("Tokens still points at the original client")
+	}
 	if base.Projects.client != base {
 		t.Error("the original's Projects was repointed at the clone")
 	}

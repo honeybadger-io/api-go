@@ -162,106 +162,110 @@ func TestCollectPagesHonorsContextCancellation(t *testing.T) {
 	}
 }
 
-func cursorPage(items []string, hasOlder bool, oldest string) *ListResponse[string] {
-	c := &CursorPagination{HasOlder: hasOlder, Limit: len(items)}
-	if oldest != "" {
-		c.OldestCursor = nullable.NewNullableWithValue(oldest)
+func timeSeriesPage(items []string, hasOlder bool, olderLink string) *ListResponse[string] {
+	page := &ListResponse[string]{
+		Data:            items,
+		TimeSeries:      &TimeSeriesPagination{HasOlder: hasOlder, Limit: len(items)},
+		TimeSeriesLinks: &TimeSeriesLinks{Self: "https://app.honeybadger.io/v3/self"},
 	}
-	return &ListResponse[string]{Data: items, Cursor: c}
+	if olderLink != "" {
+		page.TimeSeriesLinks.Older = nullable.NewNullableWithValue(olderLink)
+	}
+	return page
 }
 
-func TestCollectCursorWalksBackwards(t *testing.T) {
-	var cursors []string
-	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
-		cursors = append(cursors, before)
-		switch before {
+func TestCollectTimeSeriesFollowsOlderLinks(t *testing.T) {
+	var followed []string
+	fetch := func(ctx context.Context, link string) (*ListResponse[string], error) {
+		followed = append(followed, link)
+		switch link {
 		case "":
-			return cursorPage([]string{"n1", "n2"}, true, "cur2"), nil
-		case "cur2":
-			return cursorPage([]string{"n3"}, false, ""), nil
+			return timeSeriesPage([]string{"n1", "n2"}, true, "https://app.honeybadger.io/v3/older/1"), nil
+		case "https://app.honeybadger.io/v3/older/1":
+			return timeSeriesPage([]string{"n3"}, false, ""), nil
 		}
-		t.Fatalf("unexpected cursor %q", before)
+		t.Fatalf("unexpected link %q", link)
 		return nil, nil
 	}
 
-	got, err := CollectCursor(context.Background(), fetch)
+	got, err := CollectTimeSeries(context.Background(), fetch)
 	if err != nil {
-		t.Fatalf("CollectCursor: %v", err)
+		t.Fatalf("CollectTimeSeries: %v", err)
 	}
 	if want := []string{"n1", "n2", "n3"}; !equal(got, want) {
 		t.Errorf("got %v, want %v", got, want)
 	}
-	if want := []string{"", "cur2"}; !equal(cursors, want) {
-		t.Errorf("cursors %v, want %v", cursors, want)
+	if want := []string{"", "https://app.honeybadger.io/v3/older/1"}; !equal(followed, want) {
+		t.Errorf("followed %v, want %v", followed, want)
 	}
 }
 
-// has_older says data remains, so a missing cursor means it is unreachable.
+// has_older says data remains, so a missing link means it is unreachable.
 // Stopping quietly would drop it without telling anyone.
-func TestCollectCursorRejectsMissingCursor(t *testing.T) {
-	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
-		return cursorPage([]string{"n1"}, true, ""), nil
+func TestCollectTimeSeriesRejectsMissingOlderLink(t *testing.T) {
+	fetch := func(ctx context.Context, link string) (*ListResponse[string], error) {
+		return timeSeriesPage([]string{"n1"}, true, ""), nil
 	}
-	_, err := CollectCursor(context.Background(), fetch)
+	_, err := CollectTimeSeries(context.Background(), fetch)
 	if !errors.Is(err, ErrPaginationInconsistent) {
 		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
 	}
 }
 
-// A repeated cursor would loop, re-requesting the same page and appending
+// A repeated link would loop, re-requesting the same page and appending
 // duplicates until the hard cap.
-func TestCollectCursorRejectsRepeatedCursor(t *testing.T) {
-	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
-		return cursorPage([]string{"n1"}, true, "same"), nil
+func TestCollectTimeSeriesRejectsRepeatedLink(t *testing.T) {
+	fetch := func(ctx context.Context, link string) (*ListResponse[string], error) {
+		return timeSeriesPage([]string{"n1"}, true, "https://app.honeybadger.io/v3/same"), nil
 	}
-	_, err := CollectCursor(context.Background(), fetch)
+	_, err := CollectTimeSeries(context.Background(), fetch)
 	if !errors.Is(err, ErrPaginationInconsistent) {
 		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
 	}
 }
 
-// An explicit null cursor is the same unreachable state as an absent one. Worth
-// its own test because nullable.Nullable distinguishes them and the walk must
-// treat both as inconsistent when has_older is set.
-func TestCollectCursorRejectsNullCursor(t *testing.T) {
-	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
+// An explicit null link is the same unreachable state as an absent one.
+func TestCollectTimeSeriesRejectsNullOlderLink(t *testing.T) {
+	fetch := func(ctx context.Context, link string) (*ListResponse[string], error) {
 		return &ListResponse[string]{
-			Data: []string{"n1"},
-			Cursor: &CursorPagination{
-				HasOlder:     true,
-				OldestCursor: nullable.NewNullNullable[string](),
+			Data:       []string{"n1"},
+			TimeSeries: &TimeSeriesPagination{HasOlder: true},
+			TimeSeriesLinks: &TimeSeriesLinks{
+				Self:  "https://app.honeybadger.io/v3/self",
+				Older: nullable.NewNullNullable[string](),
 			},
 		}, nil
 	}
-	_, err := CollectCursor(context.Background(), fetch)
+	_, err := CollectTimeSeries(context.Background(), fetch)
 	if !errors.Is(err, ErrPaginationInconsistent) {
 		t.Fatalf("err = %v, want ErrPaginationInconsistent", err)
 	}
 }
 
-// has_older false with a null cursor is the normal end of a walk.
-func TestCollectCursorStopsCleanlyAtEnd(t *testing.T) {
-	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
-		return cursorPage([]string{"n1"}, false, ""), nil
+// has_older false is the normal end of a walk.
+func TestCollectTimeSeriesStopsCleanlyAtEnd(t *testing.T) {
+	fetch := func(ctx context.Context, link string) (*ListResponse[string], error) {
+		return timeSeriesPage([]string{"n1"}, false, ""), nil
 	}
-	got, err := CollectCursor(context.Background(), fetch)
+	got, err := CollectTimeSeries(context.Background(), fetch)
 	if err != nil {
-		t.Fatalf("CollectCursor: %v", err)
+		t.Fatalf("CollectTimeSeries: %v", err)
 	}
 	if len(got) != 1 {
 		t.Errorf("got %v, want 1 item", got)
 	}
 }
 
-// Unique cursors forever: the repeated-cursor guard cannot catch this, so the
-// hard cap is what stops it.
-func TestCollectCursorEnforcesHardCap(t *testing.T) {
+// Unique links forever: the repeated-link guard cannot catch this, so the hard
+// cap is what stops it.
+func TestCollectTimeSeriesEnforcesHardCap(t *testing.T) {
 	i := 0
-	fetch := func(ctx context.Context, before string) (*ListResponse[string], error) {
+	fetch := func(ctx context.Context, link string) (*ListResponse[string], error) {
 		i++
-		return cursorPage([]string{fmt.Sprintf("n%d", i)}, true, fmt.Sprintf("cur%d", i)), nil
+		return timeSeriesPage([]string{fmt.Sprintf("n%d", i)}, true,
+			fmt.Sprintf("https://app.honeybadger.io/v3/older/%d", i)), nil
 	}
-	_, err := CollectCursor(context.Background(), fetch)
+	_, err := CollectTimeSeries(context.Background(), fetch)
 	if !errors.Is(err, ErrTooManyPages) {
 		t.Errorf("err = %v, want ErrTooManyPages", err)
 	}

@@ -52,42 +52,37 @@ func TestSpecIssueErrorDetailsAcceptsBothShapes(t *testing.T) {
 	}
 }
 
-// KNOWN SPEC ISSUE 2: insufficient_scope, credential_in_query, and
-// project_restricted appear in response descriptions and examples but are absent
-// from the code enum, so no generated constant exists for them.
+// The code enum is now complete: insufficient_scope, credential_in_query, and
+// project_restricted were once documented in responses without being declared,
+// and are declared now. It has grown from 10 values to 20 during v3's
+// development.
 //
-// apiv3 must therefore treat code as an open string, not a closed enum.
-func TestSpecIssueNewAuthCodesMissingFromEnum(t *testing.T) {
-	generated := map[ErrorErrorCode]bool{
-		ErrorErrorCodeAccessDenied:        true,
-		ErrorErrorCodeAmbiguousAccount:    true,
-		ErrorErrorCodeForbiddenAttributes: true,
-		ErrorErrorCodeInvalidId:           true,
-		ErrorErrorCodeMaintenanceMode:     true,
-		ErrorErrorCodeNotFound:            true,
-		ErrorErrorCodeRateLimitExceeded:   true,
-		ErrorErrorCodeServiceUnavailable:  true,
-		ErrorErrorCodeUnauthorized:        true,
-		ErrorErrorCodeValidationError:     true,
-	}
-	if len(generated) != 10 {
-		t.Fatalf("expected 10 generated codes, got %d", len(generated))
-	}
-
-	for _, missing := range []string{"insufficient_scope", "credential_in_query", "project_restricted"} {
-		if generated[ErrorErrorCode(missing)] {
-			t.Errorf("%q is now in the enum; the spec gained it — update apiv3's sentinels", missing)
+// apiv3 still treats Code as an open string rather than using these constants as
+// a closed set — this test is why. The enum keeps moving, and a client that
+// rejects unknown codes turns a real API error into an unrecognised one.
+func TestSpecIssueErrorCodeEnumKeepsGrowing(t *testing.T) {
+	// Sampled rather than exhaustive: the point is that codes keep being added,
+	// so pinning the full list would make this a change-detector.
+	for _, code := range []ErrorErrorCode{
+		ErrorErrorCodeInsufficientScope,
+		ErrorErrorCodeCredentialInQuery,
+		ErrorErrorCodeProjectRestricted,
+		ErrorErrorCodeUnsupportedAuthScheme,
+		ErrorErrorCodeRequiresUserToken,
+	} {
+		if code == "" {
+			t.Errorf("generated constant for %q is empty", code)
 		}
 	}
 
 	// An unknown code still decodes, because the generated type is a string.
 	// This is what lets apiv3 handle codes the enum has not caught up with.
 	var e Error
-	if err := json.Unmarshal([]byte(`{"error":{"code":"insufficient_scope","message":"Insufficient scope"}}`), &e); err != nil {
+	if err := json.Unmarshal([]byte(`{"error":{"code":"a_code_from_the_future","message":"m"}}`), &e); err != nil {
 		t.Fatalf("unknown code should still decode as a string: %v", err)
 	}
-	if e.Error.Code != "insufficient_scope" {
-		t.Errorf("Code = %q, want %q", e.Error.Code, "insufficient_scope")
+	if e.Error.Code != "a_code_from_the_future" {
+		t.Errorf("Code = %q, want the raw value preserved", e.Error.Code)
 	}
 }
 

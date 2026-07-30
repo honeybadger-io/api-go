@@ -11,17 +11,21 @@ info:
 
     ## Authentication
 
-    All API requests require authentication via Bearer token or HTTP Basic authentication:
+    Every request authenticates with a Bearer token:
 
     ```
     Authorization: Bearer YOUR_API_TOKEN
     ```
 
-    or
+    Bearer is the only accepted scheme. Two things that work on v2 are refused
+    here, each with its own error code so the cause is unambiguous:
 
-    ```
-    Authorization: Basic base64(YOUR_API_TOKEN:)
-    ```
+    - HTTP basic — the token as the username with a blank password, which is what
+      `curl -u` sends — answers `401 unsupported_auth_scheme`.
+    - A credential in the `auth_token` query parameter answers
+      `401 credential_in_query`, even when the credential is valid: a secret in a
+      URL leaks through access logs, proxies, Referer headers and anything a
+      person copy-pastes.
 
     You can find your API token in your Honeybadger user settings.
 
@@ -42,12 +46,29 @@ info:
     - `page`: Page number (default: 1)
     - `per_page`: Items per page (default: 25, max: 100)
 
-    ### Cursor-based Pagination
+    ### Time-series Pagination
 
-    Time-series endpoints (notices, comments, deploys, etc.) use cursor-based pagination:
-    - `limit`: Items per page (default: 25, max: 100)
-    - `before`: Cursor for older items
-    - `after`: Cursor for newer items
+    Time-ordered collections (notices, comments, deploys, outages, uptime checks,
+    check-in events, incidents) are not paged by number, because new items arrive
+    at one end while you read. They return `limit`, `has_older` and `has_newer`.
+
+    **Follow the links.** `links.older` and `links.newer` are the mechanism that
+    works on every one of these collections, and a client that follows them needs
+    to know nothing else. Both are null when there is nothing further in that
+    direction.
+
+    Five of these collections also return `oldest_cursor` and `newest_cursor`,
+    opaque tokens you can pass back as `before` and `after`. Use them when a
+    client needs to persist its position without storing a whole URL.
+
+    The other three — outages, uptime checks and check-in events — are paged on a
+    timestamp window instead, with `created_after` and `created_before`, and
+    return no cursor fields. Uptime checks have no primary key to tie-break on;
+    outages keep the v2 API's window parameters so a client can move between
+    versions unchanged. Treat the cursors as an optimisation, not the contract.
+
+    A few collections are one-directional and say so in their description: they
+    always report `has_newer: false` with a null `links.newer`.
 
     ## Response Format
 
@@ -83,7 +104,6 @@ servers:
   description: Production API
 security:
 - bearer_auth: []
-- basic_auth: []
 tags:
 - name: Accounts
   description: Account management
@@ -115,9 +135,91 @@ tags:
   description: Per-environment project settings
 - name: Insights
   description: Event querying with BadgerQL
+- name: Tokens
+  description: Introspection for the credential making the request
 - name: Streams
   description: Insights event streams
 paths:
+  "/token":
+    get:
+      operationId: getToken
+      summary: Describe the current credential
+      description: |
+        Reports what the credential making the request is and what it can reach.
+        Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
+        `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+      tags:
+      - Tokens
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      kind:
+                        type: string
+                        enum:
+                        - user
+                        - account
+                        - oauth
+                        description: "`user` and `account` are scoped API tokens.
+                          `oauth` is an access token issued to an application acting
+                          for a user.\n"
+                      name:
+                        type:
+                        - string
+                        - 'null'
+                        description: 'The token''s name, or for an OAuth grant the
+                          name of the application holding it.
+
+                          '
+                      scopes:
+                        type: array
+                        items:
+                          type: string
+                        description: 'Granular permissions. For an OAuth grant these
+                          are its legacy `read`/`write` aliases expanded to the API
+                          surface as it stood when the grant was consented to.
+
+                          '
+                        example:
+                        - faults:read
+                        - faults:write
+                      account_id:
+                        type: string
+                        description: public_id of the account the credential is bound
+                          to.
+                      project_ids:
+                        type: array
+                        items:
+                          type: string
+                        description: 'public_ids of the projects the credential can
+                          reach. Empty for a credential bound to an account with no
+                          visible projects; every project in the account when unrestricted.
+
+                          '
+                      expires_at:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                      last_used_at:
+                        type:
+                        - string
+                        - 'null'
+                        format: date-time
+                  meta:
+                    type: object
+                    properties:
+                      request_id:
+                        type: string
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
   "/accounts":
     get:
       operationId: listAccounts
@@ -143,7 +245,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -153,8 +255,6 @@ paths:
           "$ref": "#/components/responses/Unauthorized"
       security:
       - bearer_auth:
-        - account:read
-      - basic_auth:
         - account:read
   "/accounts/{account_id}":
     get:
@@ -189,8 +289,6 @@ paths:
       security:
       - bearer_auth:
         - account:read
-      - basic_auth:
-        - account:read
   "/accounts/{account_id}/usage":
     get:
       operationId: getAccountUsage
@@ -224,8 +322,6 @@ paths:
       security:
       - bearer_auth:
         - account:read
-      - basic_auth:
-        - account:read
   "/accounts/{account_id}/members":
     get:
       operationId: listAccountMembers
@@ -252,7 +348,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -266,8 +362,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
   "/accounts/{account_id}/members/{member_id}":
     get:
@@ -307,8 +401,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     patch:
       operationId: updateAccountMember
@@ -354,8 +446,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
     delete:
       operationId: deleteAccountMember
       summary: Remove an account member
@@ -381,8 +471,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:write
-      - basic_auth:
         - team:write
   "/accounts/{account_id}/invitations":
     get:
@@ -410,7 +498,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -424,8 +512,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     post:
       operationId: createAccountInvitation
@@ -469,8 +555,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
   "/accounts/{account_id}/invitations/{invitation_id}":
     get:
       operationId: getAccountInvitation
@@ -509,8 +593,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     patch:
       operationId: updateAccountInvitation
@@ -556,8 +638,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
     delete:
       operationId: deleteAccountInvitation
       summary: Delete an invitation
@@ -583,8 +663,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:write
-      - basic_auth:
         - team:write
   "/accounts/{account_id}/projects":
     get:
@@ -612,7 +690,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -626,8 +704,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:read
-      - basic_auth:
         - projects:read
     post:
       operationId: createProject
@@ -670,8 +746,6 @@ paths:
       security:
       - bearer_auth:
         - projects:create
-      - basic_auth:
-        - projects:create
   "/accounts/{account_id}/projects/{project_id}":
     get:
       operationId: getProject
@@ -705,8 +779,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:read
-      - basic_auth:
         - projects:read
     patch:
       operationId: updateProject
@@ -750,8 +822,6 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-      - basic_auth:
-        - projects:write
     delete:
       operationId: deleteProject
       summary: Delete a project
@@ -772,8 +842,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:write
-      - basic_auth:
         - projects:write
   "/accounts/{account_id}/projects/{project_id}/stats":
     get:
@@ -808,8 +876,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:read
-      - basic_auth:
         - projects:read
   "/accounts/{account_id}/projects/{project_id}/faults":
     get:
@@ -848,7 +914,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -862,8 +928,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:read
-      - basic_auth:
         - faults:read
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}":
     get:
@@ -899,8 +963,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:read
-      - basic_auth:
         - faults:read
     patch:
       operationId: updateFault
@@ -942,8 +1004,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
     delete:
       operationId: deleteFault
       summary: Delete a fault
@@ -965,8 +1025,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:write
-      - basic_auth:
         - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/resolve":
     post:
@@ -1015,8 +1073,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/unresolve":
     post:
       operationId: unresolveFaults
@@ -1063,8 +1119,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:write
-      - basic_auth:
         - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/ignore":
     post:
@@ -1113,8 +1167,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/unignore":
     post:
       operationId: unignoreFaults
@@ -1162,8 +1214,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/snooze":
     post:
       operationId: snoozeFault
@@ -1199,8 +1249,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
     delete:
       operationId: unsnoozeFault
       summary: Unsnooze a fault
@@ -1234,8 +1282,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:write
-      - basic_auth:
         - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/assign":
     post:
@@ -1278,8 +1324,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
     delete:
       operationId: unassignFault
       summary: Unassign a fault
@@ -1313,8 +1357,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:write
-      - basic_auth:
         - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/merge":
     post:
@@ -1364,8 +1406,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/occurrences":
     get:
       operationId: listFaultOccurrences
@@ -1400,8 +1440,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:read
-      - basic_auth:
         - faults:read
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users":
     get:
@@ -1438,8 +1476,6 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-      - basic_auth:
-        - faults:read
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/pause_recording":
     post:
       operationId: pauseFaultRecording
@@ -1474,8 +1510,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:write
-      - basic_auth:
         - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/resume_recording":
     post:
@@ -1512,8 +1546,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/notices":
     get:
       operationId: listNotices
@@ -1541,9 +1573,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/Notice"
                   pagination:
-                    "$ref": "#/components/schemas/CursorPagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -1557,8 +1589,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:read
-      - basic_auth:
         - faults:read
   "/notices/{uuid}":
     get:
@@ -1599,8 +1629,6 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-      - basic_auth:
-        - faults:read
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments":
     get:
       operationId: listComments
@@ -1628,9 +1656,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/Comment"
                   pagination:
-                    "$ref": "#/components/schemas/CursorPagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -1644,8 +1672,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:read
-      - basic_auth:
         - faults:read
     post:
       operationId: createComment
@@ -1692,8 +1718,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments/{comment_id}":
     get:
       operationId: getComment
@@ -1734,8 +1758,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - faults:read
-      - basic_auth:
         - faults:read
     patch:
       operationId: updateComment
@@ -1788,8 +1810,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
     delete:
       operationId: deleteComment
       summary: Delete a comment
@@ -1818,8 +1838,6 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-      - basic_auth:
-        - faults:write
   "/accounts/{account_id}/projects/{project_id}/sites":
     get:
       operationId: listSites
@@ -1847,7 +1865,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -1861,8 +1879,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - uptime:read
-      - basic_auth:
         - uptime:read
     post:
       operationId: createSite
@@ -1909,8 +1925,6 @@ paths:
       security:
       - bearer_auth:
         - uptime:write
-      - basic_auth:
-        - uptime:write
   "/accounts/{account_id}/projects/{project_id}/sites/{site_id}":
     get:
       operationId: getSite
@@ -1950,8 +1964,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - uptime:read
-      - basic_auth:
         - uptime:read
     patch:
       operationId: updateSite
@@ -2003,8 +2015,6 @@ paths:
       security:
       - bearer_auth:
         - uptime:write
-      - basic_auth:
-        - uptime:write
     delete:
       operationId: deleteSite
       summary: Delete a site
@@ -2031,8 +2041,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - uptime:write
-      - basic_auth:
         - uptime:write
   "/accounts/{account_id}/projects/{project_id}/sites/{site_id}/checks":
     get:
@@ -2066,9 +2074,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/UptimeCheck"
                   pagination:
-                    "$ref": "#/components/schemas/TimePagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -2082,8 +2090,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - uptime:read
-      - basic_auth:
         - uptime:read
   "/accounts/{account_id}/projects/{project_id}/sites/{site_id}/outages":
     get:
@@ -2117,9 +2123,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/Outage"
                   pagination:
-                    "$ref": "#/components/schemas/TimePagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -2133,8 +2139,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - uptime:read
-      - basic_auth:
         - uptime:read
   "/accounts/{account_id}/projects/{project_id}/check_ins":
     get:
@@ -2163,7 +2167,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -2177,8 +2181,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - checkins:read
-      - basic_auth:
         - checkins:read
     post:
       operationId: createCheckIn
@@ -2228,8 +2230,6 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-      - basic_auth:
-        - checkins:write
   "/accounts/{account_id}/projects/{project_id}/check_ins/bulk_update":
     put:
       operationId: bulkUpdateCheckIns
@@ -2272,8 +2272,6 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-      - basic_auth:
-        - checkins:write
   "/accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}":
     get:
       operationId: getCheckIn
@@ -2313,8 +2311,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - checkins:read
-      - basic_auth:
         - checkins:read
     patch:
       operationId: updateCheckIn
@@ -2370,8 +2366,6 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-      - basic_auth:
-        - checkins:write
     delete:
       operationId: deleteCheckIn
       summary: Delete a check-in
@@ -2399,13 +2393,14 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-      - basic_auth:
-        - checkins:write
   "/accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}/events":
     get:
       operationId: listCheckInEvents
       summary: List check-in events
-      description: Returns a list of events for a check-in.
+      description: |
+        Returns a check-in's events, newest first.
+
+        Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
       tags:
       - Check-ins
       parameters:
@@ -2418,14 +2413,7 @@ paths:
         schema:
           type: string
       - "$ref": "#/components/parameters/Limit"
-      - name: before
-        in: query
-        description: Unix timestamp; returns events older than it. Take it from the
-          `older` link. Events are always returned newest first, so the newest page
-          is the one requested without this parameter.
-        schema:
-          type: number
-          example: 1704067200
+      - "$ref": "#/components/parameters/CreatedBefore"
       responses:
         '200':
           description: Success
@@ -2439,9 +2427,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/CheckInEvent"
                   pagination:
-                    "$ref": "#/components/schemas/CursorPagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -2455,8 +2443,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - checkins:read
-      - basic_auth:
         - checkins:read
   "/accounts/{account_id}/projects/{project_id}/deploys":
     get:
@@ -2484,9 +2470,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/Deploy"
                   pagination:
-                    "$ref": "#/components/schemas/CursorPagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -2500,8 +2486,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - deploys:read
-      - basic_auth:
         - deploys:read
   "/accounts/{account_id}/projects/{project_id}/deploys/{deploy_id}":
     get:
@@ -2543,8 +2527,6 @@ paths:
       security:
       - bearer_auth:
         - deploys:read
-      - basic_auth:
-        - deploys:read
     delete:
       operationId: deleteDeploy
       summary: Delete a deploy
@@ -2571,8 +2553,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - deploys:write
-      - basic_auth:
         - deploys:write
   "/accounts/{account_id}/projects/{project_id}/environments":
     get:
@@ -2601,7 +2581,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -2615,8 +2595,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:read
-      - basic_auth:
         - projects:read
     post:
       operationId: createEnvironment
@@ -2660,8 +2638,6 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-      - basic_auth:
-        - projects:write
   "/accounts/{account_id}/projects/{project_id}/environments/{environment_id}":
     get:
       operationId: getEnvironment
@@ -2701,8 +2677,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:read
-      - basic_auth:
         - projects:read
     patch:
       operationId: updateEnvironment
@@ -2752,8 +2726,6 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-      - basic_auth:
-        - projects:write
     delete:
       operationId: deleteEnvironment
       summary: Delete an environment
@@ -2780,8 +2752,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - projects:write
-      - basic_auth:
         - projects:write
   "/accounts/{account_id}/projects/{project_id}/environments/bulk_update":
     patch:
@@ -2836,8 +2806,6 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-      - basic_auth:
-        - projects:write
   "/accounts/{account_id}/projects/{project_id}/environments/bulk_destroy":
     delete:
       operationId: bulkDeleteEnvironments
@@ -2888,8 +2856,6 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-      - basic_auth:
-        - projects:write
   "/accounts/{account_id}/projects/{project_id}/channels":
     get:
       operationId: listChannels
@@ -2917,7 +2883,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -2931,8 +2897,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - integrations:read
-      - basic_auth:
         - integrations:read
   "/accounts/{account_id}/projects/{project_id}/channels/{channel_id}":
     get:
@@ -2973,8 +2937,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - integrations:read
-      - basic_auth:
         - integrations:read
     patch:
       operationId: updateChannel
@@ -3021,8 +2983,6 @@ paths:
       security:
       - bearer_auth:
         - integrations:write
-      - basic_auth:
-        - integrations:write
   "/accounts/{account_id}/projects/{project_id}/dashboards":
     get:
       operationId: listDashboards
@@ -3050,7 +3010,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -3064,8 +3024,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - dashboards:read
-      - basic_auth:
         - dashboards:read
     post:
       operationId: createDashboard
@@ -3109,8 +3067,6 @@ paths:
       security:
       - bearer_auth:
         - dashboards:write
-      - basic_auth:
-        - dashboards:write
   "/accounts/{account_id}/projects/{project_id}/dashboards/{dashboard_id}":
     get:
       operationId: getDashboard
@@ -3150,8 +3106,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - dashboards:read
-      - basic_auth:
         - dashboards:read
     patch:
       operationId: updateDashboard
@@ -3201,8 +3155,6 @@ paths:
       security:
       - bearer_auth:
         - dashboards:write
-      - basic_auth:
-        - dashboards:write
     delete:
       operationId: deleteDashboard
       summary: Delete a dashboard
@@ -3230,20 +3182,19 @@ paths:
       security:
       - bearer_auth:
         - dashboards:write
-      - basic_auth:
-        - dashboards:write
   "/accounts/{account_id}/projects/{project_id}/alarms":
     get:
       operationId: listAlarms
       summary: List alarms
-      description: Returns a list of alarms for the project.
+      description: |
+        Returns every alarm on the project.
+
+        Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
       tags:
       - Alarms
       parameters:
       - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
-      - "$ref": "#/components/parameters/Page"
-      - "$ref": "#/components/parameters/PerPage"
       responses:
         '200':
           description: Success
@@ -3256,10 +3207,6 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Alarm"
-                  pagination:
-                    "$ref": "#/components/schemas/Pagination"
-                  links:
-                    type: object
                   meta:
                     type: object
                     properties:
@@ -3273,8 +3220,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - alarms:read
-      - basic_auth:
         - alarms:read
     post:
       operationId: createAlarm
@@ -3318,8 +3263,6 @@ paths:
       security:
       - bearer_auth:
         - alarms:write
-      - basic_auth:
-        - alarms:write
   "/accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}":
     get:
       operationId: getAlarm
@@ -3359,8 +3302,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - alarms:read
-      - basic_auth:
         - alarms:read
     patch:
       operationId: updateAlarm
@@ -3410,8 +3351,6 @@ paths:
       security:
       - bearer_auth:
         - alarms:write
-      - basic_auth:
-        - alarms:write
     delete:
       operationId: deleteAlarm
       summary: Delete an alarm
@@ -3439,13 +3378,14 @@ paths:
       security:
       - bearer_auth:
         - alarms:write
-      - basic_auth:
-        - alarms:write
   "/accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}/history":
     get:
       operationId: listAlarmHistory
       summary: List alarm trigger history
-      description: Returns the trigger history for an alarm.
+      description: |
+        Returns the trigger history for an alarm.
+
+        Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
       tags:
       - Alarms
       parameters:
@@ -3458,7 +3398,6 @@ paths:
         schema:
           type: string
       - "$ref": "#/components/parameters/Page"
-      - "$ref": "#/components/parameters/PerPage"
       responses:
         '200':
           description: Success
@@ -3472,9 +3411,13 @@ paths:
                     items:
                       type: object
                   pagination:
-                    "$ref": "#/components/schemas/Pagination"
-                  links:
                     type: object
+                    description: The query service's paging object, passed through
+                    properties:
+                      page:
+                        type: integer
+                      total_pages:
+                        type: integer
                   meta:
                     type: object
                     properties:
@@ -3488,8 +3431,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - alarms:read
-      - basic_auth:
         - alarms:read
   "/accounts/{account_id}/teams":
     get:
@@ -3517,7 +3458,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -3531,8 +3472,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     post:
       operationId: createTeam
@@ -3575,8 +3514,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
   "/accounts/{account_id}/teams/{team_id}":
     get:
       operationId: getTeam
@@ -3615,8 +3552,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     patch:
       operationId: updateTeam
@@ -3665,8 +3600,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
     delete:
       operationId: deleteTeam
       summary: Delete a team
@@ -3692,8 +3625,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:write
-      - basic_auth:
         - team:write
   "/accounts/{account_id}/teams/{team_id}/members":
     get:
@@ -3727,7 +3658,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -3741,8 +3672,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
   "/accounts/{account_id}/teams/{team_id}/members/{member_id}":
     get:
@@ -3788,8 +3717,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     patch:
       operationId: updateTeamMember
@@ -3841,8 +3768,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
     delete:
       operationId: deleteTeamMember
       summary: Remove a team member
@@ -3874,8 +3799,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:write
-      - basic_auth:
         - team:write
   "/accounts/{account_id}/teams/{team_id}/invitations":
     get:
@@ -3909,7 +3832,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -3923,8 +3846,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     post:
       operationId: createTeamInvitation
@@ -3974,8 +3895,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
   "/accounts/{account_id}/teams/{team_id}/invitations/{invitation_id}":
     get:
       operationId: getTeamInvitation
@@ -4020,8 +3939,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - team:read
-      - basic_auth:
         - team:read
     patch:
       operationId: updateTeamInvitation
@@ -4073,8 +3990,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
     delete:
       operationId: deleteTeamInvitation
       summary: Delete a team invitation
@@ -4107,8 +4022,6 @@ paths:
       security:
       - bearer_auth:
         - team:write
-      - basic_auth:
-        - team:write
   "/accounts/{account_id}/status_pages":
     get:
       operationId: listStatusPages
@@ -4135,7 +4048,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
                     properties:
@@ -4149,8 +4062,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - status_pages:read
-      - basic_auth:
         - status_pages:read
     post:
       operationId: createStatusPage
@@ -4193,8 +4104,6 @@ paths:
       security:
       - bearer_auth:
         - status_pages:write
-      - basic_auth:
-        - status_pages:write
   "/accounts/{account_id}/status_pages/{status_page_id}":
     get:
       operationId: getStatusPage
@@ -4233,8 +4142,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - status_pages:read
-      - basic_auth:
         - status_pages:read
     patch:
       operationId: updateStatusPage
@@ -4283,8 +4190,6 @@ paths:
       security:
       - bearer_auth:
         - status_pages:write
-      - basic_auth:
-        - status_pages:write
     delete:
       operationId: deleteStatusPage
       summary: Delete a status page
@@ -4310,8 +4215,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - status_pages:write
-      - basic_auth:
         - status_pages:write
   "/accounts/{account_id}/status_pages/{status_page_id}/incidents":
     get:
@@ -4344,9 +4247,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/StatusPageIncident"
                   pagination:
-                    "$ref": "#/components/schemas/CursorPagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -4360,8 +4263,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - incidents:read
-      - basic_auth:
         - incidents:read
     post:
       operationId: createStatusPageIncident
@@ -4433,8 +4334,6 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-      - basic_auth:
-        - incidents:write
   "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}":
     get:
       operationId: getStatusPageIncident
@@ -4479,8 +4378,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - incidents:read
-      - basic_auth:
         - incidents:read
     patch:
       operationId: updateStatusPageIncident
@@ -4546,8 +4443,6 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-      - basic_auth:
-        - incidents:write
     delete:
       operationId: deleteStatusPageIncident
       summary: Delete an incident
@@ -4579,8 +4474,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - incidents:write
-      - basic_auth:
         - incidents:write
   "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}/updates":
     get:
@@ -4619,9 +4512,9 @@ paths:
                     items:
                       "$ref": "#/components/schemas/IncidentUpdate"
                   pagination:
-                    "$ref": "#/components/schemas/CursorPagination"
+                    "$ref": "#/components/schemas/TimeSeriesPagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     type: object
                     properties:
@@ -4635,8 +4528,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - incidents:read
-      - basic_auth:
         - incidents:read
     post:
       operationId: createIncidentUpdate
@@ -4691,8 +4582,6 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-      - basic_auth:
-        - incidents:write
   "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}/updates/{update_id}":
     get:
       operationId: getIncidentUpdate
@@ -4743,8 +4632,6 @@ paths:
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
-        - incidents:read
-      - basic_auth:
         - incidents:read
     patch:
       operationId: updateIncidentUpdate
@@ -4807,8 +4694,6 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-      - basic_auth:
-        - incidents:write
     delete:
       operationId: deleteIncidentUpdate
       summary: Delete an incident update
@@ -4848,8 +4733,6 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-      - basic_auth:
-        - incidents:write
   "/accounts/{account_id}/projects/{project_id}/streams":
     get:
       operationId: listStreams
@@ -4882,7 +4765,7 @@ paths:
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
-                    type: object
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     type: object
         '401':
@@ -4897,8 +4780,6 @@ paths:
           "$ref": "#/components/responses/RateLimitExceeded"
       security:
       - bearer_auth:
-        - insights:read
-      - basic_auth:
         - insights:read
   "/accounts/{account_id}/projects/{project_id}/insights/queries":
     post:
@@ -5001,8 +4882,6 @@ paths:
       security:
       - bearer_auth:
         - insights:read
-      - basic_auth:
-        - insights:read
 components:
   securitySchemes:
     bearer_auth:
@@ -5011,13 +4890,7 @@ components:
       description: |
         Either credential v3 accepts, as a Bearer token: a scoped API token (prefixed `hbt_` for a personal one, `hba_` for an account one), or an OAuth access token issued to an application acting on a user's behalf.
         Both are authorized the same way. An API token carries granular permissions directly; an OAuth grant carries `read` or `write`, which expand to the permission set covering the API surface as it stood when that grant was consented to — a grant never gains a capability added to the API afterwards.
-    basic_auth:
-      type: http
-      scheme: basic
-      description: 'The same credentials as `bearer_auth`, sent as the username with
-        a blank password, which is what `curl -u` produces.
-
-        '
+        Bearer is the only accepted scheme. Unlike v2, v3 refuses HTTP basic (the token as username with a blank password, which is what `curl -u` sends) and refuses a credential in the `auth_token` query parameter.
   schemas:
     Account:
       type: object
@@ -5427,38 +5300,6 @@ components:
           type: string
           format: date-time
           description: When the comment was created
-    CursorPagination:
-      type: object
-      description: Cursor-based pagination information
-      required:
-      - limit
-      - has_older
-      - has_newer
-      properties:
-        limit:
-          type: integer
-          description: Maximum items per page
-          minimum: 1
-          maximum: 100
-          example: 25
-        has_older:
-          type: boolean
-          description: Whether there are older items available
-        has_newer:
-          type: boolean
-          description: Whether there are newer items available
-        oldest_cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor to fetch older items (use with `before` parameter)
-          example: eyJ0IjoxNzA0MDY3MjAwLCJpIjoiTm04cFF4In0
-        newest_cursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor to fetch newer items (use with `after` parameter)
-          example: eyJ0IjoxNzA0MTUzNjAwLCJpIjoiWGs5bVpwIn0
     Dashboard:
       type: object
       description: An Insights dashboard
@@ -5587,9 +5428,19 @@ components:
               description: Machine-readable error code
               enum:
               - unauthorized
+              - unsupported_auth_scheme
+              - credential_in_query
               - access_denied
+              - insufficient_scope
+              - requires_user_token
+              - project_restricted
+              - account_inactive
+              - account_parked
+              - feature_unavailable
               - not_found
               - validation_error
+              - delete_failed
+              - limit_reached
               - rate_limit_exceeded
               - maintenance_mode
               - invalid_id
@@ -5957,6 +5808,34 @@ components:
         details_url:
           type: string
           description: URL of the site's page in the Honeybadger UI
+    OffsetLinks:
+      type: object
+      description: Navigation links for a numbered-page collection
+      required:
+      - self
+      properties:
+        self:
+          type: string
+          format: uri
+          description: This page
+        first:
+          type: string
+          format: uri
+          description: First page
+        prev:
+          type:
+          - string
+          - 'null'
+          description: Previous page, or null on the first page
+        next:
+          type:
+          - string
+          - 'null'
+          description: Next page, or null on the last page
+        last:
+          type: string
+          format: uri
+          description: Last page
     Pagination:
       type: object
       description: Offset-based pagination information
@@ -6340,28 +6219,6 @@ components:
           items:
             type: string
           description: Public IDs of projects assigned to this team
-    TimePagination:
-      type: object
-      description: Time-window pagination information
-      required:
-      - limit
-      - has_older
-      - has_newer
-      properties:
-        limit:
-          type: integer
-          description: Maximum items per page
-          minimum: 1
-          maximum: 100
-          example: 25
-        has_older:
-          type: boolean
-          description: Whether there are older items available (follow the `older`
-            link)
-        has_newer:
-          type: boolean
-          description: Whether there are newer items available (follow the `newer`
-            link)
     TeamInvitation:
       type: object
       description: An invitation to join a team
@@ -6549,6 +6406,69 @@ components:
           type: string
           description: User display name
           example: Jane Smith
+    TimeSeriesLinks:
+      type: object
+      description: Navigation links for a time-ordered collection
+      required:
+      - self
+      properties:
+        self:
+          type: string
+          format: uri
+          description: This page
+        older:
+          type:
+          - string
+          - 'null'
+          description: Page of older items, or null when none exist
+        newer:
+          type:
+          - string
+          - 'null'
+          description: 'Page of newer items, or null when none exist. Always null
+            on one-directional collections, which are documented as such.
+
+            '
+    TimeSeriesPagination:
+      type: object
+      description: Pagination for a time-ordered collection
+      required:
+      - limit
+      - has_older
+      - has_newer
+      properties:
+        limit:
+          type: integer
+          description: Maximum items per page
+          minimum: 1
+          maximum: 100
+          example: 25
+        has_older:
+          type: boolean
+          description: Whether older items exist. When true, follow `links.older`.
+        has_newer:
+          type: boolean
+          description: Whether newer items exist. When true, follow `links.newer`.
+        oldest_cursor:
+          type:
+          - string
+          - 'null'
+          description: 'Opaque cursor for the oldest item on this page, to be passed
+            as `before`. Absent or null on collections that page on a timestamp rather
+            than a cursor; use `links.older` instead.
+
+            '
+          example: eyJ0IjoxNzA0MDY3MjAwLCJpIjoiTm04cFF4In0
+        newest_cursor:
+          type:
+          - string
+          - 'null'
+          description: 'Opaque cursor for the newest item on this page, to be passed
+            as `after`. Absent or null on collections that page on a timestamp rather
+            than a cursor, and on one-directional collections; use `links.newer` instead.
+
+            '
+          example: eyJ0IjoxNzA0MTUzNjAwLCJpIjoiWGs5bVpwIn0
   parameters:
     AccountId:
       name: account_id
@@ -6631,87 +6551,122 @@ components:
         example: 1704153600
   responses:
     Unauthorized:
-      description: Authentication required
+      description: 'Authentication failed. OpenAPI allows one response per status
+        code, and every operation maps 401 here — so the ways a credential can be
+        refused are the examples below rather than separate response components, which
+        nothing could reference.
+
+        '
       content:
         application/json:
           schema:
             "$ref": "#/components/schemas/Error"
-          example:
-            error:
-              code: unauthorized
-              message: Access denied
-            meta:
-              request_id: abc123
+          examples:
+            unauthorized:
+              summary: Missing, malformed, expired or revoked credential
+              value:
+                error:
+                  code: unauthorized
+                  message: Access denied
+                meta:
+                  request_id: abc123
+            unsupported_auth_scheme:
+              summary: Sent as HTTP basic, which v3 does not accept
+              description: 'The token as the username with a blank password, which
+                is what `curl -u` produces. v2 accepts it; v3 takes Bearer only. Named
+                separately from a plain 401 because the credential is usually valid,
+                and "Access denied" would send someone hunting a token problem that
+                does not exist.
+
+                '
+              value:
+                error:
+                  code: unsupported_auth_scheme
+                  message: 'Send the credential as `Authorization: Bearer <token>`;
+                    v3 does not accept HTTP basic'
+                meta:
+                  request_id: abc123
+            credential_in_query:
+              summary: Sent as the auth_token query parameter
+              description: 'Refused even when the credential is valid: a secret in
+                a URL leaks through access logs, proxies, Referer headers and anything
+                a person copy-pastes.
+
+                '
+              value:
+                error:
+                  code: credential_in_query
+                  message: Credentials must be sent in the Authorization header
+                meta:
+                  request_id: abc123
     Forbidden:
-      description: Access denied
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Error"
-          example:
-            error:
-              code: access_denied
-              message: Access denied
-            meta:
-              request_id: abc123
-    InsufficientScope:
       description: |
-        The credential authenticated but does not hold the permission this endpoint requires. `details.required_scope` names it and `details.token_scopes` lists what the credential does hold, so a client can tell the holder exactly what to re-grant rather than guessing.
-        Distinct from 404: a binding failure — an account or project the credential does not cover — answers `not_found` instead, because a 403 there would confirm the resource exists.
+        Authenticated, but not allowed. As with 401, OpenAPI allows one response per status code and every operation maps 403 here, so the distinct reasons are the examples below rather than separate components nothing could reference.
+        Note what is NOT here: a binding failure — an account or project the credential does not cover — answers 404 `not_found` instead. A 403 there would confirm the resource exists.
       headers:
         WWW-Authenticate:
-          description: Always `Bearer error="insufficient_scope"`.
+          description: 'Present as `Bearer error="insufficient_scope"` when the code
+            is `insufficient_scope`. Absent for the other reasons.
+
+            '
           schema:
             type: string
       content:
         application/json:
           schema:
             "$ref": "#/components/schemas/Error"
-          example:
-            error:
-              code: insufficient_scope
-              message: Insufficient scope
-              details:
-                required_scope: faults:write
-                token_scopes:
-                - faults:read
-                - insights:read
-            meta:
-              request_id: abc123
-    CredentialInQuery:
-      description: 'A credential was sent as the `auth_token` query parameter. v3
-        refuses it even when it is valid: a secret in a URL leaks through access logs,
-        proxies, Referer headers and anything a person copy-pastes. Send it in the
-        Authorization header.
+          examples:
+            access_denied:
+              summary: The ability refuses this action on this record
+              value:
+                error:
+                  code: access_denied
+                  message: Access denied
+                meta:
+                  request_id: abc123
+            insufficient_scope:
+              summary: The credential lacks the permission this endpoint requires
+              description: "`details.required_scope` names it and `details.token_scopes`
+                lists what the credential does hold, so a client can tell the holder
+                exactly what to re-grant rather than guessing.\n"
+              value:
+                error:
+                  code: insufficient_scope
+                  message: Insufficient scope
+                  details:
+                    required_scope: faults:write
+                    token_scopes:
+                    - faults:read
+                    - insights:read
+                meta:
+                  request_id: abc123
+            requires_user_token:
+              summary: The endpoint records who acted, and an account token has nobody
+              description: 'Authoring or editing a comment attributes text to a person.
+                An account token may hold `faults:write` legitimately and still have
+                nobody to attribute it to, so this is not something a scope can express.
 
-        '
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Error"
-          example:
-            error:
-              code: credential_in_query
-              message: Credentials must be sent in the Authorization header
-            meta:
-              request_id: abc123
-    ProjectRestricted:
-      description: 'The credential is limited to named projects, and this endpoint
-        creates one — a project that does not exist yet cannot be inside a fixed list.
-        Deliberately 403 rather than 404: the endpoint exists and the caller may well
-        hold `projects:create`.
+                '
+              value:
+                error:
+                  code: requires_user_token
+                  message: This endpoint records the person who acted, so it requires
+                    a user credential rather than an account token
+                meta:
+                  request_id: abc123
+            project_restricted:
+              summary: A project-restricted credential cannot create a project
+              description: 'A project that does not exist yet cannot be inside a fixed
+                list. Deliberately 403 rather than 404: the endpoint exists and the
+                caller may well hold `projects:create`.
 
-        '
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Error"
-          example:
-            error:
-              code: project_restricted
-              message: Project-restricted tokens cannot create projects
-            meta:
-              request_id: abc123
+                '
+              value:
+                error:
+                  code: project_restricted
+                  message: Project-restricted tokens cannot create projects
+                meta:
+                  request_id: abc123
     NotFound:
       description: Resource not found
       content:

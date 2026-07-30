@@ -106,14 +106,14 @@ func TestFaultNullableFieldsAreThreeState(t *testing.T) {
 	}
 }
 
-// Notices are the first cursor-paginated endpoint, so this exercises
-// CursorPagination against real generated code rather than a fake.
+// Notices are the first time-ordered endpoint, so this exercises
+// TimeSeriesPagination against real generated code rather than a fake.
 //
 // Note the fixture ids are real UUIDs: unlike every other v3 resource, which
 // uses short opaque public ids, a notice is addressed by its token UUID
 // (`format: uuid` in the spec), so the generated type is uuid.UUID and rejects
 // anything else.
-func TestFaultsListNoticesUsesCursorPagination(t *testing.T) {
+func TestFaultsListNoticesUsesTimeSeriesPagination(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if want := "/v3/accounts/me/projects/Xk9mZp/faults/f1/notices"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
@@ -123,7 +123,8 @@ func TestFaultsListNoticesUsesCursorPagination(t *testing.T) {
 		}
 		writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111"}],
 		  "pagination":{"has_newer":false,"has_older":true,"limit":10,
-		    "newest_cursor":"cur_new","oldest_cursor":"cur_old"}}`)
+		    "newest_cursor":"cur_new","oldest_cursor":"cur_old"},
+		  "links":{"self":"http://`+r.Host+`/v3/self","older":"http://`+r.Host+`/v3/older"}}`)
 	}))
 	defer srv.Close()
 
@@ -134,34 +135,38 @@ func TestFaultsListNoticesUsesCursorPagination(t *testing.T) {
 	}
 
 	if resp.Pagination != nil {
-		t.Error("Pagination should be nil for a cursor endpoint")
+		t.Error("Pagination should be nil for a time-ordered endpoint")
 	}
-	if resp.Cursor == nil {
-		t.Fatal("Cursor is nil for a cursor endpoint")
+	if resp.TimeSeries == nil {
+		t.Fatal("TimeSeries is nil for a time-ordered endpoint")
 	}
-	if !resp.Cursor.HasOlder {
+	if !resp.TimeSeries.HasOlder {
 		t.Error("HasOlder = false, want true")
 	}
-	oldest, err := resp.Cursor.OldestCursor.Get()
+	if resp.TimeSeriesLinks == nil {
+		t.Fatal("TimeSeriesLinks is nil; the walk needs links to follow")
+	}
+	oldest, err := resp.TimeSeries.OldestCursor.Get()
 	if err != nil || oldest != "cur_old" {
 		t.Errorf("OldestCursor = %q (err %v), want cur_old", oldest, err)
 	}
 }
 
-func TestFaultsListAllNoticesFollowsCursor(t *testing.T) {
-	var seen []string
+func TestFaultsListAllNoticesFollowsOlderLinks(t *testing.T) {
+	var paths []string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		before := r.URL.Query().Get("before")
-		seen = append(seen, before)
-		switch before {
-		case "":
+		paths = append(paths, r.URL.Path)
+		switch r.URL.Path {
+		case "/v3/accounts/me/projects/Xk9mZp/faults/f1/notices":
 			writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111"}],
-			  "pagination":{"has_older":true,"limit":1,"oldest_cursor":"cur_1"}}`)
-		case "cur_1":
+			  "pagination":{"has_older":true,"limit":1,"oldest_cursor":"cur_1"},
+			  "links":{"self":"http://`+r.Host+`/v3/self","older":"http://`+r.Host+`/v3/notices/older"}}`)
+		case "/v3/notices/older":
 			writeJSON(w, 0, `{"data":[{"id":"22222222-2222-4222-8222-222222222222"}],
-			  "pagination":{"has_older":false,"limit":1,"oldest_cursor":null}}`)
+			  "pagination":{"has_older":false,"limit":1,"oldest_cursor":null},
+			  "links":{"self":"http://`+r.Host+`/v3/notices/older"}}`)
 		default:
-			t.Errorf("unexpected before=%q", before)
+			t.Errorf("unexpected path %q", r.URL.Path)
 		}
 	}))
 	defer srv.Close()
@@ -174,8 +179,25 @@ func TestFaultsListAllNoticesFollowsCursor(t *testing.T) {
 	if len(all) != 2 {
 		t.Fatalf("got %d notices, want 2", len(all))
 	}
-	if want := []string{"", "cur_1"}; !equal(seen, want) {
-		t.Errorf("cursors %v, want %v", seen, want)
+	if want := []string{"/v3/accounts/me/projects/Xk9mZp/faults/f1/notices", "/v3/notices/older"}; !equal(paths, want) {
+		t.Errorf("paths %v, want %v", paths, want)
+	}
+}
+
+// A followed link carries the credential, so a link pointing at another host
+// must be refused rather than followed.
+func TestListAllNoticesRefusesOffHostLink(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111"}],
+		  "pagination":{"has_older":true,"limit":1},
+		  "links":{"self":"http://`+r.Host+`/v3/self","older":"https://evil.example.com/v3/steal"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
+	_, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "f1")
+	if !errors.Is(err, ErrUntrustedLink) {
+		t.Fatalf("err = %v, want ErrUntrustedLink", err)
 	}
 }
 
@@ -187,7 +209,8 @@ func TestListAllNoticesSendsNoAfterCursor(t *testing.T) {
 		if got := r.URL.Query().Get("after"); got != "" {
 			t.Errorf("after = %q, want it dropped", got)
 		}
-		writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111"}],"pagination":{"has_older":false,"limit":1}}`)
+		writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111"}],
+		  "pagination":{"has_older":false,"limit":1}}`)
 	}))
 	defer srv.Close()
 

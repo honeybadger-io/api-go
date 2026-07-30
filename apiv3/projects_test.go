@@ -46,8 +46,8 @@ func TestProjectsListDecodesEnvelope(t *testing.T) {
 	if resp.Pagination == nil || resp.Pagination.TotalCount != 51 {
 		t.Errorf("Pagination = %+v", resp.Pagination)
 	}
-	if resp.Cursor != nil {
-		t.Error("Cursor should be nil for an offset-paginated endpoint")
+	if resp.TimeSeries != nil {
+		t.Error("TimeSeries should be nil for an offset-paginated endpoint")
 	}
 	if resp.RequestID != "req_list" {
 		t.Errorf("RequestID = %q, want req_list", resp.RequestID)

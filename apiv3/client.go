@@ -100,6 +100,9 @@ type Client struct {
 
 	// Faults handles the faults resource and its notices.
 	Faults *FaultsService
+
+	// Tokens describes the credential making the request.
+	Tokens *TokensService
 }
 
 // NewClient returns a client pointing at the production API with a 30 second
@@ -131,6 +134,7 @@ func (c *Client) clone() *Client {
 func (c *Client) rebind() *Client {
 	c.Projects = &ProjectsService{client: c}
 	c.Faults = &FaultsService{client: c}
+	c.Tokens = &TokensService{client: c}
 	return c
 }
 

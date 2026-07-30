@@ -15,12 +15,13 @@ type offsetEnvelope[T any] struct {
 	} `json:"meta"`
 }
 
-// cursorEnvelope is the same shape for cursor-paginated collections. v3 uses the
-// same "pagination" key for both schemes, with a different object under it.
-type cursorEnvelope[T any] struct {
-	Data       []T               `json:"data"`
-	Pagination *CursorPagination `json:"pagination"`
-	Links      map[string]any    `json:"links"`
+// timeSeriesEnvelope is the shape of a time-ordered collection. v3 uses the same
+// "pagination" key that offset endpoints use, with a different object under it,
+// and a typed links object for navigation.
+type timeSeriesEnvelope[T any] struct {
+	Data       []T                   `json:"data"`
+	Pagination *TimeSeriesPagination `json:"pagination"`
+	Links      *TimeSeriesLinks      `json:"links"`
 	Meta       struct {
 		RequestID string `json:"request_id"`
 	} `json:"meta"`
@@ -48,17 +49,17 @@ func decodeOffsetList[T any](status int, body []byte) (*ListResponse[T], error) 
 	}, nil
 }
 
-// decodeCursorList parses a cursor-paginated collection response.
-func decodeCursorList[T any](status int, body []byte) (*ListResponse[T], error) {
-	var envelope cursorEnvelope[T]
+// decodeTimeSeriesList parses a time-ordered collection response.
+func decodeTimeSeriesList[T any](status int, body []byte) (*ListResponse[T], error) {
+	var envelope timeSeriesEnvelope[T]
 	if err := json.Unmarshal(body, &envelope); err != nil {
 		return nil, malformed(status, body, err)
 	}
 	return &ListResponse[T]{
-		Data:      envelope.Data,
-		Cursor:    envelope.Pagination,
-		Links:     envelope.Links,
-		RequestID: envelope.Meta.RequestID,
+		Data:            envelope.Data,
+		TimeSeries:      envelope.Pagination,
+		TimeSeriesLinks: envelope.Links,
+		RequestID:       envelope.Meta.RequestID,
 	}, nil
 }
 

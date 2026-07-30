@@ -9,46 +9,60 @@ import (
 
 // Code is a machine-readable v3 error code.
 //
-// Deliberately an open string rather than a closed enum: the OpenAPI bundle
-// documents `insufficient_scope`, `credential_in_query`, and
-// `project_restricted` in its responses without listing them in the schema's
-// enum, so a closed set would drop errors the API actually returns. Compare
-// against the Code* constants, or use errors.Is with the Err* sentinels.
+// Deliberately an open string rather than the generated enum. The bundle's enum
+// has grown repeatedly during v3's development, and a closed set would drop any
+// code the client has not caught up with — silently turning a real API error
+// into an unrecognised one. Compare against the Code* constants, or use
+// errors.Is with the Err* sentinels.
 type Code string
 
+// The codes v3 declares. Auth and authorization first, then the rest, matching
+// the spec's own ordering.
 const (
-	CodeUnauthorized        Code = "unauthorized"
-	CodeAccessDenied        Code = "access_denied"
-	CodeNotFound            Code = "not_found"
-	CodeValidationError     Code = "validation_error"
-	CodeRateLimitExceeded   Code = "rate_limit_exceeded"
-	CodeMaintenanceMode     Code = "maintenance_mode"
-	CodeInvalidID           Code = "invalid_id"
-	CodeForbiddenAttributes Code = "forbidden_attributes"
-	CodeServiceUnavailable  Code = "service_unavailable"
-	CodeAmbiguousAccount    Code = "ambiguous_account"
-
-	// Documented in the bundle's responses but absent from its code enum.
-	CodeInsufficientScope Code = "insufficient_scope"
-	CodeCredentialInQuery Code = "credential_in_query"
-	CodeProjectRestricted Code = "project_restricted"
+	CodeUnauthorized          Code = "unauthorized"
+	CodeUnsupportedAuthScheme Code = "unsupported_auth_scheme"
+	CodeCredentialInQuery     Code = "credential_in_query"
+	CodeAccessDenied          Code = "access_denied"
+	CodeInsufficientScope     Code = "insufficient_scope"
+	CodeRequiresUserToken     Code = "requires_user_token"
+	CodeProjectRestricted     Code = "project_restricted"
+	CodeAccountInactive       Code = "account_inactive"
+	CodeAccountParked         Code = "account_parked"
+	CodeFeatureUnavailable    Code = "feature_unavailable"
+	CodeNotFound              Code = "not_found"
+	CodeValidationError       Code = "validation_error"
+	CodeDeleteFailed          Code = "delete_failed"
+	CodeLimitReached          Code = "limit_reached"
+	CodeRateLimitExceeded     Code = "rate_limit_exceeded"
+	CodeMaintenanceMode       Code = "maintenance_mode"
+	CodeInvalidID             Code = "invalid_id"
+	CodeForbiddenAttributes   Code = "forbidden_attributes"
+	CodeServiceUnavailable    Code = "service_unavailable"
+	CodeAmbiguousAccount      Code = "ambiguous_account"
 )
 
 // Sentinels for errors.Is. Each matches any Error carrying the same code.
 var (
-	ErrUnauthorized        = &Error{Code: CodeUnauthorized}
-	ErrAccessDenied        = &Error{Code: CodeAccessDenied}
-	ErrNotFound            = &Error{Code: CodeNotFound}
-	ErrValidation          = &Error{Code: CodeValidationError}
-	ErrRateLimited         = &Error{Code: CodeRateLimitExceeded}
-	ErrMaintenanceMode     = &Error{Code: CodeMaintenanceMode}
-	ErrInvalidID           = &Error{Code: CodeInvalidID}
-	ErrForbiddenAttributes = &Error{Code: CodeForbiddenAttributes}
-	ErrServiceUnavailable  = &Error{Code: CodeServiceUnavailable}
-	ErrAmbiguousAccount    = &Error{Code: CodeAmbiguousAccount}
-	ErrInsufficientScope   = &Error{Code: CodeInsufficientScope}
-	ErrCredentialInQuery   = &Error{Code: CodeCredentialInQuery}
-	ErrProjectRestricted   = &Error{Code: CodeProjectRestricted}
+	ErrUnauthorized          = &Error{Code: CodeUnauthorized}
+	ErrUnsupportedAuthScheme = &Error{Code: CodeUnsupportedAuthScheme}
+	ErrCredentialInQuery     = &Error{Code: CodeCredentialInQuery}
+	ErrAccessDenied          = &Error{Code: CodeAccessDenied}
+	ErrInsufficientScope     = &Error{Code: CodeInsufficientScope}
+	ErrRequiresUserToken     = &Error{Code: CodeRequiresUserToken}
+	ErrProjectRestricted     = &Error{Code: CodeProjectRestricted}
+	ErrAccountInactive       = &Error{Code: CodeAccountInactive}
+	ErrAccountParked         = &Error{Code: CodeAccountParked}
+	ErrFeatureUnavailable    = &Error{Code: CodeFeatureUnavailable}
+	ErrNotFound              = &Error{Code: CodeNotFound}
+	ErrValidation            = &Error{Code: CodeValidationError}
+	ErrDeleteFailed          = &Error{Code: CodeDeleteFailed}
+	ErrLimitReached          = &Error{Code: CodeLimitReached}
+	ErrRateLimited           = &Error{Code: CodeRateLimitExceeded}
+	ErrMaintenanceMode       = &Error{Code: CodeMaintenanceMode}
+	ErrInvalidID             = &Error{Code: CodeInvalidID}
+	ErrForbiddenAttributes   = &Error{Code: CodeForbiddenAttributes}
+	ErrServiceUnavailable    = &Error{Code: CodeServiceUnavailable}
+	ErrAmbiguousAccount      = &Error{Code: CodeAmbiguousAccount}
 )
 
 // FieldError is one entry from a validation error's details.
