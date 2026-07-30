@@ -1047,8 +1047,8 @@ type CheckIn struct {
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at,omitempty"`
 
-	// GracePeriod Grace period in minutes before alerting
-	GracePeriod *int `json:"grace_period,omitempty"`
+	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
+	GracePeriod *string `json:"grace_period,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
@@ -1062,8 +1062,8 @@ type CheckIn struct {
 	// ProjectId Public ID of the project this check-in belongs to
 	ProjectId string `json:"project_id"`
 
-	// ReportPeriod Expected report period in minutes (for simple schedule type)
-	ReportPeriod nullable.Nullable[int] `json:"report_period,omitempty"`
+	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Absent for cron schedules.
+	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
 
 	// ReportUrl URL to ping when the task completes
 	ReportUrl *string `json:"report_url,omitempty"`
