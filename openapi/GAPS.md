@@ -111,6 +111,17 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
 
 ## 6. Schema inconsistencies worth a second look
 
+- **`Alarm.query` declares an object and renders a string.** The presenter reads
+  `observer_payload&.dig("query")`, which is BadgerQL text. `AlarmCreateInput`
+  already types it as a string, so the read and write halves disagree with each
+  other. Overlaid; the create succeeded and only the decode failed.
+
+- **Alarm durations have an undocumented format.** `evaluation_period` and
+  `lookback_lag` are declared as bare strings with no pattern or example, and the
+  API rejects `5 minutes` with `format is invalid`. It wants a compact duration —
+  `5m`, `10m`, `1d`. `lookback_lag` is also refused when blank, though nothing
+  marks it required. A create following the spec alone cannot succeed.
+
 - **`listFaultAffectedUsers` declares an object and renders an array.** The
   response schema says `data: {type: object}`; the controller renders
   `data: users`, an array of `{user, count}` pairs. Decoding as an object fails

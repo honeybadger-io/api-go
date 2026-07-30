@@ -937,8 +937,8 @@ type Alarm struct {
 	// ProjectId Public ID of the project this alarm belongs to
 	ProjectId string `json:"project_id"`
 
-	// Query Query definition for the alarm
-	Query *map[string]interface{} `json:"query,omitempty"`
+	// Query BadgerQL evaluated on each check
+	Query *string `json:"query,omitempty"`
 
 	// State Current alarm state
 	State string `json:"state"`

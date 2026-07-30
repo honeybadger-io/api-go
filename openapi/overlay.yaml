@@ -84,3 +84,23 @@ actions:
         description: >-
           How long after the expected time before the check-in is considered
           missing. Same format as `report_period`.
+
+  # Alarm.query is typed as an object, but the alarm's query is BadgerQL text and
+  # the presenter renders it verbatim from the observer payload:
+  #
+  #   query: observer_payload&.dig("query")
+  #
+  # Creating an alarm succeeded (201) and then failed to decode:
+  #
+  #   json: cannot unmarshal string into Go struct field
+  #   Alarm.data.query of type map[string]interface {}
+  #
+  # Same shape of error as the check-in periods, found the same way. AlarmCreateInput
+  # already types query as a string, so the two halves of the spec disagree.
+  - target: $.components.schemas.Alarm.properties.query
+    remove: true
+  - target: $.components.schemas.Alarm.properties
+    update:
+      query:
+        type: string
+        description: BadgerQL evaluated on each check
