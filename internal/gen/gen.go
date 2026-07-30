@@ -174,28 +174,58 @@ func (e DashboardInputWidgetsConfigVisView) Valid() bool {
 
 // Defines values for DashboardInputWidgetsType.
 const (
-	Alarms      DashboardInputWidgetsType = "alarms"
-	Checkins    DashboardInputWidgetsType = "checkins"
-	Deployments DashboardInputWidgetsType = "deployments"
-	Errors      DashboardInputWidgetsType = "errors"
-	InsightsVis DashboardInputWidgetsType = "insights_vis"
-	Uptime      DashboardInputWidgetsType = "uptime"
+	DashboardInputWidgetsTypeAlarms      DashboardInputWidgetsType = "alarms"
+	DashboardInputWidgetsTypeCheckins    DashboardInputWidgetsType = "checkins"
+	DashboardInputWidgetsTypeDeployments DashboardInputWidgetsType = "deployments"
+	DashboardInputWidgetsTypeErrors      DashboardInputWidgetsType = "errors"
+	DashboardInputWidgetsTypeInsightsVis DashboardInputWidgetsType = "insights_vis"
+	DashboardInputWidgetsTypeUptime      DashboardInputWidgetsType = "uptime"
 )
 
 // Valid indicates whether the value is a known member of the DashboardInputWidgetsType enum.
 func (e DashboardInputWidgetsType) Valid() bool {
 	switch e {
-	case Alarms:
+	case DashboardInputWidgetsTypeAlarms:
 		return true
-	case Checkins:
+	case DashboardInputWidgetsTypeCheckins:
 		return true
-	case Deployments:
+	case DashboardInputWidgetsTypeDeployments:
 		return true
-	case Errors:
+	case DashboardInputWidgetsTypeErrors:
 		return true
-	case InsightsVis:
+	case DashboardInputWidgetsTypeInsightsVis:
 		return true
-	case Uptime:
+	case DashboardInputWidgetsTypeUptime:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetType.
+const (
+	DashboardWidgetTypeAlarms      DashboardWidgetType = "alarms"
+	DashboardWidgetTypeCheckins    DashboardWidgetType = "checkins"
+	DashboardWidgetTypeDeployments DashboardWidgetType = "deployments"
+	DashboardWidgetTypeErrors      DashboardWidgetType = "errors"
+	DashboardWidgetTypeInsightsVis DashboardWidgetType = "insights_vis"
+	DashboardWidgetTypeUptime      DashboardWidgetType = "uptime"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetType enum.
+func (e DashboardWidgetType) Valid() bool {
+	switch e {
+	case DashboardWidgetTypeAlarms:
+		return true
+	case DashboardWidgetTypeCheckins:
+		return true
+	case DashboardWidgetTypeDeployments:
+		return true
+	case DashboardWidgetTypeErrors:
+		return true
+	case DashboardWidgetTypeInsightsVis:
+		return true
+	case DashboardWidgetTypeUptime:
 		return true
 	default:
 		return false
@@ -911,6 +941,15 @@ type AccountMemberInput struct {
 // AccountMemberInputRole defines model for AccountMemberInput.Role.
 type AccountMemberInputRole string
 
+// AffectedUser A user affected by a fault, and how many times
+type AffectedUser struct {
+	// Count How many times this user was seen on the fault
+	Count int `json:"count"`
+
+	// User The affected user as the reporting client identified them. Opaque: not a Honeybadger user id, and not necessarily an email.
+	User string `json:"user"`
+}
+
 // Alarm An Insights alarm
 type Alarm struct {
 	// CreatedAt When the alarm was created
@@ -922,7 +961,7 @@ type Alarm struct {
 	// Error Error message if the alarm is in an error state
 	Error nullable.Nullable[string] `json:"error,omitempty"`
 
-	// EvaluationPeriod Window each evaluation covers, as a compact duration (5m, 10m, 1d).
+	// EvaluationPeriod Window each evaluation covers, as a compact duration. The API rejects a spelled-out interval like `5 minutes`.
 	EvaluationPeriod nullable.Nullable[string] `json:"evaluation_period,omitempty"`
 
 	// Id Alarm identifier (opticon observer root ID)
@@ -931,7 +970,7 @@ type Alarm struct {
 	// LastCheckedAt When the alarm was last evaluated
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
-	// LookbackLag How far behind now the evaluation window ends. Same format as evaluation_period.
+	// LookbackLag How far behind now the window ends, allowing for ingestion delay. Same compact duration format as evaluation_period.
 	LookbackLag nullable.Nullable[string] `json:"lookback_lag,omitempty"`
 
 	// Name Alarm name
@@ -943,8 +982,8 @@ type Alarm struct {
 	// ProjectId Public ID of the project this alarm belongs to
 	ProjectId string `json:"project_id"`
 
-	// Query BadgerQL evaluated on each check
-	Query *string `json:"query,omitempty"`
+	// Query BadgerQL evaluated on each check. A string, the same shape AlarmCreateInput accepts — the presenter renders the observer's stored query text, not a structured object.
+	Query nullable.Nullable[string] `json:"query,omitempty"`
 
 	// State Current alarm state
 	State string `json:"state"`
@@ -1231,8 +1270,8 @@ type Dashboard struct {
 	// UpdatedAt When the dashboard was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 
-	// Widgets The dashboard's widgets, in the same shape a write accepts — the read and write forms are identical, including `config.streams` as stream slugs (`stream_ids` exists only inside the model). Pointed at the request schema's definition rather than restated, because that definition is app/data/schemas/dashboard_schema.json, the validator itself.
-	Widgets *[]map[string]interface{} `json:"widgets,omitempty"`
+	// Widgets The dashboard's widgets, in the same shape a write accepts — the read and write forms are identical, including `config.streams` as stream slugs (`stream_ids` exists only inside the model). Named rather than pointed at the request schema's definition: that definition is app/data/schemas/dashboard_schema.json, the validator itself, and a pointer into it was a reference no code generator would follow.
+	Widgets *[]DashboardWidget `json:"widgets,omitempty"`
 }
 
 // DashboardInput defines model for DashboardInput.
@@ -1286,6 +1325,41 @@ type DashboardInput_Widgets struct {
 	Presentation *DashboardInput_Widgets_Presentation `json:"presentation,omitempty"`
 	Type         DashboardInputWidgetsType            `json:"type"`
 }
+
+// DashboardWidget A widget on an Insights dashboard
+type DashboardWidget struct {
+	// Config Type-specific configuration. Its accepted fields depend on `type` and are enforced on write by the dashboard validator; left open here because the conditional that selects them cannot be expressed as a single static type.
+	Config *map[string]interface{} `json:"config,omitempty"`
+
+	// Grid Position and size on the dashboard grid.
+	Grid *DashboardWidget_Grid `json:"grid,omitempty"`
+
+	// Id Stable identifier for the widget. Regenerated when a write omits it, so a read-edit-write round trip must echo this back to keep widget identity.
+	Id *string `json:"id,omitempty"`
+
+	// Presentation Display-only chrome.
+	Presentation *DashboardWidget_Presentation `json:"presentation,omitempty"`
+
+	// Type Which kind of widget, and therefore which config shape applies.
+	Type DashboardWidgetType `json:"type"`
+}
+
+// DashboardWidget_Grid Position and size on the dashboard grid.
+type DashboardWidget_Grid struct {
+	H *int `json:"h,omitempty"`
+	W *int `json:"w,omitempty"`
+	X *int `json:"x,omitempty"`
+	Y *int `json:"y,omitempty"`
+}
+
+// DashboardWidget_Presentation Display-only chrome.
+type DashboardWidget_Presentation struct {
+	Subtitle *string `json:"subtitle,omitempty"`
+	Title    *string `json:"title,omitempty"`
+}
+
+// DashboardWidgetType Which kind of widget, and therefore which config shape applies.
+type DashboardWidgetType string
 
 // Deploy A deploy event
 type Deploy struct {
@@ -2895,8 +2969,17 @@ type ListFaults200JSONResponseBody struct {
 
 // IgnoreFaultsJSONBody defines parameters for IgnoreFaults.
 type IgnoreFaultsJSONBody struct {
+	// CreatedAfter Only faults created after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	CreatedAfter *float64 `json:"created_after,omitempty"`
+
 	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
 	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredAfter *float64 `json:"occurred_after,omitempty"`
+
+	// OccurredBefore Only faults that occurred before this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredBefore *float64 `json:"occurred_before,omitempty"`
 
 	// Q Search query, applied when fault_ids is omitted
 	Q *string `json:"q,omitempty"`
@@ -2904,8 +2987,17 @@ type IgnoreFaultsJSONBody struct {
 
 // ResolveFaultsJSONBody defines parameters for ResolveFaults.
 type ResolveFaultsJSONBody struct {
+	// CreatedAfter Only faults created after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	CreatedAfter *float64 `json:"created_after,omitempty"`
+
 	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
 	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredAfter *float64 `json:"occurred_after,omitempty"`
+
+	// OccurredBefore Only faults that occurred before this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredBefore *float64 `json:"occurred_before,omitempty"`
 
 	// Q Search query, applied when fault_ids is omitted
 	Q *string `json:"q,omitempty"`
@@ -2953,8 +3045,17 @@ type GetFaultSummary200JSONResponseBody struct {
 
 // UnignoreFaultsJSONBody defines parameters for UnignoreFaults.
 type UnignoreFaultsJSONBody struct {
+	// CreatedAfter Only faults created after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	CreatedAfter *float64 `json:"created_after,omitempty"`
+
 	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
 	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredAfter *float64 `json:"occurred_after,omitempty"`
+
+	// OccurredBefore Only faults that occurred before this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredBefore *float64 `json:"occurred_before,omitempty"`
 
 	// Q Search query, applied when fault_ids is omitted
 	Q *string `json:"q,omitempty"`
@@ -2962,8 +3063,17 @@ type UnignoreFaultsJSONBody struct {
 
 // UnresolveFaultsJSONBody defines parameters for UnresolveFaults.
 type UnresolveFaultsJSONBody struct {
+	// CreatedAfter Only faults created after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	CreatedAfter *float64 `json:"created_after,omitempty"`
+
 	// FaultIds Public IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match.
 	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredAfter *float64 `json:"occurred_after,omitempty"`
+
+	// OccurredBefore Only faults that occurred before this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	OccurredBefore *float64 `json:"occurred_before,omitempty"`
 
 	// Q Search query, applied when fault_ids is omitted
 	Q *string `json:"q,omitempty"`
@@ -2991,8 +3101,8 @@ type ListFaultAffectedUsersParams struct {
 
 // ListFaultAffectedUsers200JSONResponseBody defines parameters for ListFaultAffectedUsers.
 type ListFaultAffectedUsers200JSONResponseBody struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
+	Data []AffectedUser `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 }
 
 // UnassignFault200JSONResponseBody defines parameters for UnassignFault.
@@ -4195,7 +4305,9 @@ type ClientInterface interface {
 
 	// UpdateDashboardWithBody Update a dashboard
 	//
-	// Updates an Insights dashboard.
+	// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+	//
+	// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -4204,7 +4316,9 @@ type ClientInterface interface {
 
 	// UpdateDashboard Update a dashboard
 	//
-	// Updates an Insights dashboard.
+	// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+	//
+	// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -5959,7 +6073,9 @@ func (c *Client) GetDashboard(ctx context.Context, accountId AccountId, projectI
 
 // UpdateDashboardWithBody Update a dashboard
 //
-// Updates an Insights dashboard.
+// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+//
+// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 //
 // Takes any type of body and a specified content type.
 //
@@ -5978,7 +6094,9 @@ func (c *Client) UpdateDashboardWithBody(ctx context.Context, accountId AccountI
 
 // UpdateDashboard Update a dashboard
 //
-// Updates an Insights dashboard.
+// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+//
+// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -15189,7 +15307,9 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDashboardWithBodyWithResponse Update a dashboard
 	//
-	// Updates an Insights dashboard.
+	// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+	//
+	// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -15198,7 +15318,9 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateDashboardWithResponse Update a dashboard
 	//
-	// Updates an Insights dashboard.
+	// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+	//
+	// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -23841,7 +23963,9 @@ func (c *ClientWithResponses) GetDashboardWithResponse(ctx context.Context, acco
 
 // UpdateDashboardWithBodyWithResponse Update a dashboard
 //
-// Updates an Insights dashboard.
+// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+//
+// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -23856,7 +23980,9 @@ func (c *ClientWithResponses) UpdateDashboardWithBodyWithResponse(ctx context.Co
 
 // UpdateDashboardWithResponse Update a dashboard
 //
-// Updates an Insights dashboard.
+// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+//
+// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //

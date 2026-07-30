@@ -70,22 +70,13 @@ func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts
 }
 
 // AffectedUser is one person a fault has reached, with how often it reached them.
-type AffectedUser struct {
-	// User is the affected user as the API reports it. Untyped because the spec
-	// does not describe the member, and the app renders whatever the user object
-	// serialises to.
-	User map[string]any `json:"user"`
-
-	// Count is how many of the fault's notices affected this user.
-	Count int `json:"count"`
-}
+//
+// User is whatever the reporting client used to identify them — opaque, not a
+// Honeybadger user id and not necessarily an email. It reads as the key of the
+// app's {identifier => count} map.
+type AffectedUser = gen.AffectedUser
 
 // AffectedUsers returns the users a fault has affected.
-//
-// The spec declares the data member as an object, but the endpoint renders an
-// array of {user, count} pairs — a real server answers with the array, and
-// decoding it as an object failed outright. Modelled on what the app sends, not
-// on what the document claims; see openapi/GAPS.md.
 //
 // Search accepts the same filter syntax as the fault listing.
 func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID string, opts ...Option) ([]AffectedUser, error) {

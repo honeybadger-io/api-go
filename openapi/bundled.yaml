@@ -1227,6 +1227,27 @@ paths:
                   type: string
                   description: Search query, applied when fault_ids is omitted
                   example: is:unresolved
+                created_after:
+                  type: number
+                  format: double
+                  description: 'Only faults created after this Unix timestamp. Applied
+                    when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_after:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred after this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_before:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred before this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
       responses:
         '200':
           description: Applied. No response body.
@@ -1276,6 +1297,27 @@ paths:
                   type: string
                   description: Search query, applied when fault_ids is omitted
                   example: is:unresolved
+                created_after:
+                  type: number
+                  format: double
+                  description: 'Only faults created after this Unix timestamp. Applied
+                    when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_after:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred after this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_before:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred before this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
       responses:
         '200':
           description: Applied. No response body.
@@ -1326,6 +1368,27 @@ paths:
                   type: string
                   description: Search query, applied when fault_ids is omitted
                   example: is:unresolved
+                created_after:
+                  type: number
+                  format: double
+                  description: 'Only faults created after this Unix timestamp. Applied
+                    when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_after:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred after this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_before:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred before this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
       responses:
         '200':
           description: Applied. No response body.
@@ -1375,6 +1438,27 @@ paths:
                   type: string
                   description: Search query, applied when fault_ids is omitted
                   example: is:unresolved
+                created_after:
+                  type: number
+                  format: double
+                  description: 'Only faults created after this Unix timestamp. Applied
+                    when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_after:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred after this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
+                occurred_before:
+                  type: number
+                  format: double
+                  description: 'Only faults that occurred before this Unix timestamp.
+                    Applied when fault_ids is omitted, alongside q.
+
+                    '
       responses:
         '200':
           description: Applied. No response body.
@@ -1660,7 +1744,9 @@ paths:
                 - data
                 properties:
                   data:
-                    type: object
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/AffectedUser"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -3221,7 +3307,10 @@ paths:
     patch:
       operationId: updateDashboard
       summary: Update a dashboard
-      description: Updates an Insights dashboard.
+      description: |
+        Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
+
+        Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
       tags:
       - Dashboards
       parameters:
@@ -5020,6 +5109,24 @@ components:
             '
           items:
             type: string
+    AffectedUser:
+      type: object
+      description: A user affected by a fault, and how many times
+      required:
+      - user
+      - count
+      properties:
+        user:
+          type: string
+          description: 'The affected user as the reporting client identified them.
+            Opaque: not a Honeybadger user id, and not necessarily an email.
+
+            '
+          example: jane@example.com
+        count:
+          type: integer
+          description: How many times this user was seen on the fault
+          example: 12
     AccountMember:
       type: object
       description: A member of an account
@@ -5101,19 +5208,40 @@ components:
           type: string
           description: Current alarm state
         query:
-          type: object
-          description: Query definition for the alarm
+          type:
+          - string
+          - 'null'
+          description: 'BadgerQL evaluated on each check. A string, the same shape
+            AlarmCreateInput accepts — the presenter renders the observer''s stored
+            query text, not a structured object.
+
+            '
+          example: filter event_type::str == "notice" | stats count() as count
         stream_ids:
           type: array
           items:
             type: string
           description: Associated stream identifiers
         evaluation_period:
-          type: integer
-          description: Evaluation period in seconds
+          type:
+          - string
+          - 'null'
+          description: 'Window each evaluation covers, as a compact duration. The
+            API rejects a spelled-out interval like `5 minutes`.
+
+            '
+          pattern: "^\\d+[smhdw]$"
+          example: 10m
         lookback_lag:
-          type: integer
-          description: Lookback lag in seconds
+          type:
+          - string
+          - 'null'
+          description: 'How far behind now the window ends, allowing for ingestion
+            delay. Same compact duration format as evaluation_period.
+
+            '
+          pattern: "^\\d+[smhdw]$"
+          example: 1m
         trigger_config:
           type: object
           description: Trigger configuration for the alarm
@@ -5549,13 +5677,14 @@ components:
           type: array
           description: 'The dashboard''s widgets, in the same shape a write accepts
             — the read and write forms are identical, including `config.streams` as
-            stream slugs (`stream_ids` exists only inside the model). Pointed at the
-            request schema''s definition rather than restated, because that definition
-            is app/data/schemas/dashboard_schema.json, the validator itself.
+            stream slugs (`stream_ids` exists only inside the model). Named rather
+            than pointed at the request schema''s definition: that definition is app/data/schemas/dashboard_schema.json,
+            the validator itself, and a pointer into it was a reference no code generator
+            would follow.
 
             '
           items:
-            "$ref": "#/components/schemas/DashboardInput/properties/widgets/items"
+            "$ref": "#/components/schemas/DashboardWidget"
         is_default:
           type: boolean
           description: Whether this is the default dashboard
@@ -5570,447 +5699,505 @@ components:
           type: string
           format: date-time
           description: When the dashboard was last updated
+    DashboardWidget:
+      type: object
+      description: A widget on an Insights dashboard
+      required:
+      - type
+      properties:
+        id:
+          type: string
+          description: 'Stable identifier for the widget. Regenerated when a write
+            omits it, so a read-edit-write round trip must echo this back to keep
+            widget identity.
+
+            '
+        type:
+          type: string
+          description: Which kind of widget, and therefore which config shape applies.
+          enum:
+          - insights_vis
+          - alarms
+          - deployments
+          - checkins
+          - uptime
+          - errors
+        grid:
+          type: object
+          description: Position and size on the dashboard grid.
+          additionalProperties: false
+          properties:
+            x:
+              type: integer
+              minimum: 0
+            "y":
+              type: integer
+              minimum: 0
+            w:
+              type: integer
+              minimum: 1
+            h:
+              type: integer
+              minimum: 1
+        presentation:
+          type: object
+          description: Display-only chrome.
+          additionalProperties: false
+          properties:
+            title:
+              type: string
+              maxLength: 255
+            subtitle:
+              type: string
+              maxLength: 255
+        config:
+          type: object
+          description: 'Type-specific configuration. Its accepted fields depend on
+            `type` and are enforced on write by the dashboard validator; left open
+            here because the conditional that selects them cannot be expressed as
+            a single static type.
+
+            '
+          additionalProperties: true
     DashboardInput:
       "$schema": http://json-schema.org/draft-07/schema#
       "$defs":
-        chartConfigs:
-          table:
-            type: object
-            description: Raw result rows and columns. No config.
-            additionalProperties: false
-          billboard:
-            type: object
-            description: 'Big-number stat tiles: one tile per result row (or one per
-              result field when `groupType` is `fields`).'
-            additionalProperties: false
-            properties:
-              titleField:
-                type: string
-                description: Alias shown as the tile title
-              valueField:
-                type: string
-                description: Alias shown as the big number; required when `groupType`
-                  is `events`
-              titleURLField:
-                type: string
-                description: Alias containing a URL; makes the tile title a link
-              subtitleField:
-                type: string
-                description: Alias shown below the value
-              statusField:
-                type: string
-                description: Alias whose value drives the tile's status indicator
-              groupType:
-                type: string
-                enum:
-                - fields
-                - events
-                description: "`events` (default): one tile per result row using `valueField`;
-                  `fields`: one tile per result field"
-            allOf:
-            - if:
-                properties:
-                  groupType:
-                    const: events
-                required:
-                - groupType
-              then:
-                required:
-                - valueField
-          bar:
-            type: object
-            description: Bar chart of a value per category.
-            required:
-            - categoryField
-            - valueField
-            additionalProperties: false
-            properties:
-              categoryField:
-                type: string
-                description: Alias for the category axis; one bar per distinct value
-              valueField:
-                type: string
-                description: Alias for bar height
-              valueFieldUnit:
-                type: string
-                description: 'Unit used to format values: `percent`, `microseconds`,
-                  or `milliseconds`'
-              labelField:
-                type: string
-                description: Alias rendered as a label on each bar
-              groupType:
-                type: string
-                enum:
-                - fields
-                - events
-                description: "`events` (default): series come from `groupField`; `fields`:
-                  every result field except `categoryField` becomes its own series"
-              groupField:
-                type: string
-                description: Alias whose distinct values split bars into series (with
-                  `groupType` `events`)
-              horizontal:
-                type: boolean
-                description: Render bars horizontally
-              stacked:
-                type: boolean
-                description: Stack series instead of grouping side by side
-              groups:
-                type: object
-                description: 'Per-series display options keyed by series name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-          line:
-            type: object
-            description: One or more series plotted over an x axis, usually time.
-            additionalProperties: false
-            properties:
-              xField:
-                type: string
-                description: Alias for the x axis, typically a time bin such as `bin(1h)`
-              yField:
-                type: string
-                description: Alias plotted as the series value; required when `groupType`
-                  is `events`
-              zField:
-                type: string
-                description: Alias whose distinct values split results into one series
-                  each
-              colorField:
-                type: string
-                description: Alias whose values supply explicit series colors
-              xFieldUnit:
-                type: string
-                description: 'Unit used to format x values: `percent`, `microseconds`,
-                  or `milliseconds`'
-              yFieldUnit:
-                type: string
-                description: 'Unit used to format y values: `percent`, `microseconds`,
-                  or `milliseconds`'
-              groupType:
-                type: string
-                enum:
-                - fields
-                - events
-                description: "`events` (default): one series from `yField`, split
-                  by `zField` if set; `fields`: every result field except `xField`
-                  becomes its own series"
-              yAxisLabel:
-                type: string
-                description: Left y-axis label (accepted but not currently applied
-                  by the renderer)
-              yAxisMin:
-                type: number
-                description: Left y-axis minimum (accepted but not currently applied
-                  by the renderer)
-              yAxisMax:
-                type: number
-                description: Left y-axis maximum (accepted but not currently applied
-                  by the renderer)
-              rightYAxisFormat:
-                type: string
-                description: Right y-axis format (accepted but not currently applied
-                  by the renderer)
-              rightYAxisLabel:
-                type: string
-                description: Right y-axis label (accepted but not currently applied
-                  by the renderer)
-              rightYAxisMin:
-                type: number
-                description: Right y-axis minimum (accepted but not currently applied
-                  by the renderer)
-              rightYAxisMax:
-                type: number
-                description: Right y-axis maximum (accepted but not currently applied
-                  by the renderer)
-              groups:
-                type: object
-                description: 'Per-series display options keyed by series name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`; entries may also set `axis` (`left`|`right`)
-                  to plot a series on the right y axis. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-                      axis:
-                        type: string
-                        enum:
-                        - left
-                        - right
-            allOf:
-            - if:
-                properties:
-                  groupType:
-                    const: events
-                required:
-                - groupType
-              then:
-                required:
-                - yField
-          area:
-            type: object
-            description: Like line, with the area under each series filled; series
-              can be stacked.
-            additionalProperties: false
-            properties:
-              xField:
-                type: string
-                description: Alias for the x axis, typically a time bin such as `bin(1h)`
-              yField:
-                type: string
-                description: Alias plotted as the series value; required when `groupType`
-                  is `events`
-              zField:
-                type: string
-                description: Alias whose distinct values split results into one series
-                  each
-              groupType:
-                type: string
-                enum:
-                - fields
-                - events
-                description: "`events` (default): one series from `yField`, split
-                  by `zField` if set; `fields`: every result field except `xField`
-                  becomes its own series"
-              stacked:
-                type: boolean
-                description: Stack series instead of overlaying them
-              groups:
-                type: object
-                description: 'Per-series display options keyed by series name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-            allOf:
-            - if:
-                properties:
-                  groupType:
-                    const: events
-                required:
-                - groupType
-              then:
-                required:
-                - yField
-          histogram:
-            type: object
-            description: Distribution of values across buckets.
-            required:
-            - xField
-            - yField
-            additionalProperties: false
-            properties:
-              xField:
-                type: string
-                description: Alias for the x axis
-              yField:
-                type: string
-                description: Alias for the y axis
-              zField:
-                type: string
-                description: Alias whose distinct values split results into one series
-                  each
-              xFieldUnit:
-                type: string
-                description: 'Unit used to format x values: `percent`, `microseconds`,
-                  or `milliseconds`'
-              yFieldUnit:
-                type: string
-                description: 'Unit used to format y values: `percent`, `microseconds`,
-                  or `milliseconds`'
-              groups:
-                type: object
-                description: 'Per-series display options keyed by series name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-          scatter:
-            type: object
-            description: Individual points plotted on two axes.
-            required:
-            - xField
-            - yField
-            additionalProperties: false
-            properties:
-              xField:
-                type: string
-                description: Alias for the x axis
-              yField:
-                type: string
-                description: Alias for the y axis
-              groupField:
-                type: string
-                description: Alias whose distinct values color the points
-              scaleField:
-                type: string
-                description: Alias that scales point size
-              groups:
-                type: object
-                description: 'Per-series display options keyed by series name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-          heatmap:
-            type: object
-            description: Grid of cells colored by intensity. The query must sort by
-              the x and y fields (`| sort x, y`) to render correctly.
-            required:
-            - xField
-            - yField
-            - zField
-            additionalProperties: false
-            properties:
-              xField:
-                type: string
-                description: Alias for the x axis, typically a time bin such as `bin(1h)`
-              yField:
-                type: string
-                description: Alias for the y axis
-              zField:
-                type: string
-                description: Alias for cell value/intensity
-              yFieldUnit:
-                type: string
-                description: 'Unit used to format y values: `percent`, `microseconds`,
-                  or `milliseconds`'
-              steps:
-                type: integer
-                minimum: 1
-                description: Number of color steps (default 5)
-              groups:
-                type: object
-                description: 'Per-series display options keyed by series name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-          pie:
-            type: object
-            description: Proportional slices; one slice per result row.
-            required:
-            - nameField
-            - valueField
-            additionalProperties: false
-            properties:
-              nameField:
-                type: string
-                description: Alias for slice labels
-              valueField:
-                type: string
-                description: Alias for slice sizes
-              groups:
-                type: object
-                description: 'Per-slice display options keyed by slice name, e.g.
-                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
-                patternProperties:
-                  "^.*$":
-                    type: object
-                    properties:
-                      color:
-                        type: string
-        widgetConfigs:
-          insights_vis:
-            additionalProperties: false
-            properties:
-              streams:
-                type: array
-                items:
-                  type: string
-                  enum:
-                  - default
-                  - internal
-                description: Streams to query (defaults to ["default"])
-              query:
-                description: BadgerQL query producing the widget's data
-              vis:
-                description: 'How to render the result: `{view, chart_config}`'
-          alarms:
-            additionalProperties: false
-            properties:
-              limit:
-                type: integer
-                minimum: 1
-                description: Max alarms shown
-              filter_state:
+        chartConfigTable:
+          type: object
+          description: Raw result rows and columns. No config.
+          additionalProperties: false
+        chartConfigBillboard:
+          type: object
+          description: 'Big-number stat tiles: one tile per result row (or one per
+            result field when `groupType` is `fields`).'
+          additionalProperties: false
+          properties:
+            titleField:
+              type: string
+              description: Alias shown as the tile title
+            valueField:
+              type: string
+              description: Alias shown as the big number; required when `groupType`
+                is `events`
+            titleURLField:
+              type: string
+              description: Alias containing a URL; makes the tile title a link
+            subtitleField:
+              type: string
+              description: Alias shown below the value
+            statusField:
+              type: string
+              description: Alias whose value drives the tile's status indicator
+            groupType:
+              type: string
+              enum:
+              - fields
+              - events
+              description: "`events` (default): one tile per result row using `valueField`;
+                `fields`: one tile per result field"
+          allOf:
+          - if:
+              properties:
+                groupType:
+                  const: events
+              required:
+              - groupType
+            then:
+              required:
+              - valueField
+        chartConfigBar:
+          type: object
+          description: Bar chart of a value per category.
+          required:
+          - categoryField
+          - valueField
+          additionalProperties: false
+          properties:
+            categoryField:
+              type: string
+              description: Alias for the category axis; one bar per distinct value
+            valueField:
+              type: string
+              description: Alias for bar height
+            valueFieldUnit:
+              type: string
+              description: 'Unit used to format values: `percent`, `microseconds`,
+                or `milliseconds`'
+            labelField:
+              type: string
+              description: Alias rendered as a label on each bar
+            groupType:
+              type: string
+              enum:
+              - fields
+              - events
+              description: "`events` (default): series come from `groupField`; `fields`:
+                every result field except `categoryField` becomes its own series"
+            groupField:
+              type: string
+              description: Alias whose distinct values split bars into series (with
+                `groupType` `events`)
+            horizontal:
+              type: boolean
+              description: Render bars horizontally
+            stacked:
+              type: boolean
+              description: Stack series instead of grouping side by side
+            groups:
+              type: object
+              description: 'Per-series display options keyed by series name, e.g.
+                `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+        chartConfigLine:
+          type: object
+          description: One or more series plotted over an x axis, usually time.
+          additionalProperties: false
+          properties:
+            xField:
+              type: string
+              description: Alias for the x axis, typically a time bin such as `bin(1h)`
+            yField:
+              type: string
+              description: Alias plotted as the series value; required when `groupType`
+                is `events`
+            zField:
+              type: string
+              description: Alias whose distinct values split results into one series
+                each
+            colorField:
+              type: string
+              description: Alias whose values supply explicit series colors
+            xFieldUnit:
+              type: string
+              description: 'Unit used to format x values: `percent`, `microseconds`,
+                or `milliseconds`'
+            yFieldUnit:
+              type: string
+              description: 'Unit used to format y values: `percent`, `microseconds`,
+                or `milliseconds`'
+            groupType:
+              type: string
+              enum:
+              - fields
+              - events
+              description: "`events` (default): one series from `yField`, split by
+                `zField` if set; `fields`: every result field except `xField` becomes
+                its own series"
+            yAxisLabel:
+              type: string
+              description: Left y-axis label (accepted but not currently applied by
+                the renderer)
+            yAxisMin:
+              type: number
+              description: Left y-axis minimum (accepted but not currently applied
+                by the renderer)
+            yAxisMax:
+              type: number
+              description: Left y-axis maximum (accepted but not currently applied
+                by the renderer)
+            rightYAxisFormat:
+              type: string
+              description: Right y-axis format (accepted but not currently applied
+                by the renderer)
+            rightYAxisLabel:
+              type: string
+              description: Right y-axis label (accepted but not currently applied
+                by the renderer)
+            rightYAxisMin:
+              type: number
+              description: Right y-axis minimum (accepted but not currently applied
+                by the renderer)
+            rightYAxisMax:
+              type: number
+              description: Right y-axis maximum (accepted but not currently applied
+                by the renderer)
+            groups:
+              type: object
+              description: 'Per-series display options keyed by series name, e.g.
+                `{"web": {"color": "#4A90D9"}}`; entries may also set `axis` (`left`|`right`)
+                to plot a series on the right y axis. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+                    axis:
+                      type: string
+                      enum:
+                      - left
+                      - right
+          allOf:
+          - if:
+              properties:
+                groupType:
+                  const: events
+              required:
+              - groupType
+            then:
+              required:
+              - yField
+        chartConfigArea:
+          type: object
+          description: Like line, with the area under each series filled; series can
+            be stacked.
+          additionalProperties: false
+          properties:
+            xField:
+              type: string
+              description: Alias for the x axis, typically a time bin such as `bin(1h)`
+            yField:
+              type: string
+              description: Alias plotted as the series value; required when `groupType`
+                is `events`
+            zField:
+              type: string
+              description: Alias whose distinct values split results into one series
+                each
+            groupType:
+              type: string
+              enum:
+              - fields
+              - events
+              description: "`events` (default): one series from `yField`, split by
+                `zField` if set; `fields`: every result field except `xField` becomes
+                its own series"
+            stacked:
+              type: boolean
+              description: Stack series instead of overlaying them
+            groups:
+              type: object
+              description: 'Per-series display options keyed by series name, e.g.
+                `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+          allOf:
+          - if:
+              properties:
+                groupType:
+                  const: events
+              required:
+              - groupType
+            then:
+              required:
+              - yField
+        chartConfigHistogram:
+          type: object
+          description: Distribution of values across buckets.
+          required:
+          - xField
+          - yField
+          additionalProperties: false
+          properties:
+            xField:
+              type: string
+              description: Alias for the x axis
+            yField:
+              type: string
+              description: Alias for the y axis
+            zField:
+              type: string
+              description: Alias whose distinct values split results into one series
+                each
+            xFieldUnit:
+              type: string
+              description: 'Unit used to format x values: `percent`, `microseconds`,
+                or `milliseconds`'
+            yFieldUnit:
+              type: string
+              description: 'Unit used to format y values: `percent`, `microseconds`,
+                or `milliseconds`'
+            groups:
+              type: object
+              description: 'Per-series display options keyed by series name, e.g.
+                `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+        chartConfigScatter:
+          type: object
+          description: Individual points plotted on two axes.
+          required:
+          - xField
+          - yField
+          additionalProperties: false
+          properties:
+            xField:
+              type: string
+              description: Alias for the x axis
+            yField:
+              type: string
+              description: Alias for the y axis
+            groupField:
+              type: string
+              description: Alias whose distinct values color the points
+            scaleField:
+              type: string
+              description: Alias that scales point size
+            groups:
+              type: object
+              description: 'Per-series display options keyed by series name, e.g.
+                `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+        chartConfigHeatmap:
+          type: object
+          description: Grid of cells colored by intensity. The query must sort by
+            the x and y fields (`| sort x, y`) to render correctly.
+          required:
+          - xField
+          - yField
+          - zField
+          additionalProperties: false
+          properties:
+            xField:
+              type: string
+              description: Alias for the x axis, typically a time bin such as `bin(1h)`
+            yField:
+              type: string
+              description: Alias for the y axis
+            zField:
+              type: string
+              description: Alias for cell value/intensity
+            yFieldUnit:
+              type: string
+              description: 'Unit used to format y values: `percent`, `microseconds`,
+                or `milliseconds`'
+            steps:
+              type: integer
+              minimum: 1
+              description: Number of color steps (default 5)
+            groups:
+              type: object
+              description: 'Per-series display options keyed by series name, e.g.
+                `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+        chartConfigPie:
+          type: object
+          description: Proportional slices; one slice per result row.
+          required:
+          - nameField
+          - valueField
+          additionalProperties: false
+          properties:
+            nameField:
+              type: string
+              description: Alias for slice labels
+            valueField:
+              type: string
+              description: Alias for slice sizes
+            groups:
+              type: object
+              description: 'Per-slice display options keyed by slice name, e.g. `{"web":
+                {"color": "#4A90D9"}}`. Advanced — usually omit'
+              patternProperties:
+                "^.*$":
+                  type: object
+                  properties:
+                    color:
+                      type: string
+        widgetConfigInsightsVis:
+          additionalProperties: false
+          properties:
+            streams:
+              type: array
+              items:
                 type: string
                 enum:
-                - all
-                - triggered
-                - ok
-                description: Show all alarms or only those in one state
-          errors:
-            additionalProperties: false
-            properties:
-              limit:
-                type: integer
-                minimum: 1
-                description: Max errors shown
-              query:
-                type: string
-                description: Error search query string to filter the list
-              sort:
-                type: string
-                enum:
-                - last_seen_desc
-                - last_seen_asc
-                - times_desc
-                - times_asc
-                description: Sort order
-          deployments:
-            additionalProperties: false
-            properties:
-              limit:
-                type: integer
-                minimum: 1
-                description: Max deploys shown
-              override_time:
-                type: boolean
-                description: Use `ts` instead of the dashboard's time range
-              ts:
-                type: string
-                description: Time range used when `override_time` is true
-          checkins:
-            additionalProperties: false
-            properties:
-              limit:
-                type: integer
-                minimum: 1
-                description: Max check-ins shown
-              sort_order:
-                type: string
-                enum:
-                - state_name
-                - name
-                - last_reported
-                description: Sort by state, name, or last report time
-          uptime:
-            additionalProperties: false
-            properties:
-              limit:
-                type: integer
-                minimum: 1
-                description: Max uptime monitors shown
+                - default
+                - internal
+              description: Streams to query (defaults to ["default"])
+            query:
+              description: BadgerQL query producing the widget's data
+            vis:
+              description: 'How to render the result: `{view, chart_config}`'
+        widgetConfigAlarms:
+          additionalProperties: false
+          properties:
+            limit:
+              type: integer
+              minimum: 1
+              description: Max alarms shown
+            filter_state:
+              type: string
+              enum:
+              - all
+              - triggered
+              - ok
+              description: Show all alarms or only those in one state
+        widgetConfigErrors:
+          additionalProperties: false
+          properties:
+            limit:
+              type: integer
+              minimum: 1
+              description: Max errors shown
+            query:
+              type: string
+              description: Error search query string to filter the list
+            sort:
+              type: string
+              enum:
+              - last_seen_desc
+              - last_seen_asc
+              - times_desc
+              - times_asc
+              description: Sort order
+        widgetConfigDeployments:
+          additionalProperties: false
+          properties:
+            limit:
+              type: integer
+              minimum: 1
+              description: Max deploys shown
+            override_time:
+              type: boolean
+              description: Use `ts` instead of the dashboard's time range
+            ts:
+              type: string
+              description: Time range used when `override_time` is true
+        widgetConfigCheckins:
+          additionalProperties: false
+          properties:
+            limit:
+              type: integer
+              minimum: 1
+              description: Max check-ins shown
+            sort_order:
+              type: string
+              enum:
+              - state_name
+              - name
+              - last_reported
+              description: Sort by state, name, or last report time
+        widgetConfigUptime:
+          additionalProperties: false
+          properties:
+            limit:
+              type: integer
+              minimum: 1
+              description: Max uptime monitors shown
       type: object
       required:
       - title
@@ -6107,7 +6294,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/table"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigTable"
                     - if:
                         properties:
                           view:
@@ -6115,7 +6302,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/billboard"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigBillboard"
                     - if:
                         properties:
                           view:
@@ -6123,7 +6310,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/bar"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigBar"
                     - if:
                         properties:
                           view:
@@ -6131,7 +6318,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/line"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigLine"
                     - if:
                         properties:
                           view:
@@ -6139,7 +6326,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/area"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigArea"
                     - if:
                         properties:
                           view:
@@ -6147,7 +6334,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/histogram"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigHistogram"
                     - if:
                         properties:
                           view:
@@ -6155,7 +6342,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/scatter"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigScatter"
                     - if:
                         properties:
                           view:
@@ -6163,7 +6350,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/heatmap"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigHeatmap"
                     - if:
                         properties:
                           view:
@@ -6171,7 +6358,7 @@ components:
                       then:
                         properties:
                           chart_config:
-                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/pie"
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigPie"
             allOf:
             - if:
                 properties:
@@ -6180,7 +6367,7 @@ components:
               then:
                 properties:
                   config:
-                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/insights_vis"
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigInsightsVis"
             - if:
                 properties:
                   type:
@@ -6188,7 +6375,7 @@ components:
               then:
                 properties:
                   config:
-                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/alarms"
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigAlarms"
             - if:
                 properties:
                   type:
@@ -6196,7 +6383,7 @@ components:
               then:
                 properties:
                   config:
-                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/errors"
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigErrors"
             - if:
                 properties:
                   type:
@@ -6204,7 +6391,7 @@ components:
               then:
                 properties:
                   config:
-                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/deployments"
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigDeployments"
             - if:
                 properties:
                   type:
@@ -6212,7 +6399,7 @@ components:
               then:
                 properties:
                   config:
-                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/checkins"
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigCheckins"
             - if:
                 properties:
                   type:
@@ -6220,7 +6407,7 @@ components:
               then:
                 properties:
                   config:
-                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/uptime"
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigUptime"
     Deploy:
       type: object
       description: A deploy event

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func TestBulkFaultChangeSendsIDs(t *testing.T) {
@@ -114,6 +115,54 @@ func TestMergeRefusesAFaultIntoItself(t *testing.T) {
 
 	if _, err := c.Faults.Merge(context.Background(), "Xk9mZp", "f1", "f1"); !errors.Is(err, ErrMergeIntoSelf) {
 		t.Fatalf("err = %v, want ErrMergeIntoSelf", err)
+	}
+	if got.method != "" {
+		t.Errorf("request reached the server: %s", got.method)
+	}
+}
+
+// Time filters bound a bulk change without naming ids. They apply only when
+// fault_ids is omitted, so they compose with a query and not with a list.
+func TestBulkFaultChangeSendsTimeFilters(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, "")
+	cutoff := time.Unix(1785300000, 0)
+
+	sel := SelectFaultsMatching("is:unresolved").OccurredBefore(cutoff)
+	if err := c.Faults.Ignore(context.Background(), "Xk9mZp", sel); err != nil {
+		t.Fatalf("Ignore: %v", err)
+	}
+	if got.body["q"] != "is:unresolved" {
+		t.Errorf("q = %v", got.body["q"])
+	}
+	if got.body["occurred_before"] != float64(1785300000) {
+		t.Errorf("occurred_before = %v", got.body["occurred_before"])
+	}
+}
+
+// A time filter is itself a bound, so it is a complete selection on its own.
+func TestTimeFilterAloneIsABoundedSelection(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, "")
+
+	sel := FaultSelection{}.CreatedAfter(time.Unix(1785300000, 0))
+	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); err != nil {
+		t.Fatalf("Resolve: %v", err)
+	}
+	if got.body["created_after"] != float64(1785300000) {
+		t.Errorf("created_after = %v", got.body["created_after"])
+	}
+	if _, sent := got.body["fault_ids"]; sent {
+		t.Errorf("fault_ids sent: %v", got.body)
+	}
+}
+
+// Naming ids and also filtering is contradictory: the endpoint ignores the
+// filters when ids are present, so the request would not mean what it reads as.
+func TestIDsWithTimeFiltersIsRefused(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, "")
+
+	sel := SelectFaults("f1").OccurredBefore(time.Unix(1785300000, 0))
+	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); !errors.Is(err, ErrFilteredIDs) {
+		t.Fatalf("err = %v, want ErrFilteredIDs", err)
 	}
 	if got.method != "" {
 		t.Errorf("request reached the server: %s", got.method)

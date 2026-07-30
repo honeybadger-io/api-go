@@ -17,8 +17,8 @@
 | Alarm updates are name and description only | `AlarmCreateInput` carries the query, trigger and evaluation settings; `AlarmUpdateInput` carries neither, so an alarm's behaviour cannot be changed after creation |
 | A check-in update requires the name | The update body is the same schema as create, with `name` required, so changing only a grace period means resending the name. A caller who does not know it must read first. Verified against a real server: the update **merges** — sending only name and grace_period left `report_period` and `slug` intact — so it is the required `name` that is the burden, not field loss |
 | A project update requires the name | Same shape, same consequence |
-| Widget and trigger types are anonymous | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds — and would also remove the overlay below |
-| `Dashboard.widgets.items` breaks code generation | It `$ref`s `#/components/schemas/DashboardInput/properties/widgets/items`, a JSON Pointer into another schema's properties. Legal OpenAPI, and it says something true, but `oapi-codegen` refuses it: `unexpected reference depth: 7`. `openapi/overlay.yaml` rewrites the node to a plain object so generation can proceed. Extracting a named `DashboardWidget` component would fix this and the row above it at once |
+| ~~Widget and trigger types are anonymous~~ — closed at `2ee3eaa1f` by the named `DashboardWidget` component, plus `generate-types-for-anonymous-schemas` naming the trigger config | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds — and would also remove the overlay below |
+| ~~`Dashboard.widgets.items` breaks code generation~~ — closed; it `$ref`s the named `DashboardWidget` now, and the overlay is gone | It `$ref`s `#/components/schemas/DashboardInput/properties/widgets/items`, a JSON Pointer into another schema's properties. Legal OpenAPI, and it says something true, but `oapi-codegen` refuses it: `unexpected reference depth: 7`. `openapi/overlay.yaml` rewrites the node to a plain object so generation can proceed. Extracting a named `DashboardWidget` component would fix this and the row above it at once |
 | Notices have no timestamp filters | Cursor-only (`limit`, `before`, `after`), so v2's `created_after`/`created_before` have no equivalent |
 | Channels carry less than v2 integrations did | v2's integration reported `options` and `filters`; the v3 `Channel` has neither, so per-integration configuration is no longer readable. The MCP tool says so in its description |
 | Fault update semantics are unstated | `updateFault` says only "Updates a fault's attributes". `FaultInput` has no required fields, which implies a merge, and every other replace-semantics body requires `name` — but nothing says so. It matters because the MCP sends `resolve_on_deploy` on its own: under replace semantics that call would also clear the fault's tags and unassign it. Proceeding on the merge reading, since the alternative makes the field unusable, but this wants one sentence in the spec |
@@ -159,22 +159,6 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   anyway. A partial write reported as a failure is worse than either outcome on
   its own — the caller has no way to know what landed.
 
-- **`Alarm.query` declares an object and renders a string.** The presenter reads
-  `observer_payload&.dig("query")`, which is BadgerQL text. `AlarmCreateInput`
-  already types it as a string, so the read and write halves disagree with each
-  other. Overlaid; the create succeeded and only the decode failed.
-
-- **Alarm durations have an undocumented format.** `evaluation_period` and
-  `lookback_lag` are declared as bare strings with no pattern or example, and the
-  API rejects `5 minutes` with `format is invalid`. It wants a compact duration —
-  `5m`, `10m`, `1d`. `lookback_lag` is also refused when blank, though nothing
-  marks it required. A create following the spec alone cannot succeed.
-
-- **`listFaultAffectedUsers` declares an object and renders an array.** The
-  response schema says `data: {type: object}`; the controller renders
-  `data: users`, an array of `{user, count}` pairs. Decoding as an object fails
-  outright against a real server. `apiv3` models the array.
-
 - **`data` is optional on single-resource responses**, so `{}` decodes as a valid
   project with an empty id. `apiv3` treats a missing `data` member as an error, but
   the schema should require it.
@@ -191,21 +175,28 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   set one or the other — so no api-go caller depends on the answer, but the spec
   and the app should still be reconciled.
 
-- **The fault bulk endpoints promise time filters they do not declare.** All four
-  say "omit to act on everything the query and time filters match", but they
-  declare only `account_id` and `project_id`, and their body carries only
-  `fault_ids` and `q`. So there is no way for a client to send a time filter, and
-  no way to tell whether the sentence describes a missing parameter or is left
-  over from `listFaults`. `apiv3` documents `q` alone. Either add
-  `occurred_after`/`occurred_before` to the body or drop the clause — as written
-  a caller can reasonably expect a bounded change and get a project-wide one.
-
 - **787 anonymous inline structs** in the generated models, from inline object
   schemas. A consumer cannot name or construct those types. Extracting them into
   named component schemas would shrink hand-written wrapper code and improve the
   published docs. `Error.Error` and `Error.Meta` are the cases that bite most.
 
 ## Fixed since this list started
+
+Closed by the bundle at `2ee3eaa1f`:
+
+- `AffectedUser` and `DashboardWidget` are named components. The affected-users
+  response is an array of the first, and `Dashboard.widgets` items `$ref` the
+  second — so the JSON Pointer that no generator would follow is gone, and with
+  it both widget overlays. `AffectedUser.user` is a string: the app builds
+  `{identifier => count}` from DynamoDB and the identifier is the key, which is
+  what the client models now.
+- `Alarm.query`, `evaluation_period` and `lookback_lag` are typed as the strings
+  the presenter renders, so those three overlays are gone too. Only the
+  deliberate `ErrorBody.details` mapping remains — every corrective overlay has
+  been retired.
+- The four fault bulk endpoints declare `created_after`, `occurred_after` and
+  `occurred_before`, so the time filters their descriptions promised are now
+  reachable. `FaultSelection` exposes them as chainable methods.
 
 Closed by the bundle at `1ebb7621d`:
 

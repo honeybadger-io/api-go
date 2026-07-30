@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
 )
@@ -33,6 +34,39 @@ type FaultSelection struct {
 	ids   []string
 	query string
 	all   bool
+
+	// Unix seconds, zero meaning unset. The endpoint takes these as JSON numbers.
+	createdAfter   float64
+	occurredAfter  float64
+	occurredBefore float64
+}
+
+// CreatedAfter restricts the change to faults first seen after t.
+//
+// Like the other filters, it applies only when no ids are named. Chainable:
+//
+//	apiv3.SelectFaultsMatching("is:unresolved").OccurredBefore(cutoff)
+func (sel FaultSelection) CreatedAfter(t time.Time) FaultSelection {
+	sel.createdAfter = float64(t.Unix())
+	return sel
+}
+
+// OccurredAfter restricts the change to faults with a notice after t.
+func (sel FaultSelection) OccurredAfter(t time.Time) FaultSelection {
+	sel.occurredAfter = float64(t.Unix())
+	return sel
+}
+
+// OccurredBefore restricts the change to faults with no notice since t.
+func (sel FaultSelection) OccurredBefore(t time.Time) FaultSelection {
+	sel.occurredBefore = float64(t.Unix())
+	return sel
+}
+
+// filtered reports whether any filter other than an id list is set.
+func (sel FaultSelection) filtered() bool {
+	return strings.TrimSpace(sel.query) != "" ||
+		sel.createdAfter != 0 || sel.occurredAfter != 0 || sel.occurredBefore != 0
 }
 
 // SelectFaults changes the named faults. Ids outside the project select nothing.
@@ -68,19 +102,47 @@ var ErrEveryFault = errors.New(
 		"name the faults with SelectFaults, filter them with SelectFaultsMatching, or say so " +
 		"with SelectAllFaults")
 
-// body renders the selection, or refuses an unbounded one.
+// ErrFilteredIDs is returned when a selection names ids and also filters.
+//
+// The endpoint applies its filters only when fault_ids is absent, so a request
+// carrying both changes every named fault and silently ignores the filter. That
+// reads as a narrowing and is not one, which on a destructive operation is worth
+// refusing rather than sending.
+var ErrFilteredIDs = errors.New(
+	"apiv3: a fault selection names ids and also filters, but the endpoint ignores " +
+		"filters when ids are present — name the faults, or filter them, not both")
+
+// body renders the selection, or refuses one that is unbounded or contradictory.
 func (sel FaultSelection) body() (*gen.ResolveFaultsJSONRequestBody, error) {
-	switch {
-	case len(sel.ids) > 0:
+	if len(sel.ids) > 0 {
+		if sel.filtered() {
+			return nil, ErrFilteredIDs
+		}
 		ids := sel.ids
 		return &gen.ResolveFaultsJSONRequestBody{FaultIds: &ids}, nil
-	case strings.TrimSpace(sel.query) != "":
-		query := strings.TrimSpace(sel.query)
-		return &gen.ResolveFaultsJSONRequestBody{Q: &query}, nil
-	case sel.all:
-		return &gen.ResolveFaultsJSONRequestBody{}, nil
 	}
-	return nil, ErrEveryFault
+
+	body := &gen.ResolveFaultsJSONRequestBody{}
+	if query := strings.TrimSpace(sel.query); query != "" {
+		body.Q = &query
+	}
+	for field, value := range map[**float64]float64{
+		&body.CreatedAfter:   sel.createdAfter,
+		&body.OccurredAfter:  sel.occurredAfter,
+		&body.OccurredBefore: sel.occurredBefore,
+	} {
+		if value != 0 {
+			v := value
+			*field = &v
+		}
+	}
+
+	// A filter of any kind is a bound. Only a selection with none at all, and no
+	// explicit request for the whole project, is the accident worth refusing.
+	if body.Q == nil && !sel.filtered() && !sel.all {
+		return nil, ErrEveryFault
+	}
+	return body, nil
 }
 
 // The four bulk endpoints share one body schema, so they share one Go type: the
