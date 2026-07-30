@@ -6,8 +6,12 @@ OAPI_CODEGEN := github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.8.0
 
 generate:
 	go run $(OAPI_CODEGEN) -config openapi/codegen.yaml openapi/bundled.yaml
-	awk -f openapi/scopes.awk openapi/bundled.yaml > apiv3/scopes_gen.go
-	gofmt -w apiv3/scopes_gen.go
+	@# Via a temporary file: redirecting straight at the target truncates it before
+	@# awk runs, so a spec that trips one of the script's invariants would leave a
+	@# half-written scope map behind. Generate, then move only on success.
+	awk -f openapi/scopes.awk openapi/bundled.yaml > apiv3/scopes_gen.go.tmp
+	gofmt -w apiv3/scopes_gen.go.tmp
+	mv apiv3/scopes_gen.go.tmp apiv3/scopes_gen.go
 
 # Fails when the committed generated code does not match the committed spec.
 verify-generated: generate
