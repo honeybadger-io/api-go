@@ -6,6 +6,10 @@ actions:
   # The details field is a oneOf: an array of field errors for validation_error,
   # or an object naming the missing permission for insufficient_scope.
   #
+  # The target moved when the spec extracted the error body into a named ErrorBody
+  # schema. The overlay is applied in strict mode, so a stale selector fails
+  # generation rather than quietly doing nothing — which is how this was caught.
+  #
   # oapi-codegen renders a oneOf as a union wrapper with As*/From* accessors,
   # which would put generator-shaped machinery in the public error type for no
   # gain — apiv3 already discriminates on the error code and decodes the branch
@@ -14,6 +18,6 @@ actions:
   # No x-go-type-import: the generator does not deduplicate it against imports it
   # already emits, and generated code always imports encoding/json, so naming the
   # import produces a duplicate and a compile error.
-  - target: $.components.schemas.Error.properties.error.properties.details
+  - target: $.components.schemas.ErrorBody.properties.details
     update:
       x-go-type: json.RawMessage

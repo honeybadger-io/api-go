@@ -19,90 +19,255 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
-// Defines values for CheckInScheduleType.
+// Defines values for AccountInvitationInputRole.
 const (
-	Cron   CheckInScheduleType = "cron"
-	Simple CheckInScheduleType = "simple"
+	AccountInvitationInputRoleAdmin  AccountInvitationInputRole = "Admin"
+	AccountInvitationInputRoleMember AccountInvitationInputRole = "Member"
+	AccountInvitationInputRoleOwner  AccountInvitationInputRole = "Owner"
 )
 
-// Valid indicates whether the value is a known member of the CheckInScheduleType enum.
-func (e CheckInScheduleType) Valid() bool {
+// Valid indicates whether the value is a known member of the AccountInvitationInputRole enum.
+func (e AccountInvitationInputRole) Valid() bool {
 	switch e {
-	case Cron:
+	case AccountInvitationInputRoleAdmin:
 		return true
-	case Simple:
+	case AccountInvitationInputRoleMember:
+		return true
+	case AccountInvitationInputRoleOwner:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for ErrorErrorCode.
+// Defines values for AccountMemberInputRole.
 const (
-	ErrorErrorCodeAccessDenied          ErrorErrorCode = "access_denied"
-	ErrorErrorCodeAccountInactive       ErrorErrorCode = "account_inactive"
-	ErrorErrorCodeAccountParked         ErrorErrorCode = "account_parked"
-	ErrorErrorCodeAmbiguousAccount      ErrorErrorCode = "ambiguous_account"
-	ErrorErrorCodeCredentialInQuery     ErrorErrorCode = "credential_in_query"
-	ErrorErrorCodeDeleteFailed          ErrorErrorCode = "delete_failed"
-	ErrorErrorCodeFeatureUnavailable    ErrorErrorCode = "feature_unavailable"
-	ErrorErrorCodeForbiddenAttributes   ErrorErrorCode = "forbidden_attributes"
-	ErrorErrorCodeInsufficientScope     ErrorErrorCode = "insufficient_scope"
-	ErrorErrorCodeInvalidId             ErrorErrorCode = "invalid_id"
-	ErrorErrorCodeLimitReached          ErrorErrorCode = "limit_reached"
-	ErrorErrorCodeMaintenanceMode       ErrorErrorCode = "maintenance_mode"
-	ErrorErrorCodeNotFound              ErrorErrorCode = "not_found"
-	ErrorErrorCodeProjectRestricted     ErrorErrorCode = "project_restricted"
-	ErrorErrorCodeRateLimitExceeded     ErrorErrorCode = "rate_limit_exceeded"
-	ErrorErrorCodeRequiresUserToken     ErrorErrorCode = "requires_user_token"
-	ErrorErrorCodeServiceUnavailable    ErrorErrorCode = "service_unavailable"
-	ErrorErrorCodeUnauthorized          ErrorErrorCode = "unauthorized"
-	ErrorErrorCodeUnsupportedAuthScheme ErrorErrorCode = "unsupported_auth_scheme"
-	ErrorErrorCodeValidationError       ErrorErrorCode = "validation_error"
+	AccountMemberInputRoleAdmin  AccountMemberInputRole = "Admin"
+	AccountMemberInputRoleMember AccountMemberInputRole = "Member"
+	AccountMemberInputRoleOwner  AccountMemberInputRole = "Owner"
 )
 
-// Valid indicates whether the value is a known member of the ErrorErrorCode enum.
-func (e ErrorErrorCode) Valid() bool {
+// Valid indicates whether the value is a known member of the AccountMemberInputRole enum.
+func (e AccountMemberInputRole) Valid() bool {
 	switch e {
-	case ErrorErrorCodeAccessDenied:
+	case AccountMemberInputRoleAdmin:
 		return true
-	case ErrorErrorCodeAccountInactive:
+	case AccountMemberInputRoleMember:
 		return true
-	case ErrorErrorCodeAccountParked:
+	case AccountMemberInputRoleOwner:
 		return true
-	case ErrorErrorCodeAmbiguousAccount:
+	default:
+		return false
+	}
+}
+
+// Defines values for CheckInScheduleType.
+const (
+	CheckInScheduleTypeCron   CheckInScheduleType = "cron"
+	CheckInScheduleTypeSimple CheckInScheduleType = "simple"
+)
+
+// Valid indicates whether the value is a known member of the CheckInScheduleType enum.
+func (e CheckInScheduleType) Valid() bool {
+	switch e {
+	case CheckInScheduleTypeCron:
 		return true
-	case ErrorErrorCodeCredentialInQuery:
+	case CheckInScheduleTypeSimple:
 		return true
-	case ErrorErrorCodeDeleteFailed:
+	default:
+		return false
+	}
+}
+
+// Defines values for CheckInBulkUpdateInputCheckInsScheduleType.
+const (
+	CheckInBulkUpdateInputCheckInsScheduleTypeCron   CheckInBulkUpdateInputCheckInsScheduleType = "cron"
+	CheckInBulkUpdateInputCheckInsScheduleTypeSimple CheckInBulkUpdateInputCheckInsScheduleType = "simple"
+)
+
+// Valid indicates whether the value is a known member of the CheckInBulkUpdateInputCheckInsScheduleType enum.
+func (e CheckInBulkUpdateInputCheckInsScheduleType) Valid() bool {
+	switch e {
+	case CheckInBulkUpdateInputCheckInsScheduleTypeCron:
 		return true
-	case ErrorErrorCodeFeatureUnavailable:
+	case CheckInBulkUpdateInputCheckInsScheduleTypeSimple:
 		return true
-	case ErrorErrorCodeForbiddenAttributes:
+	default:
+		return false
+	}
+}
+
+// Defines values for CheckInInputScheduleType.
+const (
+	CheckInInputScheduleTypeCron   CheckInInputScheduleType = "cron"
+	CheckInInputScheduleTypeSimple CheckInInputScheduleType = "simple"
+)
+
+// Valid indicates whether the value is a known member of the CheckInInputScheduleType enum.
+func (e CheckInInputScheduleType) Valid() bool {
+	switch e {
+	case CheckInInputScheduleTypeCron:
 		return true
-	case ErrorErrorCodeInsufficientScope:
+	case CheckInInputScheduleTypeSimple:
 		return true
-	case ErrorErrorCodeInvalidId:
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardInputWidgetsConfigStreams.
+const (
+	DashboardInputWidgetsConfigStreamsDefault  DashboardInputWidgetsConfigStreams = "default"
+	DashboardInputWidgetsConfigStreamsInternal DashboardInputWidgetsConfigStreams = "internal"
+)
+
+// Valid indicates whether the value is a known member of the DashboardInputWidgetsConfigStreams enum.
+func (e DashboardInputWidgetsConfigStreams) Valid() bool {
+	switch e {
+	case DashboardInputWidgetsConfigStreamsDefault:
 		return true
-	case ErrorErrorCodeLimitReached:
+	case DashboardInputWidgetsConfigStreamsInternal:
 		return true
-	case ErrorErrorCodeMaintenanceMode:
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardInputWidgetsConfigVisView.
+const (
+	Area      DashboardInputWidgetsConfigVisView = "area"
+	Bar       DashboardInputWidgetsConfigVisView = "bar"
+	Billboard DashboardInputWidgetsConfigVisView = "billboard"
+	Heatmap   DashboardInputWidgetsConfigVisView = "heatmap"
+	Histogram DashboardInputWidgetsConfigVisView = "histogram"
+	Line      DashboardInputWidgetsConfigVisView = "line"
+	Pie       DashboardInputWidgetsConfigVisView = "pie"
+	Scatter   DashboardInputWidgetsConfigVisView = "scatter"
+	Table     DashboardInputWidgetsConfigVisView = "table"
+)
+
+// Valid indicates whether the value is a known member of the DashboardInputWidgetsConfigVisView enum.
+func (e DashboardInputWidgetsConfigVisView) Valid() bool {
+	switch e {
+	case Area:
 		return true
-	case ErrorErrorCodeNotFound:
+	case Bar:
 		return true
-	case ErrorErrorCodeProjectRestricted:
+	case Billboard:
 		return true
-	case ErrorErrorCodeRateLimitExceeded:
+	case Heatmap:
 		return true
-	case ErrorErrorCodeRequiresUserToken:
+	case Histogram:
 		return true
-	case ErrorErrorCodeServiceUnavailable:
+	case Line:
 		return true
-	case ErrorErrorCodeUnauthorized:
+	case Pie:
 		return true
-	case ErrorErrorCodeUnsupportedAuthScheme:
+	case Scatter:
 		return true
-	case ErrorErrorCodeValidationError:
+	case Table:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardInputWidgetsType.
+const (
+	Alarms      DashboardInputWidgetsType = "alarms"
+	Checkins    DashboardInputWidgetsType = "checkins"
+	Deployments DashboardInputWidgetsType = "deployments"
+	Errors      DashboardInputWidgetsType = "errors"
+	InsightsVis DashboardInputWidgetsType = "insights_vis"
+	Uptime      DashboardInputWidgetsType = "uptime"
+)
+
+// Valid indicates whether the value is a known member of the DashboardInputWidgetsType enum.
+func (e DashboardInputWidgetsType) Valid() bool {
+	switch e {
+	case Alarms:
+		return true
+	case Checkins:
+		return true
+	case Deployments:
+		return true
+	case Errors:
+		return true
+	case InsightsVis:
+		return true
+	case Uptime:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ErrorBodyCode.
+const (
+	ErrorBodyCodeAccessDenied          ErrorBodyCode = "access_denied"
+	ErrorBodyCodeAccountInactive       ErrorBodyCode = "account_inactive"
+	ErrorBodyCodeAccountParked         ErrorBodyCode = "account_parked"
+	ErrorBodyCodeAmbiguousAccount      ErrorBodyCode = "ambiguous_account"
+	ErrorBodyCodeCredentialInQuery     ErrorBodyCode = "credential_in_query"
+	ErrorBodyCodeDeleteFailed          ErrorBodyCode = "delete_failed"
+	ErrorBodyCodeFeatureUnavailable    ErrorBodyCode = "feature_unavailable"
+	ErrorBodyCodeForbiddenAttributes   ErrorBodyCode = "forbidden_attributes"
+	ErrorBodyCodeInsufficientScope     ErrorBodyCode = "insufficient_scope"
+	ErrorBodyCodeInvalidId             ErrorBodyCode = "invalid_id"
+	ErrorBodyCodeLimitReached          ErrorBodyCode = "limit_reached"
+	ErrorBodyCodeMaintenanceMode       ErrorBodyCode = "maintenance_mode"
+	ErrorBodyCodeNotFound              ErrorBodyCode = "not_found"
+	ErrorBodyCodeProjectRestricted     ErrorBodyCode = "project_restricted"
+	ErrorBodyCodeRateLimitExceeded     ErrorBodyCode = "rate_limit_exceeded"
+	ErrorBodyCodeRequiresUserToken     ErrorBodyCode = "requires_user_token"
+	ErrorBodyCodeServiceUnavailable    ErrorBodyCode = "service_unavailable"
+	ErrorBodyCodeUnauthorized          ErrorBodyCode = "unauthorized"
+	ErrorBodyCodeUnsupportedAuthScheme ErrorBodyCode = "unsupported_auth_scheme"
+	ErrorBodyCodeValidationError       ErrorBodyCode = "validation_error"
+)
+
+// Valid indicates whether the value is a known member of the ErrorBodyCode enum.
+func (e ErrorBodyCode) Valid() bool {
+	switch e {
+	case ErrorBodyCodeAccessDenied:
+		return true
+	case ErrorBodyCodeAccountInactive:
+		return true
+	case ErrorBodyCodeAccountParked:
+		return true
+	case ErrorBodyCodeAmbiguousAccount:
+		return true
+	case ErrorBodyCodeCredentialInQuery:
+		return true
+	case ErrorBodyCodeDeleteFailed:
+		return true
+	case ErrorBodyCodeFeatureUnavailable:
+		return true
+	case ErrorBodyCodeForbiddenAttributes:
+		return true
+	case ErrorBodyCodeInsufficientScope:
+		return true
+	case ErrorBodyCodeInvalidId:
+		return true
+	case ErrorBodyCodeLimitReached:
+		return true
+	case ErrorBodyCodeMaintenanceMode:
+		return true
+	case ErrorBodyCodeNotFound:
+		return true
+	case ErrorBodyCodeProjectRestricted:
+		return true
+	case ErrorBodyCodeRateLimitExceeded:
+		return true
+	case ErrorBodyCodeRequiresUserToken:
+		return true
+	case ErrorBodyCodeServiceUnavailable:
+		return true
+	case ErrorBodyCodeUnauthorized:
+		return true
+	case ErrorBodyCodeUnsupportedAuthScheme:
+		return true
+	case ErrorBodyCodeValidationError:
 		return true
 	default:
 		return false
@@ -235,6 +400,147 @@ func (e IncidentUpdateInputStatus) Valid() bool {
 	}
 }
 
+// Defines values for OccurrenceMetaInterval.
+const (
+	OccurrenceMetaIntervalDay    OccurrenceMetaInterval = "day"
+	OccurrenceMetaIntervalHour   OccurrenceMetaInterval = "hour"
+	OccurrenceMetaIntervalMinute OccurrenceMetaInterval = "minute"
+)
+
+// Valid indicates whether the value is a known member of the OccurrenceMetaInterval enum.
+func (e OccurrenceMetaInterval) Valid() bool {
+	switch e {
+	case OccurrenceMetaIntervalDay:
+		return true
+	case OccurrenceMetaIntervalHour:
+		return true
+	case OccurrenceMetaIntervalMinute:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OccurrenceMetaPeriod.
+const (
+	OccurrenceMetaPeriodDay   OccurrenceMetaPeriod = "day"
+	OccurrenceMetaPeriodHour  OccurrenceMetaPeriod = "hour"
+	OccurrenceMetaPeriodMonth OccurrenceMetaPeriod = "month"
+	OccurrenceMetaPeriodWeek  OccurrenceMetaPeriod = "week"
+)
+
+// Valid indicates whether the value is a known member of the OccurrenceMetaPeriod enum.
+func (e OccurrenceMetaPeriod) Valid() bool {
+	switch e {
+	case OccurrenceMetaPeriodDay:
+		return true
+	case OccurrenceMetaPeriodHour:
+		return true
+	case OccurrenceMetaPeriodMonth:
+		return true
+	case OccurrenceMetaPeriodWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteInputFrequency.
+const (
+	N1  SiteInputFrequency = 1
+	N15 SiteInputFrequency = 15
+	N2  SiteInputFrequency = 2
+	N5  SiteInputFrequency = 5
+)
+
+// Valid indicates whether the value is a known member of the SiteInputFrequency enum.
+func (e SiteInputFrequency) Valid() bool {
+	switch e {
+	case N1:
+		return true
+	case N15:
+		return true
+	case N2:
+		return true
+	case N5:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteInputLocations.
+const (
+	Frankfurt SiteInputLocations = "Frankfurt"
+	London    SiteInputLocations = "London"
+	Oregon    SiteInputLocations = "Oregon"
+	Singapore SiteInputLocations = "Singapore"
+	Virginia  SiteInputLocations = "Virginia"
+)
+
+// Valid indicates whether the value is a known member of the SiteInputLocations enum.
+func (e SiteInputLocations) Valid() bool {
+	switch e {
+	case Frankfurt:
+		return true
+	case London:
+		return true
+	case Oregon:
+		return true
+	case Singapore:
+		return true
+	case Virginia:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteInputMatchType.
+const (
+	Jmespath SiteInputMatchType = "jmespath"
+	Success  SiteInputMatchType = "success"
+)
+
+// Valid indicates whether the value is a known member of the SiteInputMatchType enum.
+func (e SiteInputMatchType) Valid() bool {
+	switch e {
+	case Jmespath:
+		return true
+	case Success:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteInputRequestMethod.
+const (
+	DELETE SiteInputRequestMethod = "DELETE"
+	GET    SiteInputRequestMethod = "GET"
+	PATCH  SiteInputRequestMethod = "PATCH"
+	POST   SiteInputRequestMethod = "POST"
+	PUT    SiteInputRequestMethod = "PUT"
+)
+
+// Valid indicates whether the value is a known member of the SiteInputRequestMethod enum.
+func (e SiteInputRequestMethod) Valid() bool {
+	switch e {
+	case DELETE:
+		return true
+	case GET:
+		return true
+	case PATCH:
+		return true
+	case POST:
+		return true
+	case PUT:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for StatusPageIncidentBuildType.
 const (
 	StatusPageIncidentBuildTypeCurrent              StatusPageIncidentBuildType = "current"
@@ -319,39 +625,147 @@ func (e StatusPageIncidentCurrentStatus) Valid() bool {
 	}
 }
 
-// Defines values for StreamSlug.
+// Defines values for StatusPageIncidentCreateInputBuildType.
 const (
-	Default  StreamSlug = "default"
-	Internal StreamSlug = "internal"
+	StatusPageIncidentCreateInputBuildTypeCurrent              StatusPageIncidentCreateInputBuildType = "current"
+	StatusPageIncidentCreateInputBuildTypeRetroactive          StatusPageIncidentCreateInputBuildType = "retroactive"
+	StatusPageIncidentCreateInputBuildTypeScheduledMaintenance StatusPageIncidentCreateInputBuildType = "scheduled_maintenance"
 )
 
-// Valid indicates whether the value is a known member of the StreamSlug enum.
-func (e StreamSlug) Valid() bool {
+// Valid indicates whether the value is a known member of the StatusPageIncidentCreateInputBuildType enum.
+func (e StatusPageIncidentCreateInputBuildType) Valid() bool {
 	switch e {
-	case Default:
+	case StatusPageIncidentCreateInputBuildTypeCurrent:
 		return true
-	case Internal:
+	case StatusPageIncidentCreateInputBuildTypeRetroactive:
+		return true
+	case StatusPageIncidentCreateInputBuildTypeScheduledMaintenance:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for CreateStatusPageIncidentJSONBodyIncidentBuildType.
+// Defines values for StreamSlug.
 const (
-	CreateStatusPageIncidentJSONBodyIncidentBuildTypeCurrent              CreateStatusPageIncidentJSONBodyIncidentBuildType = "current"
-	CreateStatusPageIncidentJSONBodyIncidentBuildTypeRetroactive          CreateStatusPageIncidentJSONBodyIncidentBuildType = "retroactive"
-	CreateStatusPageIncidentJSONBodyIncidentBuildTypeScheduledMaintenance CreateStatusPageIncidentJSONBodyIncidentBuildType = "scheduled_maintenance"
+	StreamSlugDefault  StreamSlug = "default"
+	StreamSlugInternal StreamSlug = "internal"
 )
 
-// Valid indicates whether the value is a known member of the CreateStatusPageIncidentJSONBodyIncidentBuildType enum.
-func (e CreateStatusPageIncidentJSONBodyIncidentBuildType) Valid() bool {
+// Valid indicates whether the value is a known member of the StreamSlug enum.
+func (e StreamSlug) Valid() bool {
 	switch e {
-	case CreateStatusPageIncidentJSONBodyIncidentBuildTypeCurrent:
+	case StreamSlugDefault:
 		return true
-	case CreateStatusPageIncidentJSONBodyIncidentBuildTypeRetroactive:
+	case StreamSlugInternal:
 		return true
-	case CreateStatusPageIncidentJSONBodyIncidentBuildTypeScheduledMaintenance:
+	default:
+		return false
+	}
+}
+
+// Defines values for FaultOrder.
+const (
+	FaultOrderFrequent FaultOrder = "frequent"
+	FaultOrderRecent   FaultOrder = "recent"
+)
+
+// Valid indicates whether the value is a known member of the FaultOrder enum.
+func (e FaultOrder) Valid() bool {
+	switch e {
+	case FaultOrderFrequent:
+		return true
+	case FaultOrderRecent:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OccurrencePeriod.
+const (
+	OccurrencePeriodDay   OccurrencePeriod = "day"
+	OccurrencePeriodHour  OccurrencePeriod = "hour"
+	OccurrencePeriodMonth OccurrencePeriod = "month"
+	OccurrencePeriodWeek  OccurrencePeriod = "week"
+)
+
+// Valid indicates whether the value is a known member of the OccurrencePeriod enum.
+func (e OccurrencePeriod) Valid() bool {
+	switch e {
+	case OccurrencePeriodDay:
+		return true
+	case OccurrencePeriodHour:
+		return true
+	case OccurrencePeriodMonth:
+		return true
+	case OccurrencePeriodWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListAccountOccurrencesParamsPeriod.
+const (
+	ListAccountOccurrencesParamsPeriodDay   ListAccountOccurrencesParamsPeriod = "day"
+	ListAccountOccurrencesParamsPeriodHour  ListAccountOccurrencesParamsPeriod = "hour"
+	ListAccountOccurrencesParamsPeriodMonth ListAccountOccurrencesParamsPeriod = "month"
+	ListAccountOccurrencesParamsPeriodWeek  ListAccountOccurrencesParamsPeriod = "week"
+)
+
+// Valid indicates whether the value is a known member of the ListAccountOccurrencesParamsPeriod enum.
+func (e ListAccountOccurrencesParamsPeriod) Valid() bool {
+	switch e {
+	case ListAccountOccurrencesParamsPeriodDay:
+		return true
+	case ListAccountOccurrencesParamsPeriodHour:
+		return true
+	case ListAccountOccurrencesParamsPeriodMonth:
+		return true
+	case ListAccountOccurrencesParamsPeriodWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ListFaultsParamsOrder.
+const (
+	ListFaultsParamsOrderFrequent ListFaultsParamsOrder = "frequent"
+	ListFaultsParamsOrderRecent   ListFaultsParamsOrder = "recent"
+)
+
+// Valid indicates whether the value is a known member of the ListFaultsParamsOrder enum.
+func (e ListFaultsParamsOrder) Valid() bool {
+	switch e {
+	case ListFaultsParamsOrderFrequent:
+		return true
+	case ListFaultsParamsOrderRecent:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for GetProjectOccurrencesParamsPeriod.
+const (
+	GetProjectOccurrencesParamsPeriodDay   GetProjectOccurrencesParamsPeriod = "day"
+	GetProjectOccurrencesParamsPeriodHour  GetProjectOccurrencesParamsPeriod = "hour"
+	GetProjectOccurrencesParamsPeriodMonth GetProjectOccurrencesParamsPeriod = "month"
+	GetProjectOccurrencesParamsPeriodWeek  GetProjectOccurrencesParamsPeriod = "week"
+)
+
+// Valid indicates whether the value is a known member of the GetProjectOccurrencesParamsPeriod enum.
+func (e GetProjectOccurrencesParamsPeriod) Valid() bool {
+	switch e {
+	case GetProjectOccurrencesParamsPeriodDay:
+		return true
+	case GetProjectOccurrencesParamsPeriodHour:
+		return true
+	case GetProjectOccurrencesParamsPeriodMonth:
+		return true
+	case GetProjectOccurrencesParamsPeriodWeek:
 		return true
 	default:
 		return false
@@ -445,6 +859,20 @@ type AccountInvitation struct {
 	Role string `json:"role"`
 }
 
+// AccountInvitationInput Writable account-invitation attributes
+type AccountInvitationInput struct {
+	// DisableEmailNotifications Create the member with email notifications off
+	DisableEmailNotifications *bool                       `json:"disable_email_notifications,omitempty"`
+	Email                     openapi_types.Email         `json:"email"`
+	Role                      *AccountInvitationInputRole `json:"role,omitempty"`
+
+	// TeamIds Public IDs of teams to add the invitee to. IDs outside the account resolve to nothing rather than attaching another tenant's team.
+	TeamIds *[]string `json:"team_ids,omitempty"`
+}
+
+// AccountInvitationInputRole defines model for AccountInvitationInput.Role.
+type AccountInvitationInputRole string
+
 // AccountMember A member of an account
 type AccountMember struct {
 	// AccountId Public ID of the account
@@ -468,6 +896,14 @@ type AccountMember struct {
 	// UserId Public ID of the user
 	UserId string `json:"user_id"`
 }
+
+// AccountMemberInput Writable account-member attributes
+type AccountMemberInput struct {
+	Role AccountMemberInputRole `json:"role"`
+}
+
+// AccountMemberInputRole defines model for AccountMemberInput.Role.
+type AccountMemberInputRole string
 
 // Alarm An Insights alarm
 type Alarm struct {
@@ -520,6 +956,39 @@ type Alarm struct {
 	Url *string `json:"url,omitempty"`
 }
 
+// AlarmCreateInput An alarm and the observer that evaluates it
+type AlarmCreateInput struct {
+	Description *string `json:"description,omitempty"`
+
+	// EvaluationPeriod Window each evaluation covers
+	EvaluationPeriod *string `json:"evaluation_period,omitempty"`
+
+	// LookbackLag How far behind now the window ends, allowing for ingestion delay
+	LookbackLag *string `json:"lookback_lag,omitempty"`
+	Name        string  `json:"name"`
+
+	// Query BadgerQL evaluated on each check
+	Query string `json:"query"`
+
+	// StreamIds Streams the query runs against. Defaults to every stream on the project. IDs not belonging to the project are dropped.
+	StreamIds *[]string `json:"stream_ids,omitempty"`
+
+	// TriggerConfig What turns the alarm on
+	TriggerConfig *struct {
+		Config *struct {
+			Operator *string  `json:"operator,omitempty"`
+			Value    *float32 `json:"value,omitempty"`
+		} `json:"config,omitempty"`
+		Type string `json:"type"`
+	} `json:"trigger_config,omitempty"`
+}
+
+// AlarmUpdateInput Writable alarm attributes
+type AlarmUpdateInput struct {
+	Description *string `json:"description,omitempty"`
+	Name        *string `json:"name,omitempty"`
+}
+
 // Channel A notification channel
 type Channel struct {
 	// Active Whether the channel is active
@@ -548,6 +1017,20 @@ type Channel struct {
 
 	// Type Channel type
 	Type string `json:"type"`
+}
+
+// ChannelInput Writable channel attributes
+type ChannelInput struct {
+	Active *bool `json:"active,omitempty"`
+
+	// CheckInIds Public IDs of check-ins to scope this channel to. Empty means every check-in.
+	CheckInIds *[]string `json:"check_in_ids,omitempty"`
+
+	// Events Event names this channel notifies on
+	Events *[]string `json:"events,omitempty"`
+
+	// SiteIds Public IDs of sites to scope this channel to. Empty means every site. IDs outside this project resolve to nothing rather than attaching another tenant's site.
+	SiteIds *[]string `json:"site_ids,omitempty"`
 }
 
 // CheckIn A scheduled task check-in monitor
@@ -601,6 +1084,33 @@ type CheckIn struct {
 // CheckInScheduleType Type of schedule
 type CheckInScheduleType string
 
+// CheckInBulkUpdateInput A batch of check-ins to create or update
+type CheckInBulkUpdateInput struct {
+	CheckIns []struct {
+		// CronSchedule Cron expression, required when `schedule_type` is `cron`
+		CronSchedule *string `json:"cron_schedule,omitempty"`
+
+		// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
+		CronTimezone *string `json:"cron_timezone,omitempty"`
+
+		// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
+		GracePeriod *string `json:"grace_period,omitempty"`
+		Name        string  `json:"name"`
+
+		// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
+		ReportPeriod *string `json:"report_period,omitempty"`
+
+		// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+		ScheduleType *CheckInBulkUpdateInputCheckInsScheduleType `json:"schedule_type,omitempty"`
+
+		// Slug Identifies which check-in an entry refers to, so it is required here
+		Slug string `json:"slug"`
+	} `json:"check_ins"`
+}
+
+// CheckInBulkUpdateInputCheckInsScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+type CheckInBulkUpdateInputCheckInsScheduleType string
+
 // CheckInEvent A check-in event
 type CheckInEvent struct {
 	// CheckInId Public ID of the check-in
@@ -615,6 +1125,31 @@ type CheckInEvent struct {
 	// State The state the check-in entered
 	State string `json:"state"`
 }
+
+// CheckInInput Writable check-in attributes
+type CheckInInput struct {
+	// CronSchedule Cron expression, required when `schedule_type` is `cron`
+	CronSchedule *string `json:"cron_schedule,omitempty"`
+
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
+	CronTimezone *string `json:"cron_timezone,omitempty"`
+
+	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
+	GracePeriod *string `json:"grace_period,omitempty"`
+	Name        string  `json:"name"`
+
+	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
+	ReportPeriod *string `json:"report_period,omitempty"`
+
+	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+	ScheduleType *CheckInInputScheduleType `json:"schedule_type,omitempty"`
+
+	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted.
+	Slug *string `json:"slug,omitempty"`
+}
+
+// CheckInInputScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+type CheckInInputScheduleType string
 
 // Comment A comment on a fault
 type Comment struct {
@@ -676,6 +1211,43 @@ type Dashboard struct {
 	Widgets *[]map[string]interface{} `json:"widgets,omitempty"`
 }
 
+// DashboardInput defines model for DashboardInput.
+type DashboardInput struct {
+	DefaultTs *string `json:"default_ts,omitempty"`
+	Title     string  `json:"title"`
+	Widgets   []struct {
+		Config *struct {
+			Query   *string                               `json:"query,omitempty"`
+			Streams *[]DashboardInputWidgetsConfigStreams `json:"streams,omitempty"`
+			Vis     *struct {
+				ChartConfig *map[string]interface{}            `json:"chart_config,omitempty"`
+				View        DashboardInputWidgetsConfigVisView `json:"view"`
+			} `json:"vis,omitempty"`
+		} `json:"config,omitempty"`
+		Grid *struct {
+			H *int `json:"h,omitempty"`
+			W *int `json:"w,omitempty"`
+			X *int `json:"x,omitempty"`
+			Y *int `json:"y,omitempty"`
+		} `json:"grid,omitempty"`
+		Id           *string `json:"id,omitempty"`
+		Presentation *struct {
+			Subtitle *string `json:"subtitle,omitempty"`
+			Title    *string `json:"title,omitempty"`
+		} `json:"presentation,omitempty"`
+		Type DashboardInputWidgetsType `json:"type"`
+	} `json:"widgets"`
+}
+
+// DashboardInputWidgetsConfigStreams defines model for DashboardInput.Widgets.Config.Streams.
+type DashboardInputWidgetsConfigStreams string
+
+// DashboardInputWidgetsConfigVisView defines model for DashboardInput.Widgets.Config.Vis.View.
+type DashboardInputWidgetsConfigVisView string
+
+// DashboardInputWidgetsType defines model for DashboardInput.Widgets.Type.
+type DashboardInputWidgetsType string
+
 // Deploy A deploy event
 type Deploy struct {
 	// Branch Source control branch
@@ -721,26 +1293,43 @@ type Environment struct {
 	ProjectId string `json:"project_id"`
 }
 
-// Error API error response
-type Error struct {
-	Error struct {
-		// Code Machine-readable error code
-		Code ErrorErrorCode `json:"code"`
+// EnvironmentInput Writable environment attributes
+type EnvironmentInput struct {
+	Name string `json:"name"`
 
-		// Details A list of field errors for `validation_error`, or an object naming the missing permission for `insufficient_scope`. Absent for every other code.
-		Details *json.RawMessage `json:"details,omitempty"`
-
-		// Message Human-readable error message
-		Message string `json:"message"`
-	} `json:"error"`
-	Meta *struct {
-		// RequestId Unique request identifier for debugging
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	// Notifications Whether notifications are sent for faults in this environment
+	Notifications *bool `json:"notifications,omitempty"`
 }
 
-// ErrorErrorCode Machine-readable error code
-type ErrorErrorCode string
+// Error API error response
+type Error struct {
+	Error ErrorBody     `json:"error"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
+}
+
+// ErrorBody defines model for ErrorBody.
+type ErrorBody struct {
+	// Code Machine-readable code. Branch on this rather than on the message, which is free text and may be the upstream service's own wording.
+	Code ErrorBodyCode `json:"code"`
+
+	// Details A list of field errors for `validation_error`, or an object naming the missing permission for `insufficient_scope`. Absent for every other code.
+	Details *json.RawMessage `json:"details,omitempty"`
+
+	// Message Human-readable explanation
+	Message string `json:"message"`
+}
+
+// ErrorBodyCode Machine-readable code. Branch on this rather than on the message, which is free text and may be the upstream service's own wording.
+type ErrorBodyCode string
+
+// ErrorDetail defines model for ErrorDetail.
+type ErrorDetail struct {
+	// Field The field that failed validation
+	Field string `json:"field"`
+
+	// Message Why it failed, without the field name repeated
+	Message string `json:"message"`
+}
 
 // Fault A unique error fingerprint (fault)
 type Fault struct {
@@ -821,6 +1410,21 @@ type Fault struct {
 		// Url URL of the ticket
 		Url *string `json:"url,omitempty"`
 	} `json:"tickets,omitempty"`
+}
+
+// FaultAssignmentInput Who to assign a fault to
+type FaultAssignmentInput struct {
+	// AssigneeId Public ID of a user on the project. A public ID that is not a member is rejected with 422 rather than silently unassigning. DELETE the same path to unassign.
+	AssigneeId string `json:"assignee_id"`
+}
+
+// FaultInput Writable fault attributes
+type FaultInput struct {
+	// AssigneeId Public ID of a user on the project. Null unassigns. A public ID that is not a member of this project is rejected with 422 rather than silently unassigning.
+	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
+	Ignored    *bool                     `json:"ignored,omitempty"`
+	Resolved   *bool                     `json:"resolved,omitempty"`
+	Tags       *[]string                 `json:"tags,omitempty"`
 }
 
 // IncidentUpdate An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
@@ -934,6 +1538,37 @@ type Notice struct {
 	}] `json:"request,omitempty"`
 }
 
+// OccurrenceMeta defines model for OccurrenceMeta.
+type OccurrenceMeta struct {
+	// Interval Bucket width implied by the period
+	Interval *OccurrenceMetaInterval `json:"interval,omitempty"`
+
+	// Period The window used, which is `hour` when none was requested
+	Period    *OccurrenceMetaPeriod `json:"period,omitempty"`
+	RequestId *string               `json:"request_id,omitempty"`
+}
+
+// OccurrenceMetaInterval Bucket width implied by the period
+type OccurrenceMetaInterval string
+
+// OccurrenceMetaPeriod The window used, which is `hour` when none was requested
+type OccurrenceMetaPeriod string
+
+// OccurrenceSeries defines model for OccurrenceSeries.
+type OccurrenceSeries struct {
+	// Buckets One entry per interval in the window, oldest first, including intervals with no notices.
+	Buckets []struct {
+		// Count Notices recorded in this interval
+		Count int `json:"count"`
+
+		// Timestamp Start of the interval, Unix seconds
+		Timestamp int64 `json:"timestamp"`
+	} `json:"buckets"`
+
+	// ProjectId Public ID of the project this series belongs to
+	ProjectId string `json:"project_id"`
+}
+
 // OffsetLinks Navigation links for a numbered-page collection
 type OffsetLinks struct {
 	// First First page
@@ -1036,6 +1671,49 @@ type Project struct {
 	UnresolvedFaultCount *int `json:"unresolved_fault_count,omitempty"`
 }
 
+// ProjectInput Writable project attributes
+type ProjectInput struct {
+	AsanaWorkspaceId *string `json:"asana_workspace_id,omitempty"`
+
+	// CustomerThrottle Notices accepted per minute before throttling kicks in
+	CustomerThrottle *int `json:"customer_throttle,omitempty"`
+
+	// DisableEmailNotifications Applied at creation: members added with the project get email notifications switched off. Not a stored setting, so reading a project never returns it.
+	DisableEmailNotifications *bool `json:"disable_email_notifications,omitempty"`
+
+	// DisablePublicLinks Disallow shareable public fault links
+	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
+
+	// Language Primary language, used to format backtraces
+	Language         *string `json:"language,omitempty"`
+	Name             string  `json:"name"`
+	PivotalProjectId *string `json:"pivotal_project_id,omitempty"`
+
+	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; silently ignored otherwise.
+	PurgeDays *int `json:"purge_days,omitempty"`
+
+	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded
+	ResolveErrorsOnDeploy *bool `json:"resolve_errors_on_deploy,omitempty"`
+
+	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
+	SourceUrl *string `json:"source_url,omitempty"`
+
+	// TeamId Public ID of a team on this account, granting it access when the project is created. A team from another account resolves to nothing rather than being attached. Create only — afterwards manage access through the team's projects.
+	TeamId *string `json:"team_id,omitempty"`
+
+	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
+	UserSearchField *string `json:"user_search_field,omitempty"`
+
+	// UserUrl Template for linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted.
+	UserUrl *string `json:"user_url,omitempty"`
+}
+
+// ResponseMeta defines model for ResponseMeta.
+type ResponseMeta struct {
+	// RequestId Unique identifier for the request, for correlating with support
+	RequestId *string `json:"request_id,omitempty"`
+}
+
 // Site An uptime monitoring site
 type Site struct {
 	// Active Whether monitoring is active
@@ -1092,6 +1770,56 @@ type Site struct {
 	// ValidateSsl Whether to validate SSL certificates
 	ValidateSsl *bool `json:"validate_ssl,omitempty"`
 }
+
+// SiteInput Writable uptime-check site attributes
+type SiteInput struct {
+	Active *bool `json:"active,omitempty"`
+
+	// Frequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
+	Frequency *SiteInputFrequency `json:"frequency,omitempty"`
+
+	// Locations Locations to check from, by name. Anything outside the known set is discarded, and if nothing recognisable remains the site checks from every location — so a typo silently widens rather than narrows.
+	Locations *[]SiteInputLocations `json:"locations,omitempty"`
+
+	// Match Required unless `match_type` is `success`, where it is cleared
+	Match *string `json:"match,omitempty"`
+
+	// MatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
+	MatchType *SiteInputMatchType `json:"match_type,omitempty"`
+	Name      string              `json:"name"`
+
+	// OutageThreshold Consecutive failures before an outage is declared
+	OutageThreshold *int `json:"outage_threshold,omitempty"`
+
+	// RequestBody Body to send with the request
+	RequestBody *string `json:"request_body,omitempty"`
+
+	// RequestHeaders Headers to send with the request
+	RequestHeaders *[]struct {
+		Key   *string `json:"key,omitempty"`
+		Value *string `json:"value,omitempty"`
+	} `json:"request_headers,omitempty"`
+	RequestMethod *SiteInputRequestMethod `json:"request_method,omitempty"`
+
+	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
+	Timeout *int   `json:"timeout,omitempty"`
+	Url     string `json:"url"`
+
+	// ValidateSsl Fail the check when the TLS certificate does not validate
+	ValidateSsl *bool `json:"validate_ssl,omitempty"`
+}
+
+// SiteInputFrequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
+type SiteInputFrequency int
+
+// SiteInputLocations defines model for SiteInput.Locations.
+type SiteInputLocations string
+
+// SiteInputMatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
+type SiteInputMatchType string
+
+// SiteInputRequestMethod defines model for SiteInput.RequestMethod.
+type SiteInputRequestMethod string
 
 // StatusPage A public status page
 type StatusPage struct {
@@ -1198,6 +1926,79 @@ type StatusPageIncidentCurrentSeverity string
 // StatusPageIncidentCurrentStatus Status of the update in effect now. Derived from the updates.
 type StatusPageIncidentCurrentStatus string
 
+// StatusPageIncidentCreateInput An incident and, optionally, the updates it opens with
+type StatusPageIncidentCreateInput struct {
+	// BuildType `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
+	BuildType *StatusPageIncidentCreateInputBuildType `json:"build_type,omitempty"`
+
+	// RetroNotifyMessage Message accompanying that announcement
+	RetroNotifyMessage *string `json:"retro_notify_message,omitempty"`
+
+	// RetroShouldNotify Announce a retroactive incident when it is created
+	RetroShouldNotify *bool  `json:"retro_should_notify,omitempty"`
+	Title             string `json:"title"`
+
+	// Updates Updates to create with the incident
+	Updates *[]IncidentUpdateInput `json:"updates,omitempty"`
+}
+
+// StatusPageIncidentCreateInputBuildType `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
+type StatusPageIncidentCreateInputBuildType string
+
+// StatusPageIncidentUpdateInput Writable incident attributes
+type StatusPageIncidentUpdateInput struct {
+	RetroNotifyMessage *string `json:"retro_notify_message,omitempty"`
+	RetroShouldNotify  *bool   `json:"retro_should_notify,omitempty"`
+	Title              *string `json:"title,omitempty"`
+}
+
+// StatusPageInput Writable status-page attributes
+type StatusPageInput struct {
+	// CheckIns Check-ins listed on the page, replacing the current set
+	CheckIns *[]struct {
+		// CheckInId Public ID of a check-in on this account
+		CheckInId   string  `json:"check_in_id"`
+		Description *string `json:"description,omitempty"`
+		DisplayName *string `json:"display_name,omitempty"`
+		Position    *int    `json:"position,omitempty"`
+	} `json:"check_ins,omitempty"`
+
+	// Domain Custom domain the page is served on
+	Domain *string `json:"domain,omitempty"`
+
+	// Features Presentation copy and styling. Advanced status pages only
+	Features *struct {
+		CustomCss    *string `json:"custom_css,omitempty"`
+		DownCaption  *string `json:"down_caption,omitempty"`
+		HomeLink     *string `json:"home_link,omitempty"`
+		MixedCaption *string `json:"mixed_caption,omitempty"`
+		UpCaption    *string `json:"up_caption,omitempty"`
+	} `json:"features,omitempty"`
+
+	// HideBranding Advanced status pages only; ignored otherwise
+	HideBranding *bool  `json:"hide_branding,omitempty"`
+	Name         string `json:"name"`
+
+	// Password Basic-auth password when password protected. Advanced status pages only
+	Password *string `json:"password,omitempty"`
+
+	// PasswordProtected Advanced status pages only; ignored otherwise
+	PasswordProtected *bool `json:"password_protected,omitempty"`
+
+	// Sites Sites listed on the page, replacing the current set
+	Sites *[]struct {
+		Description *string `json:"description,omitempty"`
+		DisplayName *string `json:"display_name,omitempty"`
+		Position    *int    `json:"position,omitempty"`
+
+		// SiteId Public ID of a site on this account
+		SiteId string `json:"site_id"`
+	} `json:"sites,omitempty"`
+
+	// Username Basic-auth user when password protected. Advanced status pages only
+	Username *string `json:"username,omitempty"`
+}
+
 // Stream An Insights event stream
 type Stream struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -1239,6 +2040,14 @@ type Team struct {
 	Name string `json:"name"`
 
 	// ProjectIds Public IDs of projects assigned to this team
+	ProjectIds *[]string `json:"project_ids,omitempty"`
+}
+
+// TeamInput Writable team attributes
+type TeamInput struct {
+	Name string `json:"name"`
+
+	// ProjectIds Public IDs of projects this team can access. IDs outside the account resolve to nothing rather than granting access to another tenant's project.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
@@ -1290,6 +2099,15 @@ type TeamInvitation struct {
 	TeamId string `json:"team_id"`
 }
 
+// TeamInvitationInput Writable team-invitation attributes
+type TeamInvitationInput struct {
+	Admin *bool               `json:"admin,omitempty"`
+	Email openapi_types.Email `json:"email"`
+
+	// Message Note included in the invitation email
+	Message *string `json:"message,omitempty"`
+}
+
 // TeamMember A member of a team
 type TeamMember struct {
 	// Admin Whether the member has admin privileges on the team
@@ -1312,6 +2130,12 @@ type TeamMember struct {
 
 	// UserId Public ID of the user
 	UserId string `json:"user_id"`
+}
+
+// TeamMemberInput Writable team-member attributes
+type TeamMemberInput struct {
+	// Admin Team admins can manage the team's projects and membership
+	Admin bool `json:"admin"`
 }
 
 // TimeSeriesLinks Navigation links for a time-ordered collection
@@ -1381,16 +2205,34 @@ type After = string
 type Before = string
 
 // CreatedAfter defines model for CreatedAfter.
-type CreatedAfter = float32
+type CreatedAfter = float64
 
 // CreatedBefore defines model for CreatedBefore.
-type CreatedBefore = float32
+type CreatedBefore = float64
+
+// FaultCreatedAfter defines model for FaultCreatedAfter.
+type FaultCreatedAfter = float64
 
 // FaultId defines model for FaultId.
 type FaultId = string
 
+// FaultOccurredAfter defines model for FaultOccurredAfter.
+type FaultOccurredAfter = float64
+
+// FaultOccurredBefore defines model for FaultOccurredBefore.
+type FaultOccurredBefore = float64
+
+// FaultOrder defines model for FaultOrder.
+type FaultOrder string
+
 // Limit defines model for Limit.
 type Limit = int
+
+// OccurrenceEnvironment defines model for OccurrenceEnvironment.
+type OccurrenceEnvironment = string
+
+// OccurrencePeriod defines model for OccurrencePeriod.
+type OccurrencePeriod string
 
 // Page defines model for Page.
 type Page = int
@@ -1400,6 +2242,9 @@ type PerPage = int
 
 // ProjectId defines model for ProjectId.
 type ProjectId = string
+
+// SearchFilter defines model for SearchFilter.
+type SearchFilter = string
 
 // AmbiguousAccount API error response
 type AmbiguousAccount = Error
@@ -1437,14 +2282,6 @@ type ListAccountInvitationsParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateAccountInvitationJSONBody defines parameters for CreateAccountInvitation.
-type CreateAccountInvitationJSONBody struct {
-	Email openapi_types.Email `json:"email"`
-}
-
-// UpdateAccountInvitationJSONBody defines parameters for UpdateAccountInvitation.
-type UpdateAccountInvitationJSONBody = map[string]interface{}
-
 // ListAccountMembersParams defines parameters for ListAccountMembers.
 type ListAccountMembersParams struct {
 	// Page Page number (1-indexed)
@@ -1453,9 +2290,6 @@ type ListAccountMembersParams struct {
 	// PerPage Items per page
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
-
-// UpdateAccountMemberJSONBody defines parameters for UpdateAccountMember.
-type UpdateAccountMemberJSONBody = map[string]interface{}
 
 // ListProjectsParams defines parameters for ListProjects.
 type ListProjectsParams struct {
@@ -1466,25 +2300,23 @@ type ListProjectsParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateProjectJSONBody defines parameters for CreateProject.
-type CreateProjectJSONBody struct {
-	Name string `json:"name"`
+// ListAccountOccurrencesParams defines parameters for ListAccountOccurrences.
+type ListAccountOccurrencesParams struct {
+	// Period Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily. Defaults to `hour`; an unrecognised value falls back to `hour` and `meta.period` says so.
+	Period *ListAccountOccurrencesParamsPeriod `form:"period,omitempty" json:"period,omitempty"`
+
+	// Environment Only count notices from faults in this environment
+	Environment *OccurrenceEnvironment `form:"environment,omitempty" json:"environment,omitempty"`
+
+	// Page Page number (1-indexed)
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Items per page
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// UpdateProjectJSONBody defines parameters for UpdateProject.
-type UpdateProjectJSONBody struct {
-	Name *string `json:"name,omitempty"`
-}
-
-// CreateAlarmJSONBody defines parameters for CreateAlarm.
-type CreateAlarmJSONBody struct {
-	Name string `json:"name"`
-}
-
-// UpdateAlarmJSONBody defines parameters for UpdateAlarm.
-type UpdateAlarmJSONBody struct {
-	Name *string `json:"name,omitempty"`
-}
+// ListAccountOccurrencesParamsPeriod defines parameters for ListAccountOccurrences.
+type ListAccountOccurrencesParamsPeriod string
 
 // ListAlarmHistoryParams defines parameters for ListAlarmHistory.
 type ListAlarmHistoryParams struct {
@@ -1501,9 +2333,6 @@ type ListChannelsParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// UpdateChannelJSONBody defines parameters for UpdateChannel.
-type UpdateChannelJSONBody = map[string]interface{}
-
 // ListCheckInsParams defines parameters for ListCheckIns.
 type ListCheckInsParams struct {
 	// Page Page number (1-indexed)
@@ -1513,31 +2342,12 @@ type ListCheckInsParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateCheckInJSONBody defines parameters for CreateCheckIn.
-type CreateCheckInJSONBody struct {
-	GracePeriod  *string `json:"grace_period,omitempty"`
-	Name         string  `json:"name"`
-	ReportPeriod *string `json:"report_period,omitempty"`
-	ScheduleType *string `json:"schedule_type,omitempty"`
-}
-
-// BulkUpdateCheckInsJSONBody defines parameters for BulkUpdateCheckIns.
-type BulkUpdateCheckInsJSONBody = map[string]interface{}
-
-// UpdateCheckInJSONBody defines parameters for UpdateCheckIn.
-type UpdateCheckInJSONBody struct {
-	GracePeriod  *string `json:"grace_period,omitempty"`
-	Name         *string `json:"name,omitempty"`
-	ReportPeriod *string `json:"report_period,omitempty"`
-	ScheduleType *string `json:"schedule_type,omitempty"`
-}
-
 // ListCheckInEventsParams defines parameters for ListCheckInEvents.
 type ListCheckInEventsParams struct {
 	// Limit Maximum items to return
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedBefore Only return items created before this Unix timestamp
+	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
 	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
@@ -1548,16 +2358,6 @@ type ListDashboardsParams struct {
 
 	// PerPage Items per page
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
-}
-
-// CreateDashboardJSONBody defines parameters for CreateDashboard.
-type CreateDashboardJSONBody struct {
-	Name string `json:"name"`
-}
-
-// UpdateDashboardJSONBody defines parameters for UpdateDashboard.
-type UpdateDashboardJSONBody struct {
-	Name *string `json:"name,omitempty"`
 }
 
 // ListDeploysParams defines parameters for ListDeploys.
@@ -1581,11 +2381,6 @@ type ListEnvironmentsParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateEnvironmentJSONBody defines parameters for CreateEnvironment.
-type CreateEnvironmentJSONBody struct {
-	Name string `json:"name"`
-}
-
 // BulkDeleteEnvironmentsJSONBody defines parameters for BulkDeleteEnvironments.
 type BulkDeleteEnvironmentsJSONBody struct {
 	// EnvironmentIds Public IDs of environments to delete
@@ -1601,11 +2396,6 @@ type BulkUpdateEnvironmentsJSONBody struct {
 	Notifications *map[string]interface{} `json:"notifications,omitempty"`
 }
 
-// UpdateEnvironmentJSONBody defines parameters for UpdateEnvironment.
-type UpdateEnvironmentJSONBody struct {
-	Name *string `json:"name,omitempty"`
-}
-
 // ListFaultsParams defines parameters for ListFaults.
 type ListFaultsParams struct {
 	// Page Page number (1-indexed)
@@ -1616,7 +2406,22 @@ type ListFaultsParams struct {
 
 	// Q Search query. Filtering by environment, resolved and ignored status is expressed here rather than as separate parameters — `environment:production`, `is:resolved`, `is:ignored`, and each negatable with a leading `-`. See the error search reference for the full filter list.
 	Q *string `form:"q,omitempty" json:"q,omitempty"`
+
+	// Order How to sort the list. `recent` is by most recent occurrence, `frequent` by occurrence count. Defaults to creation order.
+	Order *ListFaultsParamsOrder `form:"order,omitempty" json:"order,omitempty"`
+
+	// CreatedAfter Only faults first seen after this Unix timestamp. Clamped to the project's creation date.
+	CreatedAfter *FaultCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
+
+	// OccurredAfter Only faults with an occurrence after this Unix timestamp. Clamped to the project's retention window, so a value beyond it returns what is retained. Occurrence counts in the response are for this window.
+	OccurredAfter *FaultOccurredAfter `form:"occurred_after,omitempty" json:"occurred_after,omitempty"`
+
+	// OccurredBefore Only faults with an occurrence before this Unix timestamp
+	OccurredBefore *FaultOccurredBefore `form:"occurred_before,omitempty" json:"occurred_before,omitempty"`
 }
+
+// ListFaultsParamsOrder defines parameters for ListFaults.
+type ListFaultsParamsOrder string
 
 // IgnoreFaultsJSONBody defines parameters for IgnoreFaults.
 type IgnoreFaultsJSONBody struct {
@@ -1626,6 +2431,21 @@ type IgnoreFaultsJSONBody struct {
 // ResolveFaultsJSONBody defines parameters for ResolveFaults.
 type ResolveFaultsJSONBody struct {
 	FaultIds []string `json:"fault_ids"`
+}
+
+// GetFaultSummaryParams defines parameters for GetFaultSummary.
+type GetFaultSummaryParams struct {
+	// Q Search filter, the same syntax the fault list accepts
+	Q *string `form:"q,omitempty" json:"q,omitempty"`
+
+	// CreatedAfter Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
+	CreatedAfter *CreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
+
+	// OccurredAfter Only count faults that occurred after this Unix timestamp
+	OccurredAfter *float64 `form:"occurred_after,omitempty" json:"occurred_after,omitempty"`
+
+	// OccurredBefore Only count faults that occurred before this Unix timestamp
+	OccurredBefore *float64 `form:"occurred_before,omitempty" json:"occurred_before,omitempty"`
 }
 
 // UnignoreFaultsJSONBody defines parameters for UnignoreFaults.
@@ -1638,11 +2458,11 @@ type UnresolveFaultsJSONBody struct {
 	FaultIds []string `json:"fault_ids"`
 }
 
-// UpdateFaultJSONBody defines parameters for UpdateFault.
-type UpdateFaultJSONBody = map[string]interface{}
-
-// AssignFaultJSONBody defines parameters for AssignFault.
-type AssignFaultJSONBody = map[string]interface{}
+// ListFaultAffectedUsersParams defines parameters for ListFaultAffectedUsers.
+type ListFaultAffectedUsersParams struct {
+	// Q Search filter, the same syntax the web UI accepts — `is:resolved`, `environment:production`, `class:ArgumentError`. Filters that need the search index return nothing when it holds no data for the project.
+	Q *SearchFilter `form:"q,omitempty" json:"q,omitempty"`
+}
 
 // ListCommentsParams defines parameters for ListComments.
 type ListCommentsParams struct {
@@ -1698,6 +2518,18 @@ type RunInsightsQueryJSONBody struct {
 	Ts *string `json:"ts,omitempty"`
 }
 
+// GetProjectOccurrencesParams defines parameters for GetProjectOccurrences.
+type GetProjectOccurrencesParams struct {
+	// Period Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily. Defaults to `hour`; an unrecognised value falls back to `hour` and `meta.period` says so.
+	Period *GetProjectOccurrencesParamsPeriod `form:"period,omitempty" json:"period,omitempty"`
+
+	// Environment Only count notices from faults in this environment
+	Environment *OccurrenceEnvironment `form:"environment,omitempty" json:"environment,omitempty"`
+}
+
+// GetProjectOccurrencesParamsPeriod defines parameters for GetProjectOccurrences.
+type GetProjectOccurrencesParamsPeriod string
+
 // ListSitesParams defines parameters for ListSites.
 type ListSitesParams struct {
 	// Page Page number (1-indexed)
@@ -1707,27 +2539,15 @@ type ListSitesParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateSiteJSONBody defines parameters for CreateSite.
-type CreateSiteJSONBody struct {
-	Name string `json:"name"`
-	Url  string `json:"url"`
-}
-
-// UpdateSiteJSONBody defines parameters for UpdateSite.
-type UpdateSiteJSONBody struct {
-	Name *string `json:"name,omitempty"`
-	Url  *string `json:"url,omitempty"`
-}
-
 // ListUptimeChecksParams defines parameters for ListUptimeChecks.
 type ListUptimeChecksParams struct {
 	// Limit Maximum items to return
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedAfter Only return items created after this Unix timestamp
+	// CreatedAfter Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
 	CreatedAfter *CreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
-	// CreatedBefore Only return items created before this Unix timestamp
+	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
 	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
@@ -1736,10 +2556,10 @@ type ListOutagesParams struct {
 	// Limit Maximum items to return
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedAfter Only return items created after this Unix timestamp
+	// CreatedAfter Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
 	CreatedAfter *CreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
-	// CreatedBefore Only return items created before this Unix timestamp
+	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
 	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
@@ -1761,16 +2581,6 @@ type ListStatusPagesParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateStatusPageJSONBody defines parameters for CreateStatusPage.
-type CreateStatusPageJSONBody struct {
-	Name string `json:"name"`
-}
-
-// UpdateStatusPageJSONBody defines parameters for UpdateStatusPage.
-type UpdateStatusPageJSONBody struct {
-	Name *string `json:"name,omitempty"`
-}
-
 // ListStatusPageIncidentsParams defines parameters for ListStatusPageIncidents.
 type ListStatusPageIncidentsParams struct {
 	// Limit Maximum items to return
@@ -1781,29 +2591,6 @@ type ListStatusPageIncidentsParams struct {
 
 	// After Cursor for fetching newer items
 	After *After `form:"after,omitempty" json:"after,omitempty"`
-}
-
-// CreateStatusPageIncidentJSONBody defines parameters for CreateStatusPageIncident.
-type CreateStatusPageIncidentJSONBody struct {
-	Incident struct {
-		BuildType          *CreateStatusPageIncidentJSONBodyIncidentBuildType `json:"build_type,omitempty"`
-		RetroNotifyMessage *string                                            `json:"retro_notify_message,omitempty"`
-		RetroShouldNotify  *bool                                              `json:"retro_should_notify,omitempty"`
-		Title              string                                             `json:"title"`
-		Updates            []IncidentUpdateInput                              `json:"updates"`
-	} `json:"incident"`
-}
-
-// CreateStatusPageIncidentJSONBodyIncidentBuildType defines parameters for CreateStatusPageIncident.
-type CreateStatusPageIncidentJSONBodyIncidentBuildType string
-
-// UpdateStatusPageIncidentJSONBody defines parameters for UpdateStatusPageIncident.
-type UpdateStatusPageIncidentJSONBody struct {
-	Incident struct {
-		RetroNotifyMessage *string `json:"retro_notify_message,omitempty"`
-		RetroShouldNotify  *bool   `json:"retro_should_notify,omitempty"`
-		Title              *string `json:"title,omitempty"`
-	} `json:"incident"`
 }
 
 // ListIncidentUpdatesParams defines parameters for ListIncidentUpdates.
@@ -1818,18 +2605,6 @@ type ListIncidentUpdatesParams struct {
 	After *After `form:"after,omitempty" json:"after,omitempty"`
 }
 
-// CreateIncidentUpdateJSONBody defines parameters for CreateIncidentUpdate.
-type CreateIncidentUpdateJSONBody struct {
-	// Update The writable fields of an incident update. status and severity default to investigating and problem_detected. If neither start_at nor start_now is given, the update starts now.
-	Update IncidentUpdateInput `json:"update"`
-}
-
-// UpdateIncidentUpdateJSONBody defines parameters for UpdateIncidentUpdate.
-type UpdateIncidentUpdateJSONBody struct {
-	// Update The writable fields of an incident update. status and severity default to investigating and problem_detected. If neither start_at nor start_now is given, the update starts now.
-	Update IncidentUpdateInput `json:"update"`
-}
-
 // ListTeamsParams defines parameters for ListTeams.
 type ListTeamsParams struct {
 	// Page Page number (1-indexed)
@@ -1837,16 +2612,6 @@ type ListTeamsParams struct {
 
 	// PerPage Items per page
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
-}
-
-// CreateTeamJSONBody defines parameters for CreateTeam.
-type CreateTeamJSONBody struct {
-	Name string `json:"name"`
-}
-
-// UpdateTeamJSONBody defines parameters for UpdateTeam.
-type UpdateTeamJSONBody struct {
-	Name *string `json:"name,omitempty"`
 }
 
 // ListTeamInvitationsParams defines parameters for ListTeamInvitations.
@@ -1858,14 +2623,6 @@ type ListTeamInvitationsParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateTeamInvitationJSONBody defines parameters for CreateTeamInvitation.
-type CreateTeamInvitationJSONBody struct {
-	Email openapi_types.Email `json:"email"`
-}
-
-// UpdateTeamInvitationJSONBody defines parameters for UpdateTeamInvitation.
-type UpdateTeamInvitationJSONBody = map[string]interface{}
-
 // ListTeamMembersParams defines parameters for ListTeamMembers.
 type ListTeamMembersParams struct {
 	// Page Page number (1-indexed)
@@ -1875,53 +2632,50 @@ type ListTeamMembersParams struct {
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// UpdateTeamMemberJSONBody defines parameters for UpdateTeamMember.
-type UpdateTeamMemberJSONBody = map[string]interface{}
-
 // GetToken200JSONResponseBodyDataKind defines parameters for GetToken.
 type GetToken200JSONResponseBodyDataKind string
 
 // CreateAccountInvitationJSONRequestBody defines body for CreateAccountInvitation for application/json ContentType.
-type CreateAccountInvitationJSONRequestBody CreateAccountInvitationJSONBody
+type CreateAccountInvitationJSONRequestBody = AccountInvitationInput
 
 // UpdateAccountInvitationJSONRequestBody defines body for UpdateAccountInvitation for application/json ContentType.
-type UpdateAccountInvitationJSONRequestBody = UpdateAccountInvitationJSONBody
+type UpdateAccountInvitationJSONRequestBody = AccountInvitationInput
 
 // UpdateAccountMemberJSONRequestBody defines body for UpdateAccountMember for application/json ContentType.
-type UpdateAccountMemberJSONRequestBody = UpdateAccountMemberJSONBody
+type UpdateAccountMemberJSONRequestBody = AccountMemberInput
 
 // CreateProjectJSONRequestBody defines body for CreateProject for application/json ContentType.
-type CreateProjectJSONRequestBody CreateProjectJSONBody
+type CreateProjectJSONRequestBody = ProjectInput
 
 // UpdateProjectJSONRequestBody defines body for UpdateProject for application/json ContentType.
-type UpdateProjectJSONRequestBody UpdateProjectJSONBody
+type UpdateProjectJSONRequestBody = ProjectInput
 
 // CreateAlarmJSONRequestBody defines body for CreateAlarm for application/json ContentType.
-type CreateAlarmJSONRequestBody CreateAlarmJSONBody
+type CreateAlarmJSONRequestBody = AlarmCreateInput
 
 // UpdateAlarmJSONRequestBody defines body for UpdateAlarm for application/json ContentType.
-type UpdateAlarmJSONRequestBody UpdateAlarmJSONBody
+type UpdateAlarmJSONRequestBody = AlarmUpdateInput
 
 // UpdateChannelJSONRequestBody defines body for UpdateChannel for application/json ContentType.
-type UpdateChannelJSONRequestBody = UpdateChannelJSONBody
+type UpdateChannelJSONRequestBody = ChannelInput
 
 // CreateCheckInJSONRequestBody defines body for CreateCheckIn for application/json ContentType.
-type CreateCheckInJSONRequestBody CreateCheckInJSONBody
+type CreateCheckInJSONRequestBody = CheckInInput
 
 // BulkUpdateCheckInsJSONRequestBody defines body for BulkUpdateCheckIns for application/json ContentType.
-type BulkUpdateCheckInsJSONRequestBody = BulkUpdateCheckInsJSONBody
+type BulkUpdateCheckInsJSONRequestBody = CheckInBulkUpdateInput
 
 // UpdateCheckInJSONRequestBody defines body for UpdateCheckIn for application/json ContentType.
-type UpdateCheckInJSONRequestBody UpdateCheckInJSONBody
+type UpdateCheckInJSONRequestBody = CheckInInput
 
 // CreateDashboardJSONRequestBody defines body for CreateDashboard for application/json ContentType.
-type CreateDashboardJSONRequestBody CreateDashboardJSONBody
+type CreateDashboardJSONRequestBody = DashboardInput
 
 // UpdateDashboardJSONRequestBody defines body for UpdateDashboard for application/json ContentType.
-type UpdateDashboardJSONRequestBody UpdateDashboardJSONBody
+type UpdateDashboardJSONRequestBody = DashboardInput
 
 // CreateEnvironmentJSONRequestBody defines body for CreateEnvironment for application/json ContentType.
-type CreateEnvironmentJSONRequestBody CreateEnvironmentJSONBody
+type CreateEnvironmentJSONRequestBody = EnvironmentInput
 
 // BulkDeleteEnvironmentsJSONRequestBody defines body for BulkDeleteEnvironments for application/json ContentType.
 type BulkDeleteEnvironmentsJSONRequestBody BulkDeleteEnvironmentsJSONBody
@@ -1930,7 +2684,7 @@ type BulkDeleteEnvironmentsJSONRequestBody BulkDeleteEnvironmentsJSONBody
 type BulkUpdateEnvironmentsJSONRequestBody BulkUpdateEnvironmentsJSONBody
 
 // UpdateEnvironmentJSONRequestBody defines body for UpdateEnvironment for application/json ContentType.
-type UpdateEnvironmentJSONRequestBody UpdateEnvironmentJSONBody
+type UpdateEnvironmentJSONRequestBody = EnvironmentInput
 
 // IgnoreFaultsJSONRequestBody defines body for IgnoreFaults for application/json ContentType.
 type IgnoreFaultsJSONRequestBody IgnoreFaultsJSONBody
@@ -1945,10 +2699,10 @@ type UnignoreFaultsJSONRequestBody UnignoreFaultsJSONBody
 type UnresolveFaultsJSONRequestBody UnresolveFaultsJSONBody
 
 // UpdateFaultJSONRequestBody defines body for UpdateFault for application/json ContentType.
-type UpdateFaultJSONRequestBody = UpdateFaultJSONBody
+type UpdateFaultJSONRequestBody = FaultInput
 
 // AssignFaultJSONRequestBody defines body for AssignFault for application/json ContentType.
-type AssignFaultJSONRequestBody = AssignFaultJSONBody
+type AssignFaultJSONRequestBody = FaultAssignmentInput
 
 // CreateCommentJSONRequestBody defines body for CreateComment for application/json ContentType.
 type CreateCommentJSONRequestBody CreateCommentJSONBody
@@ -1963,43 +2717,43 @@ type MergeFaultsJSONRequestBody MergeFaultsJSONBody
 type RunInsightsQueryJSONRequestBody RunInsightsQueryJSONBody
 
 // CreateSiteJSONRequestBody defines body for CreateSite for application/json ContentType.
-type CreateSiteJSONRequestBody CreateSiteJSONBody
+type CreateSiteJSONRequestBody = SiteInput
 
 // UpdateSiteJSONRequestBody defines body for UpdateSite for application/json ContentType.
-type UpdateSiteJSONRequestBody UpdateSiteJSONBody
+type UpdateSiteJSONRequestBody = SiteInput
 
 // CreateStatusPageJSONRequestBody defines body for CreateStatusPage for application/json ContentType.
-type CreateStatusPageJSONRequestBody CreateStatusPageJSONBody
+type CreateStatusPageJSONRequestBody = StatusPageInput
 
 // UpdateStatusPageJSONRequestBody defines body for UpdateStatusPage for application/json ContentType.
-type UpdateStatusPageJSONRequestBody UpdateStatusPageJSONBody
+type UpdateStatusPageJSONRequestBody = StatusPageInput
 
 // CreateStatusPageIncidentJSONRequestBody defines body for CreateStatusPageIncident for application/json ContentType.
-type CreateStatusPageIncidentJSONRequestBody CreateStatusPageIncidentJSONBody
+type CreateStatusPageIncidentJSONRequestBody = StatusPageIncidentCreateInput
 
 // UpdateStatusPageIncidentJSONRequestBody defines body for UpdateStatusPageIncident for application/json ContentType.
-type UpdateStatusPageIncidentJSONRequestBody UpdateStatusPageIncidentJSONBody
+type UpdateStatusPageIncidentJSONRequestBody = StatusPageIncidentUpdateInput
 
 // CreateIncidentUpdateJSONRequestBody defines body for CreateIncidentUpdate for application/json ContentType.
-type CreateIncidentUpdateJSONRequestBody CreateIncidentUpdateJSONBody
+type CreateIncidentUpdateJSONRequestBody = IncidentUpdateInput
 
 // UpdateIncidentUpdateJSONRequestBody defines body for UpdateIncidentUpdate for application/json ContentType.
-type UpdateIncidentUpdateJSONRequestBody UpdateIncidentUpdateJSONBody
+type UpdateIncidentUpdateJSONRequestBody = IncidentUpdateInput
 
 // CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
-type CreateTeamJSONRequestBody CreateTeamJSONBody
+type CreateTeamJSONRequestBody = TeamInput
 
 // UpdateTeamJSONRequestBody defines body for UpdateTeam for application/json ContentType.
-type UpdateTeamJSONRequestBody UpdateTeamJSONBody
+type UpdateTeamJSONRequestBody = TeamInput
 
 // CreateTeamInvitationJSONRequestBody defines body for CreateTeamInvitation for application/json ContentType.
-type CreateTeamInvitationJSONRequestBody CreateTeamInvitationJSONBody
+type CreateTeamInvitationJSONRequestBody = TeamInvitationInput
 
 // UpdateTeamInvitationJSONRequestBody defines body for UpdateTeamInvitation for application/json ContentType.
-type UpdateTeamInvitationJSONRequestBody = UpdateTeamInvitationJSONBody
+type UpdateTeamInvitationJSONRequestBody = TeamInvitationInput
 
 // UpdateTeamMemberJSONRequestBody defines body for UpdateTeamMember for application/json ContentType.
-type UpdateTeamMemberJSONRequestBody = UpdateTeamMemberJSONBody
+type UpdateTeamMemberJSONRequestBody = TeamMemberInput
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -2209,6 +2963,17 @@ type ClientInterface interface {
 	//
 	// Corresponds with POST /accounts/{account_id}/projects (the `CreateProject` operationId).
 	CreateProject(ctx context.Context, accountId AccountId, body CreateProjectJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAccountOccurrences Get bucketed notice counts for every project on the account
+	//
+	// The same series as the per-project form, one per project the caller can read, ordered by project name.
+	//
+	// v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
+	//
+	// Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+	//
+	// Corresponds with GET /accounts/{account_id}/projects/occurrences (the `ListAccountOccurrences` operationId).
+	ListAccountOccurrences(ctx context.Context, accountId AccountId, params *ListAccountOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteProject Delete a project
 	//
@@ -2640,6 +3405,15 @@ type ClientInterface interface {
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/faults/resolve (the `ResolveFaults` operationId).
 	ResolveFaults(ctx context.Context, accountId AccountId, projectId ProjectId, body ResolveFaultsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetFaultSummary Get fault counts by environment and state
+	//
+	// Project-wide fault counts, grouped by environment and by resolved/ignored state.
+	//
+	// Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+	//
+	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/summary (the `GetFaultSummary` operationId).
+	GetFaultSummary(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetFaultSummaryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// UnignoreFaultsWithBody Unignore faults
 	//
 	// Removes the ignored status from one or more faults.
@@ -2713,7 +3487,7 @@ type ClientInterface interface {
 	// Returns users affected by a fault.
 	//
 	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
-	ListFaultAffectedUsers(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListFaultAffectedUsers(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UnassignFault Unassign a fault
 	//
@@ -2882,6 +3656,15 @@ type ClientInterface interface {
 	//
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/insights/queries (the `RunInsightsQuery` operationId).
 	RunInsightsQuery(ctx context.Context, accountId AccountId, projectId ProjectId, body RunInsightsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetProjectOccurrences Get bucketed notice counts for a project
+	//
+	// Notice counts over a fixed window, bucketed by interval.
+	//
+	// The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+	//
+	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/occurrences (the `GetProjectOccurrences` operationId).
+	GetProjectOccurrences(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetProjectOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListSites List sites
 	//
@@ -3615,6 +4398,27 @@ func (c *Client) CreateProjectWithBody(ctx context.Context, accountId AccountId,
 // Corresponds with POST /accounts/{account_id}/projects (the `CreateProject` operationId).
 func (c *Client) CreateProject(ctx context.Context, accountId AccountId, body CreateProjectJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateProjectRequest(c.Server, accountId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListAccountOccurrences Get bucketed notice counts for every project on the account
+//
+// The same series as the per-project form, one per project the caller can read, ordered by project name.
+//
+// v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
+//
+// Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+//
+// Corresponds with GET /accounts/{account_id}/projects/occurrences (the `ListAccountOccurrences` operationId).
+func (c *Client) ListAccountOccurrences(ctx context.Context, accountId AccountId, params *ListAccountOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAccountOccurrencesRequest(c.Server, accountId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -4575,6 +5379,25 @@ func (c *Client) ResolveFaults(ctx context.Context, accountId AccountId, project
 	return c.Client.Do(req)
 }
 
+// GetFaultSummary Get fault counts by environment and state
+//
+// Project-wide fault counts, grouped by environment and by resolved/ignored state.
+//
+// Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+//
+// Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/summary (the `GetFaultSummary` operationId).
+func (c *Client) GetFaultSummary(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetFaultSummaryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFaultSummaryRequest(c.Server, accountId, projectId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // UnignoreFaultsWithBody Unignore faults
 //
 // Removes the ignored status from one or more faults.
@@ -4728,8 +5551,8 @@ func (c *Client) UpdateFault(ctx context.Context, accountId AccountId, projectId
 // Returns users affected by a fault.
 //
 // Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
-func (c *Client) ListFaultAffectedUsers(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListFaultAffectedUsersRequest(c.Server, accountId, projectId, faultId)
+func (c *Client) ListFaultAffectedUsers(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFaultAffectedUsersRequest(c.Server, accountId, projectId, faultId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -5098,6 +5921,25 @@ func (c *Client) RunInsightsQueryWithBody(ctx context.Context, accountId Account
 // Corresponds with POST /accounts/{account_id}/projects/{project_id}/insights/queries (the `RunInsightsQuery` operationId).
 func (c *Client) RunInsightsQuery(ctx context.Context, accountId AccountId, projectId ProjectId, body RunInsightsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRunInsightsQueryRequest(c.Server, accountId, projectId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetProjectOccurrences Get bucketed notice counts for a project
+//
+// Notice counts over a fixed window, bucketed by interval.
+//
+// The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+//
+// Corresponds with GET /accounts/{account_id}/projects/{project_id}/occurrences (the `GetProjectOccurrences` operationId).
+func (c *Client) GetProjectOccurrences(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetProjectOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProjectOccurrencesRequest(c.Server, accountId, projectId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -6769,6 +7611,103 @@ func NewCreateProjectRequestWithBody(server string, accountId AccountId, content
 	return req, nil
 }
 
+// NewListAccountOccurrencesRequest constructs an http.Request for the ListAccountOccurrences method
+func NewListAccountOccurrencesRequest(server string, accountId AccountId, params *ListAccountOccurrencesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "account_id", accountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/projects/occurrences", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Period != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "period", *params.Period, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Environment != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "environment", *params.Environment, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewDeleteProjectRequest constructs an http.Request for the DeleteProject method
 func NewDeleteProjectRequest(server string, accountId AccountId, projectId ProjectId) (*http.Request, error) {
 	var err error
@@ -7829,7 +8768,7 @@ func NewListCheckInEventsRequest(server string, accountId AccountId, projectId P
 
 		if params.CreatedBefore != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -8809,6 +9748,54 @@ func NewListFaultsRequest(server string, accountId AccountId, projectId ProjectI
 
 		}
 
+		if params.Order != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "order", *params.Order, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedAfter != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_after", *params.CreatedAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.OccurredAfter != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "occurred_after", *params.OccurredAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.OccurredBefore != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "occurred_before", *params.OccurredBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -8927,6 +9914,110 @@ func NewResolveFaultsRequestWithBody(server string, accountId AccountId, project
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetFaultSummaryRequest constructs an http.Request for the GetFaultSummary method
+func NewGetFaultSummaryRequest(server string, accountId AccountId, projectId ProjectId, params *GetFaultSummaryParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "account_id", accountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/projects/%s/faults/summary", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Q != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "q", *params.Q, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.CreatedAfter != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_after", *params.CreatedAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.OccurredAfter != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "occurred_after", *params.OccurredAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.OccurredBefore != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "occurred_before", *params.OccurredBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -9197,7 +10288,7 @@ func NewUpdateFaultRequestWithBody(server string, accountId AccountId, projectId
 }
 
 // NewListFaultAffectedUsersRequest constructs an http.Request for the ListFaultAffectedUsers method
-func NewListFaultAffectedUsersRequest(server string, accountId AccountId, projectId ProjectId, faultId FaultId) (*http.Request, error) {
+func NewListFaultAffectedUsersRequest(server string, accountId AccountId, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -9234,6 +10325,33 @@ func NewListFaultAffectedUsersRequest(server string, accountId AccountId, projec
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Q != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "q", *params.Q, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
@@ -10145,6 +11263,86 @@ func NewRunInsightsQueryRequestWithBody(server string, accountId AccountId, proj
 	return req, nil
 }
 
+// NewGetProjectOccurrencesRequest constructs an http.Request for the GetProjectOccurrences method
+func NewGetProjectOccurrencesRequest(server string, accountId AccountId, projectId ProjectId, params *GetProjectOccurrencesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "account_id", accountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/projects/%s/occurrences", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Period != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "period", *params.Period, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Environment != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "environment", *params.Environment, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListSitesRequest constructs an http.Request for the ListSites method
 func NewListSitesRequest(server string, accountId AccountId, projectId ProjectId, params *ListSitesParams) (*http.Request, error) {
 	var err error
@@ -10499,7 +11697,7 @@ func NewListUptimeChecksRequest(server string, accountId AccountId, projectId Pr
 
 		if params.CreatedAfter != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_after", *params.CreatedAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_after", *params.CreatedAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -10511,7 +11709,7 @@ func NewListUptimeChecksRequest(server string, accountId AccountId, projectId Pr
 
 		if params.CreatedBefore != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -10598,7 +11796,7 @@ func NewListOutagesRequest(server string, accountId AccountId, projectId Project
 
 		if params.CreatedAfter != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_after", *params.CreatedAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_after", *params.CreatedAfter, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -10610,7 +11808,7 @@ func NewListOutagesRequest(server string, accountId AccountId, projectId Project
 
 		if params.CreatedBefore != nil {
 
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: ""}); err != nil {
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "created_before", *params.CreatedBefore, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "number", Format: "double"}); err != nil {
 				return nil, err
 			} else {
 				for _, qp := range strings.Split(queryFrag, "&") {
@@ -12728,6 +13926,19 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /accounts/{account_id}/projects (the `CreateProject` operationId).
 	CreateProjectWithResponse(ctx context.Context, accountId AccountId, body CreateProjectJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateProjectResponse, error)
 
+	// ListAccountOccurrencesWithResponse Get bucketed notice counts for every project on the account
+	//
+	// The same series as the per-project form, one per project the caller can read, ordered by project name.
+	//
+	// v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
+	//
+	// Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /accounts/{account_id}/projects/occurrences (the `ListAccountOccurrences` operationId).
+	ListAccountOccurrencesWithResponse(ctx context.Context, accountId AccountId, params *ListAccountOccurrencesParams, reqEditors ...RequestEditorFn) (*ListAccountOccurrencesResponse, error)
+
 	// DeleteProjectWithResponse Delete a project
 	//
 	// Permanently deletes a project and all its data.
@@ -13202,6 +14413,17 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/faults/resolve (the `ResolveFaults` operationId).
 	ResolveFaultsWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, body ResolveFaultsJSONRequestBody, reqEditors ...RequestEditorFn) (*ResolveFaultsResponse, error)
 
+	// GetFaultSummaryWithResponse Get fault counts by environment and state
+	//
+	// Project-wide fault counts, grouped by environment and by resolved/ignored state.
+	//
+	// Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/summary (the `GetFaultSummary` operationId).
+	GetFaultSummaryWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetFaultSummaryParams, reqEditors ...RequestEditorFn) (*GetFaultSummaryResponse, error)
+
 	// UnignoreFaultsWithBodyWithResponse Unignore faults
 	//
 	// Removes the ignored status from one or more faults.
@@ -13281,7 +14503,7 @@ type ClientWithResponsesInterface interface {
 	// Returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
-	ListFaultAffectedUsersWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*ListFaultAffectedUsersResponse, error)
+	ListFaultAffectedUsersWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*ListFaultAffectedUsersResponse, error)
 
 	// UnassignFaultWithResponse Unassign a fault
 	//
@@ -13470,6 +14692,17 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with POST /accounts/{account_id}/projects/{project_id}/insights/queries (the `RunInsightsQuery` operationId).
 	RunInsightsQueryWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, body RunInsightsQueryJSONRequestBody, reqEditors ...RequestEditorFn) (*RunInsightsQueryResponse, error)
+
+	// GetProjectOccurrencesWithResponse Get bucketed notice counts for a project
+	//
+	// Notice counts over a fixed window, bucketed by interval.
+	//
+	// The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /accounts/{account_id}/projects/{project_id}/occurrences (the `GetProjectOccurrences` operationId).
+	GetProjectOccurrencesWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetProjectOccurrencesParams, reqEditors ...RequestEditorFn) (*GetProjectOccurrencesResponse, error)
 
 	// ListSitesWithResponse List sites
 	//
@@ -13969,13 +15202,11 @@ type ListAccountsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Account `json:"data,omitempty"`
+		Data []Account `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -13986,13 +15217,11 @@ type ListAccountsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAccountsResponse) GetJSON200() *struct {
-	Data *[]Account `json:"data,omitempty"`
+	Data []Account `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -14040,10 +15269,8 @@ type GetAccountResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A Honeybadger account
-		Data *Account `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Account       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14056,10 +15283,8 @@ type GetAccountResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetAccountResponse) GetJSON200() *struct {
 	// Data A Honeybadger account
-	Data *Account `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Account       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -14113,13 +15338,11 @@ type ListAccountInvitationsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]AccountInvitation `json:"data,omitempty"`
+		Data []AccountInvitation `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -14134,13 +15357,11 @@ type ListAccountInvitationsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAccountInvitationsResponse) GetJSON200() *struct {
-	Data *[]AccountInvitation `json:"data,omitempty"`
+	Data []AccountInvitation `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -14198,10 +15419,8 @@ type CreateAccountInvitationResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An invitation to join an account
-		Data *AccountInvitation `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data AccountInvitation `json:"data"`
+		Meta *ResponseMeta     `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14212,10 +15431,8 @@ type CreateAccountInvitationResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateAccountInvitationResponse) GetJSON201() *struct {
 	// Data An invitation to join an account
-	Data *AccountInvitation `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data AccountInvitation `json:"data"`
+	Meta *ResponseMeta     `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -14320,10 +15537,8 @@ type GetAccountInvitationResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An invitation to join an account
-		Data *AccountInvitation `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data AccountInvitation `json:"data"`
+		Meta *ResponseMeta     `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14336,10 +15551,8 @@ type GetAccountInvitationResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetAccountInvitationResponse) GetJSON200() *struct {
 	// Data An invitation to join an account
-	Data *AccountInvitation `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data AccountInvitation `json:"data"`
+	Meta *ResponseMeta     `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -14394,10 +15607,8 @@ type UpdateAccountInvitationResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An invitation to join an account
-		Data *AccountInvitation `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data AccountInvitation `json:"data"`
+		Meta *ResponseMeta     `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14410,10 +15621,8 @@ type UpdateAccountInvitationResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateAccountInvitationResponse) GetJSON200() *struct {
 	// Data An invitation to join an account
-	Data *AccountInvitation `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data AccountInvitation `json:"data"`
+	Meta *ResponseMeta     `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -14467,13 +15676,11 @@ type ListAccountMembersResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]AccountMember `json:"data,omitempty"`
+		Data []AccountMember `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -14488,13 +15695,11 @@ type ListAccountMembersResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAccountMembersResponse) GetJSON200() *struct {
-	Data *[]AccountMember `json:"data,omitempty"`
+	Data []AccountMember `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -14607,10 +15812,8 @@ type GetAccountMemberResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A member of an account
-		Data *AccountMember `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data AccountMember `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14623,10 +15826,8 @@ type GetAccountMemberResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetAccountMemberResponse) GetJSON200() *struct {
 	// Data A member of an account
-	Data *AccountMember `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data AccountMember `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -14681,10 +15882,8 @@ type UpdateAccountMemberResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A member of an account
-		Data *AccountMember `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data AccountMember `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14697,10 +15896,8 @@ type UpdateAccountMemberResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateAccountMemberResponse) GetJSON200() *struct {
 	// Data A member of an account
-	Data *AccountMember `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data AccountMember `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -14754,13 +15951,11 @@ type ListProjectsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Project `json:"data,omitempty"`
+		Data []Project `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -14775,13 +15970,11 @@ type ListProjectsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListProjectsResponse) GetJSON200() *struct {
-	Data *[]Project `json:"data,omitempty"`
+	Data []Project `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -14839,10 +16032,8 @@ type CreateProjectResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data A Honeybadger project
-		Data *Project `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Project       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14853,10 +16044,8 @@ type CreateProjectResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateProjectResponse) GetJSON201() *struct {
 	// Data A Honeybadger project
-	Data *Project `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Project       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -14894,6 +16083,93 @@ func (r CreateProjectResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r CreateProjectResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type ListAccountOccurrencesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Data []OccurrenceSeries `json:"data"`
+
+		// Links Navigation links for a numbered-page collection
+		Links *OffsetLinks    `json:"links,omitempty"`
+		Meta  *OccurrenceMeta `json:"meta,omitempty"`
+
+		// Pagination Offset-based pagination information
+		Pagination *Pagination `json:"pagination,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *AmbiguousAccount
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *RateLimitExceeded
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListAccountOccurrencesResponse) GetJSON200() *struct {
+	Data []OccurrenceSeries `json:"data"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks    `json:"links,omitempty"`
+	Meta  *OccurrenceMeta `json:"meta,omitempty"`
+
+	// Pagination Offset-based pagination information
+	Pagination *Pagination `json:"pagination,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r ListAccountOccurrencesResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r ListAccountOccurrencesResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r ListAccountOccurrencesResponse) GetJSON422() *AmbiguousAccount {
+	return r.JSON422
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r ListAccountOccurrencesResponse) GetJSON429() *RateLimitExceeded {
+	return r.JSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListAccountOccurrencesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAccountOccurrencesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAccountOccurrencesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListAccountOccurrencesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -14961,10 +16237,8 @@ type GetProjectResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A Honeybadger project
-		Data *Project `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Project       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -14977,10 +16251,8 @@ type GetProjectResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetProjectResponse) GetJSON200() *struct {
 	// Data A Honeybadger project
-	Data *Project `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Project       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15035,10 +16307,8 @@ type UpdateProjectResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A Honeybadger project
-		Data *Project `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Project       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15051,10 +16321,8 @@ type UpdateProjectResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateProjectResponse) GetJSON200() *struct {
 	// Data A Honeybadger project
-	Data *Project `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Project       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15108,10 +16376,8 @@ type ListAlarmsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Alarm `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data []Alarm       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15123,10 +16389,8 @@ type ListAlarmsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAlarmsResponse) GetJSON200() *struct {
-	Data *[]Alarm `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data []Alarm       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15181,10 +16445,8 @@ type CreateAlarmResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An Insights alarm
-		Data *Alarm `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Alarm         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15195,10 +16457,8 @@ type CreateAlarmResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateAlarmResponse) GetJSON201() *struct {
 	// Data An Insights alarm
-	Data *Alarm `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Alarm         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -15303,10 +16563,8 @@ type GetAlarmResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An Insights alarm
-		Data *Alarm `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Alarm         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15319,10 +16577,8 @@ type GetAlarmResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetAlarmResponse) GetJSON200() *struct {
 	// Data An Insights alarm
-	Data *Alarm `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Alarm         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15377,10 +16633,8 @@ type UpdateAlarmResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An Insights alarm
-		Data *Alarm `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Alarm         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15393,10 +16647,8 @@ type UpdateAlarmResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateAlarmResponse) GetJSON200() *struct {
 	// Data An Insights alarm
-	Data *Alarm `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Alarm         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15450,10 +16702,8 @@ type ListAlarmHistoryResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data []map[string]interface{} `json:"data"`
+		Meta *ResponseMeta            `json:"meta,omitempty"`
 
 		// Pagination The query service's paging object, passed through
 		Pagination *struct {
@@ -15471,10 +16721,8 @@ type ListAlarmHistoryResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListAlarmHistoryResponse) GetJSON200() *struct {
-	Data *[]map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data []map[string]interface{} `json:"data"`
+	Meta *ResponseMeta            `json:"meta,omitempty"`
 
 	// Pagination The query service's paging object, passed through
 	Pagination *struct {
@@ -15534,13 +16782,11 @@ type ListChannelsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Channel `json:"data,omitempty"`
+		Data []Channel `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -15555,13 +16801,11 @@ type ListChannelsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListChannelsResponse) GetJSON200() *struct {
-	Data *[]Channel `json:"data,omitempty"`
+	Data []Channel `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -15619,10 +16863,8 @@ type GetChannelResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A notification channel
-		Data *Channel `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Channel       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15635,10 +16877,8 @@ type GetChannelResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetChannelResponse) GetJSON200() *struct {
 	// Data A notification channel
-	Data *Channel `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Channel       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15693,10 +16933,8 @@ type UpdateChannelResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A notification channel
-		Data *Channel `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Channel       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15709,10 +16947,8 @@ type UpdateChannelResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateChannelResponse) GetJSON200() *struct {
 	// Data A notification channel
-	Data *Channel `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Channel       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -15766,13 +17002,11 @@ type ListCheckInsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]CheckIn `json:"data,omitempty"`
+		Data []CheckIn `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -15787,13 +17021,11 @@ type ListCheckInsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListCheckInsResponse) GetJSON200() *struct {
-	Data *[]CheckIn `json:"data,omitempty"`
+	Data []CheckIn `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -15851,10 +17083,8 @@ type CreateCheckInResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data A scheduled task check-in monitor
-		Data *CheckIn `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data CheckIn       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15865,10 +17095,8 @@ type CreateCheckInResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateCheckInResponse) GetJSON201() *struct {
 	// Data A scheduled task check-in monitor
-	Data *CheckIn `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data CheckIn       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -15917,10 +17145,8 @@ type BulkUpdateCheckInsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]CheckIn `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data []CheckIn     `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -15932,10 +17158,8 @@ type BulkUpdateCheckInsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r BulkUpdateCheckInsResponse) GetJSON200() *struct {
-	Data *[]CheckIn `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data []CheckIn     `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16045,10 +17269,8 @@ type GetCheckInResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A scheduled task check-in monitor
-		Data *CheckIn `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data CheckIn       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16061,10 +17283,8 @@ type GetCheckInResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetCheckInResponse) GetJSON200() *struct {
 	// Data A scheduled task check-in monitor
-	Data *CheckIn `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data CheckIn       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16119,10 +17339,8 @@ type UpdateCheckInResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A scheduled task check-in monitor
-		Data *CheckIn `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data CheckIn       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16135,10 +17353,8 @@ type UpdateCheckInResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateCheckInResponse) GetJSON200() *struct {
 	// Data A scheduled task check-in monitor
-	Data *CheckIn `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data CheckIn       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16192,13 +17408,11 @@ type ListCheckInEventsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]CheckInEvent `json:"data,omitempty"`
+		Data []CheckInEvent `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -16213,13 +17427,11 @@ type ListCheckInEventsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListCheckInEventsResponse) GetJSON200() *struct {
-	Data *[]CheckInEvent `json:"data,omitempty"`
+	Data []CheckInEvent `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -16276,13 +17488,11 @@ type ListDashboardsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Dashboard `json:"data,omitempty"`
+		Data []Dashboard `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -16297,13 +17507,11 @@ type ListDashboardsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListDashboardsResponse) GetJSON200() *struct {
-	Data *[]Dashboard `json:"data,omitempty"`
+	Data []Dashboard `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -16361,10 +17569,8 @@ type CreateDashboardResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An Insights dashboard
-		Data *Dashboard `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Dashboard     `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16375,10 +17581,8 @@ type CreateDashboardResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateDashboardResponse) GetJSON201() *struct {
 	// Data An Insights dashboard
-	Data *Dashboard `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Dashboard     `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -16483,10 +17687,8 @@ type GetDashboardResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An Insights dashboard
-		Data *Dashboard `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Dashboard     `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16499,10 +17701,8 @@ type GetDashboardResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetDashboardResponse) GetJSON200() *struct {
 	// Data An Insights dashboard
-	Data *Dashboard `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Dashboard     `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16557,10 +17757,8 @@ type UpdateDashboardResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An Insights dashboard
-		Data *Dashboard `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Dashboard     `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16573,10 +17771,8 @@ type UpdateDashboardResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateDashboardResponse) GetJSON200() *struct {
 	// Data An Insights dashboard
-	Data *Dashboard `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Dashboard     `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16630,13 +17826,11 @@ type ListDeploysResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Deploy `json:"data,omitempty"`
+		Data []Deploy `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -16651,13 +17845,11 @@ type ListDeploysResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListDeploysResponse) GetJSON200() *struct {
-	Data *[]Deploy `json:"data,omitempty"`
+	Data []Deploy `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -16770,10 +17962,8 @@ type GetDeployResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A deploy event
-		Data *Deploy `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Deploy        `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16786,10 +17976,8 @@ type GetDeployResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetDeployResponse) GetJSON200() *struct {
 	// Data A deploy event
-	Data *Deploy `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Deploy        `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -16843,13 +18031,11 @@ type ListEnvironmentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Environment `json:"data,omitempty"`
+		Data []Environment `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -16864,13 +18050,11 @@ type ListEnvironmentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListEnvironmentsResponse) GetJSON200() *struct {
-	Data *[]Environment `json:"data,omitempty"`
+	Data []Environment `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -16928,10 +18112,8 @@ type CreateEnvironmentResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data A project environment configuration
-		Data *Environment `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Environment   `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -16942,10 +18124,8 @@ type CreateEnvironmentResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateEnvironmentResponse) GetJSON201() *struct {
 	// Data A project environment configuration
-	Data *Environment `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Environment   `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -16994,13 +18174,11 @@ type BulkDeleteEnvironmentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *struct {
+		Data struct {
 			// DestroyedCount Number of environments deleted
 			DestroyedCount *int `json:"destroyed_count,omitempty"`
-		} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		} `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17012,13 +18190,11 @@ type BulkDeleteEnvironmentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r BulkDeleteEnvironmentsResponse) GetJSON200() *struct {
-	Data *struct {
+	Data struct {
 		// DestroyedCount Number of environments deleted
 		DestroyedCount *int `json:"destroyed_count,omitempty"`
-	} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	} `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17072,13 +18248,11 @@ type BulkUpdateEnvironmentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *struct {
+		Data struct {
 			// AffectedCount Number of environments updated
 			AffectedCount *int `json:"affected_count,omitempty"`
-		} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		} `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17090,13 +18264,11 @@ type BulkUpdateEnvironmentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r BulkUpdateEnvironmentsResponse) GetJSON200() *struct {
-	Data *struct {
+	Data struct {
 		// AffectedCount Number of environments updated
 		AffectedCount *int `json:"affected_count,omitempty"`
-	} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	} `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17206,10 +18378,8 @@ type GetEnvironmentResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A project environment configuration
-		Data *Environment `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Environment   `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17222,10 +18392,8 @@ type GetEnvironmentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetEnvironmentResponse) GetJSON200() *struct {
 	// Data A project environment configuration
-	Data *Environment `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Environment   `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17280,10 +18448,8 @@ type UpdateEnvironmentResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A project environment configuration
-		Data *Environment `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Environment   `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17296,10 +18462,8 @@ type UpdateEnvironmentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateEnvironmentResponse) GetJSON200() *struct {
 	// Data A project environment configuration
-	Data *Environment `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Environment   `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17353,13 +18517,11 @@ type ListFaultsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Fault `json:"data,omitempty"`
+		Data []Fault `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -17374,13 +18536,11 @@ type ListFaultsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListFaultsResponse) GetJSON200() *struct {
-	Data *[]Fault `json:"data,omitempty"`
+	Data []Fault `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -17437,10 +18597,8 @@ type IgnoreFaultsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17452,10 +18610,8 @@ type IgnoreFaultsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r IgnoreFaultsResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17509,10 +18665,8 @@ type ResolveFaultsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17524,10 +18678,8 @@ type ResolveFaultsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ResolveFaultsResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17576,15 +18728,114 @@ func (r ResolveFaultsResponse) ContentType() string {
 	return ""
 }
 
+type GetFaultSummaryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Data struct {
+			// Environments One entry per distinct environment/resolved/ignored combination present. Combinations with no faults are absent rather than zero.
+			Environments []struct {
+				Count int `json:"count"`
+
+				// Environment Null for faults recorded with no environment
+				Environment nullable.Nullable[string] `json:"environment"`
+				Ignored     bool                      `json:"ignored"`
+				Resolved    bool                      `json:"resolved"`
+			} `json:"environments"`
+
+			// Total Total faults matching the filter
+			Total int `json:"total"`
+		} `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *AmbiguousAccount
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *RateLimitExceeded
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetFaultSummaryResponse) GetJSON200() *struct {
+	Data struct {
+		// Environments One entry per distinct environment/resolved/ignored combination present. Combinations with no faults are absent rather than zero.
+		Environments []struct {
+			Count int `json:"count"`
+
+			// Environment Null for faults recorded with no environment
+			Environment nullable.Nullable[string] `json:"environment"`
+			Ignored     bool                      `json:"ignored"`
+			Resolved    bool                      `json:"resolved"`
+		} `json:"environments"`
+
+		// Total Total faults matching the filter
+		Total int `json:"total"`
+	} `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetFaultSummaryResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetFaultSummaryResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r GetFaultSummaryResponse) GetJSON422() *AmbiguousAccount {
+	return r.JSON422
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r GetFaultSummaryResponse) GetJSON429() *RateLimitExceeded {
+	return r.JSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetFaultSummaryResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetFaultSummaryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetFaultSummaryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetFaultSummaryResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type UnignoreFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17596,10 +18847,8 @@ type UnignoreFaultsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UnignoreFaultsResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17653,10 +18902,8 @@ type UnresolveFaultsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17668,10 +18915,8 @@ type UnresolveFaultsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UnresolveFaultsResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17781,10 +19026,8 @@ type GetFaultResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17797,10 +19040,8 @@ type GetFaultResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetFaultResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17855,10 +19096,8 @@ type UpdateFaultResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17871,10 +19110,8 @@ type UpdateFaultResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateFaultResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -17928,10 +19165,8 @@ type ListFaultAffectedUsersResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -17943,10 +19178,8 @@ type ListFaultAffectedUsersResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListFaultAffectedUsersResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18001,10 +19234,8 @@ type UnassignFaultResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18017,10 +19248,8 @@ type UnassignFaultResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UnassignFaultResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18075,10 +19304,8 @@ type AssignFaultResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18091,10 +19318,8 @@ type AssignFaultResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r AssignFaultResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18148,13 +19373,11 @@ type ListCommentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Comment `json:"data,omitempty"`
+		Data []Comment `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -18169,13 +19392,11 @@ type ListCommentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListCommentsResponse) GetJSON200() *struct {
-	Data *[]Comment `json:"data,omitempty"`
+	Data []Comment `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -18233,10 +19454,8 @@ type CreateCommentResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data A comment on a fault
-		Data *Comment `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Comment       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18249,10 +19468,8 @@ type CreateCommentResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateCommentResponse) GetJSON201() *struct {
 	// Data A comment on a fault
-	Data *Comment `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Comment       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -18362,10 +19579,8 @@ type GetCommentResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A comment on a fault
-		Data *Comment `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Comment       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18378,10 +19593,8 @@ type GetCommentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetCommentResponse) GetJSON200() *struct {
 	// Data A comment on a fault
-	Data *Comment `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Comment       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18436,10 +19649,8 @@ type UpdateCommentResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A comment on a fault
-		Data *Comment `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Comment       `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18452,10 +19663,8 @@ type UpdateCommentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateCommentResponse) GetJSON200() *struct {
 	// Data A comment on a fault
-	Data *Comment `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Comment       `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18510,10 +19719,8 @@ type MergeFaultsResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18526,10 +19733,8 @@ type MergeFaultsResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r MergeFaultsResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18583,13 +19788,11 @@ type ListNoticesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Notice `json:"data,omitempty"`
+		Data []Notice `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -18604,13 +19807,11 @@ type ListNoticesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListNoticesResponse) GetJSON200() *struct {
-	Data *[]Notice `json:"data,omitempty"`
+	Data []Notice `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -18667,10 +19868,8 @@ type ListFaultOccurrencesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18682,10 +19881,8 @@ type ListFaultOccurrencesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListFaultOccurrencesResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18740,10 +19937,8 @@ type PauseFaultRecordingResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18756,10 +19951,8 @@ type PauseFaultRecordingResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r PauseFaultRecordingResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18814,10 +20007,8 @@ type ResumeFaultRecordingResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18830,10 +20021,8 @@ type ResumeFaultRecordingResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ResumeFaultRecordingResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18888,10 +20077,8 @@ type UnsnoozeFaultResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18904,10 +20091,8 @@ type UnsnoozeFaultResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UnsnoozeFaultResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -18962,10 +20147,8 @@ type SnoozeFaultResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A unique error fingerprint (fault)
-		Data *Fault `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Fault         `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -18978,10 +20161,8 @@ type SnoozeFaultResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r SnoozeFaultResponse) GetJSON200() *struct {
 	// Data A unique error fingerprint (fault)
-	Data *Fault `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -19041,7 +20222,7 @@ type RunInsightsQueryResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data Query result, as returned by the query service
-		Data *map[string]interface{} `json:"data,omitempty"`
+		Data map[string]interface{}  `json:"data"`
 		Meta *map[string]interface{} `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
@@ -19053,10 +20234,7 @@ type RunInsightsQueryResponse struct {
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *struct {
 		Error map[string]interface{} `json:"error"`
-		Meta  *struct {
-			// RequestId Unique request identifier for debugging
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON429 the response for an HTTP 429 `application/json` response
 	JSON429 *RateLimitExceeded
@@ -19069,7 +20247,7 @@ type RunInsightsQueryResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r RunInsightsQueryResponse) GetJSON200() *struct {
 	// Data Query result, as returned by the query service
-	Data *map[string]interface{} `json:"data,omitempty"`
+	Data map[string]interface{}  `json:"data"`
 	Meta *map[string]interface{} `json:"meta,omitempty"`
 } {
 	return r.JSON200
@@ -19093,10 +20271,7 @@ func (r RunInsightsQueryResponse) GetJSON404() *NotFound {
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r RunInsightsQueryResponse) GetJSON422() *struct {
 	Error map[string]interface{} `json:"error"`
-	Meta  *struct {
-		// RequestId Unique request identifier for debugging
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON422
 }
@@ -19140,18 +20315,91 @@ func (r RunInsightsQueryResponse) ContentType() string {
 	return ""
 }
 
+type GetProjectOccurrencesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *struct {
+		Data OccurrenceSeries `json:"data"`
+		Meta *OccurrenceMeta  `json:"meta,omitempty"`
+	}
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *AmbiguousAccount
+	// JSON429 the response for an HTTP 429 `application/json` response
+	JSON429 *RateLimitExceeded
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetProjectOccurrencesResponse) GetJSON200() *struct {
+	Data OccurrenceSeries `json:"data"`
+	Meta *OccurrenceMeta  `json:"meta,omitempty"`
+} {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetProjectOccurrencesResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetProjectOccurrencesResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r GetProjectOccurrencesResponse) GetJSON422() *AmbiguousAccount {
+	return r.JSON422
+}
+
+// GetJSON429 returns the response for an HTTP 429 `application/json` response
+func (r GetProjectOccurrencesResponse) GetJSON429() *RateLimitExceeded {
+	return r.JSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetProjectOccurrencesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetProjectOccurrencesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetProjectOccurrencesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetProjectOccurrencesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type ListSitesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Site `json:"data,omitempty"`
+		Data []Site `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -19166,13 +20414,11 @@ type ListSitesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListSitesResponse) GetJSON200() *struct {
-	Data *[]Site `json:"data,omitempty"`
+	Data []Site `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -19230,10 +20476,8 @@ type CreateSiteResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An uptime monitoring site
-		Data *Site `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Site          `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19244,10 +20488,8 @@ type CreateSiteResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateSiteResponse) GetJSON201() *struct {
 	// Data An uptime monitoring site
-	Data *Site `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Site          `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -19352,10 +20594,8 @@ type GetSiteResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An uptime monitoring site
-		Data *Site `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Site          `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19368,10 +20608,8 @@ type GetSiteResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetSiteResponse) GetJSON200() *struct {
 	// Data An uptime monitoring site
-	Data *Site `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Site          `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -19426,10 +20664,8 @@ type UpdateSiteResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An uptime monitoring site
-		Data *Site `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Site          `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19442,10 +20678,8 @@ type UpdateSiteResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateSiteResponse) GetJSON200() *struct {
 	// Data An uptime monitoring site
-	Data *Site `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Site          `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -19499,13 +20733,11 @@ type ListUptimeChecksResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]UptimeCheck `json:"data,omitempty"`
+		Data []UptimeCheck `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -19520,13 +20752,11 @@ type ListUptimeChecksResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListUptimeChecksResponse) GetJSON200() *struct {
-	Data *[]UptimeCheck `json:"data,omitempty"`
+	Data []UptimeCheck `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -19583,13 +20813,11 @@ type ListOutagesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Outage `json:"data,omitempty"`
+		Data []Outage `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -19604,13 +20832,11 @@ type ListOutagesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListOutagesResponse) GetJSON200() *struct {
-	Data *[]Outage `json:"data,omitempty"`
+	Data []Outage `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -19667,10 +20893,8 @@ type GetProjectStatsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19682,10 +20906,8 @@ type GetProjectStatsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetProjectStatsResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -19744,7 +20966,7 @@ type ListStreamsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Stream `json:"data,omitempty"`
+		Data []Stream `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
 		Links *OffsetLinks            `json:"links,omitempty"`
@@ -19769,7 +20991,7 @@ type ListStreamsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListStreamsResponse) GetJSON200() *struct {
-	Data *[]Stream `json:"data,omitempty"`
+	Data []Stream `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
 	Links *OffsetLinks            `json:"links,omitempty"`
@@ -19840,13 +21062,11 @@ type ListStatusPagesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]StatusPage `json:"data,omitempty"`
+		Data []StatusPage `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -19861,13 +21081,11 @@ type ListStatusPagesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListStatusPagesResponse) GetJSON200() *struct {
-	Data *[]StatusPage `json:"data,omitempty"`
+	Data []StatusPage `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -19925,10 +21143,8 @@ type CreateStatusPageResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data A public status page
-		Data *StatusPage `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data StatusPage    `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -19939,10 +21155,8 @@ type CreateStatusPageResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateStatusPageResponse) GetJSON201() *struct {
 	// Data A public status page
-	Data *StatusPage `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data StatusPage    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -20047,10 +21261,8 @@ type GetStatusPageResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A public status page
-		Data *StatusPage `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data StatusPage    `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20063,10 +21275,8 @@ type GetStatusPageResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetStatusPageResponse) GetJSON200() *struct {
 	// Data A public status page
-	Data *StatusPage `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data StatusPage    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20121,10 +21331,8 @@ type UpdateStatusPageResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A public status page
-		Data *StatusPage `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data StatusPage    `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20137,10 +21345,8 @@ type UpdateStatusPageResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateStatusPageResponse) GetJSON200() *struct {
 	// Data A public status page
-	Data *StatusPage `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data StatusPage    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20194,13 +21400,11 @@ type ListStatusPageIncidentsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]StatusPageIncident `json:"data,omitempty"`
+		Data []StatusPageIncident `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -20215,13 +21419,11 @@ type ListStatusPageIncidentsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListStatusPageIncidentsResponse) GetJSON200() *struct {
-	Data *[]StatusPageIncident `json:"data,omitempty"`
+	Data []StatusPageIncident `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -20279,10 +21481,8 @@ type CreateStatusPageIncidentResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-		Data *StatusPageIncident `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data StatusPageIncident `json:"data"`
+		Meta *ResponseMeta      `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20293,10 +21493,8 @@ type CreateStatusPageIncidentResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateStatusPageIncidentResponse) GetJSON201() *struct {
 	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-	Data *StatusPageIncident `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data StatusPageIncident `json:"data"`
+	Meta *ResponseMeta      `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -20401,10 +21599,8 @@ type GetStatusPageIncidentResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-		Data *StatusPageIncident `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data StatusPageIncident `json:"data"`
+		Meta *ResponseMeta      `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20417,10 +21613,8 @@ type GetStatusPageIncidentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetStatusPageIncidentResponse) GetJSON200() *struct {
 	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-	Data *StatusPageIncident `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data StatusPageIncident `json:"data"`
+	Meta *ResponseMeta      `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20475,10 +21669,8 @@ type UpdateStatusPageIncidentResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-		Data *StatusPageIncident `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data StatusPageIncident `json:"data"`
+		Meta *ResponseMeta      `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20491,10 +21683,8 @@ type UpdateStatusPageIncidentResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateStatusPageIncidentResponse) GetJSON200() *struct {
 	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-	Data *StatusPageIncident `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data StatusPageIncident `json:"data"`
+	Meta *ResponseMeta      `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20548,13 +21738,11 @@ type ListIncidentUpdatesResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]IncidentUpdate `json:"data,omitempty"`
+		Data []IncidentUpdate `json:"data"`
 
 		// Links Navigation links for a time-ordered collection
 		Links *TimeSeriesLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 		// Pagination Pagination for a time-ordered collection
 		Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -20569,13 +21757,11 @@ type ListIncidentUpdatesResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListIncidentUpdatesResponse) GetJSON200() *struct {
-	Data *[]IncidentUpdate `json:"data,omitempty"`
+	Data []IncidentUpdate `json:"data"`
 
 	// Links Navigation links for a time-ordered collection
 	Links *TimeSeriesLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 	// Pagination Pagination for a time-ordered collection
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -20633,10 +21819,8 @@ type CreateIncidentUpdateResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-		Data *IncidentUpdate `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data IncidentUpdate `json:"data"`
+		Meta *ResponseMeta  `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20647,10 +21831,8 @@ type CreateIncidentUpdateResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateIncidentUpdateResponse) GetJSON201() *struct {
 	// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-	Data *IncidentUpdate `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data IncidentUpdate `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -20755,10 +21937,8 @@ type GetIncidentUpdateResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-		Data *IncidentUpdate `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data IncidentUpdate `json:"data"`
+		Meta *ResponseMeta  `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20771,10 +21951,8 @@ type GetIncidentUpdateResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetIncidentUpdateResponse) GetJSON200() *struct {
 	// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-	Data *IncidentUpdate `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data IncidentUpdate `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20829,10 +22007,8 @@ type UpdateIncidentUpdateResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-		Data *IncidentUpdate `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data IncidentUpdate `json:"data"`
+		Meta *ResponseMeta  `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -20845,10 +22021,8 @@ type UpdateIncidentUpdateResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateIncidentUpdateResponse) GetJSON200() *struct {
 	// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-	Data *IncidentUpdate `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data IncidentUpdate `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -20902,13 +22076,11 @@ type ListTeamsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]Team `json:"data,omitempty"`
+		Data []Team `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -20923,13 +22095,11 @@ type ListTeamsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamsResponse) GetJSON200() *struct {
-	Data *[]Team `json:"data,omitempty"`
+	Data []Team `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -20987,10 +22157,8 @@ type CreateTeamResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data A team within an account
-		Data *Team `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Team          `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21001,10 +22169,8 @@ type CreateTeamResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateTeamResponse) GetJSON201() *struct {
 	// Data A team within an account
-	Data *Team `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Team          `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -21109,10 +22275,8 @@ type GetTeamResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A team within an account
-		Data *Team `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Team          `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21125,10 +22289,8 @@ type GetTeamResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetTeamResponse) GetJSON200() *struct {
 	// Data A team within an account
-	Data *Team `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Team          `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21183,10 +22345,8 @@ type UpdateTeamResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A team within an account
-		Data *Team `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Team          `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21199,10 +22359,8 @@ type UpdateTeamResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateTeamResponse) GetJSON200() *struct {
 	// Data A team within an account
-	Data *Team `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Team          `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21256,13 +22414,11 @@ type ListTeamInvitationsResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]TeamInvitation `json:"data,omitempty"`
+		Data []TeamInvitation `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -21277,13 +22433,11 @@ type ListTeamInvitationsResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamInvitationsResponse) GetJSON200() *struct {
-	Data *[]TeamInvitation `json:"data,omitempty"`
+	Data []TeamInvitation `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -21341,10 +22495,8 @@ type CreateTeamInvitationResponse struct {
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *struct {
 		// Data An invitation to join a team
-		Data *TeamInvitation `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data TeamInvitation `json:"data"`
+		Meta *ResponseMeta  `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21355,10 +22507,8 @@ type CreateTeamInvitationResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateTeamInvitationResponse) GetJSON201() *struct {
 	// Data An invitation to join a team
-	Data *TeamInvitation `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data TeamInvitation `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 } {
 	return r.JSON201
 }
@@ -21463,10 +22613,8 @@ type GetTeamInvitationResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An invitation to join a team
-		Data *TeamInvitation `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data TeamInvitation `json:"data"`
+		Meta *ResponseMeta  `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21479,10 +22627,8 @@ type GetTeamInvitationResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetTeamInvitationResponse) GetJSON200() *struct {
 	// Data An invitation to join a team
-	Data *TeamInvitation `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data TeamInvitation `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21537,10 +22683,8 @@ type UpdateTeamInvitationResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An invitation to join a team
-		Data *TeamInvitation `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data TeamInvitation `json:"data"`
+		Meta *ResponseMeta  `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21553,10 +22697,8 @@ type UpdateTeamInvitationResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateTeamInvitationResponse) GetJSON200() *struct {
 	// Data An invitation to join a team
-	Data *TeamInvitation `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data TeamInvitation `json:"data"`
+	Meta *ResponseMeta  `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21610,13 +22752,11 @@ type ListTeamMembersResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]TeamMember `json:"data,omitempty"`
+		Data []TeamMember `json:"data"`
 
 		// Links Navigation links for a numbered-page collection
-		Links *OffsetLinks `json:"links,omitempty"`
-		Meta  *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Links *OffsetLinks  `json:"links,omitempty"`
+		Meta  *ResponseMeta `json:"meta,omitempty"`
 
 		// Pagination Offset-based pagination information
 		Pagination *Pagination `json:"pagination,omitempty"`
@@ -21631,13 +22771,11 @@ type ListTeamMembersResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamMembersResponse) GetJSON200() *struct {
-	Data *[]TeamMember `json:"data,omitempty"`
+	Data []TeamMember `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks `json:"links,omitempty"`
-	Meta  *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -21750,10 +22888,8 @@ type GetTeamMemberResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A member of a team
-		Data *TeamMember `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data TeamMember    `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21766,10 +22902,8 @@ type GetTeamMemberResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetTeamMemberResponse) GetJSON200() *struct {
 	// Data A member of a team
-	Data *TeamMember `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data TeamMember    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21824,10 +22958,8 @@ type UpdateTeamMemberResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data A member of a team
-		Data *TeamMember `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data TeamMember    `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21840,10 +22972,8 @@ type UpdateTeamMemberResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateTeamMemberResponse) GetJSON200() *struct {
 	// Data A member of a team
-	Data *TeamMember `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data TeamMember    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21897,10 +23027,8 @@ type GetAccountUsageResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *map[string]interface{} `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data map[string]interface{} `json:"data"`
+		Meta *ResponseMeta          `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21912,10 +23040,8 @@ type GetAccountUsageResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetAccountUsageResponse) GetJSON200() *struct {
-	Data *map[string]interface{} `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+	Meta *ResponseMeta          `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -21970,10 +23096,8 @@ type GetNoticeResponse struct {
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
 		// Data An individual error occurrence
-		Data *Notice `json:"data,omitempty"`
-		Meta *struct {
-			RequestId *string `json:"request_id,omitempty"`
-		} `json:"meta,omitempty"`
+		Data Notice        `json:"data"`
+		Meta *ResponseMeta `json:"meta,omitempty"`
 	}
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
@@ -21984,10 +23108,8 @@ type GetNoticeResponse struct {
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetNoticeResponse) GetJSON200() *struct {
 	// Data An individual error occurrence
-	Data *Notice `json:"data,omitempty"`
-	Meta *struct {
-		RequestId *string `json:"request_id,omitempty"`
-	} `json:"meta,omitempty"`
+	Data Notice        `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 } {
 	return r.JSON200
 }
@@ -22376,6 +23498,25 @@ func (c *ClientWithResponses) CreateProjectWithResponse(ctx context.Context, acc
 		return nil, err
 	}
 	return ParseCreateProjectResponse(rsp)
+}
+
+// ListAccountOccurrencesWithResponse Get bucketed notice counts for every project on the account
+//
+// The same series as the per-project form, one per project the caller can read, ordered by project name.
+//
+// v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
+//
+// Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /accounts/{account_id}/projects/occurrences (the `ListAccountOccurrences` operationId).
+func (c *ClientWithResponses) ListAccountOccurrencesWithResponse(ctx context.Context, accountId AccountId, params *ListAccountOccurrencesParams, reqEditors ...RequestEditorFn) (*ListAccountOccurrencesResponse, error) {
+	rsp, err := c.ListAccountOccurrences(ctx, accountId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAccountOccurrencesResponse(rsp)
 }
 
 // DeleteProjectWithResponse Delete a project
@@ -23164,6 +24305,23 @@ func (c *ClientWithResponses) ResolveFaultsWithResponse(ctx context.Context, acc
 	return ParseResolveFaultsResponse(rsp)
 }
 
+// GetFaultSummaryWithResponse Get fault counts by environment and state
+//
+// Project-wide fault counts, grouped by environment and by resolved/ignored state.
+//
+// Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/summary (the `GetFaultSummary` operationId).
+func (c *ClientWithResponses) GetFaultSummaryWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetFaultSummaryParams, reqEditors ...RequestEditorFn) (*GetFaultSummaryResponse, error) {
+	rsp, err := c.GetFaultSummary(ctx, accountId, projectId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetFaultSummaryResponse(rsp)
+}
+
 // UnignoreFaultsWithBodyWithResponse Unignore faults
 //
 // Removes the ignored status from one or more faults.
@@ -23291,8 +24449,8 @@ func (c *ClientWithResponses) UpdateFaultWithResponse(ctx context.Context, accou
 // Returns a wrapper object for the known response body format(s).
 //
 // Corresponds with GET /accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
-func (c *ClientWithResponses) ListFaultAffectedUsersWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*ListFaultAffectedUsersResponse, error) {
-	rsp, err := c.ListFaultAffectedUsers(ctx, accountId, projectId, faultId, reqEditors...)
+func (c *ClientWithResponses) ListFaultAffectedUsersWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*ListFaultAffectedUsersResponse, error) {
+	rsp, err := c.ListFaultAffectedUsers(ctx, accountId, projectId, faultId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -23605,6 +24763,23 @@ func (c *ClientWithResponses) RunInsightsQueryWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseRunInsightsQueryResponse(rsp)
+}
+
+// GetProjectOccurrencesWithResponse Get bucketed notice counts for a project
+//
+// Notice counts over a fixed window, bucketed by interval.
+//
+// The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /accounts/{account_id}/projects/{project_id}/occurrences (the `GetProjectOccurrences` operationId).
+func (c *ClientWithResponses) GetProjectOccurrencesWithResponse(ctx context.Context, accountId AccountId, projectId ProjectId, params *GetProjectOccurrencesParams, reqEditors ...RequestEditorFn) (*GetProjectOccurrencesResponse, error) {
+	rsp, err := c.GetProjectOccurrences(ctx, accountId, projectId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetProjectOccurrencesResponse(rsp)
 }
 
 // ListSitesWithResponse List sites
@@ -24439,13 +25614,11 @@ func ParseListAccountsResponse(rsp *http.Response) (*ListAccountsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Account `json:"data,omitempty"`
+			Data []Account `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -24484,10 +25657,8 @@ func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A Honeybadger account
-			Data *Account `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Account       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -24536,13 +25707,11 @@ func ParseListAccountInvitationsResponse(rsp *http.Response) (*ListAccountInvita
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]AccountInvitation `json:"data,omitempty"`
+			Data []AccountInvitation `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -24595,10 +25764,8 @@ func ParseCreateAccountInvitationResponse(rsp *http.Response) (*CreateAccountInv
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An invitation to join an account
-			Data *AccountInvitation `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data AccountInvitation `json:"data"`
+			Meta *ResponseMeta     `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -24684,10 +25851,8 @@ func ParseGetAccountInvitationResponse(rsp *http.Response) (*GetAccountInvitatio
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An invitation to join an account
-			Data *AccountInvitation `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data AccountInvitation `json:"data"`
+			Meta *ResponseMeta     `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -24737,10 +25902,8 @@ func ParseUpdateAccountInvitationResponse(rsp *http.Response) (*UpdateAccountInv
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An invitation to join an account
-			Data *AccountInvitation `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data AccountInvitation `json:"data"`
+			Meta *ResponseMeta     `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -24789,13 +25952,11 @@ func ParseListAccountMembersResponse(rsp *http.Response) (*ListAccountMembersRes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]AccountMember `json:"data,omitempty"`
+			Data []AccountMember `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -24891,10 +26052,8 @@ func ParseGetAccountMemberResponse(rsp *http.Response) (*GetAccountMemberRespons
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A member of an account
-			Data *AccountMember `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data AccountMember `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -24944,10 +26103,8 @@ func ParseUpdateAccountMemberResponse(rsp *http.Response) (*UpdateAccountMemberR
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A member of an account
-			Data *AccountMember `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data AccountMember `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -24996,13 +26153,11 @@ func ParseListProjectsResponse(rsp *http.Response) (*ListProjectsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Project `json:"data,omitempty"`
+			Data []Project `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -25055,10 +26210,8 @@ func ParseCreateProjectResponse(rsp *http.Response) (*CreateProjectResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data A Honeybadger project
-			Data *Project `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Project       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25078,6 +26231,69 @@ func ParseCreateProjectResponse(rsp *http.Response) (*CreateProjectResponse, err
 			return nil, err
 		}
 		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAccountOccurrencesResponse parses an HTTP response from a ListAccountOccurrencesWithResponse call
+func ParseListAccountOccurrencesResponse(rsp *http.Response) (*ListAccountOccurrencesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAccountOccurrencesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data []OccurrenceSeries `json:"data"`
+
+			// Links Navigation links for a numbered-page collection
+			Links *OffsetLinks    `json:"links,omitempty"`
+			Meta  *OccurrenceMeta `json:"meta,omitempty"`
+
+			// Pagination Offset-based pagination information
+			Pagination *Pagination `json:"pagination,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest AmbiguousAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest RateLimitExceeded
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
 
 	}
 
@@ -25144,10 +26360,8 @@ func ParseGetProjectResponse(rsp *http.Response) (*GetProjectResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A Honeybadger project
-			Data *Project `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Project       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25197,10 +26411,8 @@ func ParseUpdateProjectResponse(rsp *http.Response) (*UpdateProjectResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A Honeybadger project
-			Data *Project `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Project       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25249,10 +26461,8 @@ func ParseListAlarmsResponse(rsp *http.Response) (*ListAlarmsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Alarm `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data []Alarm       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25302,10 +26512,8 @@ func ParseCreateAlarmResponse(rsp *http.Response) (*CreateAlarmResponse, error) 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An Insights alarm
-			Data *Alarm `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Alarm         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25391,10 +26599,8 @@ func ParseGetAlarmResponse(rsp *http.Response) (*GetAlarmResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An Insights alarm
-			Data *Alarm `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Alarm         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25444,10 +26650,8 @@ func ParseUpdateAlarmResponse(rsp *http.Response) (*UpdateAlarmResponse, error) 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An Insights alarm
-			Data *Alarm `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Alarm         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25496,10 +26700,8 @@ func ParseListAlarmHistoryResponse(rsp *http.Response) (*ListAlarmHistoryRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data []map[string]interface{} `json:"data"`
+			Meta *ResponseMeta            `json:"meta,omitempty"`
 
 			// Pagination The query service's paging object, passed through
 			Pagination *struct {
@@ -25554,13 +26756,11 @@ func ParseListChannelsResponse(rsp *http.Response) (*ListChannelsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Channel `json:"data,omitempty"`
+			Data []Channel `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -25613,10 +26813,8 @@ func ParseGetChannelResponse(rsp *http.Response) (*GetChannelResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A notification channel
-			Data *Channel `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Channel       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25666,10 +26864,8 @@ func ParseUpdateChannelResponse(rsp *http.Response) (*UpdateChannelResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A notification channel
-			Data *Channel `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Channel       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25718,13 +26914,11 @@ func ParseListCheckInsResponse(rsp *http.Response) (*ListCheckInsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]CheckIn `json:"data,omitempty"`
+			Data []CheckIn `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -25777,10 +26971,8 @@ func ParseCreateCheckInResponse(rsp *http.Response) (*CreateCheckInResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data A scheduled task check-in monitor
-			Data *CheckIn `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data CheckIn       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25822,10 +27014,8 @@ func ParseBulkUpdateCheckInsResponse(rsp *http.Response) (*BulkUpdateCheckInsRes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]CheckIn `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data []CheckIn     `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25918,10 +27108,8 @@ func ParseGetCheckInResponse(rsp *http.Response) (*GetCheckInResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A scheduled task check-in monitor
-			Data *CheckIn `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data CheckIn       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -25971,10 +27159,8 @@ func ParseUpdateCheckInResponse(rsp *http.Response) (*UpdateCheckInResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A scheduled task check-in monitor
-			Data *CheckIn `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data CheckIn       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26023,13 +27209,11 @@ func ParseListCheckInEventsResponse(rsp *http.Response) (*ListCheckInEventsRespo
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]CheckInEvent `json:"data,omitempty"`
+			Data []CheckInEvent `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -26081,13 +27265,11 @@ func ParseListDashboardsResponse(rsp *http.Response) (*ListDashboardsResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Dashboard `json:"data,omitempty"`
+			Data []Dashboard `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -26140,10 +27322,8 @@ func ParseCreateDashboardResponse(rsp *http.Response) (*CreateDashboardResponse,
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An Insights dashboard
-			Data *Dashboard `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Dashboard     `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26229,10 +27409,8 @@ func ParseGetDashboardResponse(rsp *http.Response) (*GetDashboardResponse, error
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An Insights dashboard
-			Data *Dashboard `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Dashboard     `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26282,10 +27460,8 @@ func ParseUpdateDashboardResponse(rsp *http.Response) (*UpdateDashboardResponse,
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An Insights dashboard
-			Data *Dashboard `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Dashboard     `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26334,13 +27510,11 @@ func ParseListDeploysResponse(rsp *http.Response) (*ListDeploysResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Deploy `json:"data,omitempty"`
+			Data []Deploy `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -26436,10 +27610,8 @@ func ParseGetDeployResponse(rsp *http.Response) (*GetDeployResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A deploy event
-			Data *Deploy `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Deploy        `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26488,13 +27660,11 @@ func ParseListEnvironmentsResponse(rsp *http.Response) (*ListEnvironmentsRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Environment `json:"data,omitempty"`
+			Data []Environment `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -26547,10 +27717,8 @@ func ParseCreateEnvironmentResponse(rsp *http.Response) (*CreateEnvironmentRespo
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data A project environment configuration
-			Data *Environment `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Environment   `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26592,13 +27760,11 @@ func ParseBulkDeleteEnvironmentsResponse(rsp *http.Response) (*BulkDeleteEnviron
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *struct {
+			Data struct {
 				// DestroyedCount Number of environments deleted
 				DestroyedCount *int `json:"destroyed_count,omitempty"`
-			} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			} `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26647,13 +27813,11 @@ func ParseBulkUpdateEnvironmentsResponse(rsp *http.Response) (*BulkUpdateEnviron
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *struct {
+			Data struct {
 				// AffectedCount Number of environments updated
 				AffectedCount *int `json:"affected_count,omitempty"`
-			} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			} `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26746,10 +27910,8 @@ func ParseGetEnvironmentResponse(rsp *http.Response) (*GetEnvironmentResponse, e
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A project environment configuration
-			Data *Environment `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Environment   `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26799,10 +27961,8 @@ func ParseUpdateEnvironmentResponse(rsp *http.Response) (*UpdateEnvironmentRespo
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A project environment configuration
-			Data *Environment `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Environment   `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26851,13 +28011,11 @@ func ParseListFaultsResponse(rsp *http.Response) (*ListFaultsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Fault `json:"data,omitempty"`
+			Data []Fault `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -26909,10 +28067,8 @@ func ParseIgnoreFaultsResponse(rsp *http.Response) (*IgnoreFaultsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26961,10 +28117,8 @@ func ParseResolveFaultsResponse(rsp *http.Response) (*ResolveFaultsResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -26997,6 +28151,76 @@ func ParseResolveFaultsResponse(rsp *http.Response) (*ResolveFaultsResponse, err
 	return response, nil
 }
 
+// ParseGetFaultSummaryResponse parses an HTTP response from a GetFaultSummaryWithResponse call
+func ParseGetFaultSummaryResponse(rsp *http.Response) (*GetFaultSummaryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetFaultSummaryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data struct {
+				// Environments One entry per distinct environment/resolved/ignored combination present. Combinations with no faults are absent rather than zero.
+				Environments []struct {
+					Count int `json:"count"`
+
+					// Environment Null for faults recorded with no environment
+					Environment nullable.Nullable[string] `json:"environment"`
+					Ignored     bool                      `json:"ignored"`
+					Resolved    bool                      `json:"resolved"`
+				} `json:"environments"`
+
+				// Total Total faults matching the filter
+				Total int `json:"total"`
+			} `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest AmbiguousAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest RateLimitExceeded
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseUnignoreFaultsResponse parses an HTTP response from a UnignoreFaultsWithResponse call
 func ParseUnignoreFaultsResponse(rsp *http.Response) (*UnignoreFaultsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -27013,10 +28237,8 @@ func ParseUnignoreFaultsResponse(rsp *http.Response) (*UnignoreFaultsResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27065,10 +28287,8 @@ func ParseUnresolveFaultsResponse(rsp *http.Response) (*UnresolveFaultsResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27161,10 +28381,8 @@ func ParseGetFaultResponse(rsp *http.Response) (*GetFaultResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27214,10 +28432,8 @@ func ParseUpdateFaultResponse(rsp *http.Response) (*UpdateFaultResponse, error) 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27266,10 +28482,8 @@ func ParseListFaultAffectedUsersResponse(rsp *http.Response) (*ListFaultAffected
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27319,10 +28533,8 @@ func ParseUnassignFaultResponse(rsp *http.Response) (*UnassignFaultResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27372,10 +28584,8 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27424,13 +28634,11 @@ func ParseListCommentsResponse(rsp *http.Response) (*ListCommentsResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Comment `json:"data,omitempty"`
+			Data []Comment `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -27483,10 +28691,8 @@ func ParseCreateCommentResponse(rsp *http.Response) (*CreateCommentResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data A comment on a fault
-			Data *Comment `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Comment       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27579,10 +28785,8 @@ func ParseGetCommentResponse(rsp *http.Response) (*GetCommentResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A comment on a fault
-			Data *Comment `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Comment       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27632,10 +28836,8 @@ func ParseUpdateCommentResponse(rsp *http.Response) (*UpdateCommentResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A comment on a fault
-			Data *Comment `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Comment       `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27685,10 +28887,8 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27737,13 +28937,11 @@ func ParseListNoticesResponse(rsp *http.Response) (*ListNoticesResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Notice `json:"data,omitempty"`
+			Data []Notice `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -27795,10 +28993,8 @@ func ParseListFaultOccurrencesResponse(rsp *http.Response) (*ListFaultOccurrence
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27848,10 +29044,8 @@ func ParsePauseFaultRecordingResponse(rsp *http.Response) (*PauseFaultRecordingR
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27901,10 +29095,8 @@ func ParseResumeFaultRecordingResponse(rsp *http.Response) (*ResumeFaultRecordin
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -27954,10 +29146,8 @@ func ParseUnsnoozeFaultResponse(rsp *http.Response) (*UnsnoozeFaultResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28007,10 +29197,8 @@ func ParseSnoozeFaultResponse(rsp *http.Response) (*SnoozeFaultResponse, error) 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A unique error fingerprint (fault)
-			Data *Fault `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Fault         `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28060,7 +29248,7 @@ func ParseRunInsightsQueryResponse(rsp *http.Response) (*RunInsightsQueryRespons
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data Query result, as returned by the query service
-			Data *map[string]interface{} `json:"data,omitempty"`
+			Data map[string]interface{}  `json:"data"`
 			Meta *map[string]interface{} `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28092,10 +29280,7 @@ func ParseRunInsightsQueryResponse(rsp *http.Response) (*RunInsightsQueryRespons
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest struct {
 			Error map[string]interface{} `json:"error"`
-			Meta  *struct {
-				// RequestId Unique request identifier for debugging
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28134,6 +29319,63 @@ func ParseRunInsightsQueryResponse(rsp *http.Response) (*RunInsightsQueryRespons
 	return response, nil
 }
 
+// ParseGetProjectOccurrencesResponse parses an HTTP response from a GetProjectOccurrencesWithResponse call
+func ParseGetProjectOccurrencesResponse(rsp *http.Response) (*GetProjectOccurrencesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetProjectOccurrencesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data OccurrenceSeries `json:"data"`
+			Meta *OccurrenceMeta  `json:"meta,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest AmbiguousAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest RateLimitExceeded
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON429 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListSitesResponse parses an HTTP response from a ListSitesWithResponse call
 func ParseListSitesResponse(rsp *http.Response) (*ListSitesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -28150,13 +29392,11 @@ func ParseListSitesResponse(rsp *http.Response) (*ListSitesResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Site `json:"data,omitempty"`
+			Data []Site `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -28209,10 +29449,8 @@ func ParseCreateSiteResponse(rsp *http.Response) (*CreateSiteResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An uptime monitoring site
-			Data *Site `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Site          `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28298,10 +29536,8 @@ func ParseGetSiteResponse(rsp *http.Response) (*GetSiteResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An uptime monitoring site
-			Data *Site `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Site          `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28351,10 +29587,8 @@ func ParseUpdateSiteResponse(rsp *http.Response) (*UpdateSiteResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An uptime monitoring site
-			Data *Site `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Site          `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28403,13 +29637,11 @@ func ParseListUptimeChecksResponse(rsp *http.Response) (*ListUptimeChecksRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]UptimeCheck `json:"data,omitempty"`
+			Data []UptimeCheck `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -28461,13 +29693,11 @@ func ParseListOutagesResponse(rsp *http.Response) (*ListOutagesResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Outage `json:"data,omitempty"`
+			Data []Outage `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -28519,10 +29749,8 @@ func ParseGetProjectStatsResponse(rsp *http.Response) (*GetProjectStatsResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28571,7 +29799,7 @@ func ParseListStreamsResponse(rsp *http.Response) (*ListStreamsResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Stream `json:"data,omitempty"`
+			Data []Stream `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
 			Links *OffsetLinks            `json:"links,omitempty"`
@@ -28654,13 +29882,11 @@ func ParseListStatusPagesResponse(rsp *http.Response) (*ListStatusPagesResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]StatusPage `json:"data,omitempty"`
+			Data []StatusPage `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -28713,10 +29939,8 @@ func ParseCreateStatusPageResponse(rsp *http.Response) (*CreateStatusPageRespons
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data A public status page
-			Data *StatusPage `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data StatusPage    `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28802,10 +30026,8 @@ func ParseGetStatusPageResponse(rsp *http.Response) (*GetStatusPageResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A public status page
-			Data *StatusPage `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data StatusPage    `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28855,10 +30077,8 @@ func ParseUpdateStatusPageResponse(rsp *http.Response) (*UpdateStatusPageRespons
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A public status page
-			Data *StatusPage `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data StatusPage    `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -28907,13 +30127,11 @@ func ParseListStatusPageIncidentsResponse(rsp *http.Response) (*ListStatusPageIn
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]StatusPageIncident `json:"data,omitempty"`
+			Data []StatusPageIncident `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -28966,10 +30184,8 @@ func ParseCreateStatusPageIncidentResponse(rsp *http.Response) (*CreateStatusPag
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-			Data *StatusPageIncident `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data StatusPageIncident `json:"data"`
+			Meta *ResponseMeta      `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29055,10 +30271,8 @@ func ParseGetStatusPageIncidentResponse(rsp *http.Response) (*GetStatusPageIncid
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-			Data *StatusPageIncident `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data StatusPageIncident `json:"data"`
+			Meta *ResponseMeta      `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29108,10 +30322,8 @@ func ParseUpdateStatusPageIncidentResponse(rsp *http.Response) (*UpdateStatusPag
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
-			Data *StatusPageIncident `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data StatusPageIncident `json:"data"`
+			Meta *ResponseMeta      `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29160,13 +30372,11 @@ func ParseListIncidentUpdatesResponse(rsp *http.Response) (*ListIncidentUpdatesR
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]IncidentUpdate `json:"data,omitempty"`
+			Data []IncidentUpdate `json:"data"`
 
 			// Links Navigation links for a time-ordered collection
 			Links *TimeSeriesLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Meta  *ResponseMeta    `json:"meta,omitempty"`
 
 			// Pagination Pagination for a time-ordered collection
 			Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
@@ -29219,10 +30429,8 @@ func ParseCreateIncidentUpdateResponse(rsp *http.Response) (*CreateIncidentUpdat
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-			Data *IncidentUpdate `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data IncidentUpdate `json:"data"`
+			Meta *ResponseMeta  `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29308,10 +30516,8 @@ func ParseGetIncidentUpdateResponse(rsp *http.Response) (*GetIncidentUpdateRespo
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-			Data *IncidentUpdate `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data IncidentUpdate `json:"data"`
+			Meta *ResponseMeta  `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29361,10 +30567,8 @@ func ParseUpdateIncidentUpdateResponse(rsp *http.Response) (*UpdateIncidentUpdat
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
-			Data *IncidentUpdate `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data IncidentUpdate `json:"data"`
+			Meta *ResponseMeta  `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29413,13 +30617,11 @@ func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]Team `json:"data,omitempty"`
+			Data []Team `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -29472,10 +30674,8 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data A team within an account
-			Data *Team `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Team          `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29561,10 +30761,8 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A team within an account
-			Data *Team `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Team          `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29614,10 +30812,8 @@ func ParseUpdateTeamResponse(rsp *http.Response) (*UpdateTeamResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A team within an account
-			Data *Team `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Team          `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29666,13 +30862,11 @@ func ParseListTeamInvitationsResponse(rsp *http.Response) (*ListTeamInvitationsR
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]TeamInvitation `json:"data,omitempty"`
+			Data []TeamInvitation `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -29725,10 +30919,8 @@ func ParseCreateTeamInvitationResponse(rsp *http.Response) (*CreateTeamInvitatio
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest struct {
 			// Data An invitation to join a team
-			Data *TeamInvitation `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data TeamInvitation `json:"data"`
+			Meta *ResponseMeta  `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29814,10 +31006,8 @@ func ParseGetTeamInvitationResponse(rsp *http.Response) (*GetTeamInvitationRespo
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An invitation to join a team
-			Data *TeamInvitation `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data TeamInvitation `json:"data"`
+			Meta *ResponseMeta  `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29867,10 +31057,8 @@ func ParseUpdateTeamInvitationResponse(rsp *http.Response) (*UpdateTeamInvitatio
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An invitation to join a team
-			Data *TeamInvitation `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data TeamInvitation `json:"data"`
+			Meta *ResponseMeta  `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -29919,13 +31107,11 @@ func ParseListTeamMembersResponse(rsp *http.Response) (*ListTeamMembersResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]TeamMember `json:"data,omitempty"`
+			Data []TeamMember `json:"data"`
 
 			// Links Navigation links for a numbered-page collection
-			Links *OffsetLinks `json:"links,omitempty"`
-			Meta  *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Links *OffsetLinks  `json:"links,omitempty"`
+			Meta  *ResponseMeta `json:"meta,omitempty"`
 
 			// Pagination Offset-based pagination information
 			Pagination *Pagination `json:"pagination,omitempty"`
@@ -30021,10 +31207,8 @@ func ParseGetTeamMemberResponse(rsp *http.Response) (*GetTeamMemberResponse, err
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A member of a team
-			Data *TeamMember `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data TeamMember    `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -30074,10 +31258,8 @@ func ParseUpdateTeamMemberResponse(rsp *http.Response) (*UpdateTeamMemberRespons
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data A member of a team
-			Data *TeamMember `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data TeamMember    `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -30126,10 +31308,8 @@ func ParseGetAccountUsageResponse(rsp *http.Response) (*GetAccountUsageResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *map[string]interface{} `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data map[string]interface{} `json:"data"`
+			Meta *ResponseMeta          `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -30179,10 +31359,8 @@ func ParseGetNoticeResponse(rsp *http.Response) (*GetNoticeResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Data An individual error occurrence
-			Data *Notice `json:"data,omitempty"`
-			Meta *struct {
-				RequestId *string `json:"request_id,omitempty"`
-			} `json:"meta,omitempty"`
+			Data Notice        `json:"data"`
+			Meta *ResponseMeta `json:"meta,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err

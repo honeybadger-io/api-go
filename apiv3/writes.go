@@ -31,7 +31,7 @@ func (s *ProjectsService) Create(ctx context.Context, name string, opts ...Optio
 // Update renames a project.
 func (s *ProjectsService) Update(ctx context.Context, projectID, name string, opts ...Option) (*Project, error) {
 	ro := resolve(opts)
-	body := gen.UpdateProjectJSONRequestBody{Name: &name}
+	body := gen.UpdateProjectJSONRequestBody{Name: name}
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateProject(ctx, s.client.accountID(ro.accountID), projectID, body)
 	})
@@ -47,50 +47,81 @@ func (s *ProjectsService) Delete(ctx context.Context, projectID string, opts ...
 
 // CheckInParams are the writable fields of a check-in.
 //
-// The spec declares these four. v2 also accepted a slug, a cron schedule, and a
-// timezone, which are not in the v3 request schema yet — see openapi/README.md.
+// The v3 schema now carries everything v2 accepted, including the cron fields
+// that define a cron check-in.
 type CheckInParams struct {
-	Name         string
+	// Name is required on create.
+	Name string
+
+	// ScheduleType is "simple" or "cron". A simple check-in expects a report every
+	// ReportPeriod; a cron one expects them on CronSchedule.
 	ScheduleType string
+
+	// ReportPeriod is required for a simple schedule: a count and a unit
+	// ("10 minutes", "1 day") or HH:MM:SS.
 	ReportPeriod string
-	GracePeriod  string
+
+	// GracePeriod is how long after the expected time before the check-in counts
+	// as missing, in the same format as ReportPeriod.
+	GracePeriod string
+
+	// CronSchedule is required when ScheduleType is "cron".
+	CronSchedule string
+
+	// CronTimezone is a Rails/ActiveSupport zone name rather than an IANA
+	// identifier — "Central Time (US & Canada)", not "America/Chicago", which the
+	// API rejects. Required when ScheduleType is "cron".
+	CronTimezone string
+
+	// Slug is the short identifier in the check-in's reporting URL. Generated from
+	// the name when empty.
+	Slug string
+}
+
+// apply fills a generated request body, leaving unset fields absent so an update
+// touches only what it was given.
+func (p CheckInParams) apply(body *gen.CheckInInput) {
+	body.Name = p.Name
+	if p.ScheduleType != "" {
+		st := gen.CheckInInputScheduleType(p.ScheduleType)
+		body.ScheduleType = &st
+	}
+	for field, value := range map[**string]string{
+		&body.ReportPeriod: p.ReportPeriod,
+		&body.GracePeriod:  p.GracePeriod,
+		&body.CronSchedule: p.CronSchedule,
+		&body.CronTimezone: p.CronTimezone,
+		&body.Slug:         p.Slug,
+	} {
+		if value != "" {
+			v := value
+			*field = &v
+		}
+	}
 }
 
 // Create makes a new check-in.
 func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
 	ro := resolve(opts)
-	body := gen.CreateCheckInJSONRequestBody{Name: p.Name}
-	if p.ScheduleType != "" {
-		body.ScheduleType = &p.ScheduleType
-	}
-	if p.ReportPeriod != "" {
-		body.ReportPeriod = &p.ReportPeriod
-	}
-	if p.GracePeriod != "" {
-		body.GracePeriod = &p.GracePeriod
-	}
+	var body gen.CheckInInput
+	p.apply(&body)
 
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateCheckIn(ctx, s.client.accountID(ro.accountID), projectID, body)
 	})
 }
 
-// Update changes a check-in. Empty fields are omitted, leaving them unchanged.
+// Update changes a check-in.
+//
+// Name is required even when only another field is changing: the API's update body
+// is the same schema as create, with name mandatory. A caller changing just the
+// grace period still has to supply the current name.
+//
+// Every other empty field is omitted, so an update touches only what it was given.
 func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
 	ro := resolve(opts)
-	body := gen.UpdateCheckInJSONRequestBody{}
-	if p.Name != "" {
-		body.Name = &p.Name
-	}
-	if p.ScheduleType != "" {
-		body.ScheduleType = &p.ScheduleType
-	}
-	if p.ReportPeriod != "" {
-		body.ReportPeriod = &p.ReportPeriod
-	}
-	if p.GracePeriod != "" {
-		body.GracePeriod = &p.GracePeriod
-	}
+	var body gen.CheckInInput
+	p.apply(&body)
 
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateCheckIn(ctx, s.client.accountID(ro.accountID), projectID, checkInID, body)
@@ -137,20 +168,24 @@ func (s *AlarmsService) Delete(ctx context.Context, projectID, alarmID string, o
 
 // Create makes a new dashboard.
 //
-// The spec declares only name. v2 accepted title, default_ts, and widgets, so a
-// dashboard created here has no widgets on it.
-func (s *DashboardsService) Create(ctx context.Context, projectID, name string, opts ...Option) (*Dashboard, error) {
+// Title is the field on both sides now: the spec previously wrote it as name
+// while reading it as title, and settled on title.
+func (s *DashboardsService) Create(ctx context.Context, projectID, title string, opts ...Option) (*Dashboard, error) {
 	ro := resolve(opts)
-	body := gen.CreateDashboardJSONRequestBody{Name: name}
+	body := gen.CreateDashboardJSONRequestBody{Title: title, Widgets: nil}
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateDashboard(ctx, s.client.accountID(ro.accountID), projectID, body)
 	})
 }
 
-// Update renames a dashboard. Same caveat as Create.
-func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID, name string, opts ...Option) (*Dashboard, error) {
+// Update renames a dashboard.
+//
+// Widgets are not yet exposed here: the generated widget type is a deep anonymous
+// struct, so a caller could not construct one. Renaming works, which is what MCP
+// needs today.
+func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID, title string, opts ...Option) (*Dashboard, error) {
 	ro := resolve(opts)
-	body := gen.UpdateDashboardJSONRequestBody{Name: &name}
+	body := gen.UpdateDashboardJSONRequestBody{Title: title, Widgets: nil}
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateDashboard(ctx, s.client.accountID(ro.accountID), projectID, dashboardID, body)
 	})

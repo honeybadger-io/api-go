@@ -126,21 +126,51 @@ func TestProjectsCreateSendsRequiredName(t *testing.T) {
 }
 
 // An update omits what it was not given, so unset fields are left alone rather
-// than blanked.
+// than blanked — except name, which the schema requires on update as well as
+// create, so a caller must always supply it.
 func TestCheckInUpdateOmitsUnsetFields(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"c1","name":"Nightly"}}`)
 
 	if _, err := c.CheckIns.Update(context.Background(), "Xk9mZp", "c1",
-		CheckInParams{GracePeriod: "5m"}); err != nil {
+		CheckInParams{Name: "Nightly", GracePeriod: "5m"}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 
 	if got.body["grace_period"] != "5m" {
 		t.Errorf("grace_period = %v", got.body["grace_period"])
 	}
-	for _, absent := range []string{"name", "schedule_type", "report_period"} {
+	if got.body["name"] != "Nightly" {
+		t.Errorf("name = %v; the schema requires it on update", got.body["name"])
+	}
+	for _, absent := range []string{"schedule_type", "report_period", "cron_schedule"} {
 		if _, present := got.body[absent]; present {
 			t.Errorf("%q was sent despite being unset; it would blank the field", absent)
+		}
+	}
+}
+
+// The cron fields exist now, so a cron check-in is expressible.
+func TestCheckInCreateSendsCronSchedule(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"c1","name":"Nightly"}}`)
+
+	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInParams{
+		Name:         "Nightly",
+		ScheduleType: "cron",
+		CronSchedule: "0 3 * * *",
+		// A Rails zone name, not an IANA identifier — the API rejects the latter.
+		CronTimezone: "Central Time (US & Canada)",
+	})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	for key, want := range map[string]any{
+		"schedule_type": "cron",
+		"cron_schedule": "0 3 * * *",
+		"cron_timezone": "Central Time (US & Canada)",
+	} {
+		if got.body[key] != want {
+			t.Errorf("%s = %v, want %v", key, got.body[key], want)
 		}
 	}
 }

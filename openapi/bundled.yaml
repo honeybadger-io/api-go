@@ -237,6 +237,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -247,10 +249,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
       security:
@@ -272,14 +271,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Account"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -305,14 +303,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -340,6 +337,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -350,10 +349,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -385,14 +381,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/AccountMember"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -421,7 +416,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/AccountMemberInput"
       responses:
         '200':
           description: Success
@@ -429,14 +424,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/AccountMember"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -490,6 +484,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -500,10 +496,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -526,13 +519,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - email
-              properties:
-                email:
-                  type: string
-                  format: email
+              "$ref": "#/components/schemas/AccountInvitationInput"
       responses:
         '201':
           description: Invitation created
@@ -540,14 +527,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/AccountInvitation"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -577,14 +563,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/AccountInvitation"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -613,7 +598,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/AccountInvitationInput"
       responses:
         '200':
           description: Success
@@ -621,14 +606,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/AccountInvitation"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -682,6 +666,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -692,10 +678,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -718,12 +701,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/ProjectInput"
       responses:
         '201':
           description: Project created
@@ -731,14 +709,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Project"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -763,14 +740,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Project"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -794,10 +770,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/ProjectInput"
       responses:
         '200':
           description: Success
@@ -805,14 +778,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Project"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -860,20 +832,108 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+      security:
+      - bearer_auth:
+        - projects:read
+  "/accounts/{account_id}/projects/{project_id}/occurrences":
+    get:
+      operationId: getProjectOccurrences
+      summary: Get bucketed notice counts for a project
+      description: |
+        Notice counts over a fixed window, bucketed by interval.
+
+        The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/OccurrencePeriod"
+      - "$ref": "#/components/parameters/OccurrenceEnvironment"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/OccurrenceSeries"
+                  meta:
+                    "$ref": "#/components/schemas/OccurrenceMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+        '429':
+          "$ref": "#/components/responses/RateLimitExceeded"
+      security:
+      - bearer_auth:
+        - projects:read
+  "/accounts/{account_id}/projects/occurrences":
+    get:
+      operationId: listAccountOccurrences
+      summary: Get bucketed notice counts for every project on the account
+      description: |
+        The same series as the per-project form, one per project the caller can read, ordered by project name.
+
+        v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
+
+        Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+      tags:
+      - Projects
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/OccurrencePeriod"
+      - "$ref": "#/components/parameters/OccurrenceEnvironment"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/OccurrenceSeries"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    "$ref": "#/components/schemas/OffsetLinks"
+                  meta:
+                    "$ref": "#/components/schemas/OccurrenceMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+        '429':
+          "$ref": "#/components/responses/RateLimitExceeded"
       security:
       - bearer_auth:
         - projects:read
@@ -899,6 +959,10 @@ paths:
           '
         schema:
           type: string
+      - "$ref": "#/components/parameters/FaultOrder"
+      - "$ref": "#/components/parameters/FaultCreatedAfter"
+      - "$ref": "#/components/parameters/FaultOccurredAfter"
+      - "$ref": "#/components/parameters/FaultOccurredBefore"
       responses:
         '200':
           description: Success
@@ -906,6 +970,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -916,10 +982,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -947,14 +1010,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -979,7 +1041,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/FaultInput"
       responses:
         '200':
           description: Success
@@ -987,14 +1049,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1026,6 +1087,97 @@ paths:
       security:
       - bearer_auth:
         - faults:write
+  "/accounts/{account_id}/projects/{project_id}/faults/summary":
+    get:
+      operationId: getFaultSummary
+      summary: Get fault counts by environment and state
+      description: |
+        Project-wide fault counts, grouped by environment and by resolved/ignored state.
+
+        Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/AccountId"
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: q
+        in: query
+        description: Search filter, the same syntax the fault list accepts
+        schema:
+          type: string
+      - "$ref": "#/components/parameters/CreatedAfter"
+      - name: occurred_after
+        in: query
+        description: Only count faults that occurred after this Unix timestamp
+        schema:
+          type: number
+          format: double
+      - name: occurred_before
+        in: query
+        description: Only count faults that occurred before this Unix timestamp
+        schema:
+          type: number
+          format: double
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: object
+                    required:
+                    - total
+                    - environments
+                    properties:
+                      total:
+                        type: integer
+                        description: Total faults matching the filter
+                        example: 142
+                      environments:
+                        type: array
+                        description: 'One entry per distinct environment/resolved/ignored
+                          combination present. Combinations with no faults are absent
+                          rather than zero.
+
+                          '
+                        items:
+                          type: object
+                          required:
+                          - environment
+                          - resolved
+                          - ignored
+                          - count
+                          properties:
+                            environment:
+                              type:
+                              - string
+                              - 'null'
+                              description: Null for faults recorded with no environment
+                              example: production
+                            resolved:
+                              type: boolean
+                            ignored:
+                              type: boolean
+                            count:
+                              type: integer
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+        '429':
+          "$ref": "#/components/responses/RateLimitExceeded"
+      security:
+      - bearer_auth:
+        - faults:read
   "/accounts/{account_id}/projects/{project_id}/faults/resolve":
     post:
       operationId: resolveFaults
@@ -1056,14 +1208,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1103,14 +1254,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1150,14 +1300,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1197,14 +1346,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1232,14 +1380,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1266,14 +1413,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1299,7 +1445,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/FaultAssignmentInput"
       responses:
         '200':
           description: Success
@@ -1307,14 +1453,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1341,14 +1486,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1389,14 +1533,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1424,14 +1567,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1452,6 +1594,7 @@ paths:
       - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
+      - "$ref": "#/components/parameters/SearchFilter"
       responses:
         '200':
           description: Success
@@ -1459,14 +1602,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1494,14 +1636,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1529,14 +1670,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Fault"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1567,6 +1707,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -1577,10 +1719,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1614,14 +1753,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Notice"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1650,6 +1788,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -1660,10 +1800,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1701,14 +1838,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Comment"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1742,14 +1878,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Comment"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1793,14 +1928,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Comment"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1857,6 +1991,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -1867,10 +2003,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1894,15 +2027,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              - url
-              properties:
-                name:
-                  type: string
-                url:
-                  type: string
+              "$ref": "#/components/schemas/SiteInput"
       responses:
         '201':
           description: Site created
@@ -1910,14 +2035,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Site"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -1948,14 +2072,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Site"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1985,12 +2108,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                url:
-                  type: string
+              "$ref": "#/components/schemas/SiteInput"
       responses:
         '200':
           description: Success
@@ -1998,14 +2116,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Site"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2068,6 +2185,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2078,10 +2197,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2117,6 +2233,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2127,10 +2245,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2159,6 +2274,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2169,10 +2286,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2196,18 +2310,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
-                schedule_type:
-                  type: string
-                report_period:
-                  type: string
-                grace_period:
-                  type: string
+              "$ref": "#/components/schemas/CheckInInput"
       responses:
         '201':
           description: Check-in created
@@ -2215,14 +2318,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/CheckIn"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -2245,7 +2347,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/CheckInBulkUpdateInput"
       responses:
         '200':
           description: Success
@@ -2253,16 +2355,15 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
                     items:
                       "$ref": "#/components/schemas/CheckIn"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2295,14 +2396,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/CheckIn"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2332,16 +2432,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                schedule_type:
-                  type: string
-                report_period:
-                  type: string
-                grace_period:
-                  type: string
+              "$ref": "#/components/schemas/CheckInInput"
       responses:
         '200':
           description: Success
@@ -2349,14 +2440,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/CheckIn"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2421,6 +2511,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2431,10 +2523,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2464,6 +2553,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2474,10 +2565,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2510,14 +2598,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Deploy"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2573,6 +2660,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2583,10 +2672,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2610,12 +2696,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/EnvironmentInput"
       responses:
         '201':
           description: Environment created
@@ -2623,14 +2704,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Environment"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -2661,14 +2741,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Environment"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2698,10 +2777,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/EnvironmentInput"
       responses:
         '200':
           description: Success
@@ -2709,14 +2785,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Environment"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2785,6 +2860,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
@@ -2793,10 +2870,7 @@ paths:
                         type: integer
                         description: Number of environments updated
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2835,6 +2909,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
@@ -2843,10 +2919,7 @@ paths:
                         type: integer
                         description: Number of environments deleted
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2875,6 +2948,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -2885,10 +2960,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2921,14 +2993,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Channel"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2958,7 +3029,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/ChannelInput"
       responses:
         '200':
           description: Success
@@ -2966,14 +3037,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Channel"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3002,6 +3072,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -3012,10 +3084,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3039,12 +3108,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/DashboardInput"
       responses:
         '201':
           description: Dashboard created
@@ -3052,14 +3116,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Dashboard"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -3090,14 +3153,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Dashboard"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3127,10 +3189,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/DashboardInput"
       responses:
         '200':
           description: Success
@@ -3138,14 +3197,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Dashboard"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3202,16 +3260,15 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
                     items:
                       "$ref": "#/components/schemas/Alarm"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3235,12 +3292,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/AlarmCreateInput"
       responses:
         '201':
           description: Alarm created
@@ -3248,14 +3300,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Alarm"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -3286,14 +3337,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Alarm"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3323,10 +3373,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/AlarmUpdateInput"
       responses:
         '200':
           description: Success
@@ -3334,14 +3381,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Alarm"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3405,6 +3451,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -3419,10 +3467,7 @@ paths:
                       total_pages:
                         type: integer
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3450,6 +3495,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -3460,10 +3507,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3486,12 +3530,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/TeamInput"
       responses:
         '201':
           description: Team created
@@ -3499,14 +3538,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Team"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -3536,14 +3574,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Team"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3572,10 +3609,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/TeamInput"
       responses:
         '200':
           description: Success
@@ -3583,14 +3617,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/Team"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3650,6 +3683,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -3660,10 +3695,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3701,14 +3733,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/TeamMember"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3743,7 +3774,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/TeamMemberInput"
       responses:
         '200':
           description: Success
@@ -3751,14 +3782,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/TeamMember"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3824,6 +3854,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -3834,10 +3866,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3866,13 +3895,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - email
-              properties:
-                email:
-                  type: string
-                  format: email
+              "$ref": "#/components/schemas/TeamInvitationInput"
       responses:
         '201':
           description: Invitation created
@@ -3880,14 +3903,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/TeamInvitation"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -3923,14 +3945,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/TeamInvitation"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -3965,7 +3986,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
+              "$ref": "#/components/schemas/TeamInvitationInput"
       responses:
         '200':
           description: Success
@@ -3973,14 +3994,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/TeamInvitation"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4040,6 +4060,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -4050,10 +4072,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4076,12 +4095,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - name
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/StatusPageInput"
       responses:
         '201':
           description: Status page created
@@ -4089,14 +4103,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/StatusPage"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -4126,14 +4139,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/StatusPage"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4162,10 +4174,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
+              "$ref": "#/components/schemas/StatusPageInput"
       responses:
         '200':
           description: Success
@@ -4173,14 +4182,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/StatusPage"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4241,6 +4249,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -4251,10 +4261,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4285,33 +4292,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - incident
-              properties:
-                incident:
-                  type: object
-                  required:
-                  - title
-                  - updates
-                  properties:
-                    title:
-                      type: string
-                    build_type:
-                      type: string
-                      enum:
-                      - current
-                      - retroactive
-                      - scheduled_maintenance
-                    retro_should_notify:
-                      type: boolean
-                    retro_notify_message:
-                      type: string
-                    updates:
-                      type: array
-                      minItems: 1
-                      items:
-                        "$ref": "#/components/schemas/IncidentUpdateInput"
+              "$ref": "#/components/schemas/StatusPageIncidentCreateInput"
       responses:
         '201':
           description: Incident created
@@ -4319,14 +4300,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/StatusPageIncident"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -4362,14 +4342,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/StatusPageIncident"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4406,19 +4385,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - incident
-              properties:
-                incident:
-                  type: object
-                  properties:
-                    title:
-                      type: string
-                    retro_should_notify:
-                      type: boolean
-                    retro_notify_message:
-                      type: string
+              "$ref": "#/components/schemas/StatusPageIncidentUpdateInput"
       responses:
         '200':
           description: Success
@@ -4426,14 +4393,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/StatusPageIncident"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4506,6 +4472,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -4516,10 +4484,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4554,12 +4519,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - update
-              properties:
-                update:
-                  "$ref": "#/components/schemas/IncidentUpdateInput"
+              "$ref": "#/components/schemas/IncidentUpdateInput"
       responses:
         '201':
           description: Update created
@@ -4567,14 +4527,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/IncidentUpdate"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -4616,14 +4575,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/IncidentUpdate"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4664,12 +4622,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-              - update
-              properties:
-                update:
-                  "$ref": "#/components/schemas/IncidentUpdateInput"
+              "$ref": "#/components/schemas/IncidentUpdateInput"
       responses:
         '200':
           description: Success
@@ -4677,14 +4630,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     "$ref": "#/components/schemas/IncidentUpdate"
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4757,6 +4709,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: array
@@ -4839,6 +4793,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
@@ -4989,6 +4945,32 @@ components:
             email:
               type: string
               description: User email
+    AccountInvitationInput:
+      type: object
+      description: Writable account-invitation attributes
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum:
+          - Owner
+          - Admin
+          - Member
+        disable_email_notifications:
+          type: boolean
+          description: Create the member with email notifications off
+        team_ids:
+          type: array
+          description: 'Public IDs of teams to add the invitee to. IDs outside the
+            account resolve to nothing rather than attaching another tenant''s team.
+
+            '
+          items:
+            type: string
     AccountMember:
       type: object
       description: A member of an account
@@ -5028,6 +5010,18 @@ components:
           type: string
           format: date-time
           description: When the member was added to the account
+    AccountMemberInput:
+      type: object
+      description: Writable account-member attributes
+      required:
+      - role
+      properties:
+        role:
+          type: string
+          enum:
+          - Owner
+          - Admin
+          - Member
     Alarm:
       type: object
       description: An Insights alarm
@@ -5102,6 +5096,65 @@ components:
         url:
           type: string
           description: URL to view the alarm in the dashboard
+    AlarmCreateInput:
+      type: object
+      description: An alarm and the observer that evaluates it
+      required:
+      - name
+      - query
+      properties:
+        name:
+          type: string
+          example: Error spike
+        description:
+          type: string
+        query:
+          type: string
+          description: BadgerQL evaluated on each check
+          example: filter event_type::str == "notice" | stats count() as count
+        stream_ids:
+          type: array
+          description: 'Streams the query runs against. Defaults to every stream on
+            the project. IDs not belonging to the project are dropped.
+
+            '
+          items:
+            type: string
+        evaluation_period:
+          type: string
+          description: Window each evaluation covers
+          example: 10m
+        lookback_lag:
+          type: string
+          description: How far behind now the window ends, allowing for ingestion
+            delay
+          example: 1m
+        trigger_config:
+          type: object
+          description: What turns the alarm on
+          required:
+          - type
+          properties:
+            type:
+              type: string
+              example: alert_result_count
+            config:
+              type: object
+              properties:
+                operator:
+                  type: string
+                  example: gt
+                value:
+                  type: number
+                  example: 10
+    AlarmUpdateInput:
+      type: object
+      description: Writable alarm attributes
+      properties:
+        name:
+          type: string
+        description:
+          type: string
     Channel:
       type: object
       description: A notification channel
@@ -5150,6 +5203,32 @@ components:
           type: string
           format: date-time
           description: When the channel was created
+    ChannelInput:
+      type: object
+      description: Writable channel attributes
+      properties:
+        active:
+          type: boolean
+        events:
+          type: array
+          description: Event names this channel notifies on
+          items:
+            type: string
+        site_ids:
+          type: array
+          description: 'Public IDs of sites to scope this channel to. Empty means
+            every site. IDs outside this project resolve to nothing rather than attaching
+            another tenant''s site.
+
+            '
+          items:
+            type: string
+        check_in_ids:
+          type: array
+          description: Public IDs of check-ins to scope this channel to. Empty means
+            every check-in.
+          items:
+            type: string
     CheckIn:
       type: object
       description: A scheduled task check-in monitor
@@ -5227,6 +5306,25 @@ components:
           - integer
           - 'null'
           description: Expected report period in minutes (for simple schedule type)
+    CheckInBulkUpdateInput:
+      type: object
+      description: A batch of check-ins to create or update
+      required:
+      - check_ins
+      properties:
+        check_ins:
+          type: array
+          items:
+            allOf:
+            - "$ref": "#/components/schemas/CheckInInput"
+            - type: object
+              required:
+              - slug
+              properties:
+                slug:
+                  type: string
+                  description: Identifies which check-in an entry refers to, so it
+                    is required here
     CheckInEvent:
       type: object
       description: A check-in event
@@ -5253,6 +5351,58 @@ components:
           - 'null'
           description: The payload reported with the check-in, as it was sent. Only
             retained on plans with advanced check-ins.
+    CheckInInput:
+      type: object
+      description: Writable check-in attributes
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: Nightly billing job
+        slug:
+          type: string
+          description: 'Short identifier used in the check-in''s reporting URL. Generated
+            from the name when omitted.
+
+            '
+          example: nightly-billing
+        schedule_type:
+          type: string
+          enum:
+          - simple
+          - cron
+          default: simple
+          description: "`simple` expects a report every `report_period`. `cron` expects
+            reports on a cron schedule and requires `cron_schedule`.\n"
+        report_period:
+          type: string
+          description: 'How often a report is expected, for `simple` schedules. A
+            count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless
+            `schedule_type` is `cron`, and may not be zero.
+
+            '
+          example: 1 day
+        grace_period:
+          type: string
+          description: 'How long after the expected time before the check-in is considered
+            missing. Same format as `report_period`.
+
+            '
+          example: 10 minutes
+        cron_schedule:
+          type: string
+          description: Cron expression, required when `schedule_type` is `cron`
+          example: 0 3 * * *
+        cron_timezone:
+          type: string
+          description: 'Timezone the cron schedule is evaluated in. A Rails/ActiveSupport
+            zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not
+            `America/Chicago`, which is rejected. Required when `schedule_type` is
+            `cron`.
+
+            '
+          example: Central Time (US & Canada)
     Comment:
       type: object
       description: A comment on a fault
@@ -5339,6 +5489,657 @@ components:
           type: string
           format: date-time
           description: When the dashboard was last updated
+    DashboardInput:
+      "$schema": http://json-schema.org/draft-07/schema#
+      "$defs":
+        chartConfigs:
+          table:
+            type: object
+            description: Raw result rows and columns. No config.
+            additionalProperties: false
+          billboard:
+            type: object
+            description: 'Big-number stat tiles: one tile per result row (or one per
+              result field when `groupType` is `fields`).'
+            additionalProperties: false
+            properties:
+              titleField:
+                type: string
+                description: Alias shown as the tile title
+              valueField:
+                type: string
+                description: Alias shown as the big number; required when `groupType`
+                  is `events`
+              titleURLField:
+                type: string
+                description: Alias containing a URL; makes the tile title a link
+              subtitleField:
+                type: string
+                description: Alias shown below the value
+              statusField:
+                type: string
+                description: Alias whose value drives the tile's status indicator
+              groupType:
+                type: string
+                enum:
+                - fields
+                - events
+                description: "`events` (default): one tile per result row using `valueField`;
+                  `fields`: one tile per result field"
+            allOf:
+            - if:
+                properties:
+                  groupType:
+                    const: events
+                required:
+                - groupType
+              then:
+                required:
+                - valueField
+          bar:
+            type: object
+            description: Bar chart of a value per category.
+            required:
+            - categoryField
+            - valueField
+            additionalProperties: false
+            properties:
+              categoryField:
+                type: string
+                description: Alias for the category axis; one bar per distinct value
+              valueField:
+                type: string
+                description: Alias for bar height
+              valueFieldUnit:
+                type: string
+                description: 'Unit used to format values: `percent`, `microseconds`,
+                  or `milliseconds`'
+              labelField:
+                type: string
+                description: Alias rendered as a label on each bar
+              groupType:
+                type: string
+                enum:
+                - fields
+                - events
+                description: "`events` (default): series come from `groupField`; `fields`:
+                  every result field except `categoryField` becomes its own series"
+              groupField:
+                type: string
+                description: Alias whose distinct values split bars into series (with
+                  `groupType` `events`)
+              horizontal:
+                type: boolean
+                description: Render bars horizontally
+              stacked:
+                type: boolean
+                description: Stack series instead of grouping side by side
+              groups:
+                type: object
+                description: 'Per-series display options keyed by series name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+          line:
+            type: object
+            description: One or more series plotted over an x axis, usually time.
+            additionalProperties: false
+            properties:
+              xField:
+                type: string
+                description: Alias for the x axis, typically a time bin such as `bin(1h)`
+              yField:
+                type: string
+                description: Alias plotted as the series value; required when `groupType`
+                  is `events`
+              zField:
+                type: string
+                description: Alias whose distinct values split results into one series
+                  each
+              colorField:
+                type: string
+                description: Alias whose values supply explicit series colors
+              xFieldUnit:
+                type: string
+                description: 'Unit used to format x values: `percent`, `microseconds`,
+                  or `milliseconds`'
+              yFieldUnit:
+                type: string
+                description: 'Unit used to format y values: `percent`, `microseconds`,
+                  or `milliseconds`'
+              groupType:
+                type: string
+                enum:
+                - fields
+                - events
+                description: "`events` (default): one series from `yField`, split
+                  by `zField` if set; `fields`: every result field except `xField`
+                  becomes its own series"
+              yAxisLabel:
+                type: string
+                description: Left y-axis label (accepted but not currently applied
+                  by the renderer)
+              yAxisMin:
+                type: number
+                description: Left y-axis minimum (accepted but not currently applied
+                  by the renderer)
+              yAxisMax:
+                type: number
+                description: Left y-axis maximum (accepted but not currently applied
+                  by the renderer)
+              rightYAxisFormat:
+                type: string
+                description: Right y-axis format (accepted but not currently applied
+                  by the renderer)
+              rightYAxisLabel:
+                type: string
+                description: Right y-axis label (accepted but not currently applied
+                  by the renderer)
+              rightYAxisMin:
+                type: number
+                description: Right y-axis minimum (accepted but not currently applied
+                  by the renderer)
+              rightYAxisMax:
+                type: number
+                description: Right y-axis maximum (accepted but not currently applied
+                  by the renderer)
+              groups:
+                type: object
+                description: 'Per-series display options keyed by series name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`; entries may also set `axis` (`left`|`right`)
+                  to plot a series on the right y axis. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+                      axis:
+                        type: string
+                        enum:
+                        - left
+                        - right
+            allOf:
+            - if:
+                properties:
+                  groupType:
+                    const: events
+                required:
+                - groupType
+              then:
+                required:
+                - yField
+          area:
+            type: object
+            description: Like line, with the area under each series filled; series
+              can be stacked.
+            additionalProperties: false
+            properties:
+              xField:
+                type: string
+                description: Alias for the x axis, typically a time bin such as `bin(1h)`
+              yField:
+                type: string
+                description: Alias plotted as the series value; required when `groupType`
+                  is `events`
+              zField:
+                type: string
+                description: Alias whose distinct values split results into one series
+                  each
+              groupType:
+                type: string
+                enum:
+                - fields
+                - events
+                description: "`events` (default): one series from `yField`, split
+                  by `zField` if set; `fields`: every result field except `xField`
+                  becomes its own series"
+              stacked:
+                type: boolean
+                description: Stack series instead of overlaying them
+              groups:
+                type: object
+                description: 'Per-series display options keyed by series name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+            allOf:
+            - if:
+                properties:
+                  groupType:
+                    const: events
+                required:
+                - groupType
+              then:
+                required:
+                - yField
+          histogram:
+            type: object
+            description: Distribution of values across buckets.
+            required:
+            - xField
+            - yField
+            additionalProperties: false
+            properties:
+              xField:
+                type: string
+                description: Alias for the x axis
+              yField:
+                type: string
+                description: Alias for the y axis
+              zField:
+                type: string
+                description: Alias whose distinct values split results into one series
+                  each
+              xFieldUnit:
+                type: string
+                description: 'Unit used to format x values: `percent`, `microseconds`,
+                  or `milliseconds`'
+              yFieldUnit:
+                type: string
+                description: 'Unit used to format y values: `percent`, `microseconds`,
+                  or `milliseconds`'
+              groups:
+                type: object
+                description: 'Per-series display options keyed by series name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+          scatter:
+            type: object
+            description: Individual points plotted on two axes.
+            required:
+            - xField
+            - yField
+            additionalProperties: false
+            properties:
+              xField:
+                type: string
+                description: Alias for the x axis
+              yField:
+                type: string
+                description: Alias for the y axis
+              groupField:
+                type: string
+                description: Alias whose distinct values color the points
+              scaleField:
+                type: string
+                description: Alias that scales point size
+              groups:
+                type: object
+                description: 'Per-series display options keyed by series name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+          heatmap:
+            type: object
+            description: Grid of cells colored by intensity. The query must sort by
+              the x and y fields (`| sort x, y`) to render correctly.
+            required:
+            - xField
+            - yField
+            - zField
+            additionalProperties: false
+            properties:
+              xField:
+                type: string
+                description: Alias for the x axis, typically a time bin such as `bin(1h)`
+              yField:
+                type: string
+                description: Alias for the y axis
+              zField:
+                type: string
+                description: Alias for cell value/intensity
+              yFieldUnit:
+                type: string
+                description: 'Unit used to format y values: `percent`, `microseconds`,
+                  or `milliseconds`'
+              steps:
+                type: integer
+                minimum: 1
+                description: Number of color steps (default 5)
+              groups:
+                type: object
+                description: 'Per-series display options keyed by series name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+          pie:
+            type: object
+            description: Proportional slices; one slice per result row.
+            required:
+            - nameField
+            - valueField
+            additionalProperties: false
+            properties:
+              nameField:
+                type: string
+                description: Alias for slice labels
+              valueField:
+                type: string
+                description: Alias for slice sizes
+              groups:
+                type: object
+                description: 'Per-slice display options keyed by slice name, e.g.
+                  `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit'
+                patternProperties:
+                  "^.*$":
+                    type: object
+                    properties:
+                      color:
+                        type: string
+        widgetConfigs:
+          insights_vis:
+            additionalProperties: false
+            properties:
+              streams:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - default
+                  - internal
+                description: Streams to query (defaults to ["default"])
+              query:
+                description: BadgerQL query producing the widget's data
+              vis:
+                description: 'How to render the result: `{view, chart_config}`'
+          alarms:
+            additionalProperties: false
+            properties:
+              limit:
+                type: integer
+                minimum: 1
+                description: Max alarms shown
+              filter_state:
+                type: string
+                enum:
+                - all
+                - triggered
+                - ok
+                description: Show all alarms or only those in one state
+          errors:
+            additionalProperties: false
+            properties:
+              limit:
+                type: integer
+                minimum: 1
+                description: Max errors shown
+              query:
+                type: string
+                description: Error search query string to filter the list
+              sort:
+                type: string
+                enum:
+                - last_seen_desc
+                - last_seen_asc
+                - times_desc
+                - times_asc
+                description: Sort order
+          deployments:
+            additionalProperties: false
+            properties:
+              limit:
+                type: integer
+                minimum: 1
+                description: Max deploys shown
+              override_time:
+                type: boolean
+                description: Use `ts` instead of the dashboard's time range
+              ts:
+                type: string
+                description: Time range used when `override_time` is true
+          checkins:
+            additionalProperties: false
+            properties:
+              limit:
+                type: integer
+                minimum: 1
+                description: Max check-ins shown
+              sort_order:
+                type: string
+                enum:
+                - state_name
+                - name
+                - last_reported
+                description: Sort by state, name, or last report time
+          uptime:
+            additionalProperties: false
+            properties:
+              limit:
+                type: integer
+                minimum: 1
+                description: Max uptime monitors shown
+      type: object
+      required:
+      - title
+      - widgets
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        default_ts:
+          type: string
+        widgets:
+          type: array
+          items:
+            type: object
+            required:
+            - type
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+                enum:
+                - insights_vis
+                - alarms
+                - deployments
+                - checkins
+                - uptime
+                - errors
+              grid:
+                type: object
+                additionalProperties: false
+                properties:
+                  x:
+                    type: integer
+                    minimum: 0
+                  "y":
+                    type: integer
+                    minimum: 0
+                  w:
+                    type: integer
+                    minimum: 1
+                  h:
+                    type: integer
+                    minimum: 1
+              presentation:
+                type: object
+                additionalProperties: false
+                properties:
+                  title:
+                    type: string
+                    maxLength: 255
+                  subtitle:
+                    type: string
+                    maxLength: 255
+              config:
+                type: object
+                properties:
+                  streams:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                      - default
+                      - internal
+                  query:
+                    type: string
+                  vis:
+                    type: object
+                    required:
+                    - view
+                    additionalProperties: false
+                    properties:
+                      view:
+                        type: string
+                        enum:
+                        - billboard
+                        - bar
+                        - line
+                        - pie
+                        - area
+                        - histogram
+                        - scatter
+                        - heatmap
+                        - table
+                      chart_config:
+                        type: object
+                    allOf:
+                    - if:
+                        properties:
+                          view:
+                            const: table
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/table"
+                    - if:
+                        properties:
+                          view:
+                            const: billboard
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/billboard"
+                    - if:
+                        properties:
+                          view:
+                            const: bar
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/bar"
+                    - if:
+                        properties:
+                          view:
+                            const: line
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/line"
+                    - if:
+                        properties:
+                          view:
+                            const: area
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/area"
+                    - if:
+                        properties:
+                          view:
+                            const: histogram
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/histogram"
+                    - if:
+                        properties:
+                          view:
+                            const: scatter
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/scatter"
+                    - if:
+                        properties:
+                          view:
+                            const: heatmap
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/heatmap"
+                    - if:
+                        properties:
+                          view:
+                            const: pie
+                      then:
+                        properties:
+                          chart_config:
+                            "$ref": "#/components/schemas/DashboardInput/$defs/chartConfigs/pie"
+            allOf:
+            - if:
+                properties:
+                  type:
+                    const: insights_vis
+              then:
+                properties:
+                  config:
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/insights_vis"
+            - if:
+                properties:
+                  type:
+                    const: alarms
+              then:
+                properties:
+                  config:
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/alarms"
+            - if:
+                properties:
+                  type:
+                    const: errors
+              then:
+                properties:
+                  config:
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/errors"
+            - if:
+                properties:
+                  type:
+                    const: deployments
+              then:
+                properties:
+                  config:
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/deployments"
+            - if:
+                properties:
+                  type:
+                    const: checkins
+              then:
+                properties:
+                  config:
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/checkins"
+            - if:
+                properties:
+                  type:
+                    const: uptime
+              then:
+                properties:
+                  config:
+                    "$ref": "#/components/schemas/DashboardInput/$defs/widgetConfigs/uptime"
     Deploy:
       type: object
       description: A deploy event
@@ -5411,6 +6212,18 @@ components:
           type: string
           format: date-time
           description: When the environment was created
+    EnvironmentInput:
+      type: object
+      description: Writable environment attributes
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: production
+        notifications:
+          type: boolean
+          description: Whether notifications are sent for faults in this environment
     Error:
       type: object
       description: API error response
@@ -5418,80 +6231,88 @@ components:
       - error
       properties:
         error:
-          type: object
-          required:
-          - code
-          - message
-          properties:
-            code:
-              type: string
-              description: Machine-readable error code
-              enum:
-              - unauthorized
-              - unsupported_auth_scheme
-              - credential_in_query
-              - access_denied
-              - insufficient_scope
-              - requires_user_token
-              - project_restricted
-              - account_inactive
-              - account_parked
-              - feature_unavailable
-              - not_found
-              - validation_error
-              - delete_failed
-              - limit_reached
-              - rate_limit_exceeded
-              - maintenance_mode
-              - invalid_id
-              - forbidden_attributes
-              - service_unavailable
-              - ambiguous_account
-            message:
-              type: string
-              description: Human-readable error message
-              example: Access denied
-            details:
-              description: 'A list of field errors for `validation_error`, or an object
-                naming the missing permission for `insufficient_scope`. Absent for
-                every other code.
-
-                '
-              oneOf:
-              - type: array
-                title: ValidationErrorDetails
-                description: One entry per field that failed validation.
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      description: Field name that failed validation
-                    message:
-                      type: string
-                      description: Validation error message
-              - type: object
-                title: InsufficientScopeDetails
-                description: 'What the endpoint required and what the credential holds,
-                  so a client can tell the holder exactly what to re-grant.
-
-                  '
-                properties:
-                  required_scope:
-                    type: string
-                    description: The permission this endpoint requires.
-                    example: faults:write
-                  token_scopes:
-                    type: array
-                    description: The permissions the credential actually holds.
-                    items:
-                      type: string
+          "$ref": "#/components/schemas/ErrorBody"
         meta:
-          type: object
-          properties:
-            request_id:
-              type: string
-              description: Unique request identifier for debugging
+          "$ref": "#/components/schemas/ResponseMeta"
+    ErrorBody:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: string
+          description: 'Machine-readable code. Branch on this rather than on the message,
+            which is free text and may be the upstream service''s own wording.
+
+            '
+          enum:
+          - unauthorized
+          - unsupported_auth_scheme
+          - credential_in_query
+          - access_denied
+          - insufficient_scope
+          - requires_user_token
+          - project_restricted
+          - account_inactive
+          - account_parked
+          - feature_unavailable
+          - not_found
+          - validation_error
+          - delete_failed
+          - limit_reached
+          - rate_limit_exceeded
+          - maintenance_mode
+          - invalid_id
+          - forbidden_attributes
+          - service_unavailable
+          - ambiguous_account
+        message:
+          type: string
+          description: Human-readable explanation
+          example: Access denied
+        details:
+          description: 'A list of field errors for `validation_error`, or an object
+            naming the missing permission for `insufficient_scope`. Absent for every
+            other code.
+
+            '
+          oneOf:
+          - type: array
+            title: ValidationErrorDetails
+            description: Present on validation_error, one entry per field that failed
+            items:
+              "$ref": "#/components/schemas/ErrorDetail"
+          - type: object
+            title: InsufficientScopeDetails
+            description: 'What the endpoint required and what the credential holds,
+              so a client can tell the holder exactly what to re-grant.
+
+              '
+            properties:
+              required_scope:
+                type: string
+                description: The permission this endpoint requires.
+                example: faults:write
+              token_scopes:
+                type: array
+                description: The permissions the credential actually holds.
+                items:
+                  type: string
+    ErrorDetail:
+      type: object
+      required:
+      - field
+      - message
+      properties:
+        field:
+          type: string
+          description: The field that failed validation
+          example: name
+        message:
+          type: string
+          description: Why it failed, without the field name repeated
+          example: can't be blank
     Fault:
       type: object
       description: A unique error fingerprint (fault)
@@ -5610,6 +6431,42 @@ components:
               channel_id:
                 type: string
                 description: Public ID of the channel that created the ticket
+    FaultAssignmentInput:
+      type: object
+      description: Who to assign a fault to
+      required:
+      - assignee_id
+      properties:
+        assignee_id:
+          type: string
+          description: 'Public ID of a user on the project. A public ID that is not
+            a member is rejected with 422 rather than silently unassigning. DELETE
+            the same path to unassign.
+
+            '
+          example: Xk9mZp
+    FaultInput:
+      type: object
+      description: Writable fault attributes
+      properties:
+        resolved:
+          type: boolean
+        ignored:
+          type: boolean
+        assignee_id:
+          type:
+          - string
+          - 'null'
+          description: 'Public ID of a user on the project. Null unassigns. A public
+            ID that is not a member of this project is rejected with 422 rather than
+            silently unassigning.
+
+            '
+          example: Xk9mZp
+        tags:
+          type: array
+          items:
+            type: string
     IncidentUpdate:
       type: object
       description: An update to a status page incident. The incident's prose lives
@@ -5792,6 +6649,85 @@ components:
                 type: string
               method:
                 type: string
+    OccurrenceMeta:
+      type: object
+      properties:
+        request_id:
+          type: string
+        period:
+          type: string
+          enum:
+          - hour
+          - day
+          - week
+          - month
+          description: The window used, which is `hour` when none was requested
+        interval:
+          type: string
+          enum:
+          - minute
+          - hour
+          - day
+          description: Bucket width implied by the period
+    OccurrenceSeries:
+      type: object
+      required:
+      - project_id
+      - buckets
+      properties:
+        project_id:
+          type: string
+          description: Public ID of the project this series belongs to
+          example: Xk9mZp
+        buckets:
+          type: array
+          description: 'One entry per interval in the window, oldest first, including
+            intervals with no notices.
+
+            '
+          items:
+            type: object
+            required:
+            - timestamp
+            - count
+            properties:
+              timestamp:
+                type: integer
+                format: int64
+                description: Start of the interval, Unix seconds
+                example: 1704067200
+              count:
+                type: integer
+                description: Notices recorded in this interval
+                example: 17
+    OffsetLinks:
+      type: object
+      description: Navigation links for a numbered-page collection
+      required:
+      - self
+      properties:
+        self:
+          type: string
+          format: uri
+          description: This page
+        first:
+          type: string
+          format: uri
+          description: First page
+        prev:
+          type:
+          - string
+          - 'null'
+          description: Previous page, or null on the first page
+        next:
+          type:
+          - string
+          - 'null'
+          description: Next page, or null on the last page
+        last:
+          type: string
+          format: uri
+          description: Last page
     Outage:
       type: object
       description: An uptime outage period
@@ -5831,34 +6767,6 @@ components:
         details_url:
           type: string
           description: URL of the site's page in the Honeybadger UI
-    OffsetLinks:
-      type: object
-      description: Navigation links for a numbered-page collection
-      required:
-      - self
-      properties:
-        self:
-          type: string
-          format: uri
-          description: This page
-        first:
-          type: string
-          format: uri
-          description: First page
-        prev:
-          type:
-          - string
-          - 'null'
-          description: Previous page, or null on the first page
-        next:
-          type:
-          - string
-          - 'null'
-          description: Next page, or null on the last page
-        last:
-          type: string
-          format: uri
-          description: Last page
     Pagination:
       type: object
       description: Offset-based pagination information
@@ -5962,6 +6870,81 @@ components:
           type: string
           format: date-time
           description: When the project was created
+    ProjectInput:
+      type: object
+      description: Writable project attributes
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: Billing API
+        resolve_errors_on_deploy:
+          type: boolean
+          description: Resolve every open fault when a deploy is recorded
+        disable_public_links:
+          type: boolean
+          description: Disallow shareable public fault links
+        language:
+          type: string
+          description: Primary language, used to format backtraces
+          example: ruby
+        user_url:
+          type: string
+          description: 'Template for linking a fault''s affected user into your own
+            system. `[user_id]` and `[user_email]` are substituted.
+
+            '
+          example: https://admin.example.com/users/[user_id]
+        source_url:
+          type: string
+          description: 'Template for linking a backtrace line to your source host.
+            `[file]` and `[line]` are substituted.
+
+            '
+          example: https://github.com/acme/app/blob/main/[file]#L[line]
+        user_search_field:
+          type: string
+          description: 'Context key identifying the affected user, for when it is
+            not in the default `context.user_email` or `context.user_id`.
+
+            '
+          example: context.account_id
+        disable_email_notifications:
+          type: boolean
+          description: 'Applied at creation: members added with the project get email
+            notifications switched off. Not a stored setting, so reading a project
+            never returns it.
+
+            '
+        pivotal_project_id:
+          type: string
+        asana_workspace_id:
+          type: string
+        customer_throttle:
+          type: integer
+          description: Notices accepted per minute before throttling kicks in
+        team_id:
+          type: string
+          description: 'Public ID of a team on this account, granting it access when
+            the project is created. A team from another account resolves to nothing
+            rather than being attached. Create only — afterwards manage access through
+            the team''s projects.
+
+            '
+          example: Ab3kL9
+        purge_days:
+          type: integer
+          description: 'Days to retain notices. Accepted only on accounts with custom
+            retention; silently ignored otherwise.
+
+            '
+    ResponseMeta:
+      type: object
+      properties:
+        request_id:
+          type: string
+          description: Unique identifier for the request, for correlating with support
     Site:
       type: object
       description: An uptime monitoring site
@@ -6043,6 +7026,95 @@ components:
           type: string
           format: date-time
           description: When the site was created
+    SiteInput:
+      type: object
+      description: Writable uptime-check site attributes
+      required:
+      - name
+      - url
+      properties:
+        name:
+          type: string
+          example: Marketing site
+        url:
+          type: string
+          format: uri
+          example: https://www.example.com/health
+        match_type:
+          type: string
+          enum:
+          - success
+          - jmespath
+          description: 'How a response is judged. `success` accepts any 2xx and ignores
+            `match`; `jmespath` evaluates `match` against the JSON body.
+
+            '
+        match:
+          type: string
+          maxLength: 255
+          description: Required unless `match_type` is `success`, where it is cleared
+          example: status == 'ok'
+        request_method:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        validate_ssl:
+          type: boolean
+          description: Fail the check when the TLS certificate does not validate
+        request_body:
+          type: string
+          description: Body to send with the request
+        request_headers:
+          type: array
+          description: Headers to send with the request
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+        frequency:
+          type: integer
+          enum:
+          - 1
+          - 2
+          - 5
+          - 15
+          description: 'Minutes between checks. The plan sets a floor, so a value
+            below it is rejected.
+
+            '
+        locations:
+          type: array
+          description: 'Locations to check from, by name. Anything outside the known
+            set is discarded, and if nothing recognisable remains the site checks
+            from every location — so a typo silently widens rather than narrows.
+
+            '
+          items:
+            type: string
+            enum:
+            - Virginia
+            - Oregon
+            - London
+            - Frankfurt
+            - Singapore
+        outage_threshold:
+          type: integer
+          description: Consecutive failures before an outage is declared
+        active:
+          type: boolean
+        timeout:
+          type: integer
+          description: 'Request timeout. Accepted only on accounts with the uptime-timeout
+            feature; ignored otherwise.
+
+            '
     StatusPage:
       type: object
       description: A public status page
@@ -6210,6 +7282,158 @@ components:
           description: The incident's thread, newest first. Always at least one update.
           items:
             "$ref": "#/components/schemas/IncidentUpdate"
+    StatusPageIncidentCreateInput:
+      type: object
+      description: An incident and, optionally, the updates it opens with
+      required:
+      - title
+      properties:
+        title:
+          type: string
+          example: Elevated error rates
+        build_type:
+          type: string
+          enum:
+          - current
+          - retroactive
+          - scheduled_maintenance
+          description: "`current` is happening now, `retroactive` records something
+            already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance
+            incident may have updates starting in the future.\n"
+        retro_should_notify:
+          type: boolean
+          description: Announce a retroactive incident when it is created
+        retro_notify_message:
+          type: string
+          description: Message accompanying that announcement
+        updates:
+          type: array
+          description: Updates to create with the incident
+          items:
+            "$ref": "#/components/schemas/IncidentUpdateInput"
+    StatusPageIncidentUpdateInput:
+      type: object
+      description: Writable incident attributes
+      properties:
+        title:
+          type: string
+        retro_should_notify:
+          type: boolean
+        retro_notify_message:
+          type: string
+    StatusPageInput:
+      type: object
+      description: Writable status-page attributes
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: Acme Status
+        domain:
+          type: string
+          description: Custom domain the page is served on
+          example: status.example.com
+        hide_branding:
+          type: boolean
+          description: Advanced status pages only; ignored otherwise
+        password_protected:
+          type: boolean
+          description: Advanced status pages only; ignored otherwise
+        username:
+          type: string
+          description: Basic-auth user when password protected. Advanced status pages
+            only
+        password:
+          type: string
+          description: Basic-auth password when password protected. Advanced status
+            pages only
+        features:
+          type: object
+          description: Presentation copy and styling. Advanced status pages only
+          properties:
+            home_link:
+              type: string
+            up_caption:
+              type: string
+            down_caption:
+              type: string
+            mixed_caption:
+              type: string
+            custom_css:
+              type: string
+        sites:
+          type: array
+          description: Sites listed on the page, replacing the current set
+          items:
+            type: object
+            required:
+            - site_id
+            properties:
+              site_id:
+                type: string
+                description: Public ID of a site on this account
+              display_name:
+                type: string
+              description:
+                type: string
+              position:
+                type: integer
+        check_ins:
+          type: array
+          description: Check-ins listed on the page, replacing the current set
+          items:
+            type: object
+            required:
+            - check_in_id
+            properties:
+              check_in_id:
+                type: string
+                description: Public ID of a check-in on this account
+              display_name:
+                type: string
+              description:
+                type: string
+              position:
+                type: integer
+    Stream:
+      type: object
+      description: An Insights event stream
+      properties:
+        id:
+          type: string
+          description: 'Stream identifier: 12 lowercase hex characters. Randomly assigned
+            rather than sequential, so unlike other v3 resources this is not a public
+            ID — it is the stream''s own identifier, and the value to pass as `stream_ids`
+            when querying.
+
+            '
+          pattern: "^[0-9a-f]{12}$"
+          example: a3f19c02b7de
+        name:
+          type: string
+          description: Display name
+          example: Default
+        slug:
+          type: string
+          description: Stable short name
+          enum:
+          - default
+          - internal
+        internal:
+          type: boolean
+          description: 'True for the stream carrying Honeybadger-generated event types
+            (`notice`, `deploy`, `uptime_check`, `check_in`). Those event classes
+            are only queryable when this stream is selected.
+
+            '
+        project_id:
+          type: string
+          description: Public ID of the project this stream belongs to
+          example: Xk9mZp
+        created_at:
+          type: string
+          format: date-time
     Team:
       type: object
       description: A team within an account
@@ -6242,6 +7466,24 @@ components:
           items:
             type: string
           description: Public IDs of projects assigned to this team
+    TeamInput:
+      type: object
+      description: Writable team attributes
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          example: Platform
+        project_ids:
+          type: array
+          description: 'Public IDs of projects this team can access. IDs outside the
+            account resolve to nothing rather than granting access to another tenant''s
+            project.
+
+            '
+          items:
+            type: string
     TeamInvitation:
       type: object
       description: An invitation to join a team
@@ -6311,6 +7553,20 @@ components:
             email:
               type: string
               description: User email
+    TeamInvitationInput:
+      type: object
+      description: Writable team-invitation attributes
+      required:
+      - email
+      properties:
+        email:
+          type: string
+          format: email
+        admin:
+          type: boolean
+        message:
+          type: string
+          description: Note included in the invitation email
     TeamMember:
       type: object
       description: A member of a team
@@ -6349,86 +7605,15 @@ components:
           type: string
           format: date-time
           description: When the member was added to the team
-    Stream:
+    TeamMemberInput:
       type: object
-      description: An Insights event stream
-      properties:
-        id:
-          type: string
-          description: 'Stream identifier: 12 lowercase hex characters. Randomly assigned
-            rather than sequential, so unlike other v3 resources this is not a public
-            ID — it is the stream''s own identifier, and the value to pass as `stream_ids`
-            when querying.
-
-            '
-          pattern: "^[0-9a-f]{12}$"
-          example: a3f19c02b7de
-        name:
-          type: string
-          description: Display name
-          example: Default
-        slug:
-          type: string
-          description: Stable short name
-          enum:
-          - default
-          - internal
-        internal:
-          type: boolean
-          description: 'True for the stream carrying Honeybadger-generated event types
-            (`notice`, `deploy`, `uptime_check`, `check_in`). Those event classes
-            are only queryable when this stream is selected.
-
-            '
-        project_id:
-          type: string
-          description: Public ID of the project this stream belongs to
-          example: Xk9mZp
-        created_at:
-          type: string
-          format: date-time
-    UptimeCheck:
-      type: object
-      description: An individual uptime check result
+      description: Writable team-member attributes
       required:
-      - created_at
-      - up
+      - admin
       properties:
-        created_at:
-          type: string
-          format: date-time
-          description: When the check was performed
-        duration:
-          type: number
-          description: Response time in milliseconds
-        location:
-          type: string
-          description: Monitoring location that performed the check
-          example: us-east-1
-        up:
+        admin:
           type: boolean
-          description: Whether the site was up
-    User:
-      type: object
-      description: A Honeybadger user
-      required:
-      - id
-      - email
-      - name
-      properties:
-        id:
-          type: string
-          description: Unique public identifier
-          example: Uz4wKm
-        email:
-          type: string
-          format: email
-          description: User email address
-          example: jane@example.com
-        name:
-          type: string
-          description: User display name
-          example: Jane Smith
+          description: Team admins can manage the team's projects and membership
     TimeSeriesLinks:
       type: object
       description: Navigation links for a time-ordered collection
@@ -6492,6 +7677,48 @@ components:
 
             '
           example: eyJ0IjoxNzA0MTUzNjAwLCJpIjoiWGs5bVpwIn0
+    UptimeCheck:
+      type: object
+      description: An individual uptime check result
+      required:
+      - created_at
+      - up
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          description: When the check was performed
+        duration:
+          type: number
+          description: Response time in milliseconds
+        location:
+          type: string
+          description: Monitoring location that performed the check
+          example: us-east-1
+        up:
+          type: boolean
+          description: Whether the site was up
+    User:
+      type: object
+      description: A Honeybadger user
+      required:
+      - id
+      - email
+      - name
+      properties:
+        id:
+          type: string
+          description: Unique public identifier
+          example: Uz4wKm
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: jane@example.com
+        name:
+          type: string
+          description: User display name
+          example: Jane Smith
   parameters:
     AccountId:
       name: account_id
@@ -6561,17 +7788,102 @@ components:
     CreatedAfter:
       name: created_after
       in: query
-      description: Only return items created after this Unix timestamp
+      description: 'Only return items created after this Unix timestamp. Fractional
+        seconds are significant; take the value from `links.newer` rather than constructing
+        it.
+
+        '
       schema:
         type: number
-        example: 1704067200
+        format: double
+        example: 1704067200.123456
     CreatedBefore:
       name: created_before
       in: query
-      description: Only return items created before this Unix timestamp
+      description: 'Only return items created before this Unix timestamp. Fractional
+        seconds are significant; take the value from `links.older` rather than constructing
+        it.
+
+        '
       schema:
         type: number
-        example: 1704153600
+        format: double
+        example: 1704153600.123456
+    OccurrencePeriod:
+      name: period
+      in: query
+      description: 'Window to report over. Both ends of the window are inclusive,
+        so each period returns one more bucket than its name suggests: `hour` gives
+        61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
+        Defaults to `hour`; an unrecognised value falls back to `hour` and `meta.period`
+        says so.
+
+        '
+      schema:
+        type: string
+        enum:
+        - hour
+        - day
+        - week
+        - month
+        default: hour
+    OccurrenceEnvironment:
+      name: environment
+      in: query
+      description: Only count notices from faults in this environment
+      schema:
+        type: string
+        example: production
+    FaultOrder:
+      name: order
+      in: query
+      description: 'How to sort the list. `recent` is by most recent occurrence, `frequent`
+        by occurrence count. Defaults to creation order.
+
+        '
+      schema:
+        type: string
+        enum:
+        - recent
+        - frequent
+    FaultCreatedAfter:
+      name: created_after
+      in: query
+      description: 'Only faults first seen after this Unix timestamp. Clamped to the
+        project''s creation date.
+
+        '
+      schema:
+        type: number
+        format: double
+    FaultOccurredAfter:
+      name: occurred_after
+      in: query
+      description: 'Only faults with an occurrence after this Unix timestamp. Clamped
+        to the project''s retention window, so a value beyond it returns what is retained.
+        Occurrence counts in the response are for this window.
+
+        '
+      schema:
+        type: number
+        format: double
+    FaultOccurredBefore:
+      name: occurred_before
+      in: query
+      description: Only faults with an occurrence before this Unix timestamp
+      schema:
+        type: number
+        format: double
+    SearchFilter:
+      name: q
+      in: query
+      description: 'Search filter, the same syntax the web UI accepts — `is:resolved`,
+        `environment:production`, `class:ArgumentError`. Filters that need the search
+        index return nothing when it holds no data for the project.
+
+        '
+      schema:
+        type: string
   responses:
     Unauthorized:
       description: 'Authentication failed. OpenAPI allows one response per status

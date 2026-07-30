@@ -55,7 +55,8 @@ func TestSpecIssueErrorDetailsAcceptsBothShapes(t *testing.T) {
 // The code enum is now complete: insufficient_scope, credential_in_query, and
 // project_restricted were once documented in responses without being declared,
 // and are declared now. It has grown from 10 values to 20 during v3's
-// development.
+// development, and the error body was extracted into a named ErrorBody schema —
+// which is why these constants are ErrorBodyCode* rather than ErrorErrorCode*.
 //
 // apiv3 still treats Code as an open string rather than using these constants as
 // a closed set — this test is why. The enum keeps moving, and a client that
@@ -63,12 +64,12 @@ func TestSpecIssueErrorDetailsAcceptsBothShapes(t *testing.T) {
 func TestSpecIssueErrorCodeEnumKeepsGrowing(t *testing.T) {
 	// Sampled rather than exhaustive: the point is that codes keep being added,
 	// so pinning the full list would make this a change-detector.
-	for _, code := range []ErrorErrorCode{
-		ErrorErrorCodeInsufficientScope,
-		ErrorErrorCodeCredentialInQuery,
-		ErrorErrorCodeProjectRestricted,
-		ErrorErrorCodeUnsupportedAuthScheme,
-		ErrorErrorCodeRequiresUserToken,
+	for _, code := range []ErrorBodyCode{
+		ErrorBodyCodeInsufficientScope,
+		ErrorBodyCodeCredentialInQuery,
+		ErrorBodyCodeProjectRestricted,
+		ErrorBodyCodeUnsupportedAuthScheme,
+		ErrorBodyCodeRequiresUserToken,
 	} {
 		if code == "" {
 			t.Errorf("generated constant for %q is empty", code)
