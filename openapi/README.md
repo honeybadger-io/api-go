@@ -52,6 +52,9 @@ never carries Go-shaped annotations.
 
 ## Known spec issues
 
+The full list, with what the client does about each, is in
+[GAPS.md](GAPS.md). The summary below covers only what affects generation.
+
 ### Write bodies that are narrower than v2
 
 These request schemas declare fewer fields than v2 accepted. A field absent from
