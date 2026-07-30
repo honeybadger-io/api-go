@@ -272,7 +272,7 @@ func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
 		EvaluationPeriod: "5m",
 		LookbackLag:      "1m",
 		StreamIDs:        []string{"str_1"},
-		Trigger:          &AlarmTrigger{Type: "threshold", Operator: ">", Value: 100},
+		Trigger:          &AlarmTrigger{Type: "alert_result_count", Operator: "gt", Value: 100},
 	})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -285,11 +285,11 @@ func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
 	if !ok {
 		t.Fatalf("trigger_config = %v", got.body["trigger_config"])
 	}
-	if trigger["type"] != "threshold" {
+	if trigger["type"] != "alert_result_count" {
 		t.Errorf("trigger type = %v", trigger["type"])
 	}
 	config, ok := trigger["config"].(map[string]any)
-	if !ok || config["operator"] != ">" || config["value"] != float64(100) {
+	if !ok || config["operator"] != "gt" || config["value"] != float64(100) {
 		t.Errorf("trigger config = %v", trigger["config"])
 	}
 }

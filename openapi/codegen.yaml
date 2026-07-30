@@ -12,3 +12,8 @@ output-options:
   overlay:
     path: openapi/overlay.yaml
   nullable-type: true
+  # Name the inline object schemas. Without this, a trigger configuration or a
+  # dashboard widget generates as an anonymous struct inside an internal package,
+  # which no caller outside it can construct — apiv3 had to restate the literal
+  # to build one. Added in oapi-codegen v2.8.0 for exactly this.
+  generate-types-for-anonymous-schemas: true

@@ -149,19 +149,25 @@ func (s *CheckInsService) Delete(ctx context.Context, projectID, checkInID strin
 }
 
 // AlarmTrigger is what turns an alarm on.
+//
+// The vocabulary is the API's, not arithmetic: Type is a trigger kind such as
+// "alert_result_count", and Operator is a name such as "gt" or "lt" rather than a
+// symbol. Verified against a running server — an alarm created with
+// {alert_result_count, gt, 10} stores and reports exactly that.
 type AlarmTrigger struct {
-	// Type is the trigger kind, such as "threshold".
+	// Type is the trigger kind, such as "alert_result_count".
 	Type string
 
-	// Operator and Value configure a threshold trigger — ">" and 100, say.
+	// Operator and Value configure the comparison — "gt" and 10, say.
 	Operator string
 	Value    float32
 }
 
 // AlarmParams are the writable fields of an alarm.
 //
-// Hand-written rather than aliased: the generated trigger configuration is an
-// anonymous struct inside an internal package, so a caller could not build one.
+// Hand-written rather than aliased so the trigger reads as three flat fields
+// instead of a nested config object. The generated trigger type is now named and
+// constructible, so this is an ergonomic choice rather than a workaround.
 type AlarmParams struct {
 	// Name and Query are required on create.
 	Name  string
@@ -200,19 +206,13 @@ func (p AlarmParams) toCreate() gen.AlarmCreateInput {
 		body.StreamIds = &p.StreamIDs
 	}
 	if p.Trigger != nil {
-		body.TriggerConfig = &struct {
-			Config *struct {
-				Operator *string  `json:"operator,omitempty"`
-				Value    *float32 `json:"value,omitempty"`
-			} `json:"config,omitempty"`
-			Type string `json:"type"`
-		}{Type: p.Trigger.Type}
+		body.TriggerConfig = &gen.AlarmCreateInput_TriggerConfig{Type: p.Trigger.Type}
 		if p.Trigger.Operator != "" || p.Trigger.Value != 0 {
 			op, val := p.Trigger.Operator, p.Trigger.Value
-			body.TriggerConfig.Config = &struct {
-				Operator *string  `json:"operator,omitempty"`
-				Value    *float32 `json:"value,omitempty"`
-			}{Operator: &op, Value: &val}
+			body.TriggerConfig.Config = &gen.AlarmCreateInput_TriggerConfig_Config{
+				Operator: &op,
+				Value:    &val,
+			}
 		}
 	}
 	return body
