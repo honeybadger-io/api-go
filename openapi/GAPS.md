@@ -111,6 +111,11 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
 
 ## 6. Schema inconsistencies worth a second look
 
+- **`listFaultAffectedUsers` declares an object and renders an array.** The
+  response schema says `data: {type: object}`; the controller renders
+  `data: users`, an array of `{user, count}` pairs. Decoding as an object fails
+  outright against a real server. `apiv3` models the array.
+
 - **`data` is optional on single-resource responses**, so `{}` decodes as a valid
   project with an empty id. `apiv3` treats a missing `data` member as an error, but
   the schema should require it.

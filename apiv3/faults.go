@@ -69,12 +69,26 @@ func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts
 	})
 }
 
+// AffectedUser is one person a fault has reached, with how often it reached them.
+type AffectedUser struct {
+	// User is the affected user as the API reports it. Untyped because the spec
+	// does not describe the member, and the app renders whatever the user object
+	// serialises to.
+	User map[string]any `json:"user"`
+
+	// Count is how many of the fault's notices affected this user.
+	Count int `json:"count"`
+}
+
 // AffectedUsers returns the users a fault has affected.
 //
-// Untyped because the endpoint's data member is an unspecified object in the
-// spec, so there is no shape to model. Search accepts the same filter syntax as
-// the fault listing.
-func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID string, opts ...Option) (map[string]any, error) {
+// The spec declares the data member as an object, but the endpoint renders an
+// array of {user, count} pairs — a real server answers with the array, and
+// decoding it as an object failed outright. Modelled on what the app sends, not
+// on what the document claims; see openapi/GAPS.md.
+//
+// Search accepts the same filter syntax as the fault listing.
+func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID string, opts ...Option) ([]AffectedUser, error) {
 	ro := resolve(opts)
 	params := &gen.ListFaultAffectedUsersParams{}
 	if ro.query != "" {
@@ -82,7 +96,7 @@ func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID st
 		params.Q = &q
 	}
 
-	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
+	data, err := getOne[[]AffectedUser](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ListFaultAffectedUsers(ctx, s.client.accountID(ro.accountID), projectID, faultID, params)
 	})
 	if err != nil {

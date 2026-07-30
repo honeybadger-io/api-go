@@ -166,7 +166,7 @@ func TestFaultsAffectedUsers(t *testing.T) {
 		if want := "/v3/accounts/me/projects/Xk9mZp/faults/f1/affected_users"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
-		writeJSON(w, 0, `{"data":{"users":[{"email":"a@example.com","count":3}]}}`)
+		writeJSON(w, 0, `{"data":[{"user":{"email":"a@example.com"},"count":3}]}`)
 	}))
 	defer srv.Close()
 
@@ -175,8 +175,10 @@ func TestFaultsAffectedUsers(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AffectedUsers: %v", err)
 	}
-	users, ok := data["users"].([]any)
-	if !ok || len(users) != 1 {
-		t.Fatalf("data = %v", data)
+	if len(data) != 1 {
+		t.Fatalf("data = %+v, want one affected user", data)
+	}
+	if data[0].Count != 3 || data[0].User["email"] != "a@example.com" {
+		t.Errorf("data[0] = %+v", data[0])
 	}
 }
