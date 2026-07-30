@@ -23,6 +23,13 @@ func (n *Number) UnmarshalJSON(data []byte) error {
 	// If that fails, try as string and parse to int
 	var str string
 	if err := json.Unmarshal(data, &str); err == nil {
+		// An empty string means "no value" (e.g. a symbolicated backtrace
+		// frame with no line number); treat it as zero rather than failing
+		// the whole decode.
+		if str == "" {
+			*n = 0
+			return nil
+		}
 		// Try to parse the string as an integer
 		parsed, err := strconv.Atoi(str)
 		if err != nil {
