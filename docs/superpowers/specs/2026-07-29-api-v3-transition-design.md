@@ -1,7 +1,16 @@
 # Transitioning api-go and the MCP server to Honeybadger API v3
 
 Date: 2026-07-29
-Status: Design under review. Three prerequisites block implementation.
+Status: Largely built. `apiv3` is complete against the spec as written, and every
+MCP tool with a v3 endpoint has been migrated. Sections marked "what was built
+differs" record where implementation diverged from the plan and why.
+
+Outstanding, all server-side: the gaps listed in [../../../openapi/GAPS.md](../../../openapi/GAPS.md).
+Four MCP tools still run on v2 because v3 has no endpoint for them.
+
+Not yet done on the client side: verification against a real server. Every test
+is a hand-written fixture, so this proves the client matches the *document*, not
+that the document matches the Rails app.
 Scope: `github.com/honeybadger-io/api-go` and `honeybadger-mcp-server`. The
 server-side v3 API is designed elsewhere; this document treats
 `openapi/v3/bundled.yaml` in the honeybadger repo as its authority.
@@ -34,8 +43,8 @@ from v2 in seven ways that matter to a client:
 | Envelope | `{results: [...]}` | `{data, pagination, links, meta}` |
 | Identifiers | integers (`12345`) | opaque strings (`Xk9mZp`) |
 | Path scoping | `/projects/{id}/faults` | `/accounts/{account_id}/projects/{project_id}/faults`, with `me` accepted |
-| Pagination | `page`/`per_page` | offset *and* cursor (`limit`/`before`/`after`) |
-| Errors | untyped body | `{error: {code, message, details}, meta: {request_id}}`, 10 codes |
+| Pagination | `page`/`per_page` | offset *and* time-ordered (`limit` plus `links.older`) |
+| Errors | untyped body | `{error: {code, message, details}, meta: {request_id}}`, 20 codes |
 
 Auth has the widest operational blast radius: personal auth tokens stop working,
 so every consumer needs a new credential, not just new code. See decision 9.
@@ -85,7 +94,27 @@ A `WithVersion()` setter would silently change what `Projects.Get` returns.
 **Rejected: an immediate hard cut to v3-only.** Leaves no rollback path and
 forces MCP, CLI, and external consumers to move on the same day.
 
-### 2. The version lever lives in the MCP server, behind MCP-owned DTOs
+### 2. The version lever lives in the MCP server, behind two factories
+
+**What was built differs from what this section proposed**, and the reason is
+worth recording. The plan was MCP-owned DTOs behind port interfaces, so a v2 and
+a v3 adapter could satisfy one signature. In practice, changing `ClientFactory`'s
+type broke all 34 call sites at once, which would have meant a broken build for
+the length of a 5,000-line migration with no way to test progress.
+
+What replaced it: a second factory, `V3ClientFactory`, alongside the existing
+one. Each tool file moved independently — insights and streams first, then
+projects, faults, alarms, check-ins, dashboards — with the build and tests green
+at every step. Handlers take the concrete client rather than an interface.
+
+The DTO layer was not needed because handlers already map API types into their
+own response structs before serialising, so response shape changes stayed local
+to that mapping.
+
+The v2 factory remains for the four tools with no v3 endpoint, and goes away when
+they have one.
+
+### 2b. Original proposal, for the record: MCP-owned DTOs
 
 `internal/hbmcp` gains narrow port interfaces per resource group, with two
 implementations — one over the root package, one over `apiv3`.
@@ -296,10 +325,28 @@ accept personal ones, so the credential is **not interchangeable**:
   "Both tokens stay provisioned" is a hope about other people's installs, not a
   property this server can guarantee.
 
-**Scope gating cannot improve in stdio.** `EffectiveReadOnly` uses token scopes
-in http mode and the startup `--read-only` flag in stdio (`server.go:16-23`).
-Opaque scoped tokens do not change that. Deliberate asymmetry: http filters tools
-by scope, stdio does not.
+**Scope gating turned out to be possible after all.** This section originally
+concluded it was not, on the grounds that opaque scoped tokens cannot be
+inspected. `GET /v3/token` landed afterwards and changed that: introspection
+requires no scope, so any credential can be asked what it holds.
+
+What was built instead of the asymmetry described here:
+
+- The MCP server classifies the credential by prefix and verifies what it can.
+  OAuth tokens keep full JWT verification; opaque tokens are forwarded for the
+  API to judge.
+- Introspection results are cached per credential digest with a short TTL and an
+  LRU bound, so scopes cost one call per credential per window rather than one
+  per request. That matters because the server is hosted: the cache is derivable
+  and disposable, never state a request depends on.
+- The advertised tool catalog is filtered per request from those scopes, using a
+  tool-to-operation map plus `apiv3.OperationScopes`, which is generated from the
+  spec's per-operation `security` declarations.
+- Where scopes are unknown — introspection unavailable — nothing is filtered and
+  the API refuses what it must. Absent knowledge is not absent permission.
+
+In stdio there is still no per-request credential, so `--read-only` decides
+there.
 
 **403 handling is required regardless.** A token may permit faults but not
 check-ins, and scopes can be revoked mid-session, so filtering can never be
