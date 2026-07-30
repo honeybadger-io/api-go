@@ -3654,7 +3654,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/User"
+                      "$ref": "#/components/schemas/TeamMember"
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
@@ -3703,7 +3703,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    "$ref": "#/components/schemas/User"
+                    "$ref": "#/components/schemas/TeamMember"
                   meta:
                     type: object
                     properties:
@@ -3753,7 +3753,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    "$ref": "#/components/schemas/User"
+                    "$ref": "#/components/schemas/TeamMember"
                   meta:
                     type: object
                     properties:
@@ -5452,17 +5452,40 @@ components:
               description: Human-readable error message
               example: Access denied
             details:
-              type: array
-              description: Detailed validation errors (for validation_error)
-              items:
-                type: object
+              description: 'A list of field errors for `validation_error`, or an object
+                naming the missing permission for `insufficient_scope`. Absent for
+                every other code.
+
+                '
+              oneOf:
+              - type: array
+                title: ValidationErrorDetails
+                description: One entry per field that failed validation.
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: Field name that failed validation
+                    message:
+                      type: string
+                      description: Validation error message
+              - type: object
+                title: InsufficientScopeDetails
+                description: 'What the endpoint required and what the credential holds,
+                  so a client can tell the holder exactly what to re-grant.
+
+                  '
                 properties:
-                  field:
+                  required_scope:
                     type: string
-                    description: Field name that failed validation
-                  message:
-                    type: string
-                    description: Validation error message
+                    description: The permission this endpoint requires.
+                    example: faults:write
+                  token_scopes:
+                    type: array
+                    description: The permissions the credential actually holds.
+                    items:
+                      type: string
         meta:
           type: object
           properties:

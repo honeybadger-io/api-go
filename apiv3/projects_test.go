@@ -52,8 +52,12 @@ func TestProjectsListDecodesEnvelope(t *testing.T) {
 	if resp.RequestID != "req_list" {
 		t.Errorf("RequestID = %q, want req_list", resp.RequestID)
 	}
-	if resp.Links["next"] != "https://example.test/next" {
-		t.Errorf("Links = %v", resp.Links)
+	if resp.Links == nil {
+		t.Fatal("Links is nil")
+	}
+	next, err := resp.Links.Next.Get()
+	if err != nil || next != "https://example.test/next" {
+		t.Errorf("Links.Next = %q (err %v), want the next page URL", next, err)
 	}
 }
 

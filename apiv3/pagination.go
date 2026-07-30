@@ -27,6 +27,9 @@ type TimeSeriesPagination = gen.TimeSeriesPagination
 // TimeSeriesLinks are the navigation links for a time-ordered collection.
 type TimeSeriesLinks = gen.TimeSeriesLinks
 
+// OffsetLinks are the navigation links for a numbered-page collection.
+type OffsetLinks = gen.OffsetLinks
+
 // maxPages bounds any pagination walk. Nothing legitimate needs this many
 // requests — the rate limit is 360/hour — so hitting it means the server's
 // counts or cursors are inconsistent, and looping forever would be worse than
@@ -71,8 +74,8 @@ type ListResponse[T any] struct {
 	// TimeSeriesLinks are the navigation links for a time-ordered endpoint.
 	TimeSeriesLinks *TimeSeriesLinks
 
-	// Links holds an offset endpoint's untyped links object.
-	Links map[string]any
+	// Links are the navigation links for an offset-paginated endpoint.
+	Links *OffsetLinks
 }
 
 // PageFetcher retrieves a single page by 1-indexed page number.

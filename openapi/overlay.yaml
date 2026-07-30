@@ -3,19 +3,17 @@ info:
   title: Go-specific mappings for api-go
   version: 0.0.1
 actions:
-  # The bundle types error.details as an array of {field, message}, but the
-  # InsufficientScope response sends an object ({required_scope, token_scopes}).
-  # Generated code follows the schema, so a real 403 fails to decode outright.
+  # The details field is a oneOf: an array of field errors for validation_error,
+  # or an object naming the missing permission for insufficient_scope.
   #
-  # Retyping it as json.RawMessage lets both shapes through; apiv3 decides which
-  # one it got (see parseError). This is a Go-side workaround for a spec bug, so
-  # it belongs here rather than in the producer spec — and it disappears the day
-  # the spec settles on one shape.
+  # oapi-codegen renders a oneOf as a union wrapper with As*/From* accessors,
+  # which would put generator-shaped machinery in the public error type for no
+  # gain — apiv3 already discriminates on the error code and decodes the branch
+  # it expects. Retyping it as json.RawMessage keeps that decision in one place.
   #
-  # No x-go-type-import here on purpose: the generator does not deduplicate it
-  # against imports it already emits, and generated code always imports
-  # encoding/json for marshalling, so naming the import produces a duplicate
-  # and a compile error.
+  # No x-go-type-import: the generator does not deduplicate it against imports it
+  # already emits, and generated code always imports encoding/json, so naming the
+  # import produces a duplicate and a compile error.
   - target: $.components.schemas.Error.properties.error.properties.details
     update:
       x-go-type: json.RawMessage

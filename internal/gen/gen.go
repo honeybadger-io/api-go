@@ -727,7 +727,7 @@ type Error struct {
 		// Code Machine-readable error code
 		Code ErrorErrorCode `json:"code"`
 
-		// Details Detailed validation errors (for validation_error)
+		// Details A list of field errors for `validation_error`, or an object naming the missing permission for `insufficient_scope`. Absent for every other code.
 		Details *json.RawMessage `json:"details,omitempty"`
 
 		// Message Human-readable error message
@@ -21610,7 +21610,7 @@ type ListTeamMembersResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		Data *[]User `json:"data,omitempty"`
+		Data *[]TeamMember `json:"data,omitempty"`
 
 		// Links Navigation links for a numbered-page collection
 		Links *OffsetLinks `json:"links,omitempty"`
@@ -21631,7 +21631,7 @@ type ListTeamMembersResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r ListTeamMembersResponse) GetJSON200() *struct {
-	Data *[]User `json:"data,omitempty"`
+	Data *[]TeamMember `json:"data,omitempty"`
 
 	// Links Navigation links for a numbered-page collection
 	Links *OffsetLinks `json:"links,omitempty"`
@@ -21749,8 +21749,8 @@ type GetTeamMemberResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		// Data A Honeybadger user
-		Data *User `json:"data,omitempty"`
+		// Data A member of a team
+		Data *TeamMember `json:"data,omitempty"`
 		Meta *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -21765,8 +21765,8 @@ type GetTeamMemberResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r GetTeamMemberResponse) GetJSON200() *struct {
-	// Data A Honeybadger user
-	Data *User `json:"data,omitempty"`
+	// Data A member of a team
+	Data *TeamMember `json:"data,omitempty"`
 	Meta *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -21823,8 +21823,8 @@ type UpdateTeamMemberResponse struct {
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
 	JSON200 *struct {
-		// Data A Honeybadger user
-		Data *User `json:"data,omitempty"`
+		// Data A member of a team
+		Data *TeamMember `json:"data,omitempty"`
 		Meta *struct {
 			RequestId *string `json:"request_id,omitempty"`
 		} `json:"meta,omitempty"`
@@ -21839,8 +21839,8 @@ type UpdateTeamMemberResponse struct {
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
 func (r UpdateTeamMemberResponse) GetJSON200() *struct {
-	// Data A Honeybadger user
-	Data *User `json:"data,omitempty"`
+	// Data A member of a team
+	Data *TeamMember `json:"data,omitempty"`
 	Meta *struct {
 		RequestId *string `json:"request_id,omitempty"`
 	} `json:"meta,omitempty"`
@@ -29919,7 +29919,7 @@ func ParseListTeamMembersResponse(rsp *http.Response) (*ListTeamMembersResponse,
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data *[]User `json:"data,omitempty"`
+			Data *[]TeamMember `json:"data,omitempty"`
 
 			// Links Navigation links for a numbered-page collection
 			Links *OffsetLinks `json:"links,omitempty"`
@@ -30020,8 +30020,8 @@ func ParseGetTeamMemberResponse(rsp *http.Response) (*GetTeamMemberResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			// Data A Honeybadger user
-			Data *User `json:"data,omitempty"`
+			// Data A member of a team
+			Data *TeamMember `json:"data,omitempty"`
 			Meta *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`
@@ -30073,8 +30073,8 @@ func ParseUpdateTeamMemberResponse(rsp *http.Response) (*UpdateTeamMemberRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			// Data A Honeybadger user
-			Data *User `json:"data,omitempty"`
+			// Data A member of a team
+			Data *TeamMember `json:"data,omitempty"`
 			Meta *struct {
 				RequestId *string `json:"request_id,omitempty"`
 			} `json:"meta,omitempty"`

@@ -10,9 +10,9 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
 | Branch | `scoped-api-tokens-v3` |
-| Commit | `db59097aa562394d51f8d25b2e49630de5c5acff` |
+| Commit | `01a704e5b` (validator fixes) |
 | Vendored | 2026-07-29 |
-| sha256 | `3d94288f5194efdf60b6d7173d9b5ba98da085b710553e50f93ddd63f11b07be` |
+| sha256 | `97d8e657ae315289722c63fbdd44a9d4b721326be3cd59204ae54e22af033947` |
 
 Record the branch, commit, **and checksum** on every refresh. The bundle is
 **gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of
@@ -52,21 +52,23 @@ never carries Go-shaped annotations.
 
 ## Known spec issues
 
-One problem remains in the current bundle, pinned by a test in `internal/gen/` so
-it surfaces if the spec changes.
+None outstanding. The bundle now validates — the source repo gained
+`lib/openapi/validator.rb` and a rake task, so a malformed bundle fails there
+rather than here.
 
-**`Error.details` is typed as an array but used as an object.** The schema
-declares `details: {type: array, items: {field, message}}` for validation errors,
-while the `insufficient_scope` example under the `Forbidden` response sends
-`details: {required_scope: "faults:write", token_scopes: [...]}`. Both cannot
-hold. `overlay.yaml` retypes the field as `json.RawMessage` so generated code
-accepts either, and `apiv3` decides which it received.
-
-`apiv3` also treats `code` as an open string rather than the generated enum. The
+`apiv3` still treats `code` as an open string rather than the generated enum. The
 enum has grown from 10 to 20 values during v3's development, so a closed set would
 silently drop codes the client has not caught up with.
 
 ### Fixed since first vendoring
+
+- **`Error.details` is a `oneOf`** — an array of field errors for
+  `validation_error`, or an object naming the missing permission for
+  `insufficient_scope`. It was previously typed as an array while the
+  insufficient_scope example sent an object, so a real 403 could not decode.
+  `overlay.yaml` still retypes it to `json.RawMessage`, now by choice rather than
+  necessity: the generator renders a `oneOf` as a union wrapper with As*/From*
+  accessors, and `apiv3` already discriminates on the error code.
 
 - **Basic auth removed** — `security` is `bearer_auth` only, and a Basic attempt
   now answers `unsupported_auth_scheme`.

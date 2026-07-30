@@ -7,9 +7,9 @@ import (
 
 // offsetEnvelope is the documented shape of an offset-paginated collection.
 type offsetEnvelope[T any] struct {
-	Data       []T            `json:"data"`
-	Pagination *Pagination    `json:"pagination"`
-	Links      map[string]any `json:"links"`
+	Data       []T          `json:"data"`
+	Pagination *Pagination  `json:"pagination"`
+	Links      *OffsetLinks `json:"links"`
 	Meta       struct {
 		RequestID string `json:"request_id"`
 	} `json:"meta"`
