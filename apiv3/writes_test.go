@@ -113,7 +113,7 @@ func TestProjectsCreateSendsRequiredName(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated,
 		`{"data":{"id":"Xk9mZp","account_id":"Ab3kL9","name":"New App","active":true}}`)
 
-	p, err := c.Projects.Create(context.Background(), "New App")
+	p, err := c.Projects.Create(context.Background(), ProjectParams{Name: "New App"})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
 	}
@@ -206,7 +206,7 @@ func TestWriteValidationErrorCarriesFieldDetails(t *testing.T) {
 		  "details":[{"field":"name","message":"can't be blank"}]},
 		  "meta":{"request_id":"req_v"}}`)
 
-	_, err := c.Projects.Create(context.Background(), "")
+	_, err := c.Projects.Create(context.Background(), ProjectParams{})
 	if !errors.Is(err, ErrValidation) {
 		t.Fatalf("err = %v, want ErrValidation", err)
 	}
@@ -240,5 +240,141 @@ func TestWriteInsufficientScopeNamesScope(t *testing.T) {
 	}
 	if apiErr.RequiredScope() != "faults:write" {
 		t.Errorf("RequiredScope() = %q", apiErr.RequiredScope())
+	}
+}
+
+// The project write schema carries everything v2 accepted, so a caller can set
+// the settings that previously had to be changed in the UI.
+func TestProjectsUpdateSendsFullSettings(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK,
+		`{"data":{"id":"Xk9mZp","account_id":"Ab3kL9","name":"App","active":true}}`)
+
+	purgeDays := 30
+	disablePublicLinks := false
+	userURL := "http://example.com/users/[user_id]"
+
+	_, err := c.Projects.Update(context.Background(), "Xk9mZp", ProjectParams{
+		Name:               "App",
+		PurgeDays:          &purgeDays,
+		DisablePublicLinks: &disablePublicLinks,
+		UserUrl:            &userURL,
+	})
+	if err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	if got.body["purge_days"] != float64(30) {
+		t.Errorf("purge_days = %v", got.body["purge_days"])
+	}
+	// False is a value, not an absence: it must reach the wire.
+	if v, present := got.body["disable_public_links"]; !present || v != false {
+		t.Errorf("disable_public_links = %v (present %v), want false sent", v, present)
+	}
+	if got.body["user_url"] != userURL {
+		t.Errorf("user_url = %v", got.body["user_url"])
+	}
+	// Unset fields stay absent.
+	if _, present := got.body["source_url"]; present {
+		t.Error("source_url was sent unset")
+	}
+}
+
+// An alarm can now be created with the query and trigger that make it fire.
+func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
+
+	_, err := c.Alarms.Create(context.Background(), "Xk9mZp", AlarmParams{
+		Name:             "Spike",
+		Query:            "count() > 100",
+		EvaluationPeriod: "5m",
+		LookbackLag:      "1m",
+		StreamIDs:        []string{"str_1"},
+		Trigger:          &AlarmTrigger{Type: "threshold", Operator: ">", Value: 100},
+	})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	if got.body["query"] != "count() > 100" {
+		t.Errorf("query = %v", got.body["query"])
+	}
+	trigger, ok := got.body["trigger_config"].(map[string]any)
+	if !ok {
+		t.Fatalf("trigger_config = %v", got.body["trigger_config"])
+	}
+	if trigger["type"] != "threshold" {
+		t.Errorf("trigger type = %v", trigger["type"])
+	}
+	config, ok := trigger["config"].(map[string]any)
+	if !ok || config["operator"] != ">" || config["value"] != float64(100) {
+		t.Errorf("trigger config = %v", trigger["config"])
+	}
+}
+
+// A dashboard with no widgets must send an empty array: the field is required and
+// a nil slice would serialise as null.
+func TestDashboardsCreateSendsEmptyWidgetArray(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"d1","title":"Ops"}}`)
+
+	if _, err := c.Dashboards.Create(context.Background(), "Xk9mZp",
+		DashboardParams{Title: "Ops"}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	widgets, present := got.body["widgets"]
+	if !present {
+		t.Fatal("widgets was not sent; the schema requires it")
+	}
+	if widgets == nil {
+		t.Error("widgets was null; an empty array is what the schema wants")
+	}
+	if arr, ok := widgets.([]any); !ok || len(arr) != 0 {
+		t.Errorf("widgets = %v, want []", widgets)
+	}
+}
+
+// Widgets pass through as raw JSON, since the generated widget type is an
+// anonymous struct a caller could not build.
+func TestDashboardsCreatePassesWidgetsThrough(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"d1","title":"Ops"}}`)
+
+	_, err := c.Dashboards.Create(context.Background(), "Xk9mZp", DashboardParams{
+		Title:   "Ops",
+		Widgets: []byte(`[{"type":"errors","grid":{"x":0,"y":0,"w":6,"h":4}}]`),
+	})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	arr, ok := got.body["widgets"].([]any)
+	if !ok || len(arr) != 1 {
+		t.Fatalf("widgets = %v", got.body["widgets"])
+	}
+	widget, _ := arr[0].(map[string]any)
+	if widget["type"] != "errors" {
+		t.Errorf("widget = %v", widget)
+	}
+}
+
+// Assignment is expressible now, through a dedicated endpoint.
+func TestFaultsAssignAndUnassign(t *testing.T) {
+	c, got := captureWrite(t, http.StatusNoContent, "")
+
+	if err := c.Faults.Assign(context.Background(), "Xk9mZp", "f1", "usr_1"); err != nil {
+		t.Fatalf("Assign: %v", err)
+	}
+	if got.method != http.MethodPost {
+		t.Errorf("method = %q, want POST", got.method)
+	}
+	if got.body["assignee_id"] != "usr_1" {
+		t.Errorf("assignee_id = %v", got.body["assignee_id"])
+	}
+
+	c2, got2 := captureWrite(t, http.StatusNoContent, "")
+	if err := c2.Faults.Unassign(context.Background(), "Xk9mZp", "f1"); err != nil {
+		t.Fatalf("Unassign: %v", err)
+	}
+	if got2.method != http.MethodDelete {
+		t.Errorf("unassign method = %q, want DELETE", got2.method)
 	}
 }

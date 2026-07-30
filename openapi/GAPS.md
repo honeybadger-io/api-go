@@ -1,5 +1,26 @@
 # v2 capabilities not expressible in v3
 
+> **Most of this list is closed.** The bundle at `7295ca79c` added the missing
+> write fields, three of the four missing endpoints, the fault ordering and time
+> filters, and extracted the error body into named schemas. What remains is at the
+> top; the closed items are kept below because the history explains why the client
+> is shaped as it is.
+
+## Still open
+
+| Gap | Detail |
+| --- | --- |
+| `get_project_report` has no v3 endpoint | No path matches `reports/`. The MCP tool stays on v2, needing a legacy numeric id nothing can now discover |
+| Integrations unconfirmed | `listChannels` looks like the replacement — same shape, and v2's own comment says "integrations (channels)" — but nobody has confirmed it |
+| `resolve_on_deploy` | Appears nowhere in the bundle. A capability v2 had and v3 does not |
+| Alarm updates are name and description only | `AlarmCreateInput` carries the query, trigger and evaluation settings; `AlarmUpdateInput` carries neither, so an alarm's behaviour cannot be changed after creation |
+| A check-in update requires the name | The update body is the same schema as create, with `name` required, so changing only a grace period means resending the name. A caller who does not know it must read first |
+| A project update requires the name | Same shape, same consequence |
+| Widget and trigger types are anonymous | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds |
+| Notices have no timestamp filters | Cursor-only (`limit`, `before`, `after`), so v2's `created_after`/`created_before` have no equivalent |
+
+## Closed
+
 Tracked here because the list is the input to finishing the migration, and because
 each item is a decision someone has to make on the API side rather than a client
 workaround. Discovered while porting `api-go`'s `apiv3` package and the MCP
