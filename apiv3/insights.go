@@ -44,10 +44,12 @@ type InsightsQuery struct {
 // query — an aggregation returns different fields from an event listing — and is
 // passed through from the query service unchanged. Modelling it here would be an
 // unverifiable claim about a contract the API does not make.
+// Tagged because callers serialise this straight back out — the MCP server
+// returns it as tool output — and Go-cased keys would leak into that payload.
 type InsightsResult struct {
-	Data      map[string]any
-	Meta      map[string]any
-	RequestID string
+	Data      map[string]any `json:"data"`
+	Meta      map[string]any `json:"meta,omitempty"`
+	RequestID string         `json:"request_id,omitempty"`
 }
 
 // Query runs a BadgerQL query against the project's event streams.
