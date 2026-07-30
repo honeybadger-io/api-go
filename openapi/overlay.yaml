@@ -44,47 +44,6 @@ actions:
       items:
         type: object
 
-  # CheckIn.report_period and .grace_period are typed as integer minutes, but
-  # both are PostgreSQL interval columns and the app serialises them as strings —
-  # the same format CheckInInput already documents for the write side
-  # ("10 minutes", "00:10:00"), and the format CheckIn's own model validates:
-  #
-  #   validates :grace_period, format: {with: /\A(\d+ (minute|hour|day|week|month)s?|\d\d:\d\d:\d\d)\Z/}
-  #
-  # Generated as int, every list_check_ins call failed to decode:
-  #
-  #   json: cannot unmarshal string into Go struct field
-  #   CheckIn.data.report_period of type int
-  #
-  # Found by calling a real server. No fixture written from this spec could have
-  # caught it — the fixture would have carried the same wrong type, and the test
-  # would have passed.
-  #
-  # Two actions per field, for the reason the dashboard widgets need two: update
-  # merges, so setting type in place unions the arrays into [integer, string],
-  # which the generator rejects ("unhandled Schema type").
-  #
-  # Remove all of this once the read schemas are corrected upstream — the spec is
-  # wrong here, not the app.
-  - target: $.components.schemas.CheckIn.properties.report_period
-    remove: true
-  - target: $.components.schemas.CheckIn.properties.grace_period
-    remove: true
-  - target: $.components.schemas.CheckIn.properties
-    update:
-      report_period:
-        type:
-        - string
-        - 'null'
-        description: >-
-          How often a report is expected, for `simple` schedules. A count and a
-          unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Absent for cron schedules.
-      grace_period:
-        type: string
-        description: >-
-          How long after the expected time before the check-in is considered
-          missing. Same format as `report_period`.
-
   # Alarm.query is typed as an object, but the alarm's query is BadgerQL text and
   # the presenter renders it verbatim from the observer payload:
   #

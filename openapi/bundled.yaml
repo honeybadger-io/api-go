@@ -5329,8 +5329,13 @@ components:
           type: integer
           description: Number of consecutive missed reports
         grace_period:
-          type: integer
-          description: Grace period in minutes before alerting
+          type: string
+          description: 'How long after the expected time before the check-in is missing.
+            A Postgres interval, rendered the way it is written: a count and a unit,
+            or HH:MM:SS.
+
+            '
+          example: 10 minutes
         report_url:
           type: string
           description: URL to ping when the task completes
@@ -5352,9 +5357,14 @@ components:
           example: America/New_York
         report_period:
           type:
-          - integer
+          - string
           - 'null'
-          description: Expected report period in minutes (for simple schedule type)
+          description: 'How often a report is expected, for `simple` schedules. Same
+            interval format as `grace_period`. Null for `cron` schedules, which use
+            `cron_schedule`.
+
+            '
+          example: 1 day
     CheckInBulkUpdateInput:
       type: object
       description: 'The project''s complete set of check-ins. This replaces rather
@@ -6928,6 +6938,41 @@ components:
           - production
           - staging
           - development
+        resolve_errors_on_deploy:
+          type: boolean
+          description: Whether recording a deploy resolves every open fault
+        user_url:
+          type:
+          - string
+          - 'null'
+          description: 'Template linking a fault''s affected user into your own system.
+            `[user_id]` and `[user_email]` are substituted.
+
+            '
+          example: https://admin.example.com/users/[user_id]
+        source_url:
+          type:
+          - string
+          - 'null'
+          description: 'Template linking a backtrace line to your source host. `[file]`
+            and `[line]` are substituted.
+
+            '
+          example: https://github.com/acme/app/blob/main/[file]#L[line]
+        user_search_field:
+          type:
+          - string
+          - 'null'
+          description: 'Context key identifying the affected user, when it is not
+            in the default `context.user_email` or `context.user_id`.
+
+            '
+          example: context.account_id
+        customer_throttle:
+          type:
+          - integer
+          - 'null'
+          description: Notices accepted per minute before throttling kicks in
         language:
           type:
           - string

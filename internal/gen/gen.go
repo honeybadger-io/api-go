@@ -1047,7 +1047,7 @@ type CheckIn struct {
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at,omitempty"`
 
-	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
+	// GracePeriod How long after the expected time before the check-in is missing. A Postgres interval, rendered the way it is written: a count and a unit, or HH:MM:SS.
 	GracePeriod *string `json:"grace_period,omitempty"`
 
 	// Id Unique public identifier
@@ -1062,7 +1062,7 @@ type CheckIn struct {
 	// ProjectId Public ID of the project this check-in belongs to
 	ProjectId string `json:"project_id"`
 
-	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Absent for cron schedules.
+	// ReportPeriod How often a report is expected, for `simple` schedules. Same interval format as `grace_period`. Null for `cron` schedules, which use `cron_schedule`.
 	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
 
 	// ReportUrl URL to ping when the task completes
@@ -1654,6 +1654,9 @@ type Project struct {
 	// CreatedAt When the project was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
+	// CustomerThrottle Notices accepted per minute before throttling kicks in
+	CustomerThrottle nullable.Nullable[int] `json:"customer_throttle,omitempty"`
+
 	// DisablePublicLinks Whether public error links are disabled
 	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
 
@@ -1681,11 +1684,23 @@ type Project struct {
 	// PurgeDays Data retention period in days
 	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
 
+	// ResolveErrorsOnDeploy Whether recording a deploy resolves every open fault
+	ResolveErrorsOnDeploy *bool `json:"resolve_errors_on_deploy,omitempty"`
+
+	// SourceUrl Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
+	SourceUrl nullable.Nullable[string] `json:"source_url,omitempty"`
+
 	// Token API key for error reporting (only shown to authorized users)
 	Token *string `json:"token,omitempty"`
 
 	// UnresolvedFaultCount Number of unresolved faults
 	UnresolvedFaultCount *int `json:"unresolved_fault_count,omitempty"`
+
+	// UserSearchField Context key identifying the affected user, when it is not in the default `context.user_email` or `context.user_id`.
+	UserSearchField nullable.Nullable[string] `json:"user_search_field,omitempty"`
+
+	// UserUrl Template linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted.
+	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
 // ProjectInput Writable project attributes

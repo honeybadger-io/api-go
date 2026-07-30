@@ -159,12 +159,6 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   anyway. A partial write reported as a failure is worse than either outcome on
   its own — the caller has no way to know what landed.
 
-- **The project settings are write-only.** `updateProject` permits
-  `resolve_errors_on_deploy`, `user_url`, `source_url`, `user_search_field` and
-  more, but `V3::ProjectPresenter` returns none of them. A caller can set them and
-  can never read them back, so it cannot confirm a write or read current values
-  before a partial update.
-
 - **`Alarm.query` declares an object and renders a string.** The presenter reads
   `observer_payload&.dig("query")`, which is BadgerQL text. `AlarmCreateInput`
   already types it as a string, so the read and write halves disagree with each
@@ -212,6 +206,17 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   published docs. `Error.Error` and `Error.Meta` are the cases that bite most.
 
 ## Fixed since this list started
+
+Closed by the bundle at `1ebb7621d`:
+
+- `CheckIn.report_period` and `grace_period` are typed as the interval strings the
+  app sends, with examples. The overlay that corrected them locally is removed —
+  the spec is now the authority again.
+- `Project` reports `resolve_errors_on_deploy`, `user_url`, `source_url`,
+  `user_search_field` and `customer_throttle`, and `V3::ProjectPresenter` renders
+  all five. The settings are no longer write-only, so a caller can confirm what it
+  wrote and read current values before a partial update.
+
 
 Kept for context, since several were fixed within hours of being reported.
 
