@@ -129,11 +129,21 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   `create_project` and still offers `delete_project`. The scope filtering is
   correct; the catalog and the OAuth configuration disagree.
 
-  Either `projects:create` should join `V1["write"]` — the same carve-out
-  reasoning the `uptime:*` rename already used, since v2 write grants could create
-  projects — or Doorkeeper needs to offer the granular catalog as optional scopes
-  so a client can ask for it. Until one of those lands, the destructive half of
-  project management is the only half OAuth can reach.
+  **The fix is to add `projects:create` to `V1["write"]`**, and it is permitted by
+  that list's own DO-NOT-EDIT rule rather than an exception to it. v2 gates every
+  write on one check — `!token.can_write?` in `ApiController#enforce_oauth_scope!`,
+  where `can_write?` is `scopes.exists?("write")` — so any v2 `write` grant could
+  `POST /v2/projects`. There was no separate create permission. Omitting
+  `projects:create` therefore narrows existing grants rather than holding a line
+  against widening them, which is the `uptime:*` case verbatim: "omitting it would
+  have narrowed every existing grant … adding it preserves the surface rather than
+  extending it."
+
+  Adding it to `write` only; `read` should not gain it. Offering the granular
+  catalog through Doorkeeper `optional_scopes` is the larger, separate fix — it
+  would let a client ask for less, but it does not repair the grants already
+  issued. Until this lands, the destructive half of project management is the only
+  half OAuth can reach.
 
 - **`update_alarm` cannot succeed with only a name.** `observer_params` derives
   `lookback_duration` from `params[:evaluation_period]`, so an update that does
