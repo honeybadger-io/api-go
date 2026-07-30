@@ -117,6 +117,15 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   `account_id`, `name`, and `active` required on `Project`, but generated
   non-pointer fields silently become zero values when absent, so `{"data":{}}`
   would otherwise return a project with an empty id.
+- **The fault bulk endpoints promise time filters they do not declare.** All four
+  say "omit to act on everything the query and time filters match", but they
+  declare only `account_id` and `project_id`, and their body carries only
+  `fault_ids` and `q`. So there is no way for a client to send a time filter, and
+  no way to tell whether the sentence describes a missing parameter or is left
+  over from `listFaults`. `apiv3` documents `q` alone. Either add
+  `occurred_after`/`occurred_before` to the body or drop the clause — as written
+  a caller can reasonably expect a bounded change and get a project-wide one.
+
 - **787 anonymous inline structs** in the generated models, from inline object
   schemas. A consumer cannot name or construct those types. Extracting them into
   named component schemas would shrink hand-written wrapper code and improve the
