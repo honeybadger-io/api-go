@@ -82,6 +82,9 @@ type Client struct {
 
 	// Projects handles the projects resource.
 	Projects *ProjectsService
+
+	// Faults handles the faults resource and its notices.
+	Faults *FaultsService
 }
 
 // NewClient returns a client pointing at the production API with a 30 second
@@ -92,6 +95,7 @@ func NewClient() *Client {
 		httpClient: &http.Client{Timeout: 30 * time.Second},
 	}
 	c.Projects = &ProjectsService{client: c}
+	c.Faults = &FaultsService{client: c}
 	return c
 }
 
