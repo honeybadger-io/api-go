@@ -59,8 +59,8 @@ func (t *TokenInfo) HasScope(scope string) bool {
 // discover its own limits. Two uses worth knowing:
 //
 //   - Recovering from ambiguous_account: AccountID names the account the
-//     credential is bound to, so a caller that hit that error can retry with
-//     InAccount(info.AccountID).
+//     credential is bound to. v3 resolves the account from the credential,
+//     so the fix is to use a credential scoped to one account.
 //   - Gating features ahead of a 403: Scopes lets a caller check what is
 //     permitted rather than discovering it from a refusal.
 func (s *TokensService) Get(ctx context.Context) (*TokenInfo, error) {

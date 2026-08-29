@@ -15,8 +15,7 @@ type ProjectsService struct {
 	client *Client
 }
 
-// List returns one page of projects. Use Page to select which, and InAccount to
-// address a specific account.
+// List returns one page of projects. Use Page to select which.
 func (s *ProjectsService) List(ctx context.Context, opts ...Option) (*ListResponse[Project], error) {
 	return s.list(ctx, resolve(opts))
 }
@@ -35,14 +34,13 @@ func (s *ProjectsService) list(ctx context.Context, ro requestOptions) (*ListRes
 	ro.applyOffset(&params.Page, &params.PerPage)
 
 	return listOffset[Project](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ListProjects(ctx, s.client.accountID(ro.accountID), params)
+		return s.client.gen().ListProjects(ctx, params)
 	})
 }
 
 // Get returns a single project by its opaque id.
 func (s *ProjectsService) Get(ctx context.Context, projectID string, opts ...Option) (*Project, error) {
-	ro := resolve(opts)
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().GetProject(ctx, s.client.accountID(ro.accountID), projectID)
+		return s.client.gen().GetProject(ctx, projectID)
 	})
 }

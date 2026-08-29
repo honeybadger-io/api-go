@@ -105,7 +105,7 @@ func TestProjectsListAllWalksPages(t *testing.T) {
 
 func TestProjectsGet(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/accounts/me/projects/Xk9mZp"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":{"id":"Xk9mZp","account_id":"Ab3kL9","name":"My Rails App","active":true},

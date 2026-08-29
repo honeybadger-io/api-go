@@ -62,8 +62,6 @@ type InsightsResult struct {
 // the events not existing — so list the project's streams first when a query
 // unexpectedly comes back empty.
 func (s *InsightsService) Query(ctx context.Context, projectID string, q InsightsQuery, opts ...Option) (*InsightsResult, error) {
-	ro := resolve(opts)
-
 	body := gen.RunInsightsQueryJSONRequestBody{Query: q.Query}
 	if len(q.StreamIDs) > 0 {
 		body.StreamIds = &q.StreamIDs
@@ -76,7 +74,7 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 	}
 
 	status, raw, err := s.client.do(ctx, func() (*http.Response, error) {
-		return s.client.gen().RunInsightsQuery(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().RunInsightsQuery(ctx, projectID, body)
 	})
 	if err != nil {
 		return nil, err
@@ -160,6 +158,6 @@ func (s *InsightsService) listStreams(ctx context.Context, projectID string, ro 
 	ro.applyOffset(&params.Page, &params.PerPage)
 
 	return listOffset[Stream](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ListStreams(ctx, s.client.accountID(ro.accountID), projectID, params)
+		return s.client.gen().ListStreams(ctx, projectID, params)
 	})
 }

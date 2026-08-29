@@ -54,19 +54,17 @@ func TestTokensGet(t *testing.T) {
 	}
 }
 
-// Introspection is how a caller recovers from ambiguous_account: the error says
-// "me" is ambiguous, and the token endpoint names the account to use instead.
-func TestTokensGetRecoversFromAmbiguousAccount(t *testing.T) {
+// Token introspection reveals the account a credential belongs to, which a
+// caller can use to resolve an ambiguous_account error by scoping their
+// credential on the server side. v3 does not accept account IDs in paths.
+func TestTokensGetRevealsAccountID(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/v3/accounts/me/projects":
+		case "/v3/projects":
 			writeJSON(w, http.StatusUnprocessableEntity,
 				`{"error":{"code":"ambiguous_account","message":"\"me\" is ambiguous"}}`)
 		case "/v3/token":
 			writeJSON(w, 0, `{"data":{"kind":"oauth","scopes":["projects:read"],"account_id":"Ab3kL9"}}`)
-		case "/v3/accounts/Ab3kL9/projects":
-			writeJSON(w, 0, `{"data":[{"id":"Xk9mZp","account_id":"Ab3kL9","name":"App","active":true}],
-			  "pagination":{"page":1,"per_page":25,"total_count":1,"total_pages":1}}`)
 		default:
 			t.Errorf("unexpected path %q", r.URL.Path)
 		}
@@ -85,12 +83,7 @@ func TestTokensGetRecoversFromAmbiguousAccount(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Tokens.Get: %v", err)
 	}
-
-	resp, err := c.Projects.List(context.Background(), InAccount(info.AccountID))
-	if err != nil {
-		t.Fatalf("retry with explicit account: %v", err)
-	}
-	if len(resp.Data) != 1 {
-		t.Errorf("Data = %v, want 1 project", resp.Data)
+	if info.AccountID != "Ab3kL9" {
+		t.Errorf("AccountID = %q, want Ab3kL9", info.AccountID)
 	}
 }

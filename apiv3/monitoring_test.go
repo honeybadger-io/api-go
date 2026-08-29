@@ -9,7 +9,7 @@ import (
 
 func TestCheckInsList(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/accounts/me/projects/Xk9mZp/check_ins"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp/check_ins"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":[{"id":"c1","name":"Nightly","slug":"nightly"}],
@@ -101,7 +101,7 @@ func TestAlarmsListIsUnpaginated(t *testing.T) {
 // Alarm history rows come straight from the query service, so they stay untyped.
 func TestAlarmsListHistoryPassesRowsThrough(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/accounts/me/projects/Xk9mZp/alarms/a1/history"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp/alarms/a1/history"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":[{"state":"triggered","at":"2026-07-29T00:00:00Z","value":91.5}],
@@ -144,7 +144,7 @@ func TestAlarmHistorySendsPageOnly(t *testing.T) {
 
 func TestDashboardsGet(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/accounts/me/projects/Xk9mZp/dashboards/d1"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp/dashboards/d1"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":{"id":"d1","name":"Ops"}}`)
@@ -163,7 +163,7 @@ func TestDashboardsGet(t *testing.T) {
 
 func TestFaultsAffectedUsers(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/accounts/me/projects/Xk9mZp/faults/f1/affected_users"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp/faults/1/affected_users"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":[{"user":"a@example.com","count":3}]}`)
@@ -171,7 +171,7 @@ func TestFaultsAffectedUsers(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	data, err := c.Faults.AffectedUsers(context.Background(), "Xk9mZp", "f1")
+	data, err := c.Faults.AffectedUsers(context.Background(), "Xk9mZp", 1)
 	if err != nil {
 		t.Fatalf("AffectedUsers: %v", err)
 	}

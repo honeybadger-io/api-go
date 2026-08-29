@@ -21,8 +21,8 @@ type FaultsService struct {
 	client *Client
 }
 
-// List returns one page of faults for a project. Use Search to filter, Page to
-// select which page, and InAccount to address a specific account.
+// List returns one page of faults for a project. Use Search to filter and Page
+// to select which page.
 func (s *FaultsService) List(ctx context.Context, projectID string, opts ...Option) (*ListResponse[Fault], error) {
 	return s.list(ctx, projectID, resolve(opts))
 }
@@ -57,15 +57,14 @@ func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOp
 	}
 
 	return listOffset[Fault](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ListFaults(ctx, s.client.accountID(ro.accountID), projectID, params)
+		return s.client.gen().ListFaults(ctx, projectID, params)
 	})
 }
 
 // Get returns a single fault.
-func (s *FaultsService) Get(ctx context.Context, projectID, faultID string, opts ...Option) (*Fault, error) {
-	ro := resolve(opts)
+func (s *FaultsService) Get(ctx context.Context, projectID string, faultID int, opts ...Option) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().GetFault(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+		return s.client.gen().GetFault(ctx, projectID, faultID)
 	})
 }
 
@@ -79,7 +78,7 @@ type AffectedUser = gen.AffectedUser
 // AffectedUsers returns the users a fault has affected.
 //
 // Search accepts the same filter syntax as the fault listing.
-func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID string, opts ...Option) ([]AffectedUser, error) {
+func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, faultID int, opts ...Option) ([]AffectedUser, error) {
 	ro := resolve(opts)
 	params := &gen.ListFaultAffectedUsersParams{}
 	if ro.query != "" {
@@ -88,7 +87,7 @@ func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID st
 	}
 
 	data, err := getOne[[]AffectedUser](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ListFaultAffectedUsers(ctx, s.client.accountID(ro.accountID), projectID, faultID, params)
+		return s.client.gen().ListFaultAffectedUsers(ctx, projectID, faultID, params)
 	})
 	if err != nil {
 		return nil, err
@@ -98,7 +97,7 @@ func (s *FaultsService) AffectedUsers(ctx context.Context, projectID, faultID st
 
 // ListNotices returns one page of a fault's notices, newest first. Use Limit to
 // size the page, and Before or After to position within the collection.
-func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID string, opts ...Option) (*ListResponse[Notice], error) {
+func (s *FaultsService) ListNotices(ctx context.Context, projectID string, faultID int, opts ...Option) (*ListResponse[Notice], error) {
 	return s.listNotices(ctx, projectID, faultID, resolve(opts))
 }
 
@@ -107,7 +106,7 @@ func (s *FaultsService) ListNotices(ctx context.Context, projectID, faultID stri
 // After the first page it follows links.older rather than re-deriving a cursor,
 // which is what the spec instructs and the only mechanism that also works for
 // collections that page on a timestamp.
-func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID string, opts ...ListAllOption) ([]Notice, error) {
+func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, faultID int, opts ...ListAllOption) ([]Notice, error) {
 	ro := resolveListAll(opts)
 	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[Notice], error) {
 		if link != "" {
@@ -117,11 +116,11 @@ func (s *FaultsService) ListAllNotices(ctx context.Context, projectID, faultID s
 	})
 }
 
-func (s *FaultsService) listNotices(ctx context.Context, projectID, faultID string, ro requestOptions) (*ListResponse[Notice], error) {
+func (s *FaultsService) listNotices(ctx context.Context, projectID string, faultID int, ro requestOptions) (*ListResponse[Notice], error) {
 	params := &gen.ListNoticesParams{}
 	ro.applyTimeSeries(&params.Limit, &params.Before, &params.After)
 
 	return listTimeSeries[Notice](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ListNotices(ctx, s.client.accountID(ro.accountID), projectID, faultID, params)
+		return s.client.gen().ListNotices(ctx, projectID, faultID, params)
 	})
 }

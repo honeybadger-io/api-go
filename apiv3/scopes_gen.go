@@ -7,7 +7,6 @@ package apiv3
 // Absent means no scope is needed. Generated from the spec so it cannot drift
 // from what the API actually enforces.
 var OperationScopes = map[string]string{
-	"listAccounts":             "account:read",
 	"getAccount":               "account:read",
 	"getAccountUsage":          "account:read",
 	"listAccountMembers":       "team:read",
@@ -76,9 +75,15 @@ var OperationScopes = map[string]string{
 	"deleteEnvironment":        "projects:write",
 	"bulkUpdateEnvironments":   "projects:write",
 	"bulkDeleteEnvironments":   "projects:write",
-	"listChannels":             "integrations:read",
-	"getChannel":               "integrations:read",
-	"updateChannel":            "integrations:write",
+	"listIntegrations":         "integrations:read",
+	"createIntegration":        "integrations:write",
+	"getIntegration":           "integrations:read",
+	"updateIntegration":        "integrations:write",
+	"deleteIntegration":        "integrations:write",
+	"listProjectKeys":          "projects:read",
+	"createProjectKey":         "projects:write",
+	"updateProjectKey":         "projects:write",
+	"deleteProjectKey":         "projects:write",
 	"listDashboards":           "dashboards:read",
 	"createDashboard":          "dashboards:write",
 	"getDashboard":             "dashboards:read",

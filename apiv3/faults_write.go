@@ -3,6 +3,7 @@ package apiv3
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -31,7 +32,7 @@ import (
 //
 // The zero value is not a valid selection: see ErrEveryFault.
 type FaultSelection struct {
-	ids   []string
+	ids   []int
 	query string
 	all   bool
 
@@ -70,7 +71,7 @@ func (sel FaultSelection) filtered() bool {
 }
 
 // SelectFaults changes the named faults. Ids outside the project select nothing.
-func SelectFaults(ids ...string) FaultSelection {
+func SelectFaults(ids ...int) FaultSelection {
 	return FaultSelection{ids: ids}
 }
 
@@ -151,51 +152,47 @@ func (sel FaultSelection) body() (*gen.ResolveFaultsJSONRequestBody, error) {
 
 // Resolve marks faults as resolved.
 func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
-	ro := resolve(opts)
 	body, err := sel.body()
 	if err != nil {
 		return err
 	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ResolveFaults(ctx, s.client.accountID(ro.accountID), projectID, *body)
+		return s.client.gen().ResolveFaults(ctx, projectID, *body)
 	})
 }
 
 // Unresolve returns faults to the unresolved state.
 func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
-	ro := resolve(opts)
 	body, err := sel.body()
 	if err != nil {
 		return err
 	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UnresolveFaults(ctx, s.client.accountID(ro.accountID), projectID,
+		return s.client.gen().UnresolveFaults(ctx, projectID,
 			gen.UnresolveFaultsJSONRequestBody(*body))
 	})
 }
 
 // Ignore marks faults as ignored, which also stops collecting data for them.
 func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
-	ro := resolve(opts)
 	body, err := sel.body()
 	if err != nil {
 		return err
 	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().IgnoreFaults(ctx, s.client.accountID(ro.accountID), projectID,
+		return s.client.gen().IgnoreFaults(ctx, projectID,
 			gen.IgnoreFaultsJSONRequestBody(*body))
 	})
 }
 
 // Unignore stops ignoring faults.
 func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
-	ro := resolve(opts)
 	body, err := sel.body()
 	if err != nil {
 		return err
 	}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UnignoreFaults(ctx, s.client.accountID(ro.accountID), projectID,
+		return s.client.gen().UnignoreFaults(ctx, projectID,
 			gen.UnignoreFaultsJSONRequestBody(*body))
 	})
 }
@@ -206,10 +203,10 @@ type FaultMerge struct {
 	BatchID string `json:"batch_id"`
 
 	// SourceID is the fault that was merged away.
-	SourceID string `json:"source_id"`
+	SourceID int `json:"source_id"`
 
 	// TargetID is the fault that was kept.
-	TargetID string `json:"target_id"`
+	TargetID int `json:"target_id"`
 }
 
 // ErrMergeIntoSelf is returned when both fault ids are the same.
@@ -223,38 +220,47 @@ var ErrMergeIntoSelf = errors.New("apiv3: a fault cannot be merged into itself")
 //
 // The merge runs in the background, so a successful call means accepted, not
 // done, and the returned ids let a caller confirm the direction the API applied.
-func (s *FaultsService) Merge(ctx context.Context, projectID, sourceFaultID, targetFaultID string, opts ...Option) (*FaultMerge, error) {
+func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFaultID, targetFaultID int, opts ...Option) (*FaultMerge, error) {
 	if sourceFaultID == targetFaultID {
 		return nil, ErrMergeIntoSelf
 	}
-	ro := resolve(opts)
 	body := gen.MergeFaultsJSONRequestBody{TargetFaultId: targetFaultID}
 	return getOne[FaultMerge](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().MergeFaults(ctx, s.client.accountID(ro.accountID), projectID, sourceFaultID, body)
+		return s.client.gen().MergeFaults(ctx, projectID, sourceFaultID, body)
 	})
 }
 
-// PauseRecording stops recording new notices for a fault.
-func (s *FaultsService) PauseRecording(ctx context.Context, projectID, faultID string, opts ...Option) error {
-	ro := resolve(opts)
+// PauseDuration controls how long recording is paused.
+type PauseDuration = gen.PauseFaultRecordingJSONBodyTime
+
+const (
+	PauseHour PauseDuration = gen.PauseFaultRecordingJSONBodyTimeHour
+	PauseDay  PauseDuration = gen.PauseFaultRecordingJSONBodyTimeDay
+	PauseWeek PauseDuration = gen.PauseFaultRecordingJSONBodyTimeWeek
+)
+
+// PauseRecording stops recording new notices for a fault for the given duration.
+func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID int, duration PauseDuration, opts ...Option) error {
+	if !duration.Valid() {
+		return fmt.Errorf("apiv3: invalid pause duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
+	}
+	body := gen.PauseFaultRecordingJSONRequestBody{Time: duration}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().PauseFaultRecording(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+		return s.client.gen().PauseFaultRecording(ctx, projectID, faultID, body)
 	})
 }
 
 // ResumeRecording starts recording notices for a fault again.
-func (s *FaultsService) ResumeRecording(ctx context.Context, projectID, faultID string, opts ...Option) error {
-	ro := resolve(opts)
+func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID int, opts ...Option) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().ResumeFaultRecording(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+		return s.client.gen().ResumeFaultRecording(ctx, projectID, faultID)
 	})
 }
 
 // Delete removes a fault and its notices.
-func (s *FaultsService) Delete(ctx context.Context, projectID, faultID string, opts ...Option) error {
-	ro := resolve(opts)
+func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID int, opts ...Option) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().DeleteFault(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+		return s.client.gen().DeleteFault(ctx, projectID, faultID)
 	})
 }
 
@@ -263,11 +269,10 @@ func (s *FaultsService) Delete(ctx context.Context, projectID, faultID string, o
 // Commenting attributes text to a person, so an account token holding
 // faults:write is still refused with requires_user_token — there is nobody to
 // attribute it to. Check errors.Is(err, ErrRequiresUserToken).
-func (s *FaultsService) AddComment(ctx context.Context, projectID, faultID, comment string, opts ...Option) error {
-	ro := resolve(opts)
+func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID int, comment string, opts ...Option) error {
 	body := gen.CreateCommentJSONRequestBody{Body: comment}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateComment(ctx, s.client.accountID(ro.accountID), projectID, faultID, body)
+		return s.client.gen().CreateComment(ctx, projectID, faultID, body)
 	})
 }
 
@@ -280,10 +285,9 @@ func (s *FaultsService) AddComment(ctx context.Context, projectID, faultID, comm
 //
 // AssigneeId is nullable: an explicit null unassigns, while leaving it
 // unspecified changes nothing.
-func (s *FaultsService) Update(ctx context.Context, projectID, faultID string, p FaultParams, opts ...Option) (*Fault, error) {
-	ro := resolve(opts)
+func (s *FaultsService) Update(ctx context.Context, projectID string, faultID int, p FaultParams, opts ...Option) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateFault(ctx, s.client.accountID(ro.accountID), projectID, faultID, p)
+		return s.client.gen().UpdateFault(ctx, projectID, faultID, p)
 	})
 }
 
@@ -291,19 +295,17 @@ func (s *FaultsService) Update(ctx context.Context, projectID, faultID string, p
 //
 // The id must belong to a member of the project; one that does not is rejected
 // with 422 rather than silently unassigning.
-func (s *FaultsService) Assign(ctx context.Context, projectID, faultID, assigneeID string, opts ...Option) error {
-	ro := resolve(opts)
+func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID int, assigneeID string, opts ...Option) error {
 	body := gen.AssignFaultJSONRequestBody{AssigneeId: assigneeID}
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().AssignFault(ctx, s.client.accountID(ro.accountID), projectID, faultID, body)
+		return s.client.gen().AssignFault(ctx, projectID, faultID, body)
 	})
 }
 
 // Unassign removes a fault's assignee.
-func (s *FaultsService) Unassign(ctx context.Context, projectID, faultID string, opts ...Option) error {
-	ro := resolve(opts)
+func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID int, opts ...Option) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UnassignFault(ctx, s.client.accountID(ro.accountID), projectID, faultID)
+		return s.client.gen().UnassignFault(ctx, projectID, faultID)
 	})
 }
 
@@ -328,7 +330,7 @@ func (s *FaultsService) Summary(ctx context.Context, projectID string, opts ...O
 	}
 
 	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().GetFaultSummary(ctx, s.client.accountID(ro.accountID), projectID, params)
+		return s.client.gen().GetFaultSummary(ctx, projectID, params)
 	})
 	if err != nil {
 		return nil, err

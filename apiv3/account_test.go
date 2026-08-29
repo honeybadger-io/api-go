@@ -31,7 +31,7 @@ func TestPerCallAccountWins(t *testing.T) {
 	}
 }
 
-// The default must reach the wire as /v3/accounts/me/..., since that is what
+// The default must reach the wire as /v3/..., since that is what
 // spares every caller from resolving an account id.
 func TestMeReachesTheRequestPath(t *testing.T) {
 	var gotPath string
@@ -45,16 +45,18 @@ func TestMeReachesTheRequestPath(t *testing.T) {
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("List: %v", err)
 	}
-	if want := "/v3/accounts/me/projects"; gotPath != want {
+	if want := "/v3/projects"; gotPath != want {
 		t.Errorf("path = %q, want %q", gotPath, want)
 	}
 }
 
-func TestExplicitAccountReachesTheRequestPath(t *testing.T) {
+// v3 removed account IDs from paths — the account is resolved from the
+// credential. InAccount is accepted but does not alter the request path.
+func TestExplicitAccountDoesNotAlterPath(t *testing.T) {
 	var gotPath string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotPath = r.URL.Path
-		writeJSON(w, 0, `{"data":[]}`)
+		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25,"total_count":0,"total_pages":0}}`)
 	}))
 	defer srv.Close()
 
@@ -63,7 +65,7 @@ func TestExplicitAccountReachesTheRequestPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("List: %v", err)
 	}
-	if want := "/v3/accounts/Ab3kL9/projects"; gotPath != want {
+	if want := "/v3/projects"; gotPath != want {
 		t.Errorf("path = %q, want %q", gotPath, want)
 	}
 }

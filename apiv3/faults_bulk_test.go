@@ -11,15 +11,15 @@ import (
 func TestBulkFaultChangeSendsIDs(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, "")
 
-	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults("f1", "f2")); err != nil {
+	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(1, 2)); err != nil {
 		t.Fatalf("Resolve: %v", err)
 	}
 
-	if want := "/v3/accounts/me/projects/Xk9mZp/faults/resolve"; got.path != want {
+	if want := "/v3/projects/Xk9mZp/faults/resolve"; got.path != want {
 		t.Errorf("path = %q, want %q", got.path, want)
 	}
 	ids, ok := got.body["fault_ids"].([]any)
-	if !ok || len(ids) != 2 || ids[0] != "f1" {
+	if !ok || len(ids) != 2 || ids[0] != float64(1) {
 		t.Errorf("fault_ids = %v", got.body["fault_ids"])
 	}
 	if _, sent := got.body["q"]; sent {
@@ -92,20 +92,20 @@ func TestSelectAllFaultsSendsNoFilter(t *testing.T) {
 
 func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 	c, got := captureWrite(t, http.StatusAccepted, `{"data":{
-		"batch_id":"WksB67FpRY3bZQ","source_id":"2z4WtH9gARww","target_id":"OmDSjxQSys5k"}}`)
+		"batch_id":"WksB67FpRY3bZQ","source_id":201,"target_id":202}}`)
 
-	merge, err := c.Faults.Merge(context.Background(), "Xk9mZp", "2z4WtH9gARww", "OmDSjxQSys5k")
+	merge, err := c.Faults.Merge(context.Background(), "Xk9mZp", 201, 202)
 	if err != nil {
 		t.Fatalf("Merge: %v", err)
 	}
 
-	if want := "/v3/accounts/me/projects/Xk9mZp/faults/2z4WtH9gARww/merge"; got.path != want {
+	if want := "/v3/projects/Xk9mZp/faults/201/merge"; got.path != want {
 		t.Errorf("path = %q, want the source fault %q", got.path, want)
 	}
-	if got.body["target_fault_id"] != "OmDSjxQSys5k" {
+	if got.body["target_fault_id"] != float64(202) {
 		t.Errorf("target_fault_id = %v, want the fault being kept", got.body["target_fault_id"])
 	}
-	if merge.BatchID != "WksB67FpRY3bZQ" || merge.SourceID != "2z4WtH9gARww" || merge.TargetID != "OmDSjxQSys5k" {
+	if merge.BatchID != "WksB67FpRY3bZQ" || merge.SourceID != 201 || merge.TargetID != 202 {
 		t.Errorf("merge = %+v", merge)
 	}
 }
@@ -113,7 +113,7 @@ func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 func TestMergeRefusesAFaultIntoItself(t *testing.T) {
 	c, got := captureWrite(t, http.StatusAccepted, "")
 
-	if _, err := c.Faults.Merge(context.Background(), "Xk9mZp", "f1", "f1"); !errors.Is(err, ErrMergeIntoSelf) {
+	if _, err := c.Faults.Merge(context.Background(), "Xk9mZp", 1, 1); !errors.Is(err, ErrMergeIntoSelf) {
 		t.Fatalf("err = %v, want ErrMergeIntoSelf", err)
 	}
 	if got.method != "" {
@@ -160,7 +160,7 @@ func TestTimeFilterAloneIsABoundedSelection(t *testing.T) {
 func TestIDsWithTimeFiltersIsRefused(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, "")
 
-	sel := SelectFaults("f1").OccurredBefore(time.Unix(1785300000, 0))
+	sel := SelectFaults(1).OccurredBefore(time.Unix(1785300000, 0))
 	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); !errors.Is(err, ErrFilteredIDs) {
 		t.Fatalf("err = %v, want ErrFilteredIDs", err)
 	}

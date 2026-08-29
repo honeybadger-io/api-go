@@ -44,7 +44,7 @@ func captureWrite(t *testing.T, status int, response string) (*Client, *captured
 func TestDeleteAcceptsNoContent(t *testing.T) {
 	c, got := captureWrite(t, http.StatusNoContent, "")
 
-	if err := c.Faults.Delete(context.Background(), "Xk9mZp", "f1"); err != nil {
+	if err := c.Faults.Delete(context.Background(), "Xk9mZp", 1); err != nil {
 		t.Fatalf("Delete: %v", err)
 	}
 	if got.method != http.MethodDelete {
@@ -52,31 +52,34 @@ func TestDeleteAcceptsNoContent(t *testing.T) {
 	}
 }
 
-func TestPauseAndResumeRecordingSendNoBody(t *testing.T) {
-	for _, tc := range []struct {
-		name string
-		call func(*Client) error
-		path string
-	}{
-		{"pause", func(c *Client) error {
-			return c.Faults.PauseRecording(context.Background(), "Xk9mZp", "f1")
-		}, "/v3/accounts/me/projects/Xk9mZp/faults/f1/pause_recording"},
-		{"resume", func(c *Client) error {
-			return c.Faults.ResumeRecording(context.Background(), "Xk9mZp", "f1")
-		}, "/v3/accounts/me/projects/Xk9mZp/faults/f1/resume_recording"},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			c, got := captureWrite(t, http.StatusNoContent, "")
-			if err := tc.call(c); err != nil {
-				t.Fatalf("%s: %v", tc.name, err)
-			}
-			if got.path != tc.path {
-				t.Errorf("path = %q, want %q", got.path, tc.path)
-			}
-			if got.body != nil {
-				t.Errorf("body = %v, want none", got.body)
-			}
-		})
+func TestPauseRecordingSendsBody(t *testing.T) {
+	c, got := captureWrite(t, http.StatusNoContent, "")
+	if err := c.Faults.PauseRecording(context.Background(), "Xk9mZp", 1, PauseDay); err != nil {
+		t.Fatalf("pause: %v", err)
+	}
+	wantPath := "/v3/projects/Xk9mZp/faults/1/pause_recording"
+	if got.path != wantPath {
+		t.Errorf("path = %q, want %q", got.path, wantPath)
+	}
+	if got.body == nil {
+		t.Fatal("body = nil, want {time: day}")
+	}
+	if time, ok := got.body["time"]; !ok || time != "day" {
+		t.Errorf("body = %v, want time=day", got.body)
+	}
+}
+
+func TestResumeRecordingSendsNoBody(t *testing.T) {
+	c, got := captureWrite(t, http.StatusNoContent, "")
+	if err := c.Faults.ResumeRecording(context.Background(), "Xk9mZp", 1); err != nil {
+		t.Fatalf("resume: %v", err)
+	}
+	wantPath := "/v3/projects/Xk9mZp/faults/1/resume_recording"
+	if got.path != wantPath {
+		t.Errorf("path = %q, want %q", got.path, wantPath)
+	}
+	if got.body != nil {
+		t.Errorf("body = %v, want none", got.body)
 	}
 }
 
@@ -86,7 +89,7 @@ func TestAddCommentRequiresUserToken(t *testing.T) {
 	c, _ := captureWrite(t, http.StatusForbidden,
 		`{"error":{"code":"requires_user_token","message":"This endpoint records the person who acted"}}`)
 
-	err := c.Faults.AddComment(context.Background(), "Xk9mZp", "f1", "looking into it")
+	err := c.Faults.AddComment(context.Background(), "Xk9mZp", 1, "looking into it")
 	if !errors.Is(err, ErrRequiresUserToken) {
 		t.Fatalf("err = %v, want ErrRequiresUserToken", err)
 	}
@@ -216,7 +219,7 @@ func TestWriteInsufficientScopeNamesScope(t *testing.T) {
 		`{"error":{"code":"insufficient_scope","message":"Insufficient scope",
 		  "details":{"required_scope":"faults:write","token_scopes":["faults:read"]}}}`)
 
-	err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults("f1"))
+	err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults(1))
 	var apiErr *Error
 	if !asError(err, &apiErr) {
 		t.Fatalf("err = %T, want *apiv3.Error", err)
@@ -343,7 +346,7 @@ func TestDashboardsCreatePassesWidgetsThrough(t *testing.T) {
 func TestFaultsAssignAndUnassign(t *testing.T) {
 	c, got := captureWrite(t, http.StatusNoContent, "")
 
-	if err := c.Faults.Assign(context.Background(), "Xk9mZp", "f1", "usr_1"); err != nil {
+	if err := c.Faults.Assign(context.Background(), "Xk9mZp", 1, "usr_1"); err != nil {
 		t.Fatalf("Assign: %v", err)
 	}
 	if got.method != http.MethodPost {
@@ -354,7 +357,7 @@ func TestFaultsAssignAndUnassign(t *testing.T) {
 	}
 
 	c2, got2 := captureWrite(t, http.StatusNoContent, "")
-	if err := c2.Faults.Unassign(context.Background(), "Xk9mZp", "f1"); err != nil {
+	if err := c2.Faults.Unassign(context.Background(), "Xk9mZp", 1); err != nil {
 		t.Fatalf("Unassign: %v", err)
 	}
 	if got2.method != http.MethodDelete {

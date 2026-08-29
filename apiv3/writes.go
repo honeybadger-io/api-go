@@ -32,9 +32,8 @@ type FaultParams = gen.FaultInput
 
 // Create makes a new project. Name is the only required field.
 func (s *ProjectsService) Create(ctx context.Context, p ProjectParams, opts ...Option) (*Project, error) {
-	ro := resolve(opts)
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateProject(ctx, s.client.accountID(ro.accountID), p)
+		return s.client.gen().CreateProject(ctx, p)
 	})
 }
 
@@ -43,17 +42,15 @@ func (s *ProjectsService) Create(ctx context.Context, p ProjectParams, opts ...O
 // Name is required even when only another field is changing: the update body is
 // the same schema as create. Every other unset field is omitted.
 func (s *ProjectsService) Update(ctx context.Context, projectID string, p ProjectParams, opts ...Option) (*Project, error) {
-	ro := resolve(opts)
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateProject(ctx, s.client.accountID(ro.accountID), projectID, p)
+		return s.client.gen().UpdateProject(ctx, projectID, p)
 	})
 }
 
 // Delete removes a project.
 func (s *ProjectsService) Delete(ctx context.Context, projectID string, opts ...Option) error {
-	ro := resolve(opts)
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().DeleteProject(ctx, s.client.accountID(ro.accountID), projectID)
+		return s.client.gen().DeleteProject(ctx, projectID)
 	})
 }
 
@@ -114,12 +111,11 @@ func (p CheckInParams) apply(body *gen.CheckInInput) {
 
 // Create makes a new check-in.
 func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
-	ro := resolve(opts)
 	var body gen.CheckInInput
 	p.apply(&body)
 
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateCheckIn(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().CreateCheckIn(ctx, projectID, body)
 	})
 }
 
@@ -131,20 +127,18 @@ func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckI
 //
 // Every other empty field is omitted, so an update touches only what it was given.
 func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
-	ro := resolve(opts)
 	var body gen.CheckInInput
 	p.apply(&body)
 
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateCheckIn(ctx, s.client.accountID(ro.accountID), projectID, checkInID, body)
+		return s.client.gen().UpdateCheckIn(ctx, projectID, checkInID, body)
 	})
 }
 
 // Delete removes a check-in.
 func (s *CheckInsService) Delete(ctx context.Context, projectID, checkInID string, opts ...Option) error {
-	ro := resolve(opts)
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().DeleteCheckIn(ctx, s.client.accountID(ro.accountID), projectID, checkInID)
+		return s.client.gen().DeleteCheckIn(ctx, projectID, checkInID)
 	})
 }
 
@@ -221,10 +215,9 @@ func (p AlarmParams) toCreate() gen.AlarmCreateInput {
 // Create makes a new alarm. Name and Query are required; an alarm with no
 // trigger is created but never fires.
 func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmParams, opts ...Option) (*Alarm, error) {
-	ro := resolve(opts)
 	body := p.toCreate()
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateAlarm(ctx, s.client.accountID(ro.accountID), projectID, body)
+		return s.client.gen().CreateAlarm(ctx, projectID, body)
 	})
 }
 
@@ -244,19 +237,17 @@ type AlarmUpdateParams struct {
 // takes the query, trigger and evaluation settings. Changing an alarm's behaviour
 // is therefore not possible through the API; delete and recreate it.
 func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams, opts ...Option) (*Alarm, error) {
-	ro := resolve(opts)
 	body := gen.AlarmUpdateInput{Name: p.Name, Description: p.Description}
 
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateAlarm(ctx, s.client.accountID(ro.accountID), projectID, alarmID, body)
+		return s.client.gen().UpdateAlarm(ctx, projectID, alarmID, body)
 	})
 }
 
 // Delete removes an alarm.
 func (s *AlarmsService) Delete(ctx context.Context, projectID, alarmID string, opts ...Option) error {
-	ro := resolve(opts)
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().DeleteAlarm(ctx, s.client.accountID(ro.accountID), projectID, alarmID)
+		return s.client.gen().DeleteAlarm(ctx, projectID, alarmID)
 	})
 }
 
@@ -315,14 +306,13 @@ func (p DashboardParams) body() ([]byte, error) {
 // Title is the field on both sides now: the spec previously wrote it as name
 // while reading it as title, and settled on title.
 func (s *DashboardsService) Create(ctx context.Context, projectID string, p DashboardParams, opts ...Option) (*Dashboard, error) {
-	ro := resolve(opts)
 	raw, err := p.body()
 	if err != nil {
 		return nil, err
 	}
 
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateDashboardWithBody(ctx, s.client.accountID(ro.accountID), projectID,
+		return s.client.gen().CreateDashboardWithBody(ctx, projectID,
 			"application/json", bytes.NewReader(raw))
 	})
 }
@@ -338,22 +328,20 @@ func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID s
 		return nil, ErrReplacesDashboard
 	}
 
-	ro := resolve(opts)
 	raw, err := p.body()
 	if err != nil {
 		return nil, err
 	}
 
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateDashboardWithBody(ctx, s.client.accountID(ro.accountID), projectID,
+		return s.client.gen().UpdateDashboardWithBody(ctx, projectID,
 			dashboardID, "application/json", bytes.NewReader(raw))
 	})
 }
 
 // Delete removes a dashboard.
 func (s *DashboardsService) Delete(ctx context.Context, projectID, dashboardID string, opts ...Option) error {
-	ro := resolve(opts)
 	return noContent(ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().DeleteDashboard(ctx, s.client.accountID(ro.accountID), projectID, dashboardID)
+		return s.client.gen().DeleteDashboard(ctx, projectID, dashboardID)
 	})
 }

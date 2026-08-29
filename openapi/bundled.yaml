@@ -29,6 +29,17 @@ info:
 
     You can find your API token in your Honeybadger user settings.
 
+    ## Account scope
+
+    No v3 path carries an account id. `GET /v3/projects` lists projects, and
+    `GET /v3/account` returns the account. v2's `/v2/accounts/:account_id/`
+    prefix is gone.
+
+    The account is resolved from the credential you authenticate with, not from
+    the path. A credential that covers more than one account leaves the account
+    a request applies to undetermined, and every endpoint answers 422 with code
+    `ambiguous_account`.
+
     ## Request bodies
 
     Send the resource's fields at the top level of the body. There is no root
@@ -135,8 +146,10 @@ tags:
   description: Public status page management
 - name: Alarms
   description: Insights alarms
-- name: Channels
-  description: Notification channels and integrations
+- name: Integrations
+  description: Notification integrations (webhooks, PagerDuty, email, etc.)
+- name: Project Keys
+  description: Project ingestion keys
 - name: Comments
   description: Comments on errors
 - name: Dashboards
@@ -232,50 +245,17 @@ paths:
                         type: string
         '401':
           "$ref": "#/components/responses/Unauthorized"
-  "/accounts":
-    get:
-      operationId: listAccounts
-      summary: List accounts
-      description: Returns a list of accounts the authenticated user has access to.
-      tags:
-      - Accounts
-      parameters:
-      - "$ref": "#/components/parameters/Page"
-      - "$ref": "#/components/parameters/PerPage"
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/Account"
-                  pagination:
-                    "$ref": "#/components/schemas/Pagination"
-                  links:
-                    "$ref": "#/components/schemas/OffsetLinks"
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
-        '401':
-          "$ref": "#/components/responses/Unauthorized"
-      security:
-      - bearer_auth:
-        - account:read
-  "/accounts/{account_id}":
+  "/account":
     get:
       operationId: getAccount
-      summary: Get an account
-      description: Returns a single account.
+      summary: Get the account
+      description: 'Returns the account this API token belongs to. There is no id
+        in the path: a token is bound to exactly one account, and every other v3 path
+        is scoped to that same account.
+
+        '
       tags:
       - Accounts
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
       responses:
         '200':
           description: Success
@@ -299,15 +279,13 @@ paths:
       security:
       - bearer_auth:
         - account:read
-  "/accounts/{account_id}/usage":
+  "/account/usage":
     get:
       operationId: getAccountUsage
       summary: Get account usage
       description: Returns usage statistics for the account.
       tags:
       - Accounts
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
       responses:
         '200':
           description: Success
@@ -331,7 +309,7 @@ paths:
       security:
       - bearer_auth:
         - account:read
-  "/accounts/{account_id}/members":
+  "/account/members":
     get:
       operationId: listAccountMembers
       summary: List account members
@@ -339,7 +317,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -371,7 +348,7 @@ paths:
       security:
       - bearer_auth:
         - team:read
-  "/accounts/{account_id}/members/{member_id}":
+  "/account/members/{member_id}":
     get:
       operationId: getAccountMember
       summary: Get an account member
@@ -379,7 +356,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: member_id
         in: path
         required: true
@@ -416,7 +392,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: member_id
         in: path
         required: true
@@ -459,7 +434,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: member_id
         in: path
         required: true
@@ -478,7 +452,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/invitations":
+  "/account/invitations":
     get:
       operationId: listAccountInvitations
       summary: List account invitations
@@ -486,7 +460,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -524,8 +497,6 @@ paths:
       description: Invites a user to the account.
       tags:
       - Accounts
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
       requestBody:
         required: true
         content:
@@ -553,7 +524,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/invitations/{invitation_id}":
+  "/account/invitations/{invitation_id}":
     get:
       operationId: getAccountInvitation
       summary: Get an invitation
@@ -561,7 +532,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: invitation_id
         in: path
         required: true
@@ -598,7 +568,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: invitation_id
         in: path
         required: true
@@ -641,7 +610,6 @@ paths:
       tags:
       - Accounts
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: invitation_id
         in: path
         required: true
@@ -660,7 +628,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/projects":
+  "/projects":
     get:
       operationId: listProjects
       summary: List projects
@@ -668,7 +636,6 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -691,6 +658,8 @@ paths:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -706,8 +675,6 @@ paths:
       description: Creates a new project in the account.
       tags:
       - Projects
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
       requestBody:
         required: true
         content:
@@ -728,6 +695,8 @@ paths:
                     "$ref": "#/components/schemas/Project"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -735,7 +704,7 @@ paths:
       security:
       - bearer_auth:
         - projects:create
-  "/accounts/{account_id}/projects/{project_id}":
+  "/projects/{project_id}":
     get:
       operationId: getProject
       summary: Get a project
@@ -743,7 +712,6 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       responses:
         '200':
@@ -759,6 +727,8 @@ paths:
                     "$ref": "#/components/schemas/Project"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -775,7 +745,6 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -797,6 +766,8 @@ paths:
                     "$ref": "#/components/schemas/Project"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -813,11 +784,12 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       responses:
         '204':
           description: Project deleted
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -827,7 +799,7 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-  "/accounts/{account_id}/projects/{project_id}/stats":
+  "/projects/{project_id}/stats":
     get:
       operationId: getProjectStats
       summary: Get project stats
@@ -835,7 +807,6 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       responses:
         '200':
@@ -851,6 +822,8 @@ paths:
                     type: object
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -860,7 +833,7 @@ paths:
       security:
       - bearer_auth:
         - projects:read
-  "/accounts/{account_id}/projects/{project_id}/occurrences":
+  "/projects/{project_id}/occurrences":
     get:
       operationId: getProjectOccurrences
       summary: Get bucketed notice counts for a project
@@ -871,7 +844,6 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/OccurrencePeriod"
       - "$ref": "#/components/parameters/OccurrenceEnvironment"
@@ -889,6 +861,8 @@ paths:
                     "$ref": "#/components/schemas/OccurrenceSeries"
                   meta:
                     "$ref": "#/components/schemas/OccurrenceMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -900,7 +874,7 @@ paths:
       security:
       - bearer_auth:
         - projects:read
-  "/accounts/{account_id}/projects/occurrences":
+  "/projects/occurrences":
     get:
       operationId: listAccountOccurrences
       summary: Get bucketed notice counts for every project on the account
@@ -913,7 +887,6 @@ paths:
       tags:
       - Projects
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/OccurrencePeriod"
       - "$ref": "#/components/parameters/OccurrenceEnvironment"
       - "$ref": "#/components/parameters/Page"
@@ -938,6 +911,8 @@ paths:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     "$ref": "#/components/schemas/OccurrenceMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -949,7 +924,7 @@ paths:
       security:
       - bearer_auth:
         - projects:read
-  "/accounts/{account_id}/projects/{project_id}/faults":
+  "/projects/{project_id}/faults":
     get:
       operationId: listFaults
       summary: List faults
@@ -957,7 +932,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -972,6 +946,7 @@ paths:
         schema:
           type: string
       - "$ref": "#/components/parameters/FaultOrder"
+      - "$ref": "#/components/parameters/Sort"
       - "$ref": "#/components/parameters/FaultCreatedAfter"
       - "$ref": "#/components/parameters/FaultOccurredAfter"
       - "$ref": "#/components/parameters/FaultOccurredBefore"
@@ -995,6 +970,8 @@ paths:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1004,7 +981,7 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}":
+  "/projects/{project_id}/faults/{fault_id}":
     get:
       operationId: getFault
       summary: Get a fault
@@ -1012,7 +989,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       responses:
@@ -1045,7 +1021,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       requestBody:
@@ -1084,7 +1059,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       responses:
@@ -1099,7 +1073,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/summary":
+  "/projects/{project_id}/faults/summary":
     get:
       operationId: getFaultSummary
       summary: Get fault counts by environment and state
@@ -1110,7 +1084,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: q
         in: query
@@ -1179,6 +1152,8 @@ paths:
                               type: integer
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1190,218 +1165,142 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-  "/accounts/{account_id}/projects/{project_id}/faults/resolve":
+  "/projects/{project_id}/faults/resolve":
     post:
       operationId: resolveFaults
       summary: Resolve faults
-      description: 'Marks faults as resolved. Send fault_ids to choose them, or omit
-        the body to resolve everything the filters match.
+      description: 'Marks faults as resolved. Name them with fault_ids, narrow them
+        with q or a time filter, or pass all=true to resolve every fault in the project.
+        A body naming none of these is refused.
 
         '
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              description: Selects the faults a bulk operation applies to
-              properties:
-                fault_ids:
-                  type: array
-                  description: 'Public IDs of the faults to change. Ids outside this
-                    project select nothing. Omit to act on everything the query and
-                    time filters match.
-
-                    '
-                  items:
-                    type: string
-                  example:
-                  - Ab3kL9
-                  - Zq7mN2
-                q:
-                  type: string
-                  description: Search query, applied when fault_ids is omitted
-                  example: is:unresolved
-                created_after:
-                  type: number
-                  format: double
-                  description: 'Only faults created after this Unix timestamp. Applied
-                    when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_after:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred after this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_before:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred before this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
+              "$ref": "#/components/schemas/FaultSelectionInput"
       responses:
         '200':
-          description: Applied. No response body.
+          description: 'Applied, or reported without applying when dry_run was set.
+            The body says how many faults changed and names them.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/FaultBulkResult"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/FaultBulkRejected"
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/unresolve":
+  "/projects/{project_id}/faults/unresolve":
     post:
       operationId: unresolveFaults
       summary: Unresolve faults
-      description: 'Marks faults as unresolved. Send fault_ids to choose them, or
-        omit the body to unresolve everything the filters match.
+      description: 'Marks faults as unresolved. Name them with fault_ids, narrow them
+        with q or a time filter, or pass all=true to unresolve every fault in the
+        project. A body naming none of these is refused.
 
         '
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              description: Selects the faults a bulk operation applies to
-              properties:
-                fault_ids:
-                  type: array
-                  description: 'Public IDs of the faults to change. Ids outside this
-                    project select nothing. Omit to act on everything the query and
-                    time filters match.
-
-                    '
-                  items:
-                    type: string
-                  example:
-                  - Ab3kL9
-                  - Zq7mN2
-                q:
-                  type: string
-                  description: Search query, applied when fault_ids is omitted
-                  example: is:unresolved
-                created_after:
-                  type: number
-                  format: double
-                  description: 'Only faults created after this Unix timestamp. Applied
-                    when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_after:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred after this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_before:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred before this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
+              "$ref": "#/components/schemas/FaultSelectionInput"
       responses:
         '200':
-          description: Applied. No response body.
+          description: 'Applied, or reported without applying when dry_run was set.
+            The body says how many faults changed and names them.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/FaultBulkResult"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/FaultBulkRejected"
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/ignore":
+  "/projects/{project_id}/faults/ignore":
     post:
       operationId: ignoreFaults
       summary: Ignore faults
       description: 'Marks faults as ignored, stopping data collection for them. Send
-        fault_ids to choose them, or omit the body to ignore everything the filters
-        match.
+        fault_ids to choose them, narrow them with a filter, or pass all=true. A body
+        naming none of these is refused.
 
         '
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              description: Selects the faults a bulk operation applies to
-              properties:
-                fault_ids:
-                  type: array
-                  description: 'Public IDs of the faults to change. Ids outside this
-                    project select nothing. Omit to act on everything the query and
-                    time filters match.
-
-                    '
-                  items:
-                    type: string
-                  example:
-                  - Ab3kL9
-                  - Zq7mN2
-                q:
-                  type: string
-                  description: Search query, applied when fault_ids is omitted
-                  example: is:unresolved
-                created_after:
-                  type: number
-                  format: double
-                  description: 'Only faults created after this Unix timestamp. Applied
-                    when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_after:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred after this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_before:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred before this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
+              "$ref": "#/components/schemas/FaultSelectionInput"
       responses:
         '200':
-          description: Applied. No response body.
+          description: 'Applied, or reported without applying when dry_run was set.
+            The body says how many faults changed and names them.
+
+            '
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/FaultBulkResult"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/FaultBulkRejected"
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/unignore":
+  "/projects/{project_id}/faults/unignore":
     post:
       operationId: unignoreFaults
       summary: Unignore faults
@@ -1412,79 +1311,19 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              description: Selects the faults a bulk operation applies to
-              properties:
-                fault_ids:
-                  type: array
-                  description: 'Public IDs of the faults to change. Ids outside this
-                    project select nothing. Omit to act on everything the query and
-                    time filters match.
-
-                    '
-                  items:
-                    type: string
-                  example:
-                  - Ab3kL9
-                  - Zq7mN2
-                q:
-                  type: string
-                  description: Search query, applied when fault_ids is omitted
-                  example: is:unresolved
-                created_after:
-                  type: number
-                  format: double
-                  description: 'Only faults created after this Unix timestamp. Applied
-                    when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_after:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred after this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
-                occurred_before:
-                  type: number
-                  format: double
-                  description: 'Only faults that occurred before this Unix timestamp.
-                    Applied when fault_ids is omitted, alongside q.
-
-                    '
+              "$ref": "#/components/schemas/FaultSelectionInput"
       responses:
         '200':
-          description: Applied. No response body.
-        '401':
-          "$ref": "#/components/responses/Unauthorized"
-        '404':
-          "$ref": "#/components/responses/NotFound"
-        '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
-      security:
-      - bearer_auth:
-        - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/snooze":
-    post:
-      operationId: snoozeFault
-      summary: Snooze a fault
-      description: Snoozes notifications for a fault.
-      tags:
-      - Faults
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
-      - "$ref": "#/components/parameters/ProjectId"
-      - "$ref": "#/components/parameters/FaultId"
-      responses:
-        '200':
-          description: Success
+          description: 'Applied, or reported without applying when dry_run was set.
+            The body says how many faults changed and names them.
+
+            '
           content:
             application/json:
               schema:
@@ -1493,9 +1332,55 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/Fault"
+                    "$ref": "#/components/schemas/FaultBulkResult"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/FaultBulkRejected"
+      security:
+      - bearer_auth:
+        - faults:write
+  "/projects/{project_id}/faults/{fault_id}/snooze":
+    post:
+      operationId: snoozeFault
+      summary: Snooze a fault
+      description: Snoozes notifications for a fault. Requires either a `time` duration
+        or a `count` of occurrences.
+      tags:
+      - Faults
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/FaultId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Send one of `time` or `count`.
+              properties:
+                time:
+                  type: string
+                  enum:
+                  - hour
+                  - day
+                  - week
+                  description: Snooze for the given duration.
+                count:
+                  type: integer
+                  enum:
+                  - 10
+                  - 100
+                  - 1000
+                  description: Snooze until this many additional occurrences have
+                    been received.
+      responses:
+        '200':
+          description: Snooze applied. Response body is empty.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1512,23 +1397,11 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    "$ref": "#/components/schemas/Fault"
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Snooze removed. Response body is empty.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1538,7 +1411,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/assign":
+  "/projects/{project_id}/faults/{fault_id}/assign":
     post:
       operationId: assignFault
       summary: Assign a fault
@@ -1546,7 +1419,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       requestBody:
@@ -1585,7 +1457,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       responses:
@@ -1611,7 +1482,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/merge":
+  "/projects/{project_id}/faults/{fault_id}/merge":
     post:
       operationId: mergeFaults
       summary: Merge a fault into another
@@ -1624,7 +1495,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       requestBody:
@@ -1638,13 +1508,13 @@ paths:
               - target_fault_id
               properties:
                 target_fault_id:
-                  type: string
-                  description: 'Public ID of the fault to keep. Must be in the same
+                  type: integer
+                  description: 'Integer ID of the fault to keep. Must be in the same
                     project as the fault in the path, which is the one being merged
                     away.
 
                     '
-                  example: Ab3kL9
+                  example: 12345
       responses:
         '202':
           description: Merge accepted and queued
@@ -1687,17 +1557,24 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/occurrences":
+  "/projects/{project_id}/faults/{fault_id}/occurrences":
     get:
       operationId: listFaultOccurrences
       summary: Get fault occurrence timeline
-      description: Returns occurrence counts over time for a fault.
+      description: |
+        Occurrence counts for a fault, bucketed over an explicit window.
+
+        The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour, `occurred_before` alone to run to now, `occurred_after` alone to start at the retention boundary. Bucket resolution is derived from the window's length, not chosen by the caller.
+
+        `meta.window` reports the window actually served, which is narrower than the one requested when retention clamped the start, and `meta.interval_seconds` gives the spacing between the timestamps in `data`. Buckets are zero-filled, so every interval in the window is present.
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
+      - "$ref": "#/components/parameters/FaultOccurredAfter"
+      - "$ref": "#/components/parameters/FaultOccurredBefore"
+      - "$ref": "#/components/parameters/SearchFilter"
       responses:
         '200':
           description: Success
@@ -1709,9 +1586,49 @@ paths:
                 - data
                 properties:
                   data:
-                    type: object
+                    type: array
+                    description: 'Buckets in ascending time order, one per interval
+                      across the served window.
+
+                      '
+                    items:
+                      type: object
+                      required:
+                      - timestamp
+                      - count
+                      properties:
+                        timestamp:
+                          type: integer
+                          description: Start of the bucket, as a Unix timestamp.
+                          example: 1704067200
+                        count:
+                          type: integer
+                          description: Occurrences within the bucket.
+                          example: 12
                   meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+                    allOf:
+                    - "$ref": "#/components/schemas/ResponseMeta"
+                    - type: object
+                      properties:
+                        window:
+                          type: object
+                          description: The window actually served.
+                          required:
+                          - occurred_after
+                          - occurred_before
+                          properties:
+                            occurred_after:
+                              type: integer
+                              example: 1704067200
+                            occurred_before:
+                              type: integer
+                              example: 1704070800
+                        interval_seconds:
+                          type: integer
+                          description: Spacing between bucket timestamps.
+                          example: 60
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1721,7 +1638,7 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/affected_users":
+  "/projects/{project_id}/faults/{fault_id}/affected_users":
     get:
       operationId: listFaultAffectedUsers
       summary: Get affected users
@@ -1729,7 +1646,6 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       - "$ref": "#/components/parameters/SearchFilter"
@@ -1758,31 +1674,35 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/pause_recording":
+  "/projects/{project_id}/faults/{fault_id}/pause_recording":
     post:
       operationId: pauseFaultRecording
       summary: Pause fault recording
-      description: Pauses recording of new notices for a fault.
+      description: Pauses recording of new notices for a fault for a given duration.
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - time
+              properties:
+                time:
+                  type: string
+                  enum:
+                  - hour
+                  - day
+                  - week
+                  description: Pause recording for the given duration.
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    "$ref": "#/components/schemas/Fault"
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Recording paused. Response body is empty.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1792,7 +1712,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/resume_recording":
+  "/projects/{project_id}/faults/{fault_id}/resume_recording":
     post:
       operationId: resumeFaultRecording
       summary: Resume fault recording
@@ -1800,23 +1720,11 @@ paths:
       tags:
       - Faults
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                - data
-                properties:
-                  data:
-                    "$ref": "#/components/schemas/Fault"
-                  meta:
-                    "$ref": "#/components/schemas/ResponseMeta"
+          description: Recording resumed. Response body is empty.
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1826,7 +1734,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/notices":
+  "/projects/{project_id}/faults/{fault_id}/notices":
     get:
       operationId: listNotices
       summary: List notices
@@ -1834,12 +1742,12 @@ paths:
       tags:
       - Notices
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       - "$ref": "#/components/parameters/Limit"
       - "$ref": "#/components/parameters/Before"
       - "$ref": "#/components/parameters/After"
+      - "$ref": "#/components/parameters/Unmapped"
       responses:
         '200':
           description: Success
@@ -1860,6 +1768,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1886,6 +1796,7 @@ paths:
           type: string
           format: uuid
           example: 1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b
+      - "$ref": "#/components/parameters/Unmapped"
       responses:
         '200':
           description: Success
@@ -1900,6 +1811,8 @@ paths:
                     "$ref": "#/components/schemas/Notice"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1907,7 +1820,7 @@ paths:
       security:
       - bearer_auth:
         - faults:read
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments":
+  "/projects/{project_id}/faults/{fault_id}/comments":
     get:
       operationId: listComments
       summary: List comments
@@ -1915,7 +1828,6 @@ paths:
       tags:
       - Comments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       - "$ref": "#/components/parameters/Limit"
@@ -1941,6 +1853,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1957,7 +1871,6 @@ paths:
       tags:
       - Comments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       requestBody:
@@ -1980,6 +1893,8 @@ paths:
                     "$ref": "#/components/schemas/Comment"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -1989,7 +1904,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/faults/{fault_id}/comments/{comment_id}":
+  "/projects/{project_id}/faults/{fault_id}/comments/{comment_id}":
     get:
       operationId: getComment
       summary: Get a comment
@@ -1997,7 +1912,6 @@ paths:
       tags:
       - Comments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       - name: comment_id
@@ -2020,6 +1934,8 @@ paths:
                     "$ref": "#/components/schemas/Comment"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2036,7 +1952,6 @@ paths:
       tags:
       - Comments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       - name: comment_id
@@ -2065,6 +1980,8 @@ paths:
                     "$ref": "#/components/schemas/Comment"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2081,7 +1998,6 @@ paths:
       tags:
       - Comments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/FaultId"
       - name: comment_id
@@ -2093,6 +2009,8 @@ paths:
       responses:
         '204':
           description: Comment deleted
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2102,7 +2020,7 @@ paths:
       security:
       - bearer_auth:
         - faults:write
-  "/accounts/{account_id}/projects/{project_id}/sites":
+  "/projects/{project_id}/sites":
     get:
       operationId: listSites
       summary: List sites
@@ -2110,7 +2028,6 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -2150,7 +2067,6 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -2179,7 +2095,7 @@ paths:
       security:
       - bearer_auth:
         - uptime:write
-  "/accounts/{account_id}/projects/{project_id}/sites/{site_id}":
+  "/projects/{project_id}/sites/{site_id}":
     get:
       operationId: getSite
       summary: Get a site
@@ -2187,14 +2103,14 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: site_id
         in: path
         required: true
-        description: Site public ID
+        description: Site identifier (uuid)
         schema:
           type: string
+          format: uuid
       responses:
         '200':
           description: Success
@@ -2225,14 +2141,14 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: site_id
         in: path
         required: true
-        description: Site public ID
+        description: Site identifier (uuid)
         schema:
           type: string
+          format: uuid
       requestBody:
         required: true
         content:
@@ -2269,14 +2185,14 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: site_id
         in: path
         required: true
-        description: Site public ID
+        description: Site identifier (uuid)
         schema:
           type: string
+          format: uuid
       responses:
         '204':
           description: Site deleted
@@ -2289,7 +2205,7 @@ paths:
       security:
       - bearer_auth:
         - uptime:write
-  "/accounts/{account_id}/projects/{project_id}/sites/{site_id}/checks":
+  "/projects/{project_id}/sites/{site_id}/checks":
     get:
       operationId: listUptimeChecks
       summary: List uptime checks
@@ -2297,14 +2213,14 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: site_id
         in: path
         required: true
-        description: Site public ID
+        description: Site identifier (uuid)
         schema:
           type: string
+          format: uuid
       - "$ref": "#/components/parameters/Limit"
       - "$ref": "#/components/parameters/CreatedAfter"
       - "$ref": "#/components/parameters/CreatedBefore"
@@ -2328,6 +2244,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2337,7 +2255,7 @@ paths:
       security:
       - bearer_auth:
         - uptime:read
-  "/accounts/{account_id}/projects/{project_id}/sites/{site_id}/outages":
+  "/projects/{project_id}/sites/{site_id}/outages":
     get:
       operationId: listOutages
       summary: List outages
@@ -2345,14 +2263,14 @@ paths:
       tags:
       - Sites
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: site_id
         in: path
         required: true
-        description: Site public ID
+        description: Site identifier (uuid)
         schema:
           type: string
+          format: uuid
       - "$ref": "#/components/parameters/Limit"
       - "$ref": "#/components/parameters/CreatedAfter"
       - "$ref": "#/components/parameters/CreatedBefore"
@@ -2376,6 +2294,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2385,7 +2305,7 @@ paths:
       security:
       - bearer_auth:
         - uptime:read
-  "/accounts/{account_id}/projects/{project_id}/check_ins":
+  "/projects/{project_id}/check_ins":
     get:
       operationId: listCheckIns
       summary: List check-ins
@@ -2393,7 +2313,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -2417,6 +2336,8 @@ paths:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2433,7 +2354,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -2455,6 +2375,8 @@ paths:
                     "$ref": "#/components/schemas/CheckIn"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '422':
@@ -2462,7 +2384,7 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-  "/accounts/{account_id}/projects/{project_id}/check_ins/bulk_update":
+  "/projects/{project_id}/check_ins/bulk_update":
     put:
       operationId: bulkUpdateCheckIns
       summary: Replace the project's check-ins
@@ -2475,7 +2397,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -2496,9 +2417,31 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/CheckIn"
+                      type: object
+                      required:
+                      - operation
+                      - slug
+                      - success
+                      properties:
+                        operation:
+                          type: string
+                          enum:
+                          - create
+                          - update
+                          - delete
+                        slug:
+                          type: string
+                        success:
+                          type: boolean
+                        errors:
+                          type: array
+                          items:
+                            type: string
+                          description: Present when success is false.
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2508,7 +2451,7 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-  "/accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}":
+  "/projects/{project_id}/check_ins/{check_in_id}":
     get:
       operationId: getCheckIn
       summary: Get a check-in
@@ -2516,7 +2459,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: check_in_id
         in: path
@@ -2538,6 +2480,8 @@ paths:
                     "$ref": "#/components/schemas/CheckIn"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2554,7 +2498,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: check_in_id
         in: path
@@ -2582,6 +2525,8 @@ paths:
                     "$ref": "#/components/schemas/CheckIn"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2598,7 +2543,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: check_in_id
         in: path
@@ -2609,6 +2553,8 @@ paths:
       responses:
         '204':
           description: Check-in deleted
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2618,7 +2564,7 @@ paths:
       security:
       - bearer_auth:
         - checkins:write
-  "/accounts/{account_id}/projects/{project_id}/check_ins/{check_in_id}/events":
+  "/projects/{project_id}/check_ins/{check_in_id}/events":
     get:
       operationId: listCheckInEvents
       summary: List check-in events
@@ -2629,7 +2575,6 @@ paths:
       tags:
       - Check-ins
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: check_in_id
         in: path
@@ -2659,6 +2604,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2668,7 +2615,7 @@ paths:
       security:
       - bearer_auth:
         - checkins:read
-  "/accounts/{account_id}/projects/{project_id}/deploys":
+  "/projects/{project_id}/deploys":
     get:
       operationId: listDeploys
       summary: List deploys
@@ -2676,7 +2623,6 @@ paths:
       tags:
       - Deploys
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Limit"
       - "$ref": "#/components/parameters/Before"
@@ -2701,6 +2647,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2710,7 +2658,7 @@ paths:
       security:
       - bearer_auth:
         - deploys:read
-  "/accounts/{account_id}/projects/{project_id}/deploys/{deploy_id}":
+  "/projects/{project_id}/deploys/{deploy_id}":
     get:
       operationId: getDeploy
       summary: Get a deploy
@@ -2718,7 +2666,6 @@ paths:
       tags:
       - Deploys
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: deploy_id
         in: path
@@ -2740,6 +2687,8 @@ paths:
                     "$ref": "#/components/schemas/Deploy"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2756,7 +2705,6 @@ paths:
       tags:
       - Deploys
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: deploy_id
         in: path
@@ -2767,6 +2715,8 @@ paths:
       responses:
         '204':
           description: Deploy deleted
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -2776,7 +2726,7 @@ paths:
       security:
       - bearer_auth:
         - deploys:write
-  "/accounts/{account_id}/projects/{project_id}/environments":
+  "/projects/{project_id}/environments":
     get:
       operationId: listEnvironments
       summary: List environments
@@ -2784,7 +2734,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -2824,7 +2773,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -2853,7 +2801,7 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-  "/accounts/{account_id}/projects/{project_id}/environments/{environment_id}":
+  "/projects/{project_id}/environments/{environment_id}":
     get:
       operationId: getEnvironment
       summary: Get an environment
@@ -2861,7 +2809,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: environment_id
         in: path
@@ -2899,7 +2846,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: environment_id
         in: path
@@ -2943,7 +2889,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: environment_id
         in: path
@@ -2963,7 +2908,7 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-  "/accounts/{account_id}/projects/{project_id}/environments/bulk_update":
+  "/projects/{project_id}/environments/bulk_update":
     patch:
       operationId: bulkUpdateEnvironments
       summary: Bulk update environments
@@ -2971,7 +2916,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -2979,6 +2923,9 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+              - environment_ids
+              - notifications
               properties:
                 environment_ids:
                   type: array
@@ -2986,8 +2933,8 @@ paths:
                     type: string
                   description: Public IDs of environments to update
                 notifications:
-                  type: object
-                  description: Notification settings to apply
+                  type: boolean
+                  description: Whether notifications should fire for these environments.
       responses:
         '200':
           description: Success
@@ -3015,7 +2962,7 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-  "/accounts/{account_id}/projects/{project_id}/environments/bulk_destroy":
+  "/projects/{project_id}/environments/bulk_destroy":
     delete:
       operationId: bulkDeleteEnvironments
       summary: Bulk delete environments
@@ -3023,7 +2970,6 @@ paths:
       tags:
       - Environments
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -3064,15 +3010,14 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-  "/accounts/{account_id}/projects/{project_id}/channels":
+  "/projects/{project_id}/integrations":
     get:
-      operationId: listChannels
-      summary: List channels
-      description: Returns a list of notification channels for the project.
+      operationId: listIntegrations
+      summary: List integrations
+      description: Returns a list of notification integrations for the project.
       tags:
-      - Channels
+      - Integrations
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -3089,7 +3034,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/Channel"
+                      "$ref": "#/components/schemas/Integration"
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
@@ -3098,6 +3043,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3105,20 +3052,65 @@ paths:
       security:
       - bearer_auth:
         - integrations:read
-  "/accounts/{account_id}/projects/{project_id}/channels/{channel_id}":
-    get:
-      operationId: getChannel
-      summary: Get a channel
-      description: Returns a single notification channel.
+    post:
+      operationId: createIntegration
+      summary: Create an integration
+      description: 'Creates a notification integration for the project. The `type`
+        field determines which config fields are required. OAuth integration types
+        (Slack, GitHub, etc.) cannot be created via the API — set them up through
+        the web UI first.
+
+        '
       tags:
-      - Channels
+      - Integrations
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
-      - name: channel_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/IntegrationInput"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Integration"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+      security:
+      - bearer_auth:
+        - integrations:write
+  "/projects/{project_id}/integrations/{integration_id}":
+    get:
+      operationId: getIntegration
+      summary: Get an integration
+      description: Returns a single notification integration.
+      tags:
+      - Integrations
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: integration_id
         in: path
         required: true
-        description: Channel public ID
+        description: Integration public ID
         schema:
           type: string
       responses:
@@ -3132,11 +3124,13 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/Channel"
+                    "$ref": "#/components/schemas/Integration"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3145,18 +3139,17 @@ paths:
       - bearer_auth:
         - integrations:read
     patch:
-      operationId: updateChannel
-      summary: Update a channel
-      description: Updates a notification channel's settings.
+      operationId: updateIntegration
+      summary: Update an integration
+      description: Updates a notification integration's settings.
       tags:
-      - Channels
+      - Integrations
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
-      - name: channel_id
+      - name: integration_id
         in: path
         required: true
-        description: Channel public ID
+        description: Integration public ID
         schema:
           type: string
       requestBody:
@@ -3164,7 +3157,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/ChannelInput"
+              "$ref": "#/components/schemas/IntegrationInput"
       responses:
         '200':
           description: Success
@@ -3176,11 +3169,13 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/Channel"
+                    "$ref": "#/components/schemas/Integration"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3188,7 +3183,199 @@ paths:
       security:
       - bearer_auth:
         - integrations:write
-  "/accounts/{account_id}/projects/{project_id}/dashboards":
+    delete:
+      operationId: deleteIntegration
+      summary: Delete an integration
+      description: 'Permanently deletes a notification integration, including all
+        associated tickets and configurations. Works on all integration types, including
+        OAuth integrations.
+
+        '
+      tags:
+      - Integrations
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: integration_id
+        in: path
+        required: true
+        description: Integration public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+      security:
+      - bearer_auth:
+        - integrations:write
+  "/projects/{project_id}/keys":
+    get:
+      operationId: listProjectKeys
+      summary: List project keys
+      description: Returns the project's ingestion keys.
+      tags:
+      - Project Keys
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - "$ref": "#/components/parameters/Page"
+      - "$ref": "#/components/parameters/PerPage"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ProjectKey"
+                  pagination:
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    "$ref": "#/components/schemas/OffsetLinks"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+      security:
+      - bearer_auth:
+        - projects:read
+    post:
+      operationId: createProjectKey
+      summary: Create a project key
+      description: 'Creates a new ingestion key for the project. A project may hold
+        a limited number of keys; a request beyond that limit is refused with 403.
+
+        '
+      tags:
+      - Project Keys
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProjectKeyInput"
+      responses:
+        '201':
+          description: Key created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ProjectKey"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+      security:
+      - bearer_auth:
+        - projects:write
+  "/projects/{project_id}/keys/{key_id}":
+    patch:
+      operationId: updateProjectKey
+      summary: Update a project key
+      description: Updates a key's label. The key value itself cannot be changed.
+      tags:
+      - Project Keys
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: key_id
+        in: path
+        required: true
+        description: Key public ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ProjectKeyInput"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ProjectKey"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/ValidationError"
+      security:
+      - bearer_auth:
+        - projects:write
+    delete:
+      operationId: deleteProjectKey
+      summary: Delete a project key
+      description: 'Deletes an ingestion key. A project''s last key cannot be deleted
+        — without one it can no longer receive errors — and that request is refused
+        with 403.
+
+        '
+      tags:
+      - Project Keys
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: key_id
+        in: path
+        required: true
+        description: Key public ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Key deleted
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+      security:
+      - bearer_auth:
+        - projects:write
+  "/projects/{project_id}/dashboards":
     get:
       operationId: listDashboards
       summary: List dashboards
@@ -3196,7 +3383,6 @@ paths:
       tags:
       - Dashboards
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -3236,7 +3422,6 @@ paths:
       tags:
       - Dashboards
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -3265,7 +3450,7 @@ paths:
       security:
       - bearer_auth:
         - dashboards:write
-  "/accounts/{account_id}/projects/{project_id}/dashboards/{dashboard_id}":
+  "/projects/{project_id}/dashboards/{dashboard_id}":
     get:
       operationId: getDashboard
       summary: Get a dashboard
@@ -3273,7 +3458,6 @@ paths:
       tags:
       - Dashboards
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: dashboard_id
         in: path
@@ -3314,7 +3498,6 @@ paths:
       tags:
       - Dashboards
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: dashboard_id
         in: path
@@ -3358,7 +3541,6 @@ paths:
       tags:
       - Dashboards
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: dashboard_id
         in: path
@@ -3378,7 +3560,7 @@ paths:
       security:
       - bearer_auth:
         - dashboards:write
-  "/accounts/{account_id}/projects/{project_id}/alarms":
+  "/projects/{project_id}/alarms":
     get:
       operationId: listAlarms
       summary: List alarms
@@ -3389,7 +3571,6 @@ paths:
       tags:
       - Alarms
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       responses:
         '200':
@@ -3423,7 +3604,6 @@ paths:
       tags:
       - Alarms
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -3452,7 +3632,7 @@ paths:
       security:
       - bearer_auth:
         - alarms:write
-  "/accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}":
+  "/projects/{project_id}/alarms/{alarm_id}":
     get:
       operationId: getAlarm
       summary: Get an alarm
@@ -3460,7 +3640,6 @@ paths:
       tags:
       - Alarms
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: alarm_id
         in: path
@@ -3498,7 +3677,6 @@ paths:
       tags:
       - Alarms
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: alarm_id
         in: path
@@ -3542,7 +3720,6 @@ paths:
       tags:
       - Alarms
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: alarm_id
         in: path
@@ -3562,7 +3739,7 @@ paths:
       security:
       - bearer_auth:
         - alarms:write
-  "/accounts/{account_id}/projects/{project_id}/alarms/{alarm_id}/history":
+  "/projects/{project_id}/alarms/{alarm_id}/history":
     get:
       operationId: listAlarmHistory
       summary: List alarm trigger history
@@ -3573,7 +3750,6 @@ paths:
       tags:
       - Alarms
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - name: alarm_id
         in: path
@@ -3615,7 +3791,7 @@ paths:
       security:
       - bearer_auth:
         - alarms:read
-  "/accounts/{account_id}/teams":
+  "/teams":
     get:
       operationId: listTeams
       summary: List teams
@@ -3623,7 +3799,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -3661,8 +3836,6 @@ paths:
       description: Creates a new team in the account.
       tags:
       - Teams
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
       requestBody:
         required: true
         content:
@@ -3690,7 +3863,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/teams/{team_id}":
+  "/teams/{team_id}":
     get:
       operationId: getTeam
       summary: Get a team
@@ -3698,7 +3871,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3735,7 +3907,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3778,7 +3949,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3797,7 +3967,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/teams/{team_id}/members":
+  "/teams/{team_id}/members":
     get:
       operationId: listTeamMembers
       summary: List team members
@@ -3805,7 +3975,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3843,7 +4012,7 @@ paths:
       security:
       - bearer_auth:
         - team:read
-  "/accounts/{account_id}/teams/{team_id}/members/{member_id}":
+  "/teams/{team_id}/members/{member_id}":
     get:
       operationId: getTeamMember
       summary: Get a team member
@@ -3851,7 +4020,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3894,7 +4062,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3943,7 +4110,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -3968,7 +4134,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/teams/{team_id}/invitations":
+  "/teams/{team_id}/invitations":
     get:
       operationId: listTeamInvitations
       summary: List team invitations
@@ -3976,7 +4142,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -4021,7 +4186,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -4055,7 +4219,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/teams/{team_id}/invitations/{invitation_id}":
+  "/teams/{team_id}/invitations/{invitation_id}":
     get:
       operationId: getTeamInvitation
       summary: Get a team invitation
@@ -4063,7 +4227,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -4106,7 +4269,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -4155,7 +4317,6 @@ paths:
       tags:
       - Teams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: team_id
         in: path
         required: true
@@ -4180,7 +4341,7 @@ paths:
       security:
       - bearer_auth:
         - team:write
-  "/accounts/{account_id}/status_pages":
+  "/status_pages":
     get:
       operationId: listStatusPages
       summary: List status pages
@@ -4188,7 +4349,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -4226,8 +4386,6 @@ paths:
       description: Creates a new status page.
       tags:
       - Status Pages
-      parameters:
-      - "$ref": "#/components/parameters/AccountId"
       requestBody:
         required: true
         content:
@@ -4255,7 +4413,7 @@ paths:
       security:
       - bearer_auth:
         - status_pages:write
-  "/accounts/{account_id}/status_pages/{status_page_id}":
+  "/status_pages/{status_page_id}":
     get:
       operationId: getStatusPage
       summary: Get a status page
@@ -4263,7 +4421,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4300,7 +4457,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4343,7 +4499,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4362,7 +4517,7 @@ paths:
       security:
       - bearer_auth:
         - status_pages:write
-  "/accounts/{account_id}/status_pages/{status_page_id}/incidents":
+  "/status_pages/{status_page_id}/incidents":
     get:
       operationId: listStatusPageIncidents
       summary: List incidents
@@ -4370,7 +4525,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4400,6 +4554,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4418,7 +4574,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4452,7 +4607,7 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-  "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}":
+  "/status_pages/{status_page_id}/incidents/{incident_id}":
     get:
       operationId: getStatusPageIncident
       summary: Get an incident
@@ -4460,7 +4615,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4505,7 +4659,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4554,7 +4707,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4579,7 +4731,7 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-  "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}/updates":
+  "/status_pages/{status_page_id}/incidents/{incident_id}/updates":
     get:
       operationId: listIncidentUpdates
       summary: List incident updates
@@ -4587,7 +4739,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4623,6 +4774,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '400':
+          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '404':
@@ -4639,7 +4792,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4679,7 +4831,7 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-  "/accounts/{account_id}/status_pages/{status_page_id}/incidents/{incident_id}/updates/{update_id}":
+  "/status_pages/{status_page_id}/incidents/{incident_id}/updates/{update_id}":
     get:
       operationId: getIncidentUpdate
       summary: Get an incident update
@@ -4687,7 +4839,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4736,7 +4887,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4792,7 +4942,6 @@ paths:
       tags:
       - Status Pages
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - name: status_page_id
         in: path
         required: true
@@ -4823,7 +4972,7 @@ paths:
       security:
       - bearer_auth:
         - incidents:write
-  "/accounts/{account_id}/projects/{project_id}/streams":
+  "/projects/{project_id}/streams":
     get:
       operationId: listStreams
       summary: List event streams
@@ -4836,7 +4985,6 @@ paths:
       tags:
       - Streams
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
@@ -4873,7 +5021,7 @@ paths:
       security:
       - bearer_auth:
         - insights:read
-  "/accounts/{account_id}/projects/{project_id}/insights/queries":
+  "/projects/{project_id}/insights/queries":
     post:
       operationId: runInsightsQuery
       summary: Run an Insights query
@@ -4886,7 +5034,6 @@ paths:
       tags:
       - Insights
       parameters:
-      - "$ref": "#/components/parameters/AccountId"
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
         required: true
@@ -5332,9 +5479,9 @@ components:
           type: string
         description:
           type: string
-    Channel:
+    Integration:
       type: object
-      description: A notification channel
+      description: A notification integration
       required:
       - id
       - project_id
@@ -5351,7 +5498,7 @@ components:
           example: Xk9mZp
         type:
           type: string
-          description: Channel type
+          description: Integration type
           example: slack
         active:
           type: boolean
@@ -5365,7 +5512,8 @@ components:
           type: array
           items:
             type: string
-          description: Public IDs of sites this channel monitors
+            format: uuid
+          description: Identifiers of sites this channel monitors
         check_in_ids:
           type: array
           items:
@@ -5376,36 +5524,148 @@ components:
           items:
             type: string
           description: Environment names excluded from notifications
+        alarm_alert_ids:
+          type: array
+          items:
+            type: string
+          description: IDs of alarms whose alert events this integration receives
+        alarm_ok_ids:
+          type: array
+          items:
+            type: string
+          description: IDs of alarms whose recovery events this integration receives
+        threshold:
+          type: integer
+          description: Occurrence threshold for rate_exceeded events
+        rate:
+          type: string
+          description: Rate period for rate_exceeded events (e.g. min, hour)
+        notification_limit:
+          type: integer
+          description: Maximum notifications in a 10-minute window before flood control
+        config:
+          type: object
+          description: 'Type-specific configuration fields. Sensitive values (API
+            keys, tokens) are masked. Hidden internal fields are omitted.
+
+            '
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: boolean
+            - type: integer
+            - type: array
+              items:
+                type: string
+          example:
+            url: https://example.com/hook
+            label: Deploy listener
+        error:
+          type: boolean
+          description: Whether the channel is in an error state
+        error_reason:
+          type: string
+          description: Reason for the error state, if any
         created_at:
           type: string
           format: date-time
           description: When the channel was created
-    ChannelInput:
+    IntegrationInput:
       type: object
-      description: Writable channel attributes
+      description: 'Integration attributes for create and update. On create, `type`
+        is required and determines which config fields are accepted. On update, `type`
+        is ignored. Type-specific config fields are passed at the top level alongside
+        common fields. Sensitive fields (API keys, tokens) sent as their masked value
+        from a GET response are silently ignored — the original value is preserved.
+
+        '
       properties:
+        type:
+          type: string
+          description: 'Integration type (create only). Must be an API-creatable type
+            — OAuth types (Slack, GitHub, etc.) must be connected through the web
+            UI. Use the short class name: WebHook, PagerDutyV2, Email, etc.
+
+            '
+          example: WebHook
         active:
           type: boolean
         events:
           type: array
-          description: Event names this channel notifies on
+          description: 'Event names this channel notifies on. Defaults to the type''s
+            default events when omitted on create.
+
+            '
           items:
             type: string
+        rate:
+          type: string
+          description: Rate threshold period (e.g. min, hour)
+        threshold:
+          type: integer
+          description: Number of occurrences before rate_exceeded fires
+        notification_limit:
+          type: integer
+          description: Maximum notifications in a 10-minute window before flood control
         site_ids:
           type: array
-          description: 'Public IDs of sites to scope this channel to. Empty means
+          description: 'Identifiers of sites to scope this channel to. Empty means
             every site. IDs outside this project resolve to nothing rather than attaching
             another tenant''s site.
 
             '
           items:
             type: string
+            format: uuid
         check_in_ids:
           type: array
           description: Public IDs of check-ins to scope this channel to. Empty means
             every check-in.
           items:
             type: string
+        alarm_alert_ids:
+          type: array
+          description: IDs of alarms whose alert events this channel receives.
+          items:
+            type: string
+        alarm_ok_ids:
+          type: array
+          description: IDs of alarms whose recovery events this channel receives.
+          items:
+            type: string
+        excluded_environments:
+          type: array
+          description: Environment names excluded from notifications.
+          items:
+            type: string
+        included_environments:
+          type: array
+          description: Environment names included in notifications (overrides excluded).
+          items:
+            type: string
+        environments:
+          type: array
+          description: Environment names this channel monitors (shorthand for setting
+            included/excluded).
+          items:
+            type: string
+        filter_events:
+          type: array
+          description: Event names to filter notifications on.
+          items:
+            type: string
+        filter_queries:
+          type: array
+          description: Search queries paired with filter_events for conditional notification
+            filtering.
+          items:
+            type: string
+      additionalProperties:
+        description: 'Type-specific config fields vary by channel type. Pass them
+          at the top level (e.g. url, label, integration_key, api_key, severity).
+          Hidden and OAuth-managed fields are silently ignored.
+
+          '
     CheckIn:
       type: object
       description: A scheduled task check-in monitor
@@ -5610,9 +5870,9 @@ components:
           description: Unique public identifier
           example: Cm7pLx
         fault_id:
-          type: string
-          description: Public ID of the fault this comment belongs to
-          example: Fq8nRz
+          type: integer
+          description: Integer ID of the fault this comment belongs to
+          example: 12345
         author:
           type:
           - object
@@ -5677,10 +5937,7 @@ components:
           type: array
           description: 'The dashboard''s widgets, in the same shape a write accepts
             — the read and write forms are identical, including `config.streams` as
-            stream slugs (`stream_ids` exists only inside the model). Named rather
-            than pointed at the request schema''s definition: that definition is app/data/schemas/dashboard_schema.json,
-            the validator itself, and a pointer into it was a reference no code generator
-            would follow.
+            stream slugs (`stream_ids` exists only inside the model).
 
             '
           items:
@@ -6474,8 +6731,8 @@ components:
           description: Environment name
           example: production
         notifications:
-          type: object
-          description: Notification settings for this environment
+          type: boolean
+          description: Whether notifications fire for this environment.
         created_at:
           type: string
           format: date-time
@@ -6532,9 +6789,15 @@ components:
           - rate_limit_exceeded
           - maintenance_mode
           - invalid_id
+          - invalid_parameter
           - forbidden_attributes
           - service_unavailable
           - ambiguous_account
+          - account_parked
+          - account_inactive
+          - limit_reached
+          - feature_unavailable
+          - delete_failed
         message:
           type: string
           description: Human-readable explanation
@@ -6589,9 +6852,10 @@ components:
       - project_id
       properties:
         id:
-          type: string
-          description: Unique public identifier
-          example: Fq8nRz
+          type: integer
+          description: Fault ID (integer primary key; faults do not carry a public
+            ID)
+          example: 12345
         project_id:
           type: string
           description: Public ID of the project this fault belongs to
@@ -6722,6 +6986,100 @@ components:
 
             '
           example: Xk9mZp
+    FaultSelectionInput:
+      type: object
+      description: Selects the faults a bulk operation applies to
+      properties:
+        all:
+          type: boolean
+          description: 'Apply to every fault the other filters match, which with no
+            other filters is every fault in the project. Required to make an unbounded
+            change explicit; ignored when fault_ids names specific faults.
+
+            '
+          example: false
+        dry_run:
+          type: boolean
+          description: 'Report what the request would change without changing it —
+            no state change, no comments, no timeline entries. The response has the
+            same shape either way, with `dry_run` echoed back.
+
+            '
+          example: false
+        fault_ids:
+          type: array
+          description: 'Integer IDs of the faults to change. Ids outside this project
+            select nothing. Omit to act on everything the query and time filters match,
+            which requires all=true when there are none.
+
+            '
+          items:
+            type: integer
+          example:
+          - 12345
+          - 12346
+        q:
+          type: string
+          description: Search query, applied when fault_ids is omitted
+          example: "-is:resolved"
+        created_after:
+          type: number
+          format: double
+          description: 'Only faults created after this Unix timestamp. Applied when
+            fault_ids is omitted, alongside q.
+
+            '
+        occurred_after:
+          type: number
+          format: double
+          description: 'Only faults that occurred after this Unix timestamp. Applied
+            when fault_ids is omitted, alongside q.
+
+            '
+        occurred_before:
+          type: number
+          format: double
+          description: 'Only faults that occurred before this Unix timestamp. Applied
+            when fault_ids is omitted, alongside q.
+
+            '
+    FaultBulkResult:
+      type: object
+      required:
+      - count
+      - dry_run
+      - fault_ids
+      properties:
+        count:
+          type: integer
+          description: 'How many faults changed. Exact, and counts what changed rather
+            than what matched: resolving a hundred faults of which ninety were already
+            resolved reports ten. On a dry run, how many would have changed.
+
+            '
+          example: 12
+        dry_run:
+          type: boolean
+          description: 'True when nothing was written. Echoed back so a response is
+            never ambiguous about whether it took effect.
+
+            '
+          example: false
+        fault_ids:
+          type: array
+          description: 'Integer IDs of the faults that changed, capped at 100. `count`
+            is exact regardless; see fault_ids_truncated.
+
+            '
+          items:
+            type: integer
+          example:
+          - 12345
+          - 12346
+        fault_ids_truncated:
+          type: boolean
+          description: True when more faults changed than fault_ids lists.
+          example: false
     FaultInput:
       type: object
       description: Writable fault attributes
@@ -6876,9 +7234,9 @@ components:
           description: The notice's token UUID, which addresses it globally
           example: 1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b
         fault_id:
-          type: string
-          description: Public ID of the fault this notice belongs to
-          example: Fq8nRz
+          type: integer
+          description: Integer ID of the fault this notice belongs to
+          example: 12345
         project_id:
           type: string
           description: Public ID of the project
@@ -6927,16 +7285,141 @@ components:
           additionalProperties: true
         backtrace:
           type: array
-          description: Stack trace frames
+          description: 'Stack trace frames, at most 20. Source-mapped by default;
+            pass `unmapped=true` for the frames exactly as the client sent them.
+
+            '
           items:
-            type: object
-            properties:
-              file:
-                type: string
-              number:
-                type: string
-              method:
-                type: string
+            "$ref": "#/components/schemas/NoticeFrame"
+        backtrace_mode:
+          type: string
+          enum:
+          - source_mapped
+          - reported
+          description: 'Which representation of the trace this response carries. `source_mapped`
+            when a stored mapped trace was served, `reported` when the frames are
+            as the client sent them — either because `unmapped=true` was requested
+            or because no different mapped trace was stored.
+
+            '
+          example: source_mapped
+        backtrace_total_frames:
+          type: integer
+          description: 'Total frames in the selected trace before the 20-frame limit
+            was applied.
+
+            '
+          example: 25
+        backtrace_truncated:
+          type: boolean
+          description: Whether `backtrace` omits frames because of the 20-frame limit.
+          example: true
+        request_fields_removed:
+          type:
+          - array
+          - 'null'
+          description: 'Names of `request` fields removed at ingest because the payload
+            exceeded the size limit. Null when nothing was removed. Present so a caller
+            can tell an empty field from a stripped one.
+
+            '
+          items:
+            type: string
+          example:
+          - params
+    NoticeFrame:
+      type: object
+      properties:
+        file:
+          type:
+          - string
+          - 'null'
+          description: 'Path to the source file. Null when the notifier sent a backtrace
+            entry that carried no file, or one that was not a frame at all.
+
+            '
+          example: app/models/checkout.rb
+        line:
+          type:
+          - integer
+          - 'null'
+          description: 'Line number within `file`. Null when the notifier sent a value
+            that is not a line number, such as `(eval)`.
+
+            '
+          example: 42
+        column:
+          type:
+          - integer
+          - 'null'
+          description: Column number. Usually present only on source-mapped frames.
+          example: 8
+        method:
+          type:
+          - string
+          - 'null'
+          description: 'Name of the method or function. Null when the notifier omitted
+            it, and routinely on source-mapped frames where the map carries no name
+            for the position.
+
+            '
+          example: submit_order
+        in_app:
+          type: boolean
+          description: 'Whether this frame is the project''s own code rather than
+            a framework, gem or dependency. Derived from the project root the notifier
+            reported.
+
+            '
+          example: true
+        mapping:
+          type: string
+          enum:
+          - source_mapped
+          - reported
+          description: 'Whether this specific frame was resolved through a source
+            map. Mapping is applied one frame at a time and falls back to the reported
+            frame, so a source-mapped trace can contain reported frames. Always `reported`
+            when `unmapped=true` was requested.
+
+            '
+          example: source_mapped
+        source:
+          type: array
+          description: 'Contiguous runs of source lines around the frame. Normally
+            one block; a notifier-sent snippet with a gap produces one block per run.
+            Empty when no source is available, when the notifier sent it in a shape
+            other than a map of line number to content, or when no entry carried a
+            usable line number. At most 25 lines in total.
+
+            '
+          items:
+            "$ref": "#/components/schemas/SourceBlock"
+    SourceBlock:
+      type: object
+      required:
+      - first_line
+      - lines
+      properties:
+        first_line:
+          type: integer
+          description: Line number of the first entry in `lines`.
+          example: 41
+        lines:
+          type: array
+          description: 'Source lines in order. Each line is truncated to 1024 characters.
+            Across all of a frame''s blocks at most 25 lines are returned, chosen
+            nearest the frame''s own line so that line is always present when the
+            notifier sent it.
+
+            '
+          items:
+            type: string
+            maxLength: 1024
+          example:
+          - "  def submit"
+          - "    charge!"
+          - "  end"
     OccurrenceMeta:
       type: object
       properties:
@@ -7027,12 +7510,14 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
-          example: Og5tNr
+          format: uuid
+          description: Unique identifier
+          example: 3d7a1c94-6f28-4e5b-8a13-c5e9b204d6f8
         site_id:
           type: string
-          description: Public ID of the site
-          example: St3vBn
+          format: uuid
+          description: Identifier of the site
+          example: 9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47
         down_at:
           type: string
           format: date-time
@@ -7262,6 +7747,44 @@ components:
             retention; silently ignored otherwise.
 
             '
+    ProjectKey:
+      type: object
+      required:
+      - id
+      - project_id
+      - key
+      properties:
+        id:
+          type: string
+          description: Public identifier for this key. Use it in paths.
+          example: Kp7mZq2x
+        project_id:
+          type: string
+          description: Public identifier of the project the key belongs to.
+          example: Xk9mZp
+        key:
+          type: string
+          description: 'The ingestion key a notifier sends. Returned in full — unlike
+            an API credential, this value is meant to be distributed with your application.
+
+            '
+          example: hbp_aBcDeFgHiJkLmNoPqRsTuVwXyZ012345aB12Cd
+        label:
+          type:
+          - string
+          - 'null'
+          description: Optional human-readable name.
+          example: CI
+        created_at:
+          type: string
+          format: date-time
+    ProjectKeyInput:
+      type: object
+      properties:
+        label:
+          type: string
+          description: Optional human-readable name.
+          example: CI
     ResponseMeta:
       type: object
       properties:
@@ -7280,8 +7803,9 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
-          example: St3vBn
+          format: uuid
+          description: Unique identifier
+          example: 9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47
         project_id:
           type: string
           description: Public ID of the project this site belongs to
@@ -7487,7 +8011,8 @@ components:
             properties:
               site_id:
                 type: string
-                description: Public ID of the site
+                format: uuid
+                description: Identifier of the site
               display_name:
                 type: string
                 description: Display name on the status page
@@ -7695,7 +8220,8 @@ components:
             properties:
               site_id:
                 type: string
-                description: Public ID of a site on this account
+                format: uuid
+                description: Identifier of a site on this account
               display_name:
                 type: string
               description:
@@ -8043,17 +8569,6 @@ components:
           description: User display name
           example: Jane Smith
   parameters:
-    AccountId:
-      name: account_id
-      in: path
-      required: true
-      description: |
-        Account public ID, or the literal `me` for the account the API token belongs to. Using `me` means a client never has to call `GET /v3/accounts` before it can address a project.
-
-        `me` resolves only when the token covers exactly one account. A token covering several returns 422 with code `ambiguous_account`; list the accounts and pass a concrete id instead. Response `links` are always returned with the concrete id.
-      schema:
-        type: string
-        example: Ab3kL9
     ProjectId:
       name: project_id
       in: path
@@ -8066,10 +8581,21 @@ components:
       name: fault_id
       in: path
       required: true
-      description: Fault public ID
+      description: Fault ID (integer primary key; faults do not have a separate public
+        ID)
       schema:
-        type: string
-        example: Nm8pQx
+        type: integer
+        example: 12345
+    Unmapped:
+      name: unmapped
+      in: query
+      description: |
+        Return the backtrace exactly as the client reported it, instead of the source-mapped one. Frames are source-mapped by default. Where no different mapped trace was stored — no source map was uploaded for the revision, or mapping did not change the frames — both forms are the same.
+
+        Accepts `true`/`false` and the usual spellings (`1`/`0`, `yes`/`no`, `on`/`off`). Any other value is refused with 400 `invalid_parameter` rather than being read as true.
+      schema:
+        type: boolean
+        default: false
     Page:
       name: page
       in: query
@@ -8090,7 +8616,11 @@ components:
     Limit:
       name: limit
       in: query
-      description: Maximum items to return
+      description: 'Maximum items to return. A value above the maximum is clamped
+        down to it; a value that is not a positive integer is refused with 400 `invalid_parameter`
+        rather than being reinterpreted.
+
+        '
       schema:
         type: integer
         minimum: 1
@@ -8111,11 +8641,10 @@ components:
     CreatedAfter:
       name: created_after
       in: query
-      description: 'Only return items created after this Unix timestamp. Fractional
-        seconds are significant; take the value from `links.newer` rather than constructing
-        it.
+      description: |
+        Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
 
-        '
+        A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
       schema:
         type: number
         format: double
@@ -8123,11 +8652,10 @@ components:
     CreatedBefore:
       name: created_before
       in: query
-      description: 'Only return items created before this Unix timestamp. Fractional
-        seconds are significant; take the value from `links.older` rather than constructing
-        it.
+      description: |
+        Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
 
-        '
+        A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
       schema:
         type: number
         format: double
@@ -8135,13 +8663,10 @@ components:
     OccurrencePeriod:
       name: period
       in: query
-      description: 'Window to report over. Both ends of the window are inclusive,
-        so each period returns one more bucket than its name suggests: `hour` gives
-        61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
-        Defaults to `hour`; an unrecognised value falls back to `hour` and `meta.period`
-        says so.
+      description: |
+        Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
 
-        '
+        Defaults to `hour` when omitted, and `meta.period` reports what was used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
       schema:
         type: string
         enum:
@@ -8161,7 +8686,8 @@ components:
       name: order
       in: query
       description: 'How to sort the list. `recent` is by most recent occurrence, `frequent`
-        by occurrence count. Defaults to creation order.
+        by occurrence count. Omitted means creation order. An unrecognised value is
+        refused with 400 `invalid_parameter`.
 
         '
       schema:
@@ -8169,31 +8695,47 @@ components:
         enum:
         - recent
         - frequent
+    Sort:
+      name: sort
+      in: query
+      description: 'Direction for `order`. Each ordering has its own default — most
+        recent and most frequent descend, creation order ascends. An unrecognised
+        value is refused with 400 `invalid_parameter` rather than sorting the other
+        way.
+
+        '
+      schema:
+        type: string
+        enum:
+        - asc
+        - desc
     FaultCreatedAfter:
       name: created_after
       in: query
-      description: 'Only faults first seen after this Unix timestamp. Clamped to the
-        project''s creation date.
+      description: |
+        Only faults first seen after this Unix timestamp. Clamped to the project's creation date.
 
-        '
+        A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
       schema:
         type: number
         format: double
     FaultOccurredAfter:
       name: occurred_after
       in: query
-      description: 'Only faults with an occurrence after this Unix timestamp. Clamped
-        to the project''s retention window, so a value beyond it returns what is retained.
-        Occurrence counts in the response are for this window.
+      description: |
+        Only faults with an occurrence after this Unix timestamp. Clamped to the project's retention window, so a value beyond it returns what is retained. Occurrence counts in the response are for this window.
 
-        '
+        A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
       schema:
         type: number
         format: double
     FaultOccurredBefore:
       name: occurred_before
       in: query
-      description: Only faults with an occurrence before this Unix timestamp
+      description: |
+        Only faults with an occurrence before this Unix timestamp. On the occurrence timeline it is the upper bound of the reported window; omitting `occurred_after` reports the hour before it.
+
+        A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped, as is an empty value.
       schema:
         type: number
         format: double
@@ -8209,10 +8751,9 @@ components:
         type: string
   responses:
     Unauthorized:
-      description: 'Authentication failed. OpenAPI allows one response per status
-        code, and every operation maps 401 here — so the ways a credential can be
-        refused are the examples below rather than separate response components, which
-        nothing could reference.
+      description: 'Authentication failed: the credential was missing, malformed,
+        expired, revoked, or presented in a way v3 does not accept. `error.code` says
+        which — see the examples below.
 
         '
       content:
@@ -8259,7 +8800,7 @@ components:
                   request_id: abc123
     Forbidden:
       description: |
-        Authenticated, but not allowed. As with 401, OpenAPI allows one response per status code and every operation maps 403 here, so the distinct reasons are the examples below rather than separate components nothing could reference.
+        Authenticated, but not allowed to do this. `error.code` says why — see the examples below.
         Note what is NOT here: a binding failure — an account or project the credential does not cover — answers 404 `not_found` instead. A 403 there would confirm the resource exists.
       headers:
         WWW-Authenticate:
@@ -8353,9 +8894,9 @@ components:
             meta:
               request_id: abc123
     AmbiguousAccount:
-      description: 'The `me` account alias could not be resolved because the API token
-        covers more than one account. List the accounts and pass a concrete id. Only
-        returned when `account_id` is the literal `me`.
+      description: 'No path names the account, so the API token has to. This is returned
+        when the token covers more than one account and the account a request applies
+        to cannot be determined. Use a token bound to a single account.
 
         '
       content:
@@ -8365,9 +8906,64 @@ components:
           example:
             error:
               code: ambiguous_account
-              message: This credential covers more than one account, so "me" is ambiguous.
+              message: This credential covers more than one account, so the account
+                a request applies to is ambiguous. Use a token bound to a single account.
             meta:
               request_id: abc123
+    FaultBulkRejected:
+      description: 'The request was refused and nothing was changed. `error.code`
+        and `error.details` say why — see the examples below.
+
+        '
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          examples:
+            missing_selection:
+              summary: The body named no faults
+              description: 'A body naming nothing used to mean every fault in the
+                project. Say which faults with fault_ids, narrow them with q or a
+                time filter, or ask for all of them with all=true.
+
+                '
+              value:
+                error:
+                  code: validation_error
+                  message: Name the faults to change with fault_ids, narrow them with
+                    a filter, or pass all=true to change every fault in the project.
+                  details:
+                  - field: fault_ids
+                    message: required unless a filter or all=true is given
+                meta:
+                  request_id: abc123
+            unrecognised_filter:
+              summary: q contained a filter that matches nothing
+              description: 'An unknown token contributes nothing to the query, so
+                the request would have applied to everything the rest of it matched.
+                `is:unresolved` is the common mistake — the filter is `-is:resolved`.
+
+                '
+              value:
+                error:
+                  code: validation_error
+                  message: 'Unrecognised search filters: is:unresolved. They match
+                    nothing, so this would have applied to every fault the rest of
+                    the query matched.'
+                  details:
+                  - field: q
+                    message: unrecognised filter is:unresolved
+                meta:
+                  request_id: abc123
+            ambiguous_account:
+              summary: The `me` alias covers more than one account
+              value:
+                error:
+                  code: ambiguous_account
+                  message: This credential covers more than one account, so "me" is
+                    ambiguous.
+                meta:
+                  request_id: abc123
     RateLimitExceeded:
       description: Rate limit exceeded
       content:
@@ -8378,5 +8974,25 @@ components:
             error:
               code: rate_limit_exceeded
               message: Rate limit exceeded
+            meta:
+              request_id: abc123
+    BadRequest:
+      description: 'A query parameter was malformed or carried a value outside its
+        documented set. `error.details` names the parameter. Returned rather than
+        reinterpreting the value, so a caller that guessed wrong is told instead of
+        being handed a correct-looking answer to a different question.
+
+        '
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: invalid_parameter
+              message: unmapped must be true or false
+              details:
+              - field: unmapped
+                message: must be true or false
             meta:
               request_id: abc123

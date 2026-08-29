@@ -36,12 +36,12 @@ const versionSegment = "/v3"
 // single response exhaust memory.
 const maxBodyBytes = 64 << 20 // 64 MiB
 
-// AccountMe is the account_id sentinel v3 resolves from the credential. It is
-// the default, which is why account ids do not appear in method signatures.
+// AccountMe is the account_id sentinel v3 resolves from the credential.
 //
-// It only resolves when the credential covers exactly one account. A credential
-// covering several returns 422 with code ambiguous_account; recover by listing
-// accounts and passing a concrete id through InAccount or WithAccountID.
+// Deprecated: v3 no longer carries account IDs in paths. The account is
+// resolved from the credential; a credential covering several accounts
+// returns 422 ambiguous_account and must be replaced with one scoped to a
+// single account.
 const AccountMe = "me"
 
 // RateLimit is a snapshot of the rate-limit headers from a response. v3 allows
@@ -116,8 +116,11 @@ type Client struct {
 	// Dashboards handles Insights dashboards.
 	Dashboards *DashboardsService
 
-	// Channels handles notification channels, which v2 called integrations.
-	Channels *ChannelsService
+	// Integrations handles notification integrations (webhooks, email, PagerDuty, etc.).
+	Integrations *IntegrationsService
+
+	// ProjectKeys handles project ingestion keys.
+	ProjectKeys *ProjectKeysService
 }
 
 // NewClient returns a client pointing at the production API with a 30 second
@@ -154,7 +157,8 @@ func (c *Client) rebind() *Client {
 	c.CheckIns = &CheckInsService{client: c}
 	c.Alarms = &AlarmsService{client: c}
 	c.Dashboards = &DashboardsService{client: c}
-	c.Channels = &ChannelsService{client: c}
+	c.Integrations = &IntegrationsService{client: c}
+	c.ProjectKeys = &ProjectKeysService{client: c}
 	return c
 }
 

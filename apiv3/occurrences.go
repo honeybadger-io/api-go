@@ -50,7 +50,7 @@ func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o O
 	}
 
 	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().GetProjectOccurrences(ctx, s.client.accountID(o.AccountID), projectID, params)
+		return s.client.gen().GetProjectOccurrences(ctx, projectID, params)
 	})
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (s *ProjectsService) AccountOccurrences(ctx context.Context, o OccurrenceOp
 		}
 
 		return listOffset[OccurrenceSeries](ctx, s.client, func() (*http.Response, error) {
-			return s.client.gen().ListAccountOccurrences(ctx, s.client.accountID(o.AccountID), params)
+			return s.client.gen().ListAccountOccurrences(ctx, params)
 		})
 	})
 }

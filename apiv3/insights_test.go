@@ -35,7 +35,7 @@ func TestInsightsQuerySendsBody(t *testing.T) {
 	if gotMethod != http.MethodPost {
 		t.Errorf("method = %q, want POST", gotMethod)
 	}
-	if want := "/v3/accounts/me/projects/Xk9mZp/insights/queries"; gotPath != want {
+	if want := "/v3/projects/Xk9mZp/insights/queries"; gotPath != want {
 		t.Errorf("path = %q, want %q", gotPath, want)
 	}
 	if got["query"] != "@size > 0 | limit 10" {
@@ -156,7 +156,7 @@ func TestInsightsQueryServiceUnavailableIsTyped(t *testing.T) {
 
 func TestListStreams(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/accounts/me/projects/Xk9mZp/streams"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp/streams"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":[

@@ -62,7 +62,7 @@ func TestBearerTokenIsSent(t *testing.T) {
 	if want := "Bearer hbt_secret"; gotAuth != want {
 		t.Errorf("Authorization = %q, want %q", gotAuth, want)
 	}
-	if want := "/v3/accounts/me/projects"; gotPath != want {
+	if want := "/v3/projects"; gotPath != want {
 		t.Errorf("path = %q, want %q", gotPath, want)
 	}
 }
