@@ -45,11 +45,11 @@ func TestOptionalNonNullableFieldsConflateNullAndAbsent(t *testing.T) {
 		t.Fatalf("decoding absent field: %v", err)
 	}
 
-	if explicitNull.Token != nil {
-		t.Errorf("explicit null gave non-nil %v; generator behavior changed", *explicitNull.Token)
+	if !explicitNull.Token.IsNull() {
+		t.Errorf("explicit null should be null; generator behavior changed")
 	}
-	if absent.Token != nil {
-		t.Errorf("absent gave non-nil %v", *absent.Token)
+	if absent.Token.IsSpecified() {
+		t.Errorf("absent should not be specified")
 	}
 	// Both nil: indistinguishable for this class of field.
 }

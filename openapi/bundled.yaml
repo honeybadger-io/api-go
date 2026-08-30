@@ -1538,14 +1538,14 @@ paths:
                         description: Identifies the background merge
                         example: WksB67FpRY3bZQ
                       source_id:
-                        type: string
-                        description: Public ID of the fault merged away — the one
-                          from the path
-                        example: 2z4WtH9gARww
+                        type: integer
+                        description: ID of the fault merged away — the one from the
+                          path
+                        example: 12345
                       target_id:
-                        type: string
-                        description: Public ID of the fault kept
-                        example: OmDSjxQSys5k
+                        type: integer
+                        description: ID of the fault kept
+                        example: 67890
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -5138,8 +5138,6 @@ components:
       description: A Honeybadger account
       required:
       - id
-      - name
-      - email
       - active
       properties:
         id:
@@ -5147,11 +5145,15 @@ components:
           description: Unique public identifier
           example: Ab3kL9
         name:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Account name
           example: Acme Corp
         email:
-          type: string
+          type:
+          - string
+          - 'null'
           format: email
           description: Primary account email
           example: billing@acme.com
@@ -5172,7 +5174,6 @@ components:
       - id
       - account_id
       - email
-      - role
       properties:
         id:
           type: string
@@ -5187,9 +5188,17 @@ components:
           description: Email address of the invitee
           example: newmember@example.com
         role:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Role granted upon acceptance
-          example: member
+          enum:
+          - Owner
+          - Admin
+          - Billing
+          - Member
+          -
+          example: Member
         created_at:
           type: string
           format: date-time
@@ -5210,7 +5219,9 @@ components:
               type: string
               description: Public ID of the user
             name:
-              type: string
+              type:
+              - string
+              - 'null'
               description: User name
             email:
               type: string
@@ -5225,7 +5236,9 @@ components:
               type: string
               description: Public ID of the user
             name:
-              type: string
+              type:
+              - string
+              - 'null'
               description: User name
             email:
               type: string
@@ -5283,7 +5296,6 @@ components:
       - user_id
       - role
       - email
-      - name
       properties:
         id:
           type: string
@@ -5300,13 +5312,19 @@ components:
         role:
           type: string
           description: Member role in the account
-          example: admin
+          enum:
+          - Owner
+          - Admin
+          - Member
+          example: Admin
         email:
           type: string
           description: Member email address
           example: jane@example.com
         name:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Member display name
           example: Jane Smith
         created_at:
@@ -5354,6 +5372,10 @@ components:
         state:
           type: string
           description: Current alarm state
+          enum:
+          - initial
+          - alarm
+          - ok
         query:
           type:
           - string
@@ -5365,7 +5387,9 @@ components:
             '
           example: filter event_type::str == "notice" | stats count() as count
         stream_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             type: string
           description: Associated stream identifiers
@@ -5390,7 +5414,9 @@ components:
           pattern: "^\\d+[smhdw]$"
           example: 1m
         trigger_config:
-          type: object
+          type:
+          - object
+          - 'null'
           description: Trigger configuration for the alarm
         error:
           type:
@@ -5479,6 +5505,27 @@ components:
           type: string
         description:
           type: string
+        query:
+          type: string
+          description: BadgerQL query evaluated on each check
+        stream_ids:
+          type: array
+          items:
+            type: string
+          description: Stream identifiers to query
+        evaluation_period:
+          type: string
+          description: Window each evaluation covers, as a compact duration
+          pattern: "^\\d+[smhdw]$"
+          example: 10m
+        lookback_lag:
+          type: string
+          description: How far behind now the window ends
+          pattern: "^\\d+[smhdw]$"
+          example: 1m
+        trigger_config:
+          type: object
+          description: Trigger configuration for the alarm
     Integration:
       type: object
       description: A notification integration
@@ -5499,7 +5546,7 @@ components:
         type:
           type: string
           description: Integration type
-          example: slack
+          example: Slack
         active:
           type: boolean
           description: Whether the channel is active
@@ -5541,7 +5588,9 @@ components:
           type: string
           description: Rate period for rate_exceeded events (e.g. min, hour)
         notification_limit:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: Maximum notifications in a 10-minute window before flood control
         config:
           type: object
@@ -5672,8 +5721,6 @@ components:
       required:
       - id
       - project_id
-      - name
-      - slug
       - schedule_type
       properties:
         id:
@@ -5685,11 +5732,15 @@ components:
           description: Public ID of the project this check-in belongs to
           example: Xk9mZp
         name:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Display name
           example: Daily Backup
         slug:
-          type: string
+          type:
+          - string
+          - 'null'
           description: URL-safe identifier
           example: daily-backup
         schedule_type:
@@ -5701,6 +5752,11 @@ components:
         state:
           type: string
           description: Current check-in state
+          enum:
+          - pending
+          - reporting
+          - missing
+          - paused
         reported_at:
           type:
           - string
@@ -5717,7 +5773,9 @@ components:
           type: integer
           description: Number of consecutive missed reports
         grace_period:
-          type: string
+          type:
+          - string
+          - 'null'
           description: 'How long after the expected time before the check-in is missing.
             A Postgres interval, rendered the way it is written: a count and a unit,
             or HH:MM:SS.
@@ -5862,7 +5920,6 @@ components:
       required:
       - id
       - fault_id
-      - body
       - created_at
       properties:
         id:
@@ -5885,19 +5942,25 @@ components:
               - 'null'
               description: Public ID of the author
             name:
-              type: string
+              type:
+              - string
+              - 'null'
               description: Name of the author
             email:
               type: string
               description: Email of the author
         body:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Comment body text
         source:
           type: string
           description: Source of the comment
         event:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Event type associated with the comment
         created_at:
           type: string
@@ -5948,6 +6011,12 @@ components:
         shared:
           type: boolean
           description: Whether the dashboard is shared with all team members
+        default_ts:
+          type:
+          - string
+          - 'null'
+          description: Default time range for the dashboard
+          example: PT3H
         created_at:
           type: string
           format: date-time
@@ -6672,7 +6741,6 @@ components:
       - id
       - project_id
       - environment
-      - revision
       properties:
         id:
           type: string
@@ -6687,23 +6755,21 @@ components:
           description: Deploy environment
           example: production
         revision:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Source control revision
           example: a1b2c3d4
-        branch:
+        repository:
           type:
           - string
           - 'null'
-          description: Source control branch
-          example: main
-        repository_url:
-          type:
-          - string
-          - 'null'
-          description: URL of the source repository
-          example: https://github.com/acme/app
+          description: Source control repository
+          example: acme/app
         local_username:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Username of the person who triggered the deploy
           example: jane
         created_at:
@@ -6788,7 +6854,6 @@ components:
           - limit_reached
           - rate_limit_exceeded
           - maintenance_mode
-          - invalid_id
           - invalid_parameter
           - forbidden_attributes
           - service_unavailable
@@ -6850,6 +6915,8 @@ components:
       required:
       - id
       - project_id
+      - message
+      - created_at
       properties:
         id:
           type: integer
@@ -6861,7 +6928,9 @@ components:
           description: Public ID of the project this fault belongs to
           example: Xk9mZp
         klass:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Error class name
           example: NoMethodError
         message:
@@ -6881,7 +6950,9 @@ components:
           description: Action where the error occurred
           example: show
         environment:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Environment name
           example: production
         resolved:
@@ -6924,32 +6995,22 @@ components:
               type: string
               description: Public ID of the assignee
             name:
-              type: string
+              type:
+              - string
+              - 'null'
               description: Name of the assignee
             email:
               type: string
               description: Email of the assignee
         deploy:
-          type:
-          - object
-          - 'null'
           description: Deploy associated with this fault
-          properties:
-            id:
-              type: string
-              description: Public ID of the deploy
-            environment:
-              type: string
-              description: Deploy environment
-            revision:
-              type: string
-              description: Deploy revision
-            created_at:
-              type: string
-              format: date-time
-              description: When the deploy was created
+          oneOf:
+          - "$ref": "#/components/schemas/Deploy"
+          - type: 'null'
         tickets:
-          type: array
+          type:
+          - array
+          - 'null'
           description: Issue tracker tickets linked to this fault
           items:
             type: object
@@ -7251,8 +7312,10 @@ components:
             '
           example: production
         message:
-          type: string
-          description: Error message
+          type:
+          - string
+          - 'null'
+          description: Error message. Null when the notifier reported none.
           example: undefined method 'foo' for nil:NilClass
         created_at:
           type: string
@@ -7592,8 +7655,14 @@ components:
           description: Project name
           example: My Rails App
         token:
-          type: string
-          description: API key for error reporting (only shown to authorized users)
+          type:
+          - string
+          - 'null'
+          description: 'API key for error reporting: the newest of the project''s
+            keys. Null when the project has none, which deleting every project key
+            produces.
+
+            '
           example: hbp_abc123...
         active:
           type: boolean
@@ -7824,6 +7893,10 @@ components:
         state:
           type: string
           description: Current state of the site
+          enum:
+          - pending
+          - up
+          - down
           example: up
         last_checked_at:
           type:
@@ -7835,7 +7908,9 @@ components:
           type: string
           description: Type of response matching
         match:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Value to match in the response
         request_method:
           type: string
@@ -7843,9 +7918,11 @@ components:
           example: GET
         frequency:
           type: integer
-          description: Check frequency in seconds
+          description: Check frequency in minutes
         locations:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             type: string
           description: Monitoring locations
@@ -7853,10 +7930,14 @@ components:
           - us-east-1
           - eu-west-1
         validate_ssl:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           description: Whether to validate SSL certificates
         request_headers:
-          type: object
+          type:
+          - object
+          - 'null'
           description: Custom headers sent with check requests
         request_body:
           type:
@@ -7864,7 +7945,9 @@ components:
           - 'null'
           description: Request body for POST/PUT checks
         outage_threshold:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: Number of failed checks before declaring an outage
         timeout:
           type: integer
@@ -8014,16 +8097,22 @@ components:
                 format: uuid
                 description: Identifier of the site
               display_name:
-                type: string
+                type:
+                - string
+                - 'null'
                 description: Display name on the status page
               description:
-                type: string
+                type:
+                - string
+                - 'null'
                 description: Description shown on the status page
               state:
                 type: string
                 description: Current state of the site
               last_checked_at:
-                type: string
+                type:
+                - string
+                - 'null'
                 format: date-time
                 description: When the site was last checked
         check_ins:
@@ -8036,16 +8125,22 @@ components:
                 type: string
                 description: Public ID of the check-in
               display_name:
-                type: string
+                type:
+                - string
+                - 'null'
                 description: Display name on the status page
               description:
-                type: string
+                type:
+                - string
+                - 'null'
                 description: Description shown on the status page
               state:
                 type: string
                 description: Current state of the check-in
               reported_at:
-                type: string
+                type:
+                - string
+                - 'null'
                 format: date-time
                 description: When the check-in last reported
     StatusPageIncident:
@@ -8340,7 +8435,6 @@ components:
       - id
       - team_id
       - email
-      - admin
       properties:
         id:
           type: string
@@ -8355,7 +8449,9 @@ components:
           description: Email address of the invitee
           example: newmember@example.com
         admin:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           description: Whether the invitation grants admin privileges
         message:
           type:
@@ -8382,7 +8478,9 @@ components:
               type: string
               description: Public ID of the user
             name:
-              type: string
+              type:
+              - string
+              - 'null'
               description: User name
             email:
               type: string
@@ -8397,7 +8495,9 @@ components:
               type: string
               description: Public ID of the user
             name:
-              type: string
+              type:
+              - string
+              - 'null'
               description: User name
             email:
               type: string
@@ -8424,7 +8524,6 @@ components:
       - team_id
       - user_id
       - admin
-      - name
       - email
       properties:
         id:
@@ -8443,7 +8542,9 @@ components:
           type: boolean
           description: Whether the member has admin privileges on the team
         name:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Member name
           example: Jane Smith
         email:
@@ -8531,21 +8632,26 @@ components:
       description: An individual uptime check result
       required:
       - created_at
-      - up
       properties:
         created_at:
           type: string
           format: date-time
           description: When the check was performed
         duration:
-          type: number
+          type:
+          - number
+          - 'null'
           description: Response time in milliseconds
         location:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Monitoring location that performed the check
           example: us-east-1
         up:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           description: Whether the site was up
     User:
       type: object
@@ -8553,7 +8659,6 @@ components:
       required:
       - id
       - email
-      - name
       properties:
         id:
           type: string
@@ -8565,7 +8670,9 @@ components:
           description: User email address
           example: jane@example.com
         name:
-          type: string
+          type:
+          - string
+          - 'null'
           description: User display name
           example: Jane Smith
   parameters:

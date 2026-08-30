@@ -98,11 +98,8 @@ func TestFaultNullableFieldsAreThreeState(t *testing.T) {
 		t.Error("assignee was omitted but reads as specified")
 	}
 
-	// Environment is optional but NOT declared nullable in the spec, so it
-	// generates as a plain pointer and cannot distinguish null from absent.
-	// Documented by TestOptionalNonNullableFieldsConflateNullAndAbsent.
-	if f.Environment != nil {
-		t.Errorf("environment = %v, want nil", *f.Environment)
+	if f.Environment.IsSpecified() {
+		t.Errorf("environment should be absent, got %v", f.Environment)
 	}
 }
 

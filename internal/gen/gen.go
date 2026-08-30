@@ -19,6 +19,33 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for AccountInvitationRole.
+const (
+	AccountInvitationRoleAdmin       AccountInvitationRole = "Admin"
+	AccountInvitationRoleBilling     AccountInvitationRole = "Billing"
+	AccountInvitationRoleLessThannil AccountInvitationRole = "<nil>"
+	AccountInvitationRoleMember      AccountInvitationRole = "Member"
+	AccountInvitationRoleOwner       AccountInvitationRole = "Owner"
+)
+
+// Valid indicates whether the value is a known member of the AccountInvitationRole enum.
+func (e AccountInvitationRole) Valid() bool {
+	switch e {
+	case AccountInvitationRoleAdmin:
+		return true
+	case AccountInvitationRoleBilling:
+		return true
+	case AccountInvitationRoleLessThannil:
+		return true
+	case AccountInvitationRoleMember:
+		return true
+	case AccountInvitationRoleOwner:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AccountInvitationInputRole.
 const (
 	AccountInvitationInputRoleAdmin  AccountInvitationInputRole = "Admin"
@@ -34,6 +61,27 @@ func (e AccountInvitationInputRole) Valid() bool {
 	case AccountInvitationInputRoleMember:
 		return true
 	case AccountInvitationInputRoleOwner:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AccountMemberRole.
+const (
+	AccountMemberRoleAdmin  AccountMemberRole = "Admin"
+	AccountMemberRoleMember AccountMemberRole = "Member"
+	AccountMemberRoleOwner  AccountMemberRole = "Owner"
+)
+
+// Valid indicates whether the value is a known member of the AccountMemberRole enum.
+func (e AccountMemberRole) Valid() bool {
+	switch e {
+	case AccountMemberRoleAdmin:
+		return true
+	case AccountMemberRoleMember:
+		return true
+	case AccountMemberRoleOwner:
 		return true
 	default:
 		return false
@@ -61,6 +109,27 @@ func (e AccountMemberInputRole) Valid() bool {
 	}
 }
 
+// Defines values for AlarmState.
+const (
+	AlarmStateAlarm   AlarmState = "alarm"
+	AlarmStateInitial AlarmState = "initial"
+	AlarmStateOk      AlarmState = "ok"
+)
+
+// Valid indicates whether the value is a known member of the AlarmState enum.
+func (e AlarmState) Valid() bool {
+	switch e {
+	case AlarmStateAlarm:
+		return true
+	case AlarmStateInitial:
+		return true
+	case AlarmStateOk:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CheckInScheduleType.
 const (
 	CheckInScheduleTypeCron   CheckInScheduleType = "cron"
@@ -73,6 +142,30 @@ func (e CheckInScheduleType) Valid() bool {
 	case CheckInScheduleTypeCron:
 		return true
 	case CheckInScheduleTypeSimple:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CheckInState.
+const (
+	CheckInStateMissing   CheckInState = "missing"
+	CheckInStatePaused    CheckInState = "paused"
+	CheckInStatePending   CheckInState = "pending"
+	CheckInStateReporting CheckInState = "reporting"
+)
+
+// Valid indicates whether the value is a known member of the CheckInState enum.
+func (e CheckInState) Valid() bool {
+	switch e {
+	case CheckInStateMissing:
+		return true
+	case CheckInStatePaused:
+		return true
+	case CheckInStatePending:
+		return true
+	case CheckInStateReporting:
 		return true
 	default:
 		return false
@@ -243,7 +336,6 @@ const (
 	ErrorBodyCodeFeatureUnavailable    ErrorBodyCode = "feature_unavailable"
 	ErrorBodyCodeForbiddenAttributes   ErrorBodyCode = "forbidden_attributes"
 	ErrorBodyCodeInsufficientScope     ErrorBodyCode = "insufficient_scope"
-	ErrorBodyCodeInvalidId             ErrorBodyCode = "invalid_id"
 	ErrorBodyCodeInvalidParameter      ErrorBodyCode = "invalid_parameter"
 	ErrorBodyCodeLimitReached          ErrorBodyCode = "limit_reached"
 	ErrorBodyCodeMaintenanceMode       ErrorBodyCode = "maintenance_mode"
@@ -277,8 +369,6 @@ func (e ErrorBodyCode) Valid() bool {
 	case ErrorBodyCodeForbiddenAttributes:
 		return true
 	case ErrorBodyCodeInsufficientScope:
-		return true
-	case ErrorBodyCodeInvalidId:
 		return true
 	case ErrorBodyCodeInvalidParameter:
 		return true
@@ -508,6 +598,27 @@ func (e OccurrenceMetaPeriod) Valid() bool {
 	case OccurrenceMetaPeriodMonth:
 		return true
 	case OccurrenceMetaPeriodWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteState.
+const (
+	SiteStateDown    SiteState = "down"
+	SiteStatePending SiteState = "pending"
+	SiteStateUp      SiteState = "up"
+)
+
+// Valid indicates whether the value is a known member of the SiteState enum.
+func (e SiteState) Valid() bool {
+	switch e {
+	case SiteStateDown:
+		return true
+	case SiteStatePending:
+		return true
+	case SiteStateUp:
 		return true
 	default:
 		return false
@@ -991,13 +1102,13 @@ type Account struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// Email Primary account email
-	Email openapi_types.Email `json:"email"`
+	Email nullable.Nullable[openapi_types.Email] `json:"email,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
 
 	// Name Account name
-	Name string `json:"name"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// Parked Whether the account is parked (temporarily inactive)
 	Parked *bool `json:"parked,omitempty"`
@@ -1027,7 +1138,7 @@ type AccountInvitation struct {
 	Id string `json:"id"`
 
 	// Role Role granted upon acceptance
-	Role string `json:"role"`
+	Role nullable.Nullable[AccountInvitationRole] `json:"role,omitempty"`
 }
 
 // AccountInvitation_AcceptedBy User who accepted the invitation
@@ -1039,7 +1150,7 @@ type AccountInvitation_AcceptedBy struct {
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
-	Name *string `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
 // AccountInvitation_CreatedBy User who created the invitation
@@ -1051,8 +1162,11 @@ type AccountInvitation_CreatedBy struct {
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
-	Name *string `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
+
+// AccountInvitationRole Role granted upon acceptance
+type AccountInvitationRole string
 
 // AccountInvitationInput Writable account-invitation attributes
 type AccountInvitationInput struct {
@@ -1083,14 +1197,17 @@ type AccountMember struct {
 	Id string `json:"id"`
 
 	// Name Member display name
-	Name string `json:"name"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// Role Member role in the account
-	Role string `json:"role"`
+	Role AccountMemberRole `json:"role"`
 
 	// UserId Public ID of the user
 	UserId string `json:"user_id"`
 }
+
+// AccountMemberRole Member role in the account
+type AccountMemberRole string
 
 // AccountMemberInput Writable account-member attributes
 type AccountMemberInput struct {
@@ -1145,13 +1262,13 @@ type Alarm struct {
 	Query nullable.Nullable[string] `json:"query,omitempty"`
 
 	// State Current alarm state
-	State string `json:"state"`
+	State AlarmState `json:"state"`
 
 	// StreamIds Associated stream identifiers
-	StreamIds *[]string `json:"stream_ids,omitempty"`
+	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
 
 	// TriggerConfig Trigger configuration for the alarm
-	TriggerConfig *map[string]interface{} `json:"trigger_config,omitempty"`
+	TriggerConfig nullable.Nullable[map[string]interface{}] `json:"trigger_config,omitempty"`
 
 	// UpdatedAt When the alarm was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
@@ -1159,6 +1276,9 @@ type Alarm struct {
 	// Url URL to view the alarm in the dashboard
 	Url *string `json:"url,omitempty"`
 }
+
+// AlarmState Current alarm state
+type AlarmState string
 
 // AlarmCreateInput An alarm and the observer that evaluates it
 type AlarmCreateInput struct {
@@ -1196,7 +1316,22 @@ type AlarmCreateInput_TriggerConfig struct {
 // AlarmUpdateInput Writable alarm attributes
 type AlarmUpdateInput struct {
 	Description *string `json:"description,omitempty"`
+
+	// EvaluationPeriod Window each evaluation covers, as a compact duration
+	EvaluationPeriod *string `json:"evaluation_period,omitempty"`
+
+	// LookbackLag How far behind now the window ends
+	LookbackLag *string `json:"lookback_lag,omitempty"`
 	Name        *string `json:"name,omitempty"`
+
+	// Query BadgerQL query evaluated on each check
+	Query *string `json:"query,omitempty"`
+
+	// StreamIds Stream identifiers to query
+	StreamIds *[]string `json:"stream_ids,omitempty"`
+
+	// TriggerConfig Trigger configuration for the alarm
+	TriggerConfig *map[string]interface{} `json:"trigger_config,omitempty"`
 }
 
 // CheckIn A scheduled task check-in monitor
@@ -1214,7 +1349,7 @@ type CheckIn struct {
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at,omitempty"`
 
 	// GracePeriod How long after the expected time before the check-in is missing. A Postgres interval, rendered the way it is written: a count and a unit, or HH:MM:SS.
-	GracePeriod *string `json:"grace_period,omitempty"`
+	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
@@ -1223,7 +1358,7 @@ type CheckIn struct {
 	MissedCount *int `json:"missed_count,omitempty"`
 
 	// Name Display name
-	Name string `json:"name"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// ProjectId Public ID of the project this check-in belongs to
 	ProjectId string `json:"project_id"`
@@ -1241,14 +1376,17 @@ type CheckIn struct {
 	ScheduleType CheckInScheduleType `json:"schedule_type"`
 
 	// Slug URL-safe identifier
-	Slug string `json:"slug"`
+	Slug nullable.Nullable[string] `json:"slug,omitempty"`
 
 	// State Current check-in state
-	State *string `json:"state,omitempty"`
+	State *CheckInState `json:"state,omitempty"`
 }
 
 // CheckInScheduleType Type of schedule
 type CheckInScheduleType string
+
+// CheckInState Current check-in state
+type CheckInState string
 
 // CheckInBulkUpdateInput The project's complete set of check-ins. This replaces rather than merges: any check-in the project has and this payload does not name is DELETED. Must be a non-empty array, and every entry needs a slug — an empty payload is rejected rather than taken to mean "delete all of them".
 type CheckInBulkUpdateInput struct {
@@ -1326,13 +1464,13 @@ type Comment struct {
 	Author nullable.Nullable[Comment_Author] `json:"author,omitempty"`
 
 	// Body Comment body text
-	Body string `json:"body"`
+	Body nullable.Nullable[string] `json:"body,omitempty"`
 
 	// CreatedAt When the comment was created
 	CreatedAt time.Time `json:"created_at"`
 
 	// Event Event type associated with the comment
-	Event *string `json:"event,omitempty"`
+	Event nullable.Nullable[string] `json:"event,omitempty"`
 
 	// FaultId Integer ID of the fault this comment belongs to
 	FaultId int `json:"fault_id"`
@@ -1353,7 +1491,7 @@ type Comment_Author struct {
 	Id nullable.Nullable[string] `json:"id,omitempty"`
 
 	// Name Name of the author
-	Name *string `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
 // CommentInput Writable comment attributes
@@ -1366,6 +1504,9 @@ type CommentInput struct {
 type Dashboard struct {
 	// CreatedAt When the dashboard was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
+
+	// DefaultTs Default time range for the dashboard
+	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
 
 	// Id Unique public identifier
 	Id string `json:"id"`
@@ -1478,9 +1619,6 @@ type DashboardWidgetType string
 
 // Deploy A deploy event
 type Deploy struct {
-	// Branch Source control branch
-	Branch nullable.Nullable[string] `json:"branch,omitempty"`
-
 	// CreatedAt When the deploy was recorded
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
@@ -1491,16 +1629,16 @@ type Deploy struct {
 	Id string `json:"id"`
 
 	// LocalUsername Username of the person who triggered the deploy
-	LocalUsername *string `json:"local_username,omitempty"`
+	LocalUsername nullable.Nullable[string] `json:"local_username,omitempty"`
 
 	// ProjectId Public ID of the project this deploy belongs to
 	ProjectId string `json:"project_id"`
 
-	// RepositoryUrl URL of the source repository
-	RepositoryUrl nullable.Nullable[string] `json:"repository_url,omitempty"`
+	// Repository Source control repository
+	Repository nullable.Nullable[string] `json:"repository,omitempty"`
 
 	// Revision Source control revision
-	Revision string `json:"revision"`
+	Revision nullable.Nullable[string] `json:"revision,omitempty"`
 }
 
 // Environment A project environment configuration
@@ -1574,13 +1712,13 @@ type Fault struct {
 	Component nullable.Nullable[string] `json:"component,omitempty"`
 
 	// CreatedAt When the fault was first reported
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Deploy Deploy associated with this fault
-	Deploy nullable.Nullable[Fault_Deploy] `json:"deploy,omitempty"`
+	Deploy nullable.Nullable[Deploy] `json:"deploy,omitempty"`
 
 	// Environment Environment name
-	Environment *string `json:"environment,omitempty"`
+	Environment nullable.Nullable[string] `json:"environment,omitempty"`
 
 	// Id Fault ID (integer primary key; faults do not carry a public ID)
 	Id int `json:"id"`
@@ -1589,13 +1727,13 @@ type Fault struct {
 	Ignored *bool `json:"ignored,omitempty"`
 
 	// Klass Error class name
-	Klass *string `json:"klass,omitempty"`
+	Klass nullable.Nullable[string] `json:"klass,omitempty"`
 
 	// LastNoticeAt When the last notice was received
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
 
 	// Message Error message
-	Message *string `json:"message,omitempty"`
+	Message string `json:"message"`
 
 	// NoticesCount Total number of notices for this fault
 	NoticesCount *int `json:"notices_count,omitempty"`
@@ -1616,7 +1754,7 @@ type Fault struct {
 	Tags *[]string `json:"tags,omitempty"`
 
 	// Tickets Issue tracker tickets linked to this fault
-	Tickets *[]Fault_Tickets `json:"tickets,omitempty"`
+	Tickets nullable.Nullable[[]Fault_Tickets] `json:"tickets,omitempty"`
 }
 
 // Fault_Assignee User assigned to this fault
@@ -1628,22 +1766,7 @@ type Fault_Assignee struct {
 	Id *string `json:"id,omitempty"`
 
 	// Name Name of the assignee
-	Name *string `json:"name,omitempty"`
-}
-
-// Fault_Deploy Deploy associated with this fault
-type Fault_Deploy struct {
-	// CreatedAt When the deploy was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-
-	// Environment Deploy environment
-	Environment *string `json:"environment,omitempty"`
-
-	// Id Public ID of the deploy
-	Id *string `json:"id,omitempty"`
-
-	// Revision Deploy revision
-	Revision *string `json:"revision,omitempty"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
 // Fault_Tickets defines model for Fault.Tickets.
@@ -1812,7 +1935,7 @@ type Integration struct {
 	Id string `json:"id"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
-	NotificationLimit *int `json:"notification_limit,omitempty"`
+	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
 	// ProjectId Public ID of the project this channel belongs to
 	ProjectId string `json:"project_id"`
@@ -1924,8 +2047,8 @@ type Notice struct {
 	// Id The notice's token UUID, which addresses it globally
 	Id openapi_types.UUID `json:"id"`
 
-	// Message Error message
-	Message string `json:"message"`
+	// Message Error message. Null when the notifier reported none.
+	Message nullable.Nullable[string] `json:"message"`
 
 	// ProjectId Public ID of the project
 	ProjectId string `json:"project_id"`
@@ -2123,8 +2246,8 @@ type Project struct {
 	// SourceUrl Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl nullable.Nullable[string] `json:"source_url,omitempty"`
 
-	// Token API key for error reporting (only shown to authorized users)
-	Token *string `json:"token,omitempty"`
+	// Token API key for error reporting: the newest of the project's keys. Null when the project has none, which deleting every project key produces.
+	Token nullable.Nullable[string] `json:"token,omitempty"`
 
 	// UnresolvedFaultCount Number of unresolved faults
 	UnresolvedFaultCount *int `json:"unresolved_fault_count,omitempty"`
@@ -2210,7 +2333,7 @@ type Site struct {
 	// CreatedAt When the site was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	// Frequency Check frequency in seconds
+	// Frequency Check frequency in minutes
 	Frequency *int `json:"frequency,omitempty"`
 
 	// Id Unique identifier
@@ -2220,10 +2343,10 @@ type Site struct {
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
 	// Locations Monitoring locations
-	Locations *[]string `json:"locations,omitempty"`
+	Locations nullable.Nullable[[]string] `json:"locations,omitempty"`
 
 	// Match Value to match in the response
-	Match *string `json:"match,omitempty"`
+	Match nullable.Nullable[string] `json:"match,omitempty"`
 
 	// MatchType Type of response matching
 	MatchType *string `json:"match_type,omitempty"`
@@ -2232,7 +2355,7 @@ type Site struct {
 	Name string `json:"name"`
 
 	// OutageThreshold Number of failed checks before declaring an outage
-	OutageThreshold *int `json:"outage_threshold,omitempty"`
+	OutageThreshold nullable.Nullable[int] `json:"outage_threshold,omitempty"`
 
 	// ProjectId Public ID of the project this site belongs to
 	ProjectId string `json:"project_id"`
@@ -2241,13 +2364,13 @@ type Site struct {
 	RequestBody nullable.Nullable[string] `json:"request_body,omitempty"`
 
 	// RequestHeaders Custom headers sent with check requests
-	RequestHeaders *map[string]interface{} `json:"request_headers,omitempty"`
+	RequestHeaders nullable.Nullable[map[string]interface{}] `json:"request_headers,omitempty"`
 
 	// RequestMethod HTTP method for checks
 	RequestMethod *string `json:"request_method,omitempty"`
 
 	// State Current state of the site
-	State *string `json:"state,omitempty"`
+	State *SiteState `json:"state,omitempty"`
 
 	// Timeout Request timeout in seconds
 	Timeout *int `json:"timeout,omitempty"`
@@ -2256,8 +2379,11 @@ type Site struct {
 	Url string `json:"url"`
 
 	// ValidateSsl Whether to validate SSL certificates
-	ValidateSsl *bool `json:"validate_ssl,omitempty"`
+	ValidateSsl nullable.Nullable[bool] `json:"validate_ssl,omitempty"`
 }
+
+// SiteState Current state of the site
+type SiteState string
 
 // SiteInput Writable uptime-check site attributes
 type SiteInput struct {
@@ -2357,13 +2483,13 @@ type StatusPage_CheckIns struct {
 	CheckInId *string `json:"check_in_id,omitempty"`
 
 	// Description Description shown on the status page
-	Description *string `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description,omitempty"`
 
 	// DisplayName Display name on the status page
-	DisplayName *string `json:"display_name,omitempty"`
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 
 	// ReportedAt When the check-in last reported
-	ReportedAt *time.Time `json:"reported_at,omitempty"`
+	ReportedAt nullable.Nullable[time.Time] `json:"reported_at,omitempty"`
 
 	// State Current state of the check-in
 	State *string `json:"state,omitempty"`
@@ -2372,13 +2498,13 @@ type StatusPage_CheckIns struct {
 // StatusPage_Sites defines model for StatusPage.Sites.
 type StatusPage_Sites struct {
 	// Description Description shown on the status page
-	Description *string `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description,omitempty"`
 
 	// DisplayName Display name on the status page
-	DisplayName *string `json:"display_name,omitempty"`
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 
 	// LastCheckedAt When the site was last checked
-	LastCheckedAt *time.Time `json:"last_checked_at,omitempty"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
 	// SiteId Identifier of the site
 	SiteId *openapi_types.UUID `json:"site_id,omitempty"`
@@ -2575,7 +2701,7 @@ type TeamInvitation struct {
 	AcceptedBy nullable.Nullable[TeamInvitation_AcceptedBy] `json:"accepted_by,omitempty"`
 
 	// Admin Whether the invitation grants admin privileges
-	Admin bool `json:"admin"`
+	Admin nullable.Nullable[bool] `json:"admin,omitempty"`
 
 	// CreatedAt When the invitation was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -2605,7 +2731,7 @@ type TeamInvitation_AcceptedBy struct {
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
-	Name *string `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
 // TeamInvitation_CreatedBy User who created the invitation
@@ -2617,7 +2743,7 @@ type TeamInvitation_CreatedBy struct {
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
-	Name *string `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
 // TeamInvitationInput Writable team-invitation attributes
@@ -2644,7 +2770,7 @@ type TeamMember struct {
 	Id string `json:"id"`
 
 	// Name Member name
-	Name string `json:"name"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// TeamId Public ID of the team
 	TeamId string `json:"team_id"`
@@ -2695,13 +2821,13 @@ type UptimeCheck struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	// Duration Response time in milliseconds
-	Duration *float32 `json:"duration,omitempty"`
+	Duration nullable.Nullable[float32] `json:"duration,omitempty"`
 
 	// Location Monitoring location that performed the check
-	Location *string `json:"location,omitempty"`
+	Location nullable.Nullable[string] `json:"location,omitempty"`
 
 	// Up Whether the site was up
-	Up bool `json:"up"`
+	Up nullable.Nullable[bool] `json:"up,omitempty"`
 }
 
 // User A Honeybadger user
@@ -2713,7 +2839,7 @@ type User struct {
 	Id string `json:"id"`
 
 	// Name User display name
-	Name string `json:"name"`
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
 // After defines model for After.
@@ -3471,11 +3597,11 @@ type MergeFaults202JSONResponseBody_Data struct {
 	// BatchId Identifies the background merge
 	BatchId string `json:"batch_id"`
 
-	// SourceId Public ID of the fault merged away — the one from the path
-	SourceId string `json:"source_id"`
+	// SourceId ID of the fault merged away — the one from the path
+	SourceId int `json:"source_id"`
 
-	// TargetId Public ID of the fault kept
-	TargetId string `json:"target_id"`
+	// TargetId ID of the fault kept
+	TargetId int `json:"target_id"`
 }
 
 // MergeFaults202JSONResponseBody defines parameters for MergeFaults.
