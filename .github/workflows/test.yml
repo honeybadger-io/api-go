@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: ["1.23"]
+        go-version: ["1.24"]
 
     steps:
       - uses: actions/checkout@v7
@@ -31,6 +31,14 @@ jobs:
       - name: Verify dependencies
         run: go mod verify
 
+      # One platform only: generator output is identical everywhere, and each
+      # run downloads the generator, so repeating it only adds flake risk.
+      # oapi-codegen needs a newer toolchain than the matrix Go; GOTOOLCHAIN
+      # defaults to auto, so `go run` fetches it.
+      - name: Verify generated code matches the vendored spec
+        if: matrix.os == 'ubuntu-latest'
+        run: make verify-generated
+
       - name: Run tests
         run: go test -v -race ./...
 
@@ -44,7 +52,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version: "1.23"
+          go-version: "1.24"
           cache: true
 
       - name: golangci-lint
