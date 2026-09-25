@@ -21,6 +21,7 @@ type Dashboard struct {
 	CreatedAt time.Time                `json:"created_at"`
 	UpdatedAt time.Time                `json:"updated_at"`
 	ProjectID int                      `json:"project_id"`
+	URL       string                   `json:"url,omitempty"`
 }
 
 // DashboardListResponse represents the API response for listing dashboards
