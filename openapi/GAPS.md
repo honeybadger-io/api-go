@@ -12,11 +12,11 @@
 
 | Gap | Detail |
 | --- | --- |
-| `get_project_report` has no v3 endpoint | No path matches `reports/`. The MCP tool stays on v2, needing a legacy numeric id nothing can now discover |
-| Integrations unconfirmed | `listChannels` looks like the replacement — same shape, and v2's own comment says "integrations (channels)" — but nobody has confirmed it |
+| ~~`get_project_report` has no v3 endpoint~~ — closed by removal: Insights replaces project reports, and the MCP tool is gone | No path matches `reports/` |
+| ~~Integrations unconfirmed~~ — closed: v3 renamed channels to integrations (`listIntegrations` and friends) | `listChannels` looked like the replacement — same shape, and v2's own comment says "integrations (channels)" |
 | Alarm updates are name and description only | `AlarmCreateInput` carries the query, trigger and evaluation settings; `AlarmUpdateInput` carries neither, so an alarm's behaviour cannot be changed after creation |
-| A check-in update requires the name | The update body is the same schema as create, with `name` required, so changing only a grace period means resending the name. A caller who does not know it must read first. Verified against a real server: the update **merges** — sending only name and grace_period left `report_period` and `slug` intact — so it is the required `name` that is the burden, not field loss |
-| A project update requires the name | Same shape, same consequence |
+| ~~A check-in update requires the name~~ — closed by the separate `CheckInCreateInput`: `name` is required on create only | The update body was the same schema as create, with `name` required, so changing only a grace period meant resending the name. Verified against a real server: the update **merges** — sending only name and grace_period left `report_period` and `slug` intact |
+| ~~A project update requires the name~~ — closed by the separate `ProjectCreateInput` | Same shape, same consequence |
 | ~~Widget and trigger types are anonymous~~ — closed at `2ee3eaa1f` by the named `DashboardWidget` component, plus `generate-types-for-anonymous-schemas` naming the trigger config | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds — and would also remove the overlay below |
 | ~~`Dashboard.widgets.items` breaks code generation~~ — closed; it `$ref`s the named `DashboardWidget` now, and the overlay is gone | It `$ref`s `#/components/schemas/DashboardInput/properties/widgets/items`, a JSON Pointer into another schema's properties. Legal OpenAPI, and it says something true, but `oapi-codegen` refuses it: `unexpected reference depth: 7`. `openapi/overlay.yaml` rewrites the node to a plain object so generation can proceed. Extracting a named `DashboardWidget` component would fix this and the row above it at once |
 | Notices have no timestamp filters | Cursor-only (`limit`, `before`, `after`), so v2's `created_after`/`created_before` have no equivalent |

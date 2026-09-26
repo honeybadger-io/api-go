@@ -13,7 +13,7 @@ func TestCheckInsList(t *testing.T) {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":[{"id":"c1","name":"Nightly","slug":"nightly"}],
-		  "pagination":{"page":1,"per_page":25,"total_count":1,"total_pages":1}}`)
+		  "pagination":{"page":1,"per_page":25}}`)
 	}))
 	defer srv.Close()
 

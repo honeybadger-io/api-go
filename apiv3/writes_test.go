@@ -99,7 +99,7 @@ func TestProjectsCreateSendsRequiredName(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated,
 		`{"data":{"id":"Xk9mZp","account_id":"Ab3kL9","name":"New App","active":true}}`)
 
-	p, err := c.Projects.Create(context.Background(), ProjectParams{Name: "New App"})
+	p, err := c.Projects.Create(context.Background(), ProjectCreateParams{Name: "New App"})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
 	}
@@ -112,23 +112,19 @@ func TestProjectsCreateSendsRequiredName(t *testing.T) {
 }
 
 // An update omits what it was not given, so unset fields are left alone rather
-// than blanked — except name, which the schema requires on update as well as
-// create, so a caller must always supply it.
+// than blanked. Name included: the update schema no longer requires it.
 func TestCheckInUpdateOmitsUnsetFields(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"c1","name":"Nightly"}}`)
 
 	if _, err := c.CheckIns.Update(context.Background(), "Xk9mZp", "c1",
-		CheckInParams{Name: "Nightly", GracePeriod: "5m"}); err != nil {
+		CheckInParams{GracePeriod: "5m"}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 
 	if got.body["grace_period"] != "5m" {
 		t.Errorf("grace_period = %v", got.body["grace_period"])
 	}
-	if got.body["name"] != "Nightly" {
-		t.Errorf("name = %v; the schema requires it on update", got.body["name"])
-	}
-	for _, absent := range []string{"schedule_type", "report_period", "cron_schedule"} {
+	for _, absent := range []string{"name", "schedule_type", "report_period", "cron_schedule"} {
 		if _, present := got.body[absent]; present {
 			t.Errorf("%q was sent despite being unset; it would blank the field", absent)
 		}
@@ -192,7 +188,7 @@ func TestWriteValidationErrorCarriesFieldDetails(t *testing.T) {
 		  "details":[{"field":"name","message":"can't be blank"}]},
 		  "meta":{"request_id":"req_v"}}`)
 
-	_, err := c.Projects.Create(context.Background(), ProjectParams{})
+	_, err := c.Projects.Create(context.Background(), ProjectCreateParams{})
 	if !errors.Is(err, ErrValidation) {
 		t.Fatalf("err = %v, want ErrValidation", err)
 	}
@@ -240,7 +236,6 @@ func TestProjectsUpdateSendsFullSettings(t *testing.T) {
 	userURL := "http://example.com/users/[user_id]"
 
 	_, err := c.Projects.Update(context.Background(), "Xk9mZp", ProjectParams{
-		Name:               "App",
 		PurgeDays:          &purgeDays,
 		DisablePublicLinks: &disablePublicLinks,
 		UserUrl:            &userURL,
@@ -259,9 +254,11 @@ func TestProjectsUpdateSendsFullSettings(t *testing.T) {
 	if got.body["user_url"] != userURL {
 		t.Errorf("user_url = %v", got.body["user_url"])
 	}
-	// Unset fields stay absent.
-	if _, present := got.body["source_url"]; present {
-		t.Error("source_url was sent unset")
+	// Unset fields stay absent, name included: an update is partial.
+	for _, absent := range []string{"source_url", "name"} {
+		if _, present := got.body[absent]; present {
+			t.Errorf("%s was sent unset", absent)
+		}
 	}
 }
 

@@ -128,11 +128,13 @@ func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error)
 				ErrPaginationInconsistent, page, resp.Pagination.Page)
 		}
 
-		morePromised := page < resp.Pagination.TotalPages
+		// The collection no longer reports a total; links.next is the only signal
+		// that another page exists, and it is null on the last page.
+		morePromised := hasNextPage(resp.Links)
 		if len(resp.Data) == 0 {
 			if morePromised {
-				return nil, fmt.Errorf("%w: page %d of %d was empty",
-					ErrPaginationInconsistent, page, resp.Pagination.TotalPages)
+				return nil, fmt.Errorf("%w: page %d was empty but links a next page",
+					ErrPaginationInconsistent, page)
 			}
 			return all, nil
 		}
@@ -142,6 +144,14 @@ func CollectPages[T any](ctx context.Context, fetch PageFetcher[T]) ([]T, error)
 			return all, nil
 		}
 	}
+}
+
+func hasNextPage(links *OffsetLinks) bool {
+	if links == nil {
+		return false
+	}
+	next, err := links.Next.Get()
+	return err == nil && next != ""
 }
 
 // CollectTimeSeries walks a time-ordered endpoint from newest to oldest and

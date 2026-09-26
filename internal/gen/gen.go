@@ -46,6 +46,27 @@ func (e AccountInvitationRole) Valid() bool {
 	}
 }
 
+// Defines values for AccountInvitationCreateInputRole.
+const (
+	AccountInvitationCreateInputRoleAdmin  AccountInvitationCreateInputRole = "Admin"
+	AccountInvitationCreateInputRoleMember AccountInvitationCreateInputRole = "Member"
+	AccountInvitationCreateInputRoleOwner  AccountInvitationCreateInputRole = "Owner"
+)
+
+// Valid indicates whether the value is a known member of the AccountInvitationCreateInputRole enum.
+func (e AccountInvitationCreateInputRole) Valid() bool {
+	switch e {
+	case AccountInvitationCreateInputRoleAdmin:
+		return true
+	case AccountInvitationCreateInputRoleMember:
+		return true
+	case AccountInvitationCreateInputRoleOwner:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for AccountInvitationInputRole.
 const (
 	AccountInvitationInputRoleAdmin  AccountInvitationInputRole = "Admin"
@@ -184,6 +205,24 @@ func (e CheckInBulkUpdateInputCheckInsScheduleType) Valid() bool {
 	case CheckInBulkUpdateInputCheckInsScheduleTypeCron:
 		return true
 	case CheckInBulkUpdateInputCheckInsScheduleTypeSimple:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CheckInCreateInputScheduleType.
+const (
+	CheckInCreateInputScheduleTypeCron   CheckInCreateInputScheduleType = "cron"
+	CheckInCreateInputScheduleTypeSimple CheckInCreateInputScheduleType = "simple"
+)
+
+// Valid indicates whether the value is a known member of the CheckInCreateInputScheduleType enum.
+func (e CheckInCreateInputScheduleType) Valid() bool {
+	switch e {
+	case CheckInCreateInputScheduleTypeCron:
+		return true
+	case CheckInCreateInputScheduleTypeSimple:
 		return true
 	default:
 		return false
@@ -625,24 +664,120 @@ func (e SiteState) Valid() bool {
 	}
 }
 
+// Defines values for SiteCreateInputFrequency.
+const (
+	SiteCreateInputFrequencyN1  SiteCreateInputFrequency = 1
+	SiteCreateInputFrequencyN15 SiteCreateInputFrequency = 15
+	SiteCreateInputFrequencyN2  SiteCreateInputFrequency = 2
+	SiteCreateInputFrequencyN5  SiteCreateInputFrequency = 5
+)
+
+// Valid indicates whether the value is a known member of the SiteCreateInputFrequency enum.
+func (e SiteCreateInputFrequency) Valid() bool {
+	switch e {
+	case SiteCreateInputFrequencyN1:
+		return true
+	case SiteCreateInputFrequencyN15:
+		return true
+	case SiteCreateInputFrequencyN2:
+		return true
+	case SiteCreateInputFrequencyN5:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteCreateInputLocations.
+const (
+	SiteCreateInputLocationsFrankfurt SiteCreateInputLocations = "Frankfurt"
+	SiteCreateInputLocationsLondon    SiteCreateInputLocations = "London"
+	SiteCreateInputLocationsOregon    SiteCreateInputLocations = "Oregon"
+	SiteCreateInputLocationsSingapore SiteCreateInputLocations = "Singapore"
+	SiteCreateInputLocationsVirginia  SiteCreateInputLocations = "Virginia"
+)
+
+// Valid indicates whether the value is a known member of the SiteCreateInputLocations enum.
+func (e SiteCreateInputLocations) Valid() bool {
+	switch e {
+	case SiteCreateInputLocationsFrankfurt:
+		return true
+	case SiteCreateInputLocationsLondon:
+		return true
+	case SiteCreateInputLocationsOregon:
+		return true
+	case SiteCreateInputLocationsSingapore:
+		return true
+	case SiteCreateInputLocationsVirginia:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteCreateInputMatchType.
+const (
+	SiteCreateInputMatchTypeJmespath SiteCreateInputMatchType = "jmespath"
+	SiteCreateInputMatchTypeSuccess  SiteCreateInputMatchType = "success"
+)
+
+// Valid indicates whether the value is a known member of the SiteCreateInputMatchType enum.
+func (e SiteCreateInputMatchType) Valid() bool {
+	switch e {
+	case SiteCreateInputMatchTypeJmespath:
+		return true
+	case SiteCreateInputMatchTypeSuccess:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SiteCreateInputRequestMethod.
+const (
+	SiteCreateInputRequestMethodDELETE SiteCreateInputRequestMethod = "DELETE"
+	SiteCreateInputRequestMethodGET    SiteCreateInputRequestMethod = "GET"
+	SiteCreateInputRequestMethodPATCH  SiteCreateInputRequestMethod = "PATCH"
+	SiteCreateInputRequestMethodPOST   SiteCreateInputRequestMethod = "POST"
+	SiteCreateInputRequestMethodPUT    SiteCreateInputRequestMethod = "PUT"
+)
+
+// Valid indicates whether the value is a known member of the SiteCreateInputRequestMethod enum.
+func (e SiteCreateInputRequestMethod) Valid() bool {
+	switch e {
+	case SiteCreateInputRequestMethodDELETE:
+		return true
+	case SiteCreateInputRequestMethodGET:
+		return true
+	case SiteCreateInputRequestMethodPATCH:
+		return true
+	case SiteCreateInputRequestMethodPOST:
+		return true
+	case SiteCreateInputRequestMethodPUT:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SiteInputFrequency.
 const (
-	N1  SiteInputFrequency = 1
-	N15 SiteInputFrequency = 15
-	N2  SiteInputFrequency = 2
-	N5  SiteInputFrequency = 5
+	SiteInputFrequencyN1  SiteInputFrequency = 1
+	SiteInputFrequencyN15 SiteInputFrequency = 15
+	SiteInputFrequencyN2  SiteInputFrequency = 2
+	SiteInputFrequencyN5  SiteInputFrequency = 5
 )
 
 // Valid indicates whether the value is a known member of the SiteInputFrequency enum.
 func (e SiteInputFrequency) Valid() bool {
 	switch e {
-	case N1:
+	case SiteInputFrequencyN1:
 		return true
-	case N15:
+	case SiteInputFrequencyN15:
 		return true
-	case N2:
+	case SiteInputFrequencyN2:
 		return true
-	case N5:
+	case SiteInputFrequencyN5:
 		return true
 	default:
 		return false
@@ -651,25 +786,25 @@ func (e SiteInputFrequency) Valid() bool {
 
 // Defines values for SiteInputLocations.
 const (
-	Frankfurt SiteInputLocations = "Frankfurt"
-	London    SiteInputLocations = "London"
-	Oregon    SiteInputLocations = "Oregon"
-	Singapore SiteInputLocations = "Singapore"
-	Virginia  SiteInputLocations = "Virginia"
+	SiteInputLocationsFrankfurt SiteInputLocations = "Frankfurt"
+	SiteInputLocationsLondon    SiteInputLocations = "London"
+	SiteInputLocationsOregon    SiteInputLocations = "Oregon"
+	SiteInputLocationsSingapore SiteInputLocations = "Singapore"
+	SiteInputLocationsVirginia  SiteInputLocations = "Virginia"
 )
 
 // Valid indicates whether the value is a known member of the SiteInputLocations enum.
 func (e SiteInputLocations) Valid() bool {
 	switch e {
-	case Frankfurt:
+	case SiteInputLocationsFrankfurt:
 		return true
-	case London:
+	case SiteInputLocationsLondon:
 		return true
-	case Oregon:
+	case SiteInputLocationsOregon:
 		return true
-	case Singapore:
+	case SiteInputLocationsSingapore:
 		return true
-	case Virginia:
+	case SiteInputLocationsVirginia:
 		return true
 	default:
 		return false
@@ -678,16 +813,16 @@ func (e SiteInputLocations) Valid() bool {
 
 // Defines values for SiteInputMatchType.
 const (
-	Jmespath SiteInputMatchType = "jmespath"
-	Success  SiteInputMatchType = "success"
+	SiteInputMatchTypeJmespath SiteInputMatchType = "jmespath"
+	SiteInputMatchTypeSuccess  SiteInputMatchType = "success"
 )
 
 // Valid indicates whether the value is a known member of the SiteInputMatchType enum.
 func (e SiteInputMatchType) Valid() bool {
 	switch e {
-	case Jmespath:
+	case SiteInputMatchTypeJmespath:
 		return true
-	case Success:
+	case SiteInputMatchTypeSuccess:
 		return true
 	default:
 		return false
@@ -696,25 +831,25 @@ func (e SiteInputMatchType) Valid() bool {
 
 // Defines values for SiteInputRequestMethod.
 const (
-	DELETE SiteInputRequestMethod = "DELETE"
-	GET    SiteInputRequestMethod = "GET"
-	PATCH  SiteInputRequestMethod = "PATCH"
-	POST   SiteInputRequestMethod = "POST"
-	PUT    SiteInputRequestMethod = "PUT"
+	SiteInputRequestMethodDELETE SiteInputRequestMethod = "DELETE"
+	SiteInputRequestMethodGET    SiteInputRequestMethod = "GET"
+	SiteInputRequestMethodPATCH  SiteInputRequestMethod = "PATCH"
+	SiteInputRequestMethodPOST   SiteInputRequestMethod = "POST"
+	SiteInputRequestMethodPUT    SiteInputRequestMethod = "PUT"
 )
 
 // Valid indicates whether the value is a known member of the SiteInputRequestMethod enum.
 func (e SiteInputRequestMethod) Valid() bool {
 	switch e {
-	case DELETE:
+	case SiteInputRequestMethodDELETE:
 		return true
-	case GET:
+	case SiteInputRequestMethodGET:
 		return true
-	case PATCH:
+	case SiteInputRequestMethodPATCH:
 		return true
-	case POST:
+	case SiteInputRequestMethodPOST:
 		return true
-	case PUT:
+	case SiteInputRequestMethodPUT:
 		return true
 	default:
 		return false
@@ -1104,8 +1239,11 @@ type Account struct {
 	// Email Primary account email
 	Email nullable.Nullable[openapi_types.Email] `json:"email,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// Name Account name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
@@ -1122,7 +1260,7 @@ type AccountInvitation struct {
 	// AcceptedBy User who accepted the invitation
 	AcceptedBy nullable.Nullable[AccountInvitation_AcceptedBy] `json:"accepted_by,omitempty"`
 
-	// AccountId Public ID of the account
+	// AccountId ID of the account
 	AccountId string `json:"account_id"`
 
 	// CreatedAt When the invitation was created
@@ -1134,7 +1272,7 @@ type AccountInvitation struct {
 	// Email Email address of the invitee
 	Email string `json:"email"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Role Role granted upon acceptance
@@ -1146,7 +1284,7 @@ type AccountInvitation_AcceptedBy struct {
 	// Email User email
 	Email *string `json:"email,omitempty"`
 
-	// Id Public ID of the user
+	// Id ID of the user
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
@@ -1158,7 +1296,7 @@ type AccountInvitation_CreatedBy struct {
 	// Email User email
 	Email *string `json:"email,omitempty"`
 
-	// Id Public ID of the user
+	// Id ID of the user
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
@@ -1168,14 +1306,28 @@ type AccountInvitation_CreatedBy struct {
 // AccountInvitationRole Role granted upon acceptance
 type AccountInvitationRole string
 
+// AccountInvitationCreateInput Attributes for creating a account-invitation.
+type AccountInvitationCreateInput struct {
+	// DisableEmailNotifications Create the member with email notifications off
+	DisableEmailNotifications *bool                             `json:"disable_email_notifications,omitempty"`
+	Email                     openapi_types.Email               `json:"email"`
+	Role                      *AccountInvitationCreateInputRole `json:"role,omitempty"`
+
+	// TeamIds IDs of teams to add the invitee to. IDs outside the account resolve to nothing rather than attaching another tenant's team.
+	TeamIds *[]string `json:"team_ids,omitempty"`
+}
+
+// AccountInvitationCreateInputRole defines model for AccountInvitationCreateInput.Role.
+type AccountInvitationCreateInputRole string
+
 // AccountInvitationInput Writable account-invitation attributes
 type AccountInvitationInput struct {
 	// DisableEmailNotifications Create the member with email notifications off
 	DisableEmailNotifications *bool                       `json:"disable_email_notifications,omitempty"`
-	Email                     openapi_types.Email         `json:"email"`
+	Email                     *openapi_types.Email        `json:"email,omitempty"`
 	Role                      *AccountInvitationInputRole `json:"role,omitempty"`
 
-	// TeamIds Public IDs of teams to add the invitee to. IDs outside the account resolve to nothing rather than attaching another tenant's team.
+	// TeamIds IDs of teams to add the invitee to. IDs outside the account resolve to nothing rather than attaching another tenant's team.
 	TeamIds *[]string `json:"team_ids,omitempty"`
 }
 
@@ -1184,7 +1336,7 @@ type AccountInvitationInputRole string
 
 // AccountMember A member of an account
 type AccountMember struct {
-	// AccountId Public ID of the account
+	// AccountId ID of the account
 	AccountId string `json:"account_id"`
 
 	// CreatedAt When the member was added to the account
@@ -1193,7 +1345,7 @@ type AccountMember struct {
 	// Email Member email address
 	Email string `json:"email"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Name Member display name
@@ -1202,7 +1354,7 @@ type AccountMember struct {
 	// Role Member role in the account
 	Role AccountMemberRole `json:"role"`
 
-	// UserId Public ID of the user
+	// UserId ID of the user
 	UserId string `json:"user_id"`
 }
 
@@ -1246,6 +1398,9 @@ type Alarm struct {
 	// LastCheckedAt When the alarm was last evaluated
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
+
 	// LookbackLag How far behind now the window ends, allowing for ingestion delay. Same compact duration format as evaluation_period.
 	LookbackLag nullable.Nullable[string] `json:"lookback_lag,omitempty"`
 
@@ -1255,7 +1410,7 @@ type Alarm struct {
 	// NextCheckAt When the alarm will next be evaluated
 	NextCheckAt nullable.Nullable[time.Time] `json:"next_check_at,omitempty"`
 
-	// ProjectId Public ID of the project this alarm belongs to
+	// ProjectId ID of the project this alarm belongs to
 	ProjectId string `json:"project_id"`
 
 	// Query BadgerQL evaluated on each check. A string, the same shape AlarmCreateInput accepts — the presenter renders the observer's stored query text, not a structured object.
@@ -1272,9 +1427,6 @@ type Alarm struct {
 
 	// UpdatedAt When the alarm was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-
-	// Url URL to view the alarm in the dashboard
-	Url *string `json:"url,omitempty"`
 }
 
 // AlarmState Current alarm state
@@ -1351,8 +1503,11 @@ type CheckIn struct {
 	// GracePeriod How long after the expected time before the check-in is missing. A Postgres interval, rendered the way it is written: a count and a unit, or HH:MM:SS.
 	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// MissedCount Number of consecutive missed reports
 	MissedCount *int `json:"missed_count,omitempty"`
@@ -1360,7 +1515,7 @@ type CheckIn struct {
 	// Name Display name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// ProjectId Public ID of the project this check-in belongs to
+	// ProjectId ID of the project this check-in belongs to
 	ProjectId string `json:"project_id"`
 
 	// ReportPeriod How often a report is expected, for `simple` schedules. Same interval format as `grace_period`. Null for `cron` schedules, which use `cron_schedule`.
@@ -1406,7 +1561,7 @@ type CheckInBulkUpdateInput_CheckIns struct {
 
 	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
 	GracePeriod *string `json:"grace_period,omitempty"`
-	Name        string  `json:"name"`
+	Name        *string `json:"name,omitempty"`
 
 	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
 	ReportPeriod *string `json:"report_period,omitempty"`
@@ -1418,9 +1573,34 @@ type CheckInBulkUpdateInput_CheckIns struct {
 	Slug string `json:"slug"`
 }
 
+// CheckInCreateInput Attributes for creating a check-in.
+type CheckInCreateInput struct {
+	// CronSchedule Cron expression, required when `schedule_type` is `cron`
+	CronSchedule *string `json:"cron_schedule,omitempty"`
+
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
+	CronTimezone *string `json:"cron_timezone,omitempty"`
+
+	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
+	GracePeriod *string `json:"grace_period,omitempty"`
+	Name        string  `json:"name"`
+
+	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
+	ReportPeriod *string `json:"report_period,omitempty"`
+
+	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+	ScheduleType *CheckInCreateInputScheduleType `json:"schedule_type,omitempty"`
+
+	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted.
+	Slug *string `json:"slug,omitempty"`
+}
+
+// CheckInCreateInputScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+type CheckInCreateInputScheduleType string
+
 // CheckInEvent A check-in event
 type CheckInEvent struct {
-	// CheckInId Public ID of the check-in
+	// CheckInId ID of the check-in
 	CheckInId string `json:"check_in_id"`
 
 	// CreatedAt When the event occurred
@@ -1443,7 +1623,7 @@ type CheckInInput struct {
 
 	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
 	GracePeriod *string `json:"grace_period,omitempty"`
-	Name        string  `json:"name"`
+	Name        *string `json:"name,omitempty"`
 
 	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
 	ReportPeriod *string `json:"report_period,omitempty"`
@@ -1475,8 +1655,11 @@ type Comment struct {
 	// FaultId Integer ID of the fault this comment belongs to
 	FaultId int `json:"fault_id"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// Source Source of the comment
 	Source *string `json:"source,omitempty"`
@@ -1484,10 +1667,10 @@ type Comment struct {
 
 // Comment_Author Author of the comment
 type Comment_Author struct {
-	// Email Email of the author
-	Email *string `json:"email,omitempty"`
+	// Email Email of the author; null for authors known only by name, such as an account token or name-only feedback
+	Email nullable.Nullable[string] `json:"email,omitempty"`
 
-	// Id Public ID of the author
+	// Id ID of the author
 	Id nullable.Nullable[string] `json:"id,omitempty"`
 
 	// Name Name of the author
@@ -1508,13 +1691,16 @@ type Dashboard struct {
 	// DefaultTs Default time range for the dashboard
 	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// IsDefault Whether this is the default dashboard
 	IsDefault *bool `json:"is_default,omitempty"`
 
-	// ProjectId Public ID of the project this dashboard belongs to
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
+
+	// ProjectId ID of the project this dashboard belongs to
 	ProjectId string `json:"project_id"`
 
 	// Shared Whether the dashboard is shared with all team members
@@ -1625,13 +1811,13 @@ type Deploy struct {
 	// Environment Deploy environment
 	Environment string `json:"environment"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// LocalUsername Username of the person who triggered the deploy
 	LocalUsername nullable.Nullable[string] `json:"local_username,omitempty"`
 
-	// ProjectId Public ID of the project this deploy belongs to
+	// ProjectId ID of the project this deploy belongs to
 	ProjectId string `json:"project_id"`
 
 	// Repository Source control repository
@@ -1646,7 +1832,7 @@ type Environment struct {
 	// CreatedAt When the environment was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Name Environment name
@@ -1655,7 +1841,7 @@ type Environment struct {
 	// Notifications Whether notifications fire for this environment.
 	Notifications *bool `json:"notifications,omitempty"`
 
-	// ProjectId Public ID of the project this environment belongs to
+	// ProjectId ID of the project this environment belongs to
 	ProjectId string `json:"project_id"`
 }
 
@@ -1732,6 +1918,9 @@ type Fault struct {
 	// LastNoticeAt When the last notice was received
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
 
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
+
 	// Message Error message
 	Message string `json:"message"`
 
@@ -1741,7 +1930,7 @@ type Fault struct {
 	// NoticesCountInRange Notices inside the requested occurrence window. Present only when the request supplied `occurred_after` or `occurred_before`.
 	NoticesCountInRange *int `json:"notices_count_in_range,omitempty"`
 
-	// ProjectId Public ID of the project this fault belongs to
+	// ProjectId ID of the project this fault belongs to
 	ProjectId string `json:"project_id"`
 
 	// ResolveOnDeploy Whether this fault is waiting to be resolved by the next recorded deploy. Absent for a fault on an inactive project.
@@ -1762,7 +1951,7 @@ type Fault_Assignee struct {
 	// Email Email of the assignee
 	Email *string `json:"email,omitempty"`
 
-	// Id Public ID of the assignee
+	// Id ID of the assignee
 	Id *string `json:"id,omitempty"`
 
 	// Name Name of the assignee
@@ -1771,7 +1960,7 @@ type Fault_Assignee struct {
 
 // Fault_Tickets defines model for Fault.Tickets.
 type Fault_Tickets struct {
-	// ChannelId Public ID of the channel that created the ticket
+	// ChannelId ID of the channel that created the ticket
 	ChannelId *string `json:"channel_id,omitempty"`
 
 	// Url URL of the ticket
@@ -1780,7 +1969,7 @@ type Fault_Tickets struct {
 
 // FaultAssignmentInput Who to assign a fault to
 type FaultAssignmentInput struct {
-	// AssigneeId Public ID of a user on the project. A public ID that is not a member is rejected with 422 rather than silently unassigning. DELETE the same path to unassign.
+	// AssigneeId ID of a user on the project. An ID that is not a member is rejected with 422 rather than silently unassigning. DELETE the same path to unassign.
 	AssigneeId string `json:"assignee_id"`
 }
 
@@ -1801,7 +1990,7 @@ type FaultBulkResult struct {
 
 // FaultInput Writable fault attributes
 type FaultInput struct {
-	// AssigneeId Public ID of a user on the project. Null unassigns. A public ID that is not a member of this project is rejected with 422 rather than silently unassigning.
+	// AssigneeId ID of a user on the project. Null unassigns. An ID that is not a member of this project is rejected with 422 rather than silently unassigning.
 	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
 	Ignored    *bool                     `json:"ignored,omitempty"`
 
@@ -1842,10 +2031,10 @@ type IncidentUpdate struct {
 	// CreatedAt When the update was posted
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
-	// IncidentId Public ID of the incident
+	// IncidentId ID of the incident
 	IncidentId string `json:"incident_id"`
 
 	// Message The update's prose
@@ -1910,10 +2099,10 @@ type Integration struct {
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives
 	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Public IDs of check-ins this channel monitors
+	// CheckInIds IDs of check-ins this channel monitors
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Config Type-specific configuration fields. Sensitive values (API keys, tokens) are masked. Hidden internal fields are omitted.
+	// Config Type-specific configuration fields. Sensitive values (API keys, tokens) are masked. Unset values may be null. Hidden internal fields are omitted.
 	Config *map[string]Integration_Config `json:"config,omitempty"`
 
 	// CreatedAt When the channel was created
@@ -1931,13 +2120,16 @@ type Integration struct {
 	// ExcludedEnvironments Environment names excluded from notifications
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
 	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// ProjectId Public ID of the project this channel belongs to
+	// ProjectId ID of the project this channel belongs to
 	ProjectId string `json:"project_id"`
 
 	// Rate Rate period for rate_exceeded events (e.g. min, hour)
@@ -1953,17 +2145,17 @@ type Integration struct {
 	Type string `json:"type"`
 }
 
-// IntegrationConfig0 defines model for Integration.Config.0.
-type IntegrationConfig0 = string
-
 // IntegrationConfig1 defines model for Integration.Config.1.
-type IntegrationConfig1 = bool
+type IntegrationConfig1 = string
 
 // IntegrationConfig2 defines model for Integration.Config.2.
-type IntegrationConfig2 = int
+type IntegrationConfig2 = bool
 
 // IntegrationConfig3 defines model for Integration.Config.3.
-type IntegrationConfig3 = []string
+type IntegrationConfig3 = int
+
+// IntegrationConfig4 defines model for Integration.Config.4.
+type IntegrationConfig4 = []string
 
 // Integration_Config defines model for Integration.Config.
 type Integration_Config struct {
@@ -1980,7 +2172,7 @@ type IntegrationInput struct {
 	// AlarmOkIds IDs of alarms whose recovery events this channel receives.
 	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Public IDs of check-ins to scope this channel to. Empty means every check-in.
+	// CheckInIds IDs of check-ins to scope this channel to. Empty means every check-in.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
 	// Environments Environment names this channel monitors (shorthand for setting included/excluded).
@@ -2047,13 +2239,16 @@ type Notice struct {
 	// Id The notice's token UUID, which addresses it globally
 	Id openapi_types.UUID `json:"id"`
 
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
+
 	// Message Error message. Null when the notifier reported none.
 	Message nullable.Nullable[string] `json:"message"`
 
-	// ProjectId Public ID of the project
+	// ProjectId ID of the project
 	ProjectId string `json:"project_id"`
 
-	// Request Request details when the error occurred
+	// Request Request details when the error occurred. Fields not reported are null.
 	Request nullable.Nullable[Notice_Request] `json:"request,omitempty"`
 
 	// RequestFieldsRemoved Names of `request` fields removed at ingest because the payload exceeded the size limit. Null when nothing was removed. Present so a caller can tell an empty field from a stripped one.
@@ -2063,22 +2258,22 @@ type Notice struct {
 // NoticeBacktraceMode Which representation of the trace this response carries. `source_mapped` when a stored mapped trace was served, `reported` when the frames are as the client sent them — either because `unmapped=true` was requested or because no different mapped trace was stored.
 type NoticeBacktraceMode string
 
-// Notice_Request Request details when the error occurred
+// Notice_Request Request details when the error occurred. Fields not reported are null.
 type Notice_Request struct {
 	// Action Action name
-	Action *string `json:"action,omitempty"`
+	Action nullable.Nullable[string] `json:"action,omitempty"`
 
 	// Component Controller or component name
-	Component *string `json:"component,omitempty"`
+	Component nullable.Nullable[string] `json:"component,omitempty"`
 
 	// Params Request parameters
-	Params *map[string]interface{} `json:"params,omitempty"`
+	Params nullable.Nullable[map[string]interface{}] `json:"params,omitempty"`
 
 	// Session Session data
-	Session *map[string]interface{} `json:"session,omitempty"`
+	Session nullable.Nullable[map[string]interface{}] `json:"session,omitempty"`
 
 	// Url Request URL
-	Url *string `json:"url,omitempty"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
 
 // NoticeFrame defines model for NoticeFrame.
@@ -2129,7 +2324,7 @@ type OccurrenceSeries struct {
 	// Buckets One entry per interval in the window, oldest first, including intervals with no notices.
 	Buckets []OccurrenceSeries_Buckets `json:"buckets"`
 
-	// ProjectId Public ID of the project this series belongs to
+	// ProjectId ID of the project this series belongs to
 	ProjectId string `json:"project_id"`
 }
 
@@ -2147,9 +2342,6 @@ type OffsetLinks struct {
 	// First First page
 	First *string `json:"first,omitempty"`
 
-	// Last Last page
-	Last *string `json:"last,omitempty"`
-
 	// Next Next page, or null on the last page
 	Next nullable.Nullable[string] `json:"next,omitempty"`
 
@@ -2165,9 +2357,6 @@ type Outage struct {
 	// CreatedAt When the outage record was created
 	CreatedAt time.Time `json:"created_at"`
 
-	// DetailsUrl URL of the site's page in the Honeybadger UI
-	DetailsUrl *string `json:"details_url,omitempty"`
-
 	// DownAt When the site went down
 	DownAt time.Time `json:"down_at"`
 
@@ -2176,6 +2365,9 @@ type Outage struct {
 
 	// Id Unique identifier
 	Id openapi_types.UUID `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// SiteId Identifier of the site
 	SiteId openapi_types.UUID `json:"site_id"`
@@ -2191,17 +2383,11 @@ type Pagination struct {
 
 	// PerPage Items per page
 	PerPage int `json:"per_page"`
-
-	// TotalCount Total number of items across all pages
-	TotalCount int `json:"total_count"`
-
-	// TotalPages Total number of pages
-	TotalPages int `json:"total_pages"`
 }
 
 // Project A Honeybadger project
 type Project struct {
-	// AccountId Public ID of the account this project belongs to
+	// AccountId ID of the account this project belongs to
 	AccountId string `json:"account_id"`
 
 	// Active Whether the project is active
@@ -2225,7 +2411,7 @@ type Project struct {
 	// FaultCount Total number of faults (errors) in this project
 	FaultCount *int `json:"fault_count,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Language Primary programming language
@@ -2233,6 +2419,9 @@ type Project struct {
 
 	// LastNoticeAt When the last error was received
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// Name Project name
 	Name string `json:"name"`
@@ -2259,6 +2448,42 @@ type Project struct {
 	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
+// ProjectCreateInput Attributes for creating a project.
+type ProjectCreateInput struct {
+	AsanaWorkspaceId *string `json:"asana_workspace_id,omitempty"`
+
+	// CustomerThrottle Notices accepted per minute before throttling kicks in
+	CustomerThrottle *int `json:"customer_throttle,omitempty"`
+
+	// DisableEmailNotifications Applied at creation: members added with the project get email notifications switched off. Not a stored setting, so reading a project never returns it.
+	DisableEmailNotifications *bool `json:"disable_email_notifications,omitempty"`
+
+	// DisablePublicLinks Disallow shareable public fault links
+	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
+
+	// Language Primary language, used to format backtraces
+	Language *string `json:"language,omitempty"`
+	Name     string  `json:"name"`
+
+	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; silently ignored otherwise.
+	PurgeDays *int `json:"purge_days,omitempty"`
+
+	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded
+	ResolveErrorsOnDeploy *bool `json:"resolve_errors_on_deploy,omitempty"`
+
+	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
+	SourceUrl *string `json:"source_url,omitempty"`
+
+	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. Unknown or foreign teams return 404.
+	TeamId *string `json:"team_id,omitempty"`
+
+	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
+	UserSearchField *string `json:"user_search_field,omitempty"`
+
+	// UserUrl Template for linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted.
+	UserUrl *string `json:"user_url,omitempty"`
+}
+
 // ProjectInput Writable project attributes
 type ProjectInput struct {
 	AsanaWorkspaceId *string `json:"asana_workspace_id,omitempty"`
@@ -2273,9 +2498,8 @@ type ProjectInput struct {
 	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
 
 	// Language Primary language, used to format backtraces
-	Language         *string `json:"language,omitempty"`
-	Name             string  `json:"name"`
-	PivotalProjectId *string `json:"pivotal_project_id,omitempty"`
+	Language *string `json:"language,omitempty"`
+	Name     *string `json:"name,omitempty"`
 
 	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; silently ignored otherwise.
 	PurgeDays *int `json:"purge_days,omitempty"`
@@ -2286,7 +2510,7 @@ type ProjectInput struct {
 	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl *string `json:"source_url,omitempty"`
 
-	// TeamId Public ID of a team on this account, granting it access when the project is created. A team from another account resolves to nothing rather than being attached. Create only — afterwards manage access through the team's projects.
+	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. Unknown or foreign teams return 404.
 	TeamId *string `json:"team_id,omitempty"`
 
 	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
@@ -2300,7 +2524,7 @@ type ProjectInput struct {
 type ProjectKey struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	// Id Public identifier for this key. Use it in paths.
+	// Id Identifier for this key. Use it in paths.
 	Id string `json:"id"`
 
 	// Key The ingestion key a notifier sends. Returned in full — unlike an API credential, this value is meant to be distributed with your application.
@@ -2309,7 +2533,7 @@ type ProjectKey struct {
 	// Label Optional human-readable name.
 	Label nullable.Nullable[string] `json:"label,omitempty"`
 
-	// ProjectId Public identifier of the project the key belongs to.
+	// ProjectId Identifier of the project the key belongs to.
 	ProjectId string `json:"project_id"`
 }
 
@@ -2342,6 +2566,9 @@ type Site struct {
 	// LastCheckedAt When the site was last checked
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
+
 	// Locations Monitoring locations
 	Locations nullable.Nullable[[]string] `json:"locations,omitempty"`
 
@@ -2357,7 +2584,7 @@ type Site struct {
 	// OutageThreshold Number of failed checks before declaring an outage
 	OutageThreshold nullable.Nullable[int] `json:"outage_threshold,omitempty"`
 
-	// ProjectId Public ID of the project this site belongs to
+	// ProjectId ID of the project this site belongs to
 	ProjectId string `json:"project_id"`
 
 	// RequestBody Request body for POST/PUT checks
@@ -2385,6 +2612,59 @@ type Site struct {
 // SiteState Current state of the site
 type SiteState string
 
+// SiteCreateInput Attributes for creating a site.
+type SiteCreateInput struct {
+	Active *bool `json:"active,omitempty"`
+
+	// Frequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
+	Frequency *SiteCreateInputFrequency `json:"frequency,omitempty"`
+
+	// Locations Locations to check from, by name. Anything outside the known set is discarded, and if nothing recognisable remains the site checks from every location — so a typo silently widens rather than narrows.
+	Locations *[]SiteCreateInputLocations `json:"locations,omitempty"`
+
+	// Match Required unless `match_type` is `success`, where it is cleared
+	Match *string `json:"match,omitempty"`
+
+	// MatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
+	MatchType *SiteCreateInputMatchType `json:"match_type,omitempty"`
+	Name      string                    `json:"name"`
+
+	// OutageThreshold Consecutive failures before an outage is declared
+	OutageThreshold *int `json:"outage_threshold,omitempty"`
+
+	// RequestBody Body to send with the request
+	RequestBody *string `json:"request_body,omitempty"`
+
+	// RequestHeaders Headers to send with the request
+	RequestHeaders *[]SiteCreateInput_RequestHeaders `json:"request_headers,omitempty"`
+	RequestMethod  *SiteCreateInputRequestMethod     `json:"request_method,omitempty"`
+
+	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
+	Timeout *int   `json:"timeout,omitempty"`
+	Url     string `json:"url"`
+
+	// ValidateSsl Fail the check when the TLS certificate does not validate
+	ValidateSsl *bool `json:"validate_ssl,omitempty"`
+}
+
+// SiteCreateInputFrequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
+type SiteCreateInputFrequency int
+
+// SiteCreateInputLocations defines model for SiteCreateInput.Locations.
+type SiteCreateInputLocations string
+
+// SiteCreateInputMatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
+type SiteCreateInputMatchType string
+
+// SiteCreateInput_RequestHeaders defines model for SiteCreateInput.RequestHeaders.
+type SiteCreateInput_RequestHeaders struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
+// SiteCreateInputRequestMethod defines model for SiteCreateInput.RequestMethod.
+type SiteCreateInputRequestMethod string
+
 // SiteInput Writable uptime-check site attributes
 type SiteInput struct {
 	Active *bool `json:"active,omitempty"`
@@ -2400,7 +2680,7 @@ type SiteInput struct {
 
 	// MatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
 	MatchType *SiteInputMatchType `json:"match_type,omitempty"`
-	Name      string              `json:"name"`
+	Name      *string             `json:"name,omitempty"`
 
 	// OutageThreshold Consecutive failures before an outage is declared
 	OutageThreshold *int `json:"outage_threshold,omitempty"`
@@ -2413,8 +2693,8 @@ type SiteInput struct {
 	RequestMethod  *SiteInputRequestMethod     `json:"request_method,omitempty"`
 
 	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
-	Timeout *int   `json:"timeout,omitempty"`
-	Url     string `json:"url"`
+	Timeout *int    `json:"timeout,omitempty"`
+	Url     *string `json:"url,omitempty"`
 
 	// ValidateSsl Fail the check when the TLS certificate does not validate
 	ValidateSsl *bool `json:"validate_ssl,omitempty"`
@@ -2449,7 +2729,7 @@ type SourceBlock struct {
 
 // StatusPage A public status page
 type StatusPage struct {
-	// AccountId Public ID of the account this status page belongs to
+	// AccountId ID of the account this status page belongs to
 	AccountId string `json:"account_id"`
 
 	// CheckIns Check-ins displayed on the status page
@@ -2464,8 +2744,11 @@ type StatusPage struct {
 	// DomainVerifiedAt When the custom domain was verified
 	DomainVerifiedAt nullable.Nullable[time.Time] `json:"domain_verified_at,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// Name Status page name
 	Name string `json:"name"`
@@ -2479,7 +2762,7 @@ type StatusPage struct {
 
 // StatusPage_CheckIns defines model for StatusPage.CheckIns.
 type StatusPage_CheckIns struct {
-	// CheckInId Public ID of the check-in
+	// CheckInId ID of the check-in
 	CheckInId *string `json:"check_in_id,omitempty"`
 
 	// Description Description shown on the status page
@@ -2513,6 +2796,62 @@ type StatusPage_Sites struct {
 	State *string `json:"state,omitempty"`
 }
 
+// StatusPageCreateInput Attributes for creating a status-page.
+type StatusPageCreateInput struct {
+	// CheckIns Check-ins listed on the page, replacing the current set
+	CheckIns *[]StatusPageCreateInput_CheckIns `json:"check_ins,omitempty"`
+
+	// Domain Custom domain the page is served on
+	Domain *string `json:"domain,omitempty"`
+
+	// Features Presentation copy and styling. Advanced status pages only
+	Features *StatusPageCreateInput_Features `json:"features,omitempty"`
+
+	// HideBranding Advanced status pages only; ignored otherwise
+	HideBranding *bool  `json:"hide_branding,omitempty"`
+	Name         string `json:"name"`
+
+	// Password Basic-auth password when password protected. Advanced status pages only
+	Password *string `json:"password,omitempty"`
+
+	// PasswordProtected Advanced status pages only; ignored otherwise
+	PasswordProtected *bool `json:"password_protected,omitempty"`
+
+	// Sites Sites listed on the page, replacing the current set
+	Sites *[]StatusPageCreateInput_Sites `json:"sites,omitempty"`
+
+	// Username Basic-auth user when password protected. Advanced status pages only
+	Username *string `json:"username,omitempty"`
+}
+
+// StatusPageCreateInput_CheckIns defines model for StatusPageCreateInput.CheckIns.
+type StatusPageCreateInput_CheckIns struct {
+	// CheckInId ID of a check-in on this account
+	CheckInId   string  `json:"check_in_id"`
+	Description *string `json:"description,omitempty"`
+	DisplayName *string `json:"display_name,omitempty"`
+	Position    *int    `json:"position,omitempty"`
+}
+
+// StatusPageCreateInput_Features Presentation copy and styling. Advanced status pages only
+type StatusPageCreateInput_Features struct {
+	CustomCss    *string `json:"custom_css,omitempty"`
+	DownCaption  *string `json:"down_caption,omitempty"`
+	HomeLink     *string `json:"home_link,omitempty"`
+	MixedCaption *string `json:"mixed_caption,omitempty"`
+	UpCaption    *string `json:"up_caption,omitempty"`
+}
+
+// StatusPageCreateInput_Sites defines model for StatusPageCreateInput.Sites.
+type StatusPageCreateInput_Sites struct {
+	Description *string `json:"description,omitempty"`
+	DisplayName *string `json:"display_name,omitempty"`
+	Position    *int    `json:"position,omitempty"`
+
+	// SiteId Identifier of a site on this account
+	SiteId openapi_types.UUID `json:"site_id"`
+}
+
 // StatusPageIncident An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
 type StatusPageIncident struct {
 	// BuildType How the incident was opened
@@ -2530,13 +2869,16 @@ type StatusPageIncident struct {
 	// CurrentStatus Status of the update in effect now. Derived from the updates.
 	CurrentStatus nullable.Nullable[StatusPageIncidentCurrentStatus] `json:"current_status,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// StartAt When the incident starts. Derived from the updates.
 	StartAt nullable.Nullable[time.Time] `json:"start_at,omitempty"`
 
-	// StatusPageId Public ID of the status page
+	// StatusPageId ID of the status page
 	StatusPageId string `json:"status_page_id"`
 
 	// Title Incident title
@@ -2596,8 +2938,8 @@ type StatusPageInput struct {
 	Features *StatusPageInput_Features `json:"features,omitempty"`
 
 	// HideBranding Advanced status pages only; ignored otherwise
-	HideBranding *bool  `json:"hide_branding,omitempty"`
-	Name         string `json:"name"`
+	HideBranding *bool   `json:"hide_branding,omitempty"`
+	Name         *string `json:"name,omitempty"`
 
 	// Password Basic-auth password when password protected. Advanced status pages only
 	Password *string `json:"password,omitempty"`
@@ -2614,7 +2956,7 @@ type StatusPageInput struct {
 
 // StatusPageInput_CheckIns defines model for StatusPageInput.CheckIns.
 type StatusPageInput_CheckIns struct {
-	// CheckInId Public ID of a check-in on this account
+	// CheckInId ID of a check-in on this account
 	CheckInId   string  `json:"check_in_id"`
 	Description *string `json:"description,omitempty"`
 	DisplayName *string `json:"display_name,omitempty"`
@@ -2653,7 +2995,7 @@ type Stream struct {
 	// Name Display name
 	Name *string `json:"name,omitempty"`
 
-	// ProjectId Public ID of the project this stream belongs to
+	// ProjectId ID of the project this stream belongs to
 	ProjectId *string `json:"project_id,omitempty"`
 
 	// Slug Stable short name
@@ -2665,14 +3007,17 @@ type StreamSlug string
 
 // Team A team within an account
 type Team struct {
-	// AccountId Public ID of the account this team belongs to
+	// AccountId ID of the account this team belongs to
 	AccountId string `json:"account_id"`
 
 	// CreatedAt When the team was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks `json:"links,omitempty"`
 
 	// MemberCount Number of members in the team
 	MemberCount *int `json:"member_count,omitempty"`
@@ -2680,15 +3025,23 @@ type Team struct {
 	// Name Team name
 	Name string `json:"name"`
 
-	// ProjectIds Public IDs of projects assigned to this team
+	// ProjectIds IDs of projects assigned to this team
+	ProjectIds *[]string `json:"project_ids,omitempty"`
+}
+
+// TeamCreateInput Attributes for creating a team.
+type TeamCreateInput struct {
+	Name string `json:"name"`
+
+	// ProjectIds IDs of projects this team can access. IDs outside the account resolve to nothing rather than granting access to another tenant's project.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
 // TeamInput Writable team attributes
 type TeamInput struct {
-	Name string `json:"name"`
+	Name *string `json:"name,omitempty"`
 
-	// ProjectIds Public IDs of projects this team can access. IDs outside the account resolve to nothing rather than granting access to another tenant's project.
+	// ProjectIds IDs of projects this team can access. IDs outside the account resolve to nothing rather than granting access to another tenant's project.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
@@ -2712,13 +3065,13 @@ type TeamInvitation struct {
 	// Email Email address of the invitee
 	Email string `json:"email"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Message Optional message included with the invitation
 	Message nullable.Nullable[string] `json:"message,omitempty"`
 
-	// TeamId Public ID of the team
+	// TeamId ID of the team
 	TeamId string `json:"team_id"`
 }
 
@@ -2727,7 +3080,7 @@ type TeamInvitation_AcceptedBy struct {
 	// Email User email
 	Email *string `json:"email,omitempty"`
 
-	// Id Public ID of the user
+	// Id ID of the user
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
@@ -2739,17 +3092,26 @@ type TeamInvitation_CreatedBy struct {
 	// Email User email
 	Email *string `json:"email,omitempty"`
 
-	// Id Public ID of the user
+	// Id ID of the user
 	Id *string `json:"id,omitempty"`
 
 	// Name User name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
-// TeamInvitationInput Writable team-invitation attributes
-type TeamInvitationInput struct {
+// TeamInvitationCreateInput Attributes for creating a team-invitation.
+type TeamInvitationCreateInput struct {
 	Admin *bool               `json:"admin,omitempty"`
 	Email openapi_types.Email `json:"email"`
+
+	// Message Note included in the invitation email
+	Message *string `json:"message,omitempty"`
+}
+
+// TeamInvitationInput Writable team-invitation attributes
+type TeamInvitationInput struct {
+	Admin *bool                `json:"admin,omitempty"`
+	Email *openapi_types.Email `json:"email,omitempty"`
 
 	// Message Note included in the invitation email
 	Message *string `json:"message,omitempty"`
@@ -2766,16 +3128,16 @@ type TeamMember struct {
 	// Email Member email
 	Email string `json:"email"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Name Member name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// TeamId Public ID of the team
+	// TeamId ID of the team
 	TeamId string `json:"team_id"`
 
-	// UserId Public ID of the user
+	// UserId ID of the user
 	UserId string `json:"user_id"`
 }
 
@@ -2835,11 +3197,17 @@ type User struct {
 	// Email User email address
 	Email openapi_types.Email `json:"email"`
 
-	// Id Unique public identifier
+	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Name User display name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
+}
+
+// WebLinks Links into the Honeybadger web UI
+type WebLinks struct {
+	// Web Absolute URL of this resource's page in the Honeybadger web UI, on the web UI's host rather than the API's. For a project provisioned through Heroku, error, notice and comment links go through Heroku's single sign-on, on Heroku's host.
+	Web string `json:"web"`
 }
 
 // After defines model for After.
@@ -2895,6 +3263,9 @@ type Sort string
 
 // Unmapped defines model for Unmapped.
 type Unmapped = bool
+
+// AlarmServiceUnavailable API error response
+type AlarmServiceUnavailable = Error
 
 // AmbiguousAccount API error response
 type AmbiguousAccount = Error
@@ -3282,6 +3653,12 @@ type ListDeploysParams struct {
 
 	// After Cursor for fetching newer items
 	After *After `form:"after,omitempty" json:"after,omitempty"`
+
+	// Environment Exact environment name to match. Ignored when blank.
+	Environment *string `form:"environment,omitempty" json:"environment,omitempty"`
+
+	// LocalUsername Exact deploy username to match. Ignored when blank; combines with environment when both are provided.
+	LocalUsername *string `form:"local_username,omitempty" json:"local_username,omitempty"`
 }
 
 // ListDeploys200JSONResponseBody defines parameters for ListDeploys.
@@ -3667,17 +4044,23 @@ type ListFaultOccurrences200JSONResponseBody_Data struct {
 
 // ListFaultOccurrences200JSONResponseBody_Meta_Window defines parameters for ListFaultOccurrences.
 type ListFaultOccurrences200JSONResponseBody_Meta_Window struct {
-	OccurredAfter  int `json:"occurred_after"`
-	OccurredBefore int `json:"occurred_before"`
+	// OccurredAfter Unix timestamp, preserving fractional seconds.
+	OccurredAfter float64 `json:"occurred_after"`
+
+	// OccurredBefore Unix timestamp, preserving fractional seconds.
+	OccurredBefore float64 `json:"occurred_before"`
 }
 
 // ListFaultOccurrences200JSONResponseBody_Meta defines parameters for ListFaultOccurrences.
 type ListFaultOccurrences200JSONResponseBody_Meta struct {
-	// IntervalSeconds Spacing between bucket timestamps.
-	IntervalSeconds *int `json:"interval_seconds,omitempty"`
+	// IntervalSeconds Spacing between bucket timestamps. Null when the requested window falls entirely outside retention.
+	IntervalSeconds nullable.Nullable[int] `json:"interval_seconds,omitempty"`
 
 	// RequestId Unique identifier for the request, for correlating with support
 	RequestId *string `json:"request_id,omitempty"`
+
+	// RetentionTruncated Whether retention narrowed the requested window.
+	RetentionTruncated *bool `json:"retention_truncated,omitempty"`
 
 	// Window The window actually served.
 	Window *ListFaultOccurrences200JSONResponseBody_Meta_Window `json:"window,omitempty"`
@@ -3729,11 +4112,18 @@ type RunInsightsQueryJSONBody struct {
 	Ts *string `json:"ts,omitempty"`
 }
 
+// RunInsightsQuery200JSONResponseBody_Links defines parameters for RunInsightsQuery.
+type RunInsightsQuery200JSONResponseBody_Links struct {
+	// Web Absolute URL that re-runs this query in the Honeybadger web UI, on the web UI's host rather than the API's. It carries the request's `ts` and `stream_ids` when sent, and its `timezone` (UTC when none was sent). Present even when `data` carries an `error` from a query that failed while running.
+	Web string `json:"web"`
+}
+
 // RunInsightsQuery200JSONResponseBody defines parameters for RunInsightsQuery.
 type RunInsightsQuery200JSONResponseBody struct {
 	// Data Query result, as returned by the query service
-	Data map[string]interface{}  `json:"data"`
-	Meta *map[string]interface{} `json:"meta,omitempty"`
+	Data  map[string]interface{}                    `json:"data"`
+	Links RunInsightsQuery200JSONResponseBody_Links `json:"links"`
+	Meta  *map[string]interface{}                   `json:"meta,omitempty"`
 }
 
 // RunInsightsQuery422JSONResponseBody defines parameters for RunInsightsQuery.
@@ -4096,6 +4486,9 @@ type UpdateIncidentUpdate200JSONResponseBody struct {
 
 // ListTeamsParams defines parameters for ListTeams.
 type ListTeamsParams struct {
+	// Name Exact team name to match. Omit or leave blank to list all accessible teams.
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
+
 	// Page Page number (1-indexed)
 	Page *Page `form:"page,omitempty" json:"page,omitempty"`
 
@@ -4223,8 +4616,10 @@ type GetToken200JSONResponseBody_Data struct {
 	ExpiresAt nullable.Nullable[time.Time] `json:"expires_at,omitempty"`
 
 	// Kind `user` and `account` are scoped API tokens. `oauth` is an access token issued to an application acting for a user.
-	Kind       *GetToken200JSONResponseBodyDataKind `json:"kind,omitempty"`
-	LastUsedAt nullable.Nullable[time.Time]         `json:"last_used_at,omitempty"`
+	Kind *GetToken200JSONResponseBodyDataKind `json:"kind,omitempty"`
+
+	// LastUsedAt When the credential was last used before this request. Recorded at most once a minute, so it can lag by up to a minute; null on first use.
+	LastUsedAt nullable.Nullable[time.Time] `json:"last_used_at,omitempty"`
 
 	// Name The token's name, or for an OAuth grant the name of the application holding it.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
@@ -4248,7 +4643,7 @@ type GetToken200JSONResponseBody struct {
 }
 
 // CreateAccountInvitationJSONRequestBody defines body for CreateAccountInvitation for application/json ContentType.
-type CreateAccountInvitationJSONRequestBody = AccountInvitationInput
+type CreateAccountInvitationJSONRequestBody = AccountInvitationCreateInput
 
 // UpdateAccountInvitationJSONRequestBody defines body for UpdateAccountInvitation for application/json ContentType.
 type UpdateAccountInvitationJSONRequestBody = AccountInvitationInput
@@ -4257,7 +4652,7 @@ type UpdateAccountInvitationJSONRequestBody = AccountInvitationInput
 type UpdateAccountMemberJSONRequestBody = AccountMemberInput
 
 // CreateProjectJSONRequestBody defines body for CreateProject for application/json ContentType.
-type CreateProjectJSONRequestBody = ProjectInput
+type CreateProjectJSONRequestBody = ProjectCreateInput
 
 // UpdateProjectJSONRequestBody defines body for UpdateProject for application/json ContentType.
 type UpdateProjectJSONRequestBody = ProjectInput
@@ -4269,7 +4664,7 @@ type CreateAlarmJSONRequestBody = AlarmCreateInput
 type UpdateAlarmJSONRequestBody = AlarmUpdateInput
 
 // CreateCheckInJSONRequestBody defines body for CreateCheckIn for application/json ContentType.
-type CreateCheckInJSONRequestBody = CheckInInput
+type CreateCheckInJSONRequestBody = CheckInCreateInput
 
 // BulkUpdateCheckInsJSONRequestBody defines body for BulkUpdateCheckIns for application/json ContentType.
 type BulkUpdateCheckInsJSONRequestBody = CheckInBulkUpdateInput
@@ -4344,13 +4739,13 @@ type CreateProjectKeyJSONRequestBody = ProjectKeyInput
 type UpdateProjectKeyJSONRequestBody = ProjectKeyInput
 
 // CreateSiteJSONRequestBody defines body for CreateSite for application/json ContentType.
-type CreateSiteJSONRequestBody = SiteInput
+type CreateSiteJSONRequestBody = SiteCreateInput
 
 // UpdateSiteJSONRequestBody defines body for UpdateSite for application/json ContentType.
 type UpdateSiteJSONRequestBody = SiteInput
 
 // CreateStatusPageJSONRequestBody defines body for CreateStatusPage for application/json ContentType.
-type CreateStatusPageJSONRequestBody = StatusPageInput
+type CreateStatusPageJSONRequestBody = StatusPageCreateInput
 
 // UpdateStatusPageJSONRequestBody defines body for UpdateStatusPage for application/json ContentType.
 type UpdateStatusPageJSONRequestBody = StatusPageInput
@@ -4368,13 +4763,13 @@ type CreateIncidentUpdateJSONRequestBody = IncidentUpdateInput
 type UpdateIncidentUpdateJSONRequestBody = IncidentUpdateInput
 
 // CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
-type CreateTeamJSONRequestBody = TeamInput
+type CreateTeamJSONRequestBody = TeamCreateInput
 
 // UpdateTeamJSONRequestBody defines body for UpdateTeam for application/json ContentType.
 type UpdateTeamJSONRequestBody = TeamInput
 
 // CreateTeamInvitationJSONRequestBody defines body for CreateTeamInvitation for application/json ContentType.
-type CreateTeamInvitationJSONRequestBody = TeamInvitationInput
+type CreateTeamInvitationJSONRequestBody = TeamInvitationCreateInput
 
 // UpdateTeamInvitationJSONRequestBody defines body for UpdateTeamInvitation for application/json ContentType.
 type UpdateTeamInvitationJSONRequestBody = TeamInvitationInput
@@ -4660,32 +5055,6 @@ func (a IntegrationInput) MarshalJSON() ([]byte, error) {
 	return json.Marshal(object)
 }
 
-// AsIntegrationConfig0 returns the union data inside the Integration_Config as a IntegrationConfig0
-func (t Integration_Config) AsIntegrationConfig0() (IntegrationConfig0, error) {
-	var body IntegrationConfig0
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromIntegrationConfig0 overwrites any union data inside the Integration_Config as the provided IntegrationConfig0
-func (t *Integration_Config) FromIntegrationConfig0(v IntegrationConfig0) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergeIntegrationConfig0 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig0
-func (t *Integration_Config) MergeIntegrationConfig0(v IntegrationConfig0) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
 // AsIntegrationConfig1 returns the union data inside the Integration_Config as a IntegrationConfig1
 func (t Integration_Config) AsIntegrationConfig1() (IntegrationConfig1, error) {
 	var body IntegrationConfig1
@@ -4754,6 +5123,32 @@ func (t *Integration_Config) FromIntegrationConfig3(v IntegrationConfig3) error 
 
 // MergeIntegrationConfig3 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig3
 func (t *Integration_Config) MergeIntegrationConfig3(v IntegrationConfig3) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsIntegrationConfig4 returns the union data inside the Integration_Config as a IntegrationConfig4
+func (t Integration_Config) AsIntegrationConfig4() (IntegrationConfig4, error) {
+	var body IntegrationConfig4
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromIntegrationConfig4 overwrites any union data inside the Integration_Config as the provided IntegrationConfig4
+func (t *Integration_Config) FromIntegrationConfig4(v IntegrationConfig4) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeIntegrationConfig4 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig4
+func (t *Integration_Config) MergeIntegrationConfig4(v IntegrationConfig4) error {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return err
@@ -11064,6 +11459,30 @@ func NewListDeploysRequest(server string, projectId ProjectId, params *ListDeplo
 
 		}
 
+		if params.Environment != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "environment", *params.Environment, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.LocalUsername != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "local_username", *params.LocalUsername, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -14940,6 +15359,18 @@ func NewListTeamsRequest(server string, params *ListTeamsParams) (*http.Request,
 		// per the OpenAPI spec (e.g. "color=blue,black,brown").
 		var rawQueryFragments []string
 
+		if params.Name != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "name", *params.Name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if params.Page != nil {
 
 			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
@@ -17253,6 +17684,11 @@ func (r GetAccountResponse) ContentType() string {
 	return ""
 }
 
+// ListAccountInvitationsResponse403Headers the declared response headers of an HTTP 403 response for ListAccountInvitations
+type ListAccountInvitationsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListAccountInvitationsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17260,10 +17696,14 @@ type ListAccountInvitationsResponse struct {
 	JSON200 *ListAccountInvitations200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListAccountInvitationsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17274,6 +17714,11 @@ func (r ListAccountInvitationsResponse) GetJSON200() *ListAccountInvitations200J
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListAccountInvitationsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListAccountInvitationsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17315,6 +17760,11 @@ func (r ListAccountInvitationsResponse) ContentType() string {
 	return ""
 }
 
+// CreateAccountInvitationResponse403Headers the declared response headers of an HTTP 403 response for CreateAccountInvitation
+type CreateAccountInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateAccountInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17322,8 +17772,12 @@ type CreateAccountInvitationResponse struct {
 	JSON201 *CreateAccountInvitation201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateAccountInvitationResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -17334,6 +17788,11 @@ func (r CreateAccountInvitationResponse) GetJSON201() *CreateAccountInvitation20
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateAccountInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateAccountInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -17370,20 +17829,34 @@ func (r CreateAccountInvitationResponse) ContentType() string {
 	return ""
 }
 
+// DeleteAccountInvitationResponse403Headers the declared response headers of an HTTP 403 response for DeleteAccountInvitation
+type DeleteAccountInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteAccountInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteAccountInvitationResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteAccountInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteAccountInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17425,6 +17898,11 @@ func (r DeleteAccountInvitationResponse) ContentType() string {
 	return ""
 }
 
+// GetAccountInvitationResponse403Headers the declared response headers of an HTTP 403 response for GetAccountInvitation
+type GetAccountInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetAccountInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17432,10 +17910,14 @@ type GetAccountInvitationResponse struct {
 	JSON200 *GetAccountInvitation200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetAccountInvitationResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17446,6 +17928,11 @@ func (r GetAccountInvitationResponse) GetJSON200() *GetAccountInvitation200JSONR
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetAccountInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetAccountInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17487,6 +17974,11 @@ func (r GetAccountInvitationResponse) ContentType() string {
 	return ""
 }
 
+// UpdateAccountInvitationResponse403Headers the declared response headers of an HTTP 403 response for UpdateAccountInvitation
+type UpdateAccountInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateAccountInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17494,10 +17986,14 @@ type UpdateAccountInvitationResponse struct {
 	JSON200 *UpdateAccountInvitation200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateAccountInvitationResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17508,6 +18004,11 @@ func (r UpdateAccountInvitationResponse) GetJSON200() *UpdateAccountInvitation20
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateAccountInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateAccountInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17549,6 +18050,11 @@ func (r UpdateAccountInvitationResponse) ContentType() string {
 	return ""
 }
 
+// ListAccountMembersResponse403Headers the declared response headers of an HTTP 403 response for ListAccountMembers
+type ListAccountMembersResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListAccountMembersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17556,10 +18062,14 @@ type ListAccountMembersResponse struct {
 	JSON200 *ListAccountMembers200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListAccountMembersResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17570,6 +18080,11 @@ func (r ListAccountMembersResponse) GetJSON200() *ListAccountMembers200JSONRespo
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListAccountMembersResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListAccountMembersResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17611,20 +18126,34 @@ func (r ListAccountMembersResponse) ContentType() string {
 	return ""
 }
 
+// DeleteAccountMemberResponse403Headers the declared response headers of an HTTP 403 response for DeleteAccountMember
+type DeleteAccountMemberResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteAccountMemberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteAccountMemberResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteAccountMemberResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteAccountMemberResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17666,6 +18195,11 @@ func (r DeleteAccountMemberResponse) ContentType() string {
 	return ""
 }
 
+// GetAccountMemberResponse403Headers the declared response headers of an HTTP 403 response for GetAccountMember
+type GetAccountMemberResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetAccountMemberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17673,10 +18207,14 @@ type GetAccountMemberResponse struct {
 	JSON200 *GetAccountMember200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetAccountMemberResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17687,6 +18225,11 @@ func (r GetAccountMemberResponse) GetJSON200() *GetAccountMember200JSONResponseB
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetAccountMemberResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetAccountMemberResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17728,6 +18271,11 @@ func (r GetAccountMemberResponse) ContentType() string {
 	return ""
 }
 
+// UpdateAccountMemberResponse403Headers the declared response headers of an HTTP 403 response for UpdateAccountMember
+type UpdateAccountMemberResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateAccountMemberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17735,10 +18283,14 @@ type UpdateAccountMemberResponse struct {
 	JSON200 *UpdateAccountMember200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateAccountMemberResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17749,6 +18301,11 @@ func (r UpdateAccountMemberResponse) GetJSON200() *UpdateAccountMember200JSONRes
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateAccountMemberResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateAccountMemberResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -17983,6 +18540,11 @@ func (r ListProjectsResponse) ContentType() string {
 	return ""
 }
 
+// CreateProjectResponse403Headers the declared response headers of an HTTP 403 response for CreateProject
+type CreateProjectResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateProjectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17992,8 +18554,14 @@ type CreateProjectResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateProjectResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -18009,6 +18577,16 @@ func (r CreateProjectResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateProjectResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateProjectResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateProjectResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -18121,6 +18699,11 @@ func (r ListAccountOccurrencesResponse) ContentType() string {
 	return ""
 }
 
+// DeleteProjectResponse403Headers the declared response headers of an HTTP 403 response for DeleteProject
+type DeleteProjectResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteProjectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18128,10 +18711,14 @@ type DeleteProjectResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteProjectResponse403Headers
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
@@ -18142,6 +18729,11 @@ func (r DeleteProjectResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteProjectResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteProjectResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18183,6 +18775,11 @@ func (r DeleteProjectResponse) ContentType() string {
 	return ""
 }
 
+// GetProjectResponse403Headers the declared response headers of an HTTP 403 response for GetProject
+type GetProjectResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetProjectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18192,10 +18789,14 @@ type GetProjectResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetProjectResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18211,6 +18812,11 @@ func (r GetProjectResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetProjectResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetProjectResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18252,6 +18858,11 @@ func (r GetProjectResponse) ContentType() string {
 	return ""
 }
 
+// UpdateProjectResponse403Headers the declared response headers of an HTTP 403 response for UpdateProject
+type UpdateProjectResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateProjectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18261,10 +18872,14 @@ type UpdateProjectResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateProjectResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18280,6 +18895,11 @@ func (r UpdateProjectResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateProjectResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateProjectResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18321,6 +18941,11 @@ func (r UpdateProjectResponse) ContentType() string {
 	return ""
 }
 
+// ListAlarmsResponse403Headers the declared response headers of an HTTP 403 response for ListAlarms
+type ListAlarmsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListAlarmsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18328,10 +18953,16 @@ type ListAlarmsResponse struct {
 	JSON200 *ListAlarms200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// JSON503 the response for an HTTP 503 `application/json` response
+	JSON503 *AlarmServiceUnavailable
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListAlarmsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18344,6 +18975,11 @@ func (r ListAlarmsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
 }
 
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListAlarmsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r ListAlarmsResponse) GetJSON404() *NotFound {
 	return r.JSON404
@@ -18352,6 +18988,11 @@ func (r ListAlarmsResponse) GetJSON404() *NotFound {
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r ListAlarmsResponse) GetJSON422() *AmbiguousAccount {
 	return r.JSON422
+}
+
+// GetJSON503 returns the response for an HTTP 503 `application/json` response
+func (r ListAlarmsResponse) GetJSON503() *AlarmServiceUnavailable {
+	return r.JSON503
 }
 
 // GetBody returns the raw response body bytes
@@ -18383,6 +19024,11 @@ func (r ListAlarmsResponse) ContentType() string {
 	return ""
 }
 
+// CreateAlarmResponse403Headers the declared response headers of an HTTP 403 response for CreateAlarm
+type CreateAlarmResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateAlarmResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18390,8 +19036,16 @@ type CreateAlarmResponse struct {
 	JSON201 *CreateAlarm201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// JSON503 the response for an HTTP 503 `application/json` response
+	JSON503 *AlarmServiceUnavailable
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateAlarmResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -18404,9 +19058,24 @@ func (r CreateAlarmResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
 }
 
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateAlarmResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateAlarmResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r CreateAlarmResponse) GetJSON422() *ValidationError {
 	return r.JSON422
+}
+
+// GetJSON503 returns the response for an HTTP 503 `application/json` response
+func (r CreateAlarmResponse) GetJSON503() *AlarmServiceUnavailable {
+	return r.JSON503
 }
 
 // GetBody returns the raw response body bytes
@@ -18438,20 +19107,36 @@ func (r CreateAlarmResponse) ContentType() string {
 	return ""
 }
 
+// DeleteAlarmResponse403Headers the declared response headers of an HTTP 403 response for DeleteAlarm
+type DeleteAlarmResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteAlarmResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// JSON503 the response for an HTTP 503 `application/json` response
+	JSON503 *AlarmServiceUnavailable
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteAlarmResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteAlarmResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteAlarmResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18462,6 +19147,11 @@ func (r DeleteAlarmResponse) GetJSON404() *NotFound {
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r DeleteAlarmResponse) GetJSON422() *AmbiguousAccount {
 	return r.JSON422
+}
+
+// GetJSON503 returns the response for an HTTP 503 `application/json` response
+func (r DeleteAlarmResponse) GetJSON503() *AlarmServiceUnavailable {
+	return r.JSON503
 }
 
 // GetBody returns the raw response body bytes
@@ -18493,6 +19183,11 @@ func (r DeleteAlarmResponse) ContentType() string {
 	return ""
 }
 
+// GetAlarmResponse403Headers the declared response headers of an HTTP 403 response for GetAlarm
+type GetAlarmResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetAlarmResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18500,10 +19195,16 @@ type GetAlarmResponse struct {
 	JSON200 *GetAlarm200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// JSON503 the response for an HTTP 503 `application/json` response
+	JSON503 *AlarmServiceUnavailable
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetAlarmResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18516,6 +19217,11 @@ func (r GetAlarmResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
 }
 
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetAlarmResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r GetAlarmResponse) GetJSON404() *NotFound {
 	return r.JSON404
@@ -18524,6 +19230,11 @@ func (r GetAlarmResponse) GetJSON404() *NotFound {
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r GetAlarmResponse) GetJSON422() *AmbiguousAccount {
 	return r.JSON422
+}
+
+// GetJSON503 returns the response for an HTTP 503 `application/json` response
+func (r GetAlarmResponse) GetJSON503() *AlarmServiceUnavailable {
+	return r.JSON503
 }
 
 // GetBody returns the raw response body bytes
@@ -18555,6 +19266,11 @@ func (r GetAlarmResponse) ContentType() string {
 	return ""
 }
 
+// UpdateAlarmResponse403Headers the declared response headers of an HTTP 403 response for UpdateAlarm
+type UpdateAlarmResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateAlarmResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18562,10 +19278,16 @@ type UpdateAlarmResponse struct {
 	JSON200 *UpdateAlarm200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// JSON503 the response for an HTTP 503 `application/json` response
+	JSON503 *AlarmServiceUnavailable
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateAlarmResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18578,6 +19300,11 @@ func (r UpdateAlarmResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
 }
 
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateAlarmResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r UpdateAlarmResponse) GetJSON404() *NotFound {
 	return r.JSON404
@@ -18586,6 +19313,11 @@ func (r UpdateAlarmResponse) GetJSON404() *NotFound {
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r UpdateAlarmResponse) GetJSON422() *ValidationError {
 	return r.JSON422
+}
+
+// GetJSON503 returns the response for an HTTP 503 `application/json` response
+func (r UpdateAlarmResponse) GetJSON503() *AlarmServiceUnavailable {
+	return r.JSON503
 }
 
 // GetBody returns the raw response body bytes
@@ -18617,6 +19349,11 @@ func (r UpdateAlarmResponse) ContentType() string {
 	return ""
 }
 
+// ListAlarmHistoryResponse403Headers the declared response headers of an HTTP 403 response for ListAlarmHistory
+type ListAlarmHistoryResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListAlarmHistoryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18624,10 +19361,16 @@ type ListAlarmHistoryResponse struct {
 	JSON200 *ListAlarmHistory200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// JSON503 the response for an HTTP 503 `application/json` response
+	JSON503 *AlarmServiceUnavailable
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListAlarmHistoryResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18640,6 +19383,11 @@ func (r ListAlarmHistoryResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
 }
 
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListAlarmHistoryResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r ListAlarmHistoryResponse) GetJSON404() *NotFound {
 	return r.JSON404
@@ -18648,6 +19396,11 @@ func (r ListAlarmHistoryResponse) GetJSON404() *NotFound {
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
 func (r ListAlarmHistoryResponse) GetJSON422() *AmbiguousAccount {
 	return r.JSON422
+}
+
+// GetJSON503 returns the response for an HTTP 503 `application/json` response
+func (r ListAlarmHistoryResponse) GetJSON503() *AlarmServiceUnavailable {
+	return r.JSON503
 }
 
 // GetBody returns the raw response body bytes
@@ -18679,6 +19432,11 @@ func (r ListAlarmHistoryResponse) ContentType() string {
 	return ""
 }
 
+// ListCheckInsResponse403Headers the declared response headers of an HTTP 403 response for ListCheckIns
+type ListCheckInsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListCheckInsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18688,10 +19446,14 @@ type ListCheckInsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListCheckInsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18707,6 +19469,11 @@ func (r ListCheckInsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListCheckInsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListCheckInsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18748,6 +19515,11 @@ func (r ListCheckInsResponse) ContentType() string {
 	return ""
 }
 
+// CreateCheckInResponse403Headers the declared response headers of an HTTP 403 response for CreateCheckIn
+type CreateCheckInResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateCheckInResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18757,8 +19529,14 @@ type CreateCheckInResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateCheckInResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -18774,6 +19552,16 @@ func (r CreateCheckInResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateCheckInResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateCheckInResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateCheckInResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -18810,6 +19598,11 @@ func (r CreateCheckInResponse) ContentType() string {
 	return ""
 }
 
+// BulkUpdateCheckInsResponse403Headers the declared response headers of an HTTP 403 response for BulkUpdateCheckIns
+type BulkUpdateCheckInsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type BulkUpdateCheckInsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18819,10 +19612,14 @@ type BulkUpdateCheckInsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *BulkUpdateCheckInsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18838,6 +19635,11 @@ func (r BulkUpdateCheckInsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r BulkUpdateCheckInsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r BulkUpdateCheckInsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18879,6 +19681,11 @@ func (r BulkUpdateCheckInsResponse) ContentType() string {
 	return ""
 }
 
+// DeleteCheckInResponse403Headers the declared response headers of an HTTP 403 response for DeleteCheckIn
+type DeleteCheckInResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteCheckInResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18886,10 +19693,14 @@ type DeleteCheckInResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteCheckInResponse403Headers
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
@@ -18900,6 +19711,11 @@ func (r DeleteCheckInResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteCheckInResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteCheckInResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18941,6 +19757,11 @@ func (r DeleteCheckInResponse) ContentType() string {
 	return ""
 }
 
+// GetCheckInResponse403Headers the declared response headers of an HTTP 403 response for GetCheckIn
+type GetCheckInResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetCheckInResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18950,10 +19771,14 @@ type GetCheckInResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetCheckInResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18969,6 +19794,11 @@ func (r GetCheckInResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetCheckInResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetCheckInResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19010,6 +19840,11 @@ func (r GetCheckInResponse) ContentType() string {
 	return ""
 }
 
+// UpdateCheckInResponse403Headers the declared response headers of an HTTP 403 response for UpdateCheckIn
+type UpdateCheckInResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateCheckInResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19019,10 +19854,14 @@ type UpdateCheckInResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateCheckInResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19038,6 +19877,11 @@ func (r UpdateCheckInResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateCheckInResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateCheckInResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19079,6 +19923,11 @@ func (r UpdateCheckInResponse) ContentType() string {
 	return ""
 }
 
+// ListCheckInEventsResponse403Headers the declared response headers of an HTTP 403 response for ListCheckInEvents
+type ListCheckInEventsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListCheckInEventsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19088,10 +19937,14 @@ type ListCheckInEventsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListCheckInEventsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19107,6 +19960,11 @@ func (r ListCheckInEventsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListCheckInEventsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListCheckInEventsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19148,6 +20006,11 @@ func (r ListCheckInEventsResponse) ContentType() string {
 	return ""
 }
 
+// ListDashboardsResponse403Headers the declared response headers of an HTTP 403 response for ListDashboards
+type ListDashboardsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListDashboardsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19155,10 +20018,14 @@ type ListDashboardsResponse struct {
 	JSON200 *ListDashboards200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListDashboardsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19169,6 +20036,11 @@ func (r ListDashboardsResponse) GetJSON200() *ListDashboards200JSONResponseBody 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListDashboardsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListDashboardsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19210,6 +20082,11 @@ func (r ListDashboardsResponse) ContentType() string {
 	return ""
 }
 
+// CreateDashboardResponse403Headers the declared response headers of an HTTP 403 response for CreateDashboard
+type CreateDashboardResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateDashboardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19217,8 +20094,14 @@ type CreateDashboardResponse struct {
 	JSON201 *CreateDashboard201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateDashboardResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -19229,6 +20112,16 @@ func (r CreateDashboardResponse) GetJSON201() *CreateDashboard201JSONResponseBod
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateDashboardResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateDashboardResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateDashboardResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -19265,20 +20158,34 @@ func (r CreateDashboardResponse) ContentType() string {
 	return ""
 }
 
+// DeleteDashboardResponse403Headers the declared response headers of an HTTP 403 response for DeleteDashboard
+type DeleteDashboardResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteDashboardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteDashboardResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteDashboardResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteDashboardResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19320,6 +20227,11 @@ func (r DeleteDashboardResponse) ContentType() string {
 	return ""
 }
 
+// GetDashboardResponse403Headers the declared response headers of an HTTP 403 response for GetDashboard
+type GetDashboardResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetDashboardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19327,10 +20239,14 @@ type GetDashboardResponse struct {
 	JSON200 *GetDashboard200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetDashboardResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19341,6 +20257,11 @@ func (r GetDashboardResponse) GetJSON200() *GetDashboard200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetDashboardResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetDashboardResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19382,6 +20303,11 @@ func (r GetDashboardResponse) ContentType() string {
 	return ""
 }
 
+// UpdateDashboardResponse403Headers the declared response headers of an HTTP 403 response for UpdateDashboard
+type UpdateDashboardResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateDashboardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19389,10 +20315,14 @@ type UpdateDashboardResponse struct {
 	JSON200 *UpdateDashboard200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateDashboardResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19403,6 +20333,11 @@ func (r UpdateDashboardResponse) GetJSON200() *UpdateDashboard200JSONResponseBod
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateDashboardResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateDashboardResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19444,6 +20379,11 @@ func (r UpdateDashboardResponse) ContentType() string {
 	return ""
 }
 
+// ListDeploysResponse403Headers the declared response headers of an HTTP 403 response for ListDeploys
+type ListDeploysResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListDeploysResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19453,10 +20393,14 @@ type ListDeploysResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListDeploysResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19472,6 +20416,11 @@ func (r ListDeploysResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListDeploysResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListDeploysResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19513,6 +20462,11 @@ func (r ListDeploysResponse) ContentType() string {
 	return ""
 }
 
+// DeleteDeployResponse403Headers the declared response headers of an HTTP 403 response for DeleteDeploy
+type DeleteDeployResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteDeployResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19520,10 +20474,14 @@ type DeleteDeployResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteDeployResponse403Headers
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
@@ -19534,6 +20492,11 @@ func (r DeleteDeployResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteDeployResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteDeployResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19575,6 +20538,11 @@ func (r DeleteDeployResponse) ContentType() string {
 	return ""
 }
 
+// GetDeployResponse403Headers the declared response headers of an HTTP 403 response for GetDeploy
+type GetDeployResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetDeployResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19584,10 +20552,14 @@ type GetDeployResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetDeployResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19603,6 +20575,11 @@ func (r GetDeployResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetDeployResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetDeployResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19644,6 +20621,11 @@ func (r GetDeployResponse) ContentType() string {
 	return ""
 }
 
+// ListEnvironmentsResponse403Headers the declared response headers of an HTTP 403 response for ListEnvironments
+type ListEnvironmentsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListEnvironmentsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19651,10 +20633,14 @@ type ListEnvironmentsResponse struct {
 	JSON200 *ListEnvironments200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListEnvironmentsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19665,6 +20651,11 @@ func (r ListEnvironmentsResponse) GetJSON200() *ListEnvironments200JSONResponseB
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListEnvironmentsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListEnvironmentsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19706,6 +20697,11 @@ func (r ListEnvironmentsResponse) ContentType() string {
 	return ""
 }
 
+// CreateEnvironmentResponse403Headers the declared response headers of an HTTP 403 response for CreateEnvironment
+type CreateEnvironmentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateEnvironmentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19713,8 +20709,14 @@ type CreateEnvironmentResponse struct {
 	JSON201 *CreateEnvironment201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateEnvironmentResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -19725,6 +20727,16 @@ func (r CreateEnvironmentResponse) GetJSON201() *CreateEnvironment201JSONRespons
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateEnvironmentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateEnvironmentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateEnvironmentResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -19761,6 +20773,11 @@ func (r CreateEnvironmentResponse) ContentType() string {
 	return ""
 }
 
+// BulkDeleteEnvironmentsResponse403Headers the declared response headers of an HTTP 403 response for BulkDeleteEnvironments
+type BulkDeleteEnvironmentsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type BulkDeleteEnvironmentsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19768,10 +20785,14 @@ type BulkDeleteEnvironmentsResponse struct {
 	JSON200 *BulkDeleteEnvironments200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *BulkDeleteEnvironmentsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19782,6 +20803,11 @@ func (r BulkDeleteEnvironmentsResponse) GetJSON200() *BulkDeleteEnvironments200J
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r BulkDeleteEnvironmentsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r BulkDeleteEnvironmentsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19823,6 +20849,11 @@ func (r BulkDeleteEnvironmentsResponse) ContentType() string {
 	return ""
 }
 
+// BulkUpdateEnvironmentsResponse403Headers the declared response headers of an HTTP 403 response for BulkUpdateEnvironments
+type BulkUpdateEnvironmentsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type BulkUpdateEnvironmentsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19830,10 +20861,14 @@ type BulkUpdateEnvironmentsResponse struct {
 	JSON200 *BulkUpdateEnvironments200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *BulkUpdateEnvironmentsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19844,6 +20879,11 @@ func (r BulkUpdateEnvironmentsResponse) GetJSON200() *BulkUpdateEnvironments200J
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r BulkUpdateEnvironmentsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r BulkUpdateEnvironmentsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19885,20 +20925,34 @@ func (r BulkUpdateEnvironmentsResponse) ContentType() string {
 	return ""
 }
 
+// DeleteEnvironmentResponse403Headers the declared response headers of an HTTP 403 response for DeleteEnvironment
+type DeleteEnvironmentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteEnvironmentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteEnvironmentResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteEnvironmentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteEnvironmentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19940,6 +20994,11 @@ func (r DeleteEnvironmentResponse) ContentType() string {
 	return ""
 }
 
+// GetEnvironmentResponse403Headers the declared response headers of an HTTP 403 response for GetEnvironment
+type GetEnvironmentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetEnvironmentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -19947,10 +21006,14 @@ type GetEnvironmentResponse struct {
 	JSON200 *GetEnvironment200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetEnvironmentResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -19961,6 +21024,11 @@ func (r GetEnvironmentResponse) GetJSON200() *GetEnvironment200JSONResponseBody 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetEnvironmentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetEnvironmentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20002,6 +21070,11 @@ func (r GetEnvironmentResponse) ContentType() string {
 	return ""
 }
 
+// UpdateEnvironmentResponse403Headers the declared response headers of an HTTP 403 response for UpdateEnvironment
+type UpdateEnvironmentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateEnvironmentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20009,10 +21082,14 @@ type UpdateEnvironmentResponse struct {
 	JSON200 *UpdateEnvironment200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateEnvironmentResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20023,6 +21100,11 @@ func (r UpdateEnvironmentResponse) GetJSON200() *UpdateEnvironment200JSONRespons
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateEnvironmentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateEnvironmentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20064,6 +21146,11 @@ func (r UpdateEnvironmentResponse) ContentType() string {
 	return ""
 }
 
+// ListFaultsResponse403Headers the declared response headers of an HTTP 403 response for ListFaults
+type ListFaultsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20073,10 +21160,14 @@ type ListFaultsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListFaultsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20092,6 +21183,11 @@ func (r ListFaultsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListFaultsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListFaultsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20133,6 +21229,11 @@ func (r ListFaultsResponse) ContentType() string {
 	return ""
 }
 
+// IgnoreFaultsResponse403Headers the declared response headers of an HTTP 403 response for IgnoreFaults
+type IgnoreFaultsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type IgnoreFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20140,10 +21241,14 @@ type IgnoreFaultsResponse struct {
 	JSON200 *IgnoreFaults200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *FaultBulkRejected
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *IgnoreFaultsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20154,6 +21259,11 @@ func (r IgnoreFaultsResponse) GetJSON200() *IgnoreFaults200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r IgnoreFaultsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r IgnoreFaultsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20195,6 +21305,11 @@ func (r IgnoreFaultsResponse) ContentType() string {
 	return ""
 }
 
+// ResolveFaultsResponse403Headers the declared response headers of an HTTP 403 response for ResolveFaults
+type ResolveFaultsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ResolveFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20202,10 +21317,14 @@ type ResolveFaultsResponse struct {
 	JSON200 *ResolveFaults200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *FaultBulkRejected
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ResolveFaultsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20216,6 +21335,11 @@ func (r ResolveFaultsResponse) GetJSON200() *ResolveFaults200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ResolveFaultsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ResolveFaultsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20257,6 +21381,11 @@ func (r ResolveFaultsResponse) ContentType() string {
 	return ""
 }
 
+// GetFaultSummaryResponse403Headers the declared response headers of an HTTP 403 response for GetFaultSummary
+type GetFaultSummaryResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetFaultSummaryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20266,12 +21395,16 @@ type GetFaultSummaryResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
 	// JSON429 the response for an HTTP 429 `application/json` response
 	JSON429 *RateLimitExceeded
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetFaultSummaryResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20287,6 +21420,11 @@ func (r GetFaultSummaryResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetFaultSummaryResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetFaultSummaryResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20333,6 +21471,11 @@ func (r GetFaultSummaryResponse) ContentType() string {
 	return ""
 }
 
+// UnignoreFaultsResponse403Headers the declared response headers of an HTTP 403 response for UnignoreFaults
+type UnignoreFaultsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UnignoreFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20340,10 +21483,14 @@ type UnignoreFaultsResponse struct {
 	JSON200 *UnignoreFaults200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *FaultBulkRejected
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UnignoreFaultsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20354,6 +21501,11 @@ func (r UnignoreFaultsResponse) GetJSON200() *UnignoreFaults200JSONResponseBody 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UnignoreFaultsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UnignoreFaultsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20395,6 +21547,11 @@ func (r UnignoreFaultsResponse) ContentType() string {
 	return ""
 }
 
+// UnresolveFaultsResponse403Headers the declared response headers of an HTTP 403 response for UnresolveFaults
+type UnresolveFaultsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UnresolveFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20402,10 +21559,14 @@ type UnresolveFaultsResponse struct {
 	JSON200 *UnresolveFaults200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *FaultBulkRejected
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UnresolveFaultsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20416,6 +21577,11 @@ func (r UnresolveFaultsResponse) GetJSON200() *UnresolveFaults200JSONResponseBod
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UnresolveFaultsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UnresolveFaultsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20457,20 +21623,41 @@ func (r UnresolveFaultsResponse) ContentType() string {
 	return ""
 }
 
+// DeleteFaultResponse301Headers the declared response headers of an HTTP 301 response for DeleteFault
+type DeleteFaultResponse301Headers struct {
+	Location string
+}
+
+// DeleteFaultResponse403Headers the declared response headers of an HTTP 403 response for DeleteFault
+type DeleteFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *DeleteFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteFaultResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20512,6 +21699,16 @@ func (r DeleteFaultResponse) ContentType() string {
 	return ""
 }
 
+// GetFaultResponse301Headers the declared response headers of an HTTP 301 response for GetFault
+type GetFaultResponse301Headers struct {
+	Location string
+}
+
+// GetFaultResponse403Headers the declared response headers of an HTTP 403 response for GetFault
+type GetFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20519,10 +21716,16 @@ type GetFaultResponse struct {
 	JSON200 *GetFault200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *GetFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetFaultResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20533,6 +21736,11 @@ func (r GetFaultResponse) GetJSON200() *GetFault200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20574,6 +21782,16 @@ func (r GetFaultResponse) ContentType() string {
 	return ""
 }
 
+// UpdateFaultResponse301Headers the declared response headers of an HTTP 301 response for UpdateFault
+type UpdateFaultResponse301Headers struct {
+	Location string
+}
+
+// UpdateFaultResponse403Headers the declared response headers of an HTTP 403 response for UpdateFault
+type UpdateFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20581,10 +21799,16 @@ type UpdateFaultResponse struct {
 	JSON200 *UpdateFault200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *UpdateFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateFaultResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20595,6 +21819,11 @@ func (r UpdateFaultResponse) GetJSON200() *UpdateFault200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20636,6 +21865,16 @@ func (r UpdateFaultResponse) ContentType() string {
 	return ""
 }
 
+// ListFaultAffectedUsersResponse301Headers the declared response headers of an HTTP 301 response for ListFaultAffectedUsers
+type ListFaultAffectedUsersResponse301Headers struct {
+	Location string
+}
+
+// ListFaultAffectedUsersResponse403Headers the declared response headers of an HTTP 403 response for ListFaultAffectedUsers
+type ListFaultAffectedUsersResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListFaultAffectedUsersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20643,10 +21882,16 @@ type ListFaultAffectedUsersResponse struct {
 	JSON200 *ListFaultAffectedUsers200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *ListFaultAffectedUsersResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListFaultAffectedUsersResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20657,6 +21902,11 @@ func (r ListFaultAffectedUsersResponse) GetJSON200() *ListFaultAffectedUsers200J
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListFaultAffectedUsersResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListFaultAffectedUsersResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20698,6 +21948,16 @@ func (r ListFaultAffectedUsersResponse) ContentType() string {
 	return ""
 }
 
+// UnassignFaultResponse301Headers the declared response headers of an HTTP 301 response for UnassignFault
+type UnassignFaultResponse301Headers struct {
+	Location string
+}
+
+// UnassignFaultResponse403Headers the declared response headers of an HTTP 403 response for UnassignFault
+type UnassignFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UnassignFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20705,10 +21965,16 @@ type UnassignFaultResponse struct {
 	JSON200 *UnassignFault200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *UnassignFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UnassignFaultResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20719,6 +21985,11 @@ func (r UnassignFaultResponse) GetJSON200() *UnassignFault200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UnassignFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UnassignFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20760,6 +22031,16 @@ func (r UnassignFaultResponse) ContentType() string {
 	return ""
 }
 
+// AssignFaultResponse301Headers the declared response headers of an HTTP 301 response for AssignFault
+type AssignFaultResponse301Headers struct {
+	Location string
+}
+
+// AssignFaultResponse403Headers the declared response headers of an HTTP 403 response for AssignFault
+type AssignFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type AssignFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20767,10 +22048,16 @@ type AssignFaultResponse struct {
 	JSON200 *AssignFault200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *AssignFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *AssignFaultResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20781,6 +22068,11 @@ func (r AssignFaultResponse) GetJSON200() *AssignFault200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r AssignFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r AssignFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20822,6 +22114,11 @@ func (r AssignFaultResponse) ContentType() string {
 	return ""
 }
 
+// ListCommentsResponse403Headers the declared response headers of an HTTP 403 response for ListComments
+type ListCommentsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListCommentsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20831,10 +22128,14 @@ type ListCommentsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListCommentsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -20850,6 +22151,11 @@ func (r ListCommentsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListCommentsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListCommentsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20891,6 +22197,11 @@ func (r ListCommentsResponse) ContentType() string {
 	return ""
 }
 
+// CreateCommentResponse403Headers the declared response headers of an HTTP 403 response for CreateComment
+type CreateCommentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateCommentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20900,10 +22211,14 @@ type CreateCommentResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateCommentResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -20919,6 +22234,11 @@ func (r CreateCommentResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateCommentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateCommentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -20960,6 +22280,11 @@ func (r CreateCommentResponse) ContentType() string {
 	return ""
 }
 
+// DeleteCommentResponse403Headers the declared response headers of an HTTP 403 response for DeleteComment
+type DeleteCommentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteCommentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -20967,10 +22292,14 @@ type DeleteCommentResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteCommentResponse403Headers
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
@@ -20981,6 +22310,11 @@ func (r DeleteCommentResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteCommentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteCommentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21022,6 +22356,11 @@ func (r DeleteCommentResponse) ContentType() string {
 	return ""
 }
 
+// GetCommentResponse403Headers the declared response headers of an HTTP 403 response for GetComment
+type GetCommentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetCommentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -21031,10 +22370,14 @@ type GetCommentResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetCommentResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -21050,6 +22393,11 @@ func (r GetCommentResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetCommentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetCommentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21091,6 +22439,11 @@ func (r GetCommentResponse) ContentType() string {
 	return ""
 }
 
+// UpdateCommentResponse403Headers the declared response headers of an HTTP 403 response for UpdateComment
+type UpdateCommentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateCommentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -21100,10 +22453,14 @@ type UpdateCommentResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateCommentResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -21119,6 +22476,11 @@ func (r UpdateCommentResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateCommentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateCommentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21160,6 +22522,16 @@ func (r UpdateCommentResponse) ContentType() string {
 	return ""
 }
 
+// MergeFaultsResponse301Headers the declared response headers of an HTTP 301 response for MergeFaults
+type MergeFaultsResponse301Headers struct {
+	Location string
+}
+
+// MergeFaultsResponse403Headers the declared response headers of an HTTP 403 response for MergeFaults
+type MergeFaultsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type MergeFaultsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -21167,10 +22539,16 @@ type MergeFaultsResponse struct {
 	JSON202 *MergeFaults202JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *MergeFaultsResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *MergeFaultsResponse403Headers
 }
 
 // GetJSON202 returns the response for an HTTP 202 `application/json` response
@@ -21181,6 +22559,11 @@ func (r MergeFaultsResponse) GetJSON202() *MergeFaults202JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r MergeFaultsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r MergeFaultsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21222,6 +22605,11 @@ func (r MergeFaultsResponse) ContentType() string {
 	return ""
 }
 
+// ListNoticesResponse403Headers the declared response headers of an HTTP 403 response for ListNotices
+type ListNoticesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListNoticesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -21231,10 +22619,14 @@ type ListNoticesResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListNoticesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -21250,6 +22642,11 @@ func (r ListNoticesResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListNoticesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListNoticesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21291,6 +22688,16 @@ func (r ListNoticesResponse) ContentType() string {
 	return ""
 }
 
+// ListFaultOccurrencesResponse301Headers the declared response headers of an HTTP 301 response for ListFaultOccurrences
+type ListFaultOccurrencesResponse301Headers struct {
+	Location string
+}
+
+// ListFaultOccurrencesResponse403Headers the declared response headers of an HTTP 403 response for ListFaultOccurrences
+type ListFaultOccurrencesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListFaultOccurrencesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -21300,10 +22707,16 @@ type ListFaultOccurrencesResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *ListFaultOccurrencesResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListFaultOccurrencesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -21319,6 +22732,11 @@ func (r ListFaultOccurrencesResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListFaultOccurrencesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListFaultOccurrencesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21360,20 +22778,41 @@ func (r ListFaultOccurrencesResponse) ContentType() string {
 	return ""
 }
 
+// PauseFaultRecordingResponse301Headers the declared response headers of an HTTP 301 response for PauseFaultRecording
+type PauseFaultRecordingResponse301Headers struct {
+	Location string
+}
+
+// PauseFaultRecordingResponse403Headers the declared response headers of an HTTP 403 response for PauseFaultRecording
+type PauseFaultRecordingResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type PauseFaultRecordingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *PauseFaultRecordingResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *PauseFaultRecordingResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r PauseFaultRecordingResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r PauseFaultRecordingResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21415,20 +22854,41 @@ func (r PauseFaultRecordingResponse) ContentType() string {
 	return ""
 }
 
+// ResumeFaultRecordingResponse301Headers the declared response headers of an HTTP 301 response for ResumeFaultRecording
+type ResumeFaultRecordingResponse301Headers struct {
+	Location string
+}
+
+// ResumeFaultRecordingResponse403Headers the declared response headers of an HTTP 403 response for ResumeFaultRecording
+type ResumeFaultRecordingResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ResumeFaultRecordingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *ResumeFaultRecordingResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ResumeFaultRecordingResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ResumeFaultRecordingResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ResumeFaultRecordingResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21470,20 +22930,41 @@ func (r ResumeFaultRecordingResponse) ContentType() string {
 	return ""
 }
 
+// UnsnoozeFaultResponse301Headers the declared response headers of an HTTP 301 response for UnsnoozeFault
+type UnsnoozeFaultResponse301Headers struct {
+	Location string
+}
+
+// UnsnoozeFaultResponse403Headers the declared response headers of an HTTP 403 response for UnsnoozeFault
+type UnsnoozeFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UnsnoozeFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *UnsnoozeFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UnsnoozeFaultResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UnsnoozeFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UnsnoozeFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -21525,20 +23006,41 @@ func (r UnsnoozeFaultResponse) ContentType() string {
 	return ""
 }
 
+// SnoozeFaultResponse301Headers the declared response headers of an HTTP 301 response for SnoozeFault
+type SnoozeFaultResponse301Headers struct {
+	Location string
+}
+
+// SnoozeFaultResponse403Headers the declared response headers of an HTTP 403 response for SnoozeFault
+type SnoozeFaultResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type SnoozeFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers301 the parsed response headers for an HTTP 301 response
+	Headers301 *SnoozeFaultResponse301Headers
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *SnoozeFaultResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r SnoozeFaultResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r SnoozeFaultResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22340,6 +23842,11 @@ func (r UpdateProjectKeyResponse) ContentType() string {
 	return ""
 }
 
+// GetProjectOccurrencesResponse403Headers the declared response headers of an HTTP 403 response for GetProjectOccurrences
+type GetProjectOccurrencesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetProjectOccurrencesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22349,12 +23856,16 @@ type GetProjectOccurrencesResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
 	// JSON429 the response for an HTTP 429 `application/json` response
 	JSON429 *RateLimitExceeded
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetProjectOccurrencesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22370,6 +23881,11 @@ func (r GetProjectOccurrencesResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetProjectOccurrencesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetProjectOccurrencesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22416,6 +23932,11 @@ func (r GetProjectOccurrencesResponse) ContentType() string {
 	return ""
 }
 
+// ListSitesResponse403Headers the declared response headers of an HTTP 403 response for ListSites
+type ListSitesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListSitesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22423,10 +23944,14 @@ type ListSitesResponse struct {
 	JSON200 *ListSites200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListSitesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22437,6 +23962,11 @@ func (r ListSitesResponse) GetJSON200() *ListSites200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListSitesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListSitesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22478,6 +24008,11 @@ func (r ListSitesResponse) ContentType() string {
 	return ""
 }
 
+// CreateSiteResponse403Headers the declared response headers of an HTTP 403 response for CreateSite
+type CreateSiteResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateSiteResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22485,8 +24020,14 @@ type CreateSiteResponse struct {
 	JSON201 *CreateSite201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateSiteResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -22497,6 +24038,16 @@ func (r CreateSiteResponse) GetJSON201() *CreateSite201JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateSiteResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateSiteResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateSiteResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -22533,20 +24084,34 @@ func (r CreateSiteResponse) ContentType() string {
 	return ""
 }
 
+// DeleteSiteResponse403Headers the declared response headers of an HTTP 403 response for DeleteSite
+type DeleteSiteResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteSiteResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteSiteResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteSiteResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteSiteResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22588,6 +24153,11 @@ func (r DeleteSiteResponse) ContentType() string {
 	return ""
 }
 
+// GetSiteResponse403Headers the declared response headers of an HTTP 403 response for GetSite
+type GetSiteResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetSiteResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22595,10 +24165,14 @@ type GetSiteResponse struct {
 	JSON200 *GetSite200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetSiteResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22609,6 +24183,11 @@ func (r GetSiteResponse) GetJSON200() *GetSite200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetSiteResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetSiteResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22650,6 +24229,11 @@ func (r GetSiteResponse) ContentType() string {
 	return ""
 }
 
+// UpdateSiteResponse403Headers the declared response headers of an HTTP 403 response for UpdateSite
+type UpdateSiteResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateSiteResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22657,10 +24241,14 @@ type UpdateSiteResponse struct {
 	JSON200 *UpdateSite200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateSiteResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22671,6 +24259,11 @@ func (r UpdateSiteResponse) GetJSON200() *UpdateSite200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateSiteResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateSiteResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22712,6 +24305,11 @@ func (r UpdateSiteResponse) ContentType() string {
 	return ""
 }
 
+// ListUptimeChecksResponse403Headers the declared response headers of an HTTP 403 response for ListUptimeChecks
+type ListUptimeChecksResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListUptimeChecksResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22721,10 +24319,14 @@ type ListUptimeChecksResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListUptimeChecksResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22740,6 +24342,11 @@ func (r ListUptimeChecksResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListUptimeChecksResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListUptimeChecksResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22781,6 +24388,11 @@ func (r ListUptimeChecksResponse) ContentType() string {
 	return ""
 }
 
+// ListOutagesResponse403Headers the declared response headers of an HTTP 403 response for ListOutages
+type ListOutagesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListOutagesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22790,10 +24402,14 @@ type ListOutagesResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListOutagesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22809,6 +24425,11 @@ func (r ListOutagesResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListOutagesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListOutagesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -22850,6 +24471,11 @@ func (r ListOutagesResponse) ContentType() string {
 	return ""
 }
 
+// GetProjectStatsResponse403Headers the declared response headers of an HTTP 403 response for GetProjectStats
+type GetProjectStatsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetProjectStatsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -22859,10 +24485,14 @@ type GetProjectStatsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetProjectStatsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -22878,6 +24508,11 @@ func (r GetProjectStatsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetProjectStatsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetProjectStatsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23002,6 +24637,11 @@ func (r ListStreamsResponse) ContentType() string {
 	return ""
 }
 
+// ListStatusPagesResponse403Headers the declared response headers of an HTTP 403 response for ListStatusPages
+type ListStatusPagesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListStatusPagesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23009,10 +24649,14 @@ type ListStatusPagesResponse struct {
 	JSON200 *ListStatusPages200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListStatusPagesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23023,6 +24667,11 @@ func (r ListStatusPagesResponse) GetJSON200() *ListStatusPages200JSONResponseBod
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListStatusPagesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListStatusPagesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23064,6 +24713,11 @@ func (r ListStatusPagesResponse) ContentType() string {
 	return ""
 }
 
+// CreateStatusPageResponse403Headers the declared response headers of an HTTP 403 response for CreateStatusPage
+type CreateStatusPageResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateStatusPageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23071,8 +24725,12 @@ type CreateStatusPageResponse struct {
 	JSON201 *CreateStatusPage201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateStatusPageResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -23083,6 +24741,11 @@ func (r CreateStatusPageResponse) GetJSON201() *CreateStatusPage201JSONResponseB
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateStatusPageResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateStatusPageResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -23119,20 +24782,34 @@ func (r CreateStatusPageResponse) ContentType() string {
 	return ""
 }
 
+// DeleteStatusPageResponse403Headers the declared response headers of an HTTP 403 response for DeleteStatusPage
+type DeleteStatusPageResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteStatusPageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteStatusPageResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteStatusPageResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteStatusPageResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23174,6 +24851,11 @@ func (r DeleteStatusPageResponse) ContentType() string {
 	return ""
 }
 
+// GetStatusPageResponse403Headers the declared response headers of an HTTP 403 response for GetStatusPage
+type GetStatusPageResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetStatusPageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23181,10 +24863,14 @@ type GetStatusPageResponse struct {
 	JSON200 *GetStatusPage200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetStatusPageResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23195,6 +24881,11 @@ func (r GetStatusPageResponse) GetJSON200() *GetStatusPage200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetStatusPageResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetStatusPageResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23236,6 +24927,11 @@ func (r GetStatusPageResponse) ContentType() string {
 	return ""
 }
 
+// UpdateStatusPageResponse403Headers the declared response headers of an HTTP 403 response for UpdateStatusPage
+type UpdateStatusPageResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateStatusPageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23243,10 +24939,14 @@ type UpdateStatusPageResponse struct {
 	JSON200 *UpdateStatusPage200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateStatusPageResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23257,6 +24957,11 @@ func (r UpdateStatusPageResponse) GetJSON200() *UpdateStatusPage200JSONResponseB
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateStatusPageResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateStatusPageResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23298,6 +25003,11 @@ func (r UpdateStatusPageResponse) ContentType() string {
 	return ""
 }
 
+// ListStatusPageIncidentsResponse403Headers the declared response headers of an HTTP 403 response for ListStatusPageIncidents
+type ListStatusPageIncidentsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListStatusPageIncidentsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23307,10 +25017,14 @@ type ListStatusPageIncidentsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListStatusPageIncidentsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23326,6 +25040,11 @@ func (r ListStatusPageIncidentsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListStatusPageIncidentsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListStatusPageIncidentsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23367,6 +25086,11 @@ func (r ListStatusPageIncidentsResponse) ContentType() string {
 	return ""
 }
 
+// CreateStatusPageIncidentResponse403Headers the declared response headers of an HTTP 403 response for CreateStatusPageIncident
+type CreateStatusPageIncidentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateStatusPageIncidentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23374,8 +25098,14 @@ type CreateStatusPageIncidentResponse struct {
 	JSON201 *CreateStatusPageIncident201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateStatusPageIncidentResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -23386,6 +25116,16 @@ func (r CreateStatusPageIncidentResponse) GetJSON201() *CreateStatusPageIncident
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateStatusPageIncidentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateStatusPageIncidentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateStatusPageIncidentResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -23422,20 +25162,34 @@ func (r CreateStatusPageIncidentResponse) ContentType() string {
 	return ""
 }
 
+// DeleteStatusPageIncidentResponse403Headers the declared response headers of an HTTP 403 response for DeleteStatusPageIncident
+type DeleteStatusPageIncidentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteStatusPageIncidentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteStatusPageIncidentResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteStatusPageIncidentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteStatusPageIncidentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23477,6 +25231,11 @@ func (r DeleteStatusPageIncidentResponse) ContentType() string {
 	return ""
 }
 
+// GetStatusPageIncidentResponse403Headers the declared response headers of an HTTP 403 response for GetStatusPageIncident
+type GetStatusPageIncidentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetStatusPageIncidentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23484,10 +25243,14 @@ type GetStatusPageIncidentResponse struct {
 	JSON200 *GetStatusPageIncident200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetStatusPageIncidentResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23498,6 +25261,11 @@ func (r GetStatusPageIncidentResponse) GetJSON200() *GetStatusPageIncident200JSO
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetStatusPageIncidentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetStatusPageIncidentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23539,6 +25307,11 @@ func (r GetStatusPageIncidentResponse) ContentType() string {
 	return ""
 }
 
+// UpdateStatusPageIncidentResponse403Headers the declared response headers of an HTTP 403 response for UpdateStatusPageIncident
+type UpdateStatusPageIncidentResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateStatusPageIncidentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23546,10 +25319,14 @@ type UpdateStatusPageIncidentResponse struct {
 	JSON200 *UpdateStatusPageIncident200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateStatusPageIncidentResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23560,6 +25337,11 @@ func (r UpdateStatusPageIncidentResponse) GetJSON200() *UpdateStatusPageIncident
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateStatusPageIncidentResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateStatusPageIncidentResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23601,6 +25383,11 @@ func (r UpdateStatusPageIncidentResponse) ContentType() string {
 	return ""
 }
 
+// ListIncidentUpdatesResponse403Headers the declared response headers of an HTTP 403 response for ListIncidentUpdates
+type ListIncidentUpdatesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListIncidentUpdatesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23610,10 +25397,14 @@ type ListIncidentUpdatesResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListIncidentUpdatesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23629,6 +25420,11 @@ func (r ListIncidentUpdatesResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListIncidentUpdatesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListIncidentUpdatesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23670,6 +25466,11 @@ func (r ListIncidentUpdatesResponse) ContentType() string {
 	return ""
 }
 
+// CreateIncidentUpdateResponse403Headers the declared response headers of an HTTP 403 response for CreateIncidentUpdate
+type CreateIncidentUpdateResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateIncidentUpdateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23677,8 +25478,14 @@ type CreateIncidentUpdateResponse struct {
 	JSON201 *CreateIncidentUpdate201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateIncidentUpdateResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -23689,6 +25496,16 @@ func (r CreateIncidentUpdateResponse) GetJSON201() *CreateIncidentUpdate201JSONR
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateIncidentUpdateResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateIncidentUpdateResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateIncidentUpdateResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -23725,20 +25542,34 @@ func (r CreateIncidentUpdateResponse) ContentType() string {
 	return ""
 }
 
+// DeleteIncidentUpdateResponse403Headers the declared response headers of an HTTP 403 response for DeleteIncidentUpdate
+type DeleteIncidentUpdateResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteIncidentUpdateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteIncidentUpdateResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteIncidentUpdateResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteIncidentUpdateResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23780,6 +25611,11 @@ func (r DeleteIncidentUpdateResponse) ContentType() string {
 	return ""
 }
 
+// GetIncidentUpdateResponse403Headers the declared response headers of an HTTP 403 response for GetIncidentUpdate
+type GetIncidentUpdateResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetIncidentUpdateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23787,10 +25623,14 @@ type GetIncidentUpdateResponse struct {
 	JSON200 *GetIncidentUpdate200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetIncidentUpdateResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23801,6 +25641,11 @@ func (r GetIncidentUpdateResponse) GetJSON200() *GetIncidentUpdate200JSONRespons
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetIncidentUpdateResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetIncidentUpdateResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23842,6 +25687,11 @@ func (r GetIncidentUpdateResponse) ContentType() string {
 	return ""
 }
 
+// UpdateIncidentUpdateResponse403Headers the declared response headers of an HTTP 403 response for UpdateIncidentUpdate
+type UpdateIncidentUpdateResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateIncidentUpdateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23849,10 +25699,14 @@ type UpdateIncidentUpdateResponse struct {
 	JSON200 *UpdateIncidentUpdate200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateIncidentUpdateResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -23863,6 +25717,11 @@ func (r UpdateIncidentUpdateResponse) GetJSON200() *UpdateIncidentUpdate200JSONR
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateIncidentUpdateResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateIncidentUpdateResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -23966,6 +25825,11 @@ func (r ListTeamsResponse) ContentType() string {
 	return ""
 }
 
+// CreateTeamResponse403Headers the declared response headers of an HTTP 403 response for CreateTeam
+type CreateTeamResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -23973,8 +25837,12 @@ type CreateTeamResponse struct {
 	JSON201 *CreateTeam201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateTeamResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -23985,6 +25853,11 @@ func (r CreateTeamResponse) GetJSON201() *CreateTeam201JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateTeamResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateTeamResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -24021,20 +25894,34 @@ func (r CreateTeamResponse) ContentType() string {
 	return ""
 }
 
+// DeleteTeamResponse403Headers the declared response headers of an HTTP 403 response for DeleteTeam
+type DeleteTeamResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteTeamResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteTeamResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteTeamResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24076,6 +25963,11 @@ func (r DeleteTeamResponse) ContentType() string {
 	return ""
 }
 
+// GetTeamResponse403Headers the declared response headers of an HTTP 403 response for GetTeam
+type GetTeamResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24083,10 +25975,14 @@ type GetTeamResponse struct {
 	JSON200 *GetTeam200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetTeamResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24097,6 +25993,11 @@ func (r GetTeamResponse) GetJSON200() *GetTeam200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetTeamResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetTeamResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24138,6 +26039,11 @@ func (r GetTeamResponse) ContentType() string {
 	return ""
 }
 
+// UpdateTeamResponse403Headers the declared response headers of an HTTP 403 response for UpdateTeam
+type UpdateTeamResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24145,10 +26051,14 @@ type UpdateTeamResponse struct {
 	JSON200 *UpdateTeam200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateTeamResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24159,6 +26069,11 @@ func (r UpdateTeamResponse) GetJSON200() *UpdateTeam200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateTeamResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateTeamResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24200,6 +26115,11 @@ func (r UpdateTeamResponse) ContentType() string {
 	return ""
 }
 
+// ListTeamInvitationsResponse403Headers the declared response headers of an HTTP 403 response for ListTeamInvitations
+type ListTeamInvitationsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListTeamInvitationsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24207,10 +26127,14 @@ type ListTeamInvitationsResponse struct {
 	JSON200 *ListTeamInvitations200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListTeamInvitationsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24221,6 +26145,11 @@ func (r ListTeamInvitationsResponse) GetJSON200() *ListTeamInvitations200JSONRes
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListTeamInvitationsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListTeamInvitationsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24262,6 +26191,11 @@ func (r ListTeamInvitationsResponse) ContentType() string {
 	return ""
 }
 
+// CreateTeamInvitationResponse403Headers the declared response headers of an HTTP 403 response for CreateTeamInvitation
+type CreateTeamInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type CreateTeamInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24269,8 +26203,14 @@ type CreateTeamInvitationResponse struct {
 	JSON201 *CreateTeamInvitation201JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *CreateTeamInvitationResponse403Headers
 }
 
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
@@ -24281,6 +26221,16 @@ func (r CreateTeamInvitationResponse) GetJSON201() *CreateTeamInvitation201JSONR
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r CreateTeamInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r CreateTeamInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r CreateTeamInvitationResponse) GetJSON404() *NotFound {
+	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -24317,20 +26267,34 @@ func (r CreateTeamInvitationResponse) ContentType() string {
 	return ""
 }
 
+// DeleteTeamInvitationResponse403Headers the declared response headers of an HTTP 403 response for DeleteTeamInvitation
+type DeleteTeamInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteTeamInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteTeamInvitationResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteTeamInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteTeamInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24372,6 +26336,11 @@ func (r DeleteTeamInvitationResponse) ContentType() string {
 	return ""
 }
 
+// GetTeamInvitationResponse403Headers the declared response headers of an HTTP 403 response for GetTeamInvitation
+type GetTeamInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetTeamInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24379,10 +26348,14 @@ type GetTeamInvitationResponse struct {
 	JSON200 *GetTeamInvitation200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetTeamInvitationResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24393,6 +26366,11 @@ func (r GetTeamInvitationResponse) GetJSON200() *GetTeamInvitation200JSONRespons
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetTeamInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetTeamInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24434,6 +26412,11 @@ func (r GetTeamInvitationResponse) ContentType() string {
 	return ""
 }
 
+// UpdateTeamInvitationResponse403Headers the declared response headers of an HTTP 403 response for UpdateTeamInvitation
+type UpdateTeamInvitationResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateTeamInvitationResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24441,10 +26424,14 @@ type UpdateTeamInvitationResponse struct {
 	JSON200 *UpdateTeamInvitation200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateTeamInvitationResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24455,6 +26442,11 @@ func (r UpdateTeamInvitationResponse) GetJSON200() *UpdateTeamInvitation200JSONR
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateTeamInvitationResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateTeamInvitationResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24496,6 +26488,11 @@ func (r UpdateTeamInvitationResponse) ContentType() string {
 	return ""
 }
 
+// ListTeamMembersResponse403Headers the declared response headers of an HTTP 403 response for ListTeamMembers
+type ListTeamMembersResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListTeamMembersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24503,10 +26500,14 @@ type ListTeamMembersResponse struct {
 	JSON200 *ListTeamMembers200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListTeamMembersResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24517,6 +26518,11 @@ func (r ListTeamMembersResponse) GetJSON200() *ListTeamMembers200JSONResponseBod
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListTeamMembersResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListTeamMembersResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24558,20 +26564,34 @@ func (r ListTeamMembersResponse) ContentType() string {
 	return ""
 }
 
+// DeleteTeamMemberResponse403Headers the declared response headers of an HTTP 403 response for DeleteTeamMember
+type DeleteTeamMemberResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type DeleteTeamMemberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *DeleteTeamMemberResponse403Headers
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r DeleteTeamMemberResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r DeleteTeamMemberResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24613,6 +26633,11 @@ func (r DeleteTeamMemberResponse) ContentType() string {
 	return ""
 }
 
+// GetTeamMemberResponse403Headers the declared response headers of an HTTP 403 response for GetTeamMember
+type GetTeamMemberResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetTeamMemberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24620,10 +26645,14 @@ type GetTeamMemberResponse struct {
 	JSON200 *GetTeamMember200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetTeamMemberResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24634,6 +26663,11 @@ func (r GetTeamMemberResponse) GetJSON200() *GetTeamMember200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetTeamMemberResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetTeamMemberResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -24675,6 +26709,11 @@ func (r GetTeamMemberResponse) ContentType() string {
 	return ""
 }
 
+// UpdateTeamMemberResponse403Headers the declared response headers of an HTTP 403 response for UpdateTeamMember
+type UpdateTeamMemberResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type UpdateTeamMemberResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -24682,10 +26721,14 @@ type UpdateTeamMemberResponse struct {
 	JSON200 *UpdateTeamMember200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *UpdateTeamMemberResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -24696,6 +26739,11 @@ func (r UpdateTeamMemberResponse) GetJSON200() *UpdateTeamMember200JSONResponseB
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r UpdateTeamMemberResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r UpdateTeamMemberResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -27371,6 +29419,13 @@ func ParseListAccountInvitationsResponse(rsp *http.Response) (*ListAccountInvita
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27385,6 +29440,19 @@ func ParseListAccountInvitationsResponse(rsp *http.Response) (*ListAccountInvita
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListAccountInvitationsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27418,6 +29486,13 @@ func ParseCreateAccountInvitationResponse(rsp *http.Response) (*CreateAccountInv
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27425,6 +29500,19 @@ func ParseCreateAccountInvitationResponse(rsp *http.Response) (*CreateAccountInv
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateAccountInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27454,6 +29542,13 @@ func ParseDeleteAccountInvitationResponse(rsp *http.Response) (*DeleteAccountInv
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27468,6 +29563,19 @@ func ParseDeleteAccountInvitationResponse(rsp *http.Response) (*DeleteAccountInv
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteAccountInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27501,6 +29609,13 @@ func ParseGetAccountInvitationResponse(rsp *http.Response) (*GetAccountInvitatio
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27515,6 +29630,19 @@ func ParseGetAccountInvitationResponse(rsp *http.Response) (*GetAccountInvitatio
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetAccountInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27548,6 +29676,13 @@ func ParseUpdateAccountInvitationResponse(rsp *http.Response) (*UpdateAccountInv
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27562,6 +29697,19 @@ func ParseUpdateAccountInvitationResponse(rsp *http.Response) (*UpdateAccountInv
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateAccountInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27595,6 +29743,13 @@ func ParseListAccountMembersResponse(rsp *http.Response) (*ListAccountMembersRes
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27609,6 +29764,19 @@ func ParseListAccountMembersResponse(rsp *http.Response) (*ListAccountMembersRes
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListAccountMembersResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27638,6 +29806,13 @@ func ParseDeleteAccountMemberResponse(rsp *http.Response) (*DeleteAccountMemberR
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27652,6 +29827,19 @@ func ParseDeleteAccountMemberResponse(rsp *http.Response) (*DeleteAccountMemberR
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteAccountMemberResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27685,6 +29873,13 @@ func ParseGetAccountMemberResponse(rsp *http.Response) (*GetAccountMemberRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27699,6 +29894,19 @@ func ParseGetAccountMemberResponse(rsp *http.Response) (*GetAccountMemberRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetAccountMemberResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27732,6 +29940,13 @@ func ParseUpdateAccountMemberResponse(rsp *http.Response) (*UpdateAccountMemberR
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27746,6 +29961,19 @@ func ParseUpdateAccountMemberResponse(rsp *http.Response) (*UpdateAccountMemberR
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateAccountMemberResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -27934,6 +30162,20 @@ func ParseCreateProjectResponse(rsp *http.Response) (*CreateProjectResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -27941,6 +30183,19 @@ func ParseCreateProjectResponse(rsp *http.Response) (*CreateProjectResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateProjectResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28038,6 +30293,13 @@ func ParseDeleteProjectResponse(rsp *http.Response) (*DeleteProjectResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28052,6 +30314,19 @@ func ParseDeleteProjectResponse(rsp *http.Response) (*DeleteProjectResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteProjectResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28092,6 +30367,13 @@ func ParseGetProjectResponse(rsp *http.Response) (*GetProjectResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28106,6 +30388,19 @@ func ParseGetProjectResponse(rsp *http.Response) (*GetProjectResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetProjectResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28146,6 +30441,13 @@ func ParseUpdateProjectResponse(rsp *http.Response) (*UpdateProjectResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28160,6 +30462,19 @@ func ParseUpdateProjectResponse(rsp *http.Response) (*UpdateProjectResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateProjectResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28193,6 +30508,13 @@ func ParseListAlarmsResponse(rsp *http.Response) (*ListAlarmsResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28207,6 +30529,26 @@ func ParseListAlarmsResponse(rsp *http.Response) (*ListAlarmsResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest AlarmServiceUnavailable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListAlarmsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28240,6 +30582,20 @@ func ParseCreateAlarmResponse(rsp *http.Response) (*CreateAlarmResponse, error) 
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28247,6 +30603,26 @@ func ParseCreateAlarmResponse(rsp *http.Response) (*CreateAlarmResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest AlarmServiceUnavailable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateAlarmResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28276,6 +30652,13 @@ func ParseDeleteAlarmResponse(rsp *http.Response) (*DeleteAlarmResponse, error) 
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28290,6 +30673,26 @@ func ParseDeleteAlarmResponse(rsp *http.Response) (*DeleteAlarmResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest AlarmServiceUnavailable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteAlarmResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28323,6 +30726,13 @@ func ParseGetAlarmResponse(rsp *http.Response) (*GetAlarmResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28337,6 +30747,26 @@ func ParseGetAlarmResponse(rsp *http.Response) (*GetAlarmResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest AlarmServiceUnavailable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetAlarmResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28370,6 +30800,13 @@ func ParseUpdateAlarmResponse(rsp *http.Response) (*UpdateAlarmResponse, error) 
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28384,6 +30821,26 @@ func ParseUpdateAlarmResponse(rsp *http.Response) (*UpdateAlarmResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest AlarmServiceUnavailable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateAlarmResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28417,6 +30874,13 @@ func ParseListAlarmHistoryResponse(rsp *http.Response) (*ListAlarmHistoryRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28431,6 +30895,26 @@ func ParseListAlarmHistoryResponse(rsp *http.Response) (*ListAlarmHistoryRespons
 		}
 		response.JSON422 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 503:
+		var dest AlarmServiceUnavailable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON503 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListAlarmHistoryResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28471,6 +30955,13 @@ func ParseListCheckInsResponse(rsp *http.Response) (*ListCheckInsResponse, error
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28485,6 +30976,19 @@ func ParseListCheckInsResponse(rsp *http.Response) (*ListCheckInsResponse, error
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListCheckInsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28525,6 +31029,20 @@ func ParseCreateCheckInResponse(rsp *http.Response) (*CreateCheckInResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28532,6 +31050,19 @@ func ParseCreateCheckInResponse(rsp *http.Response) (*CreateCheckInResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateCheckInResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28572,6 +31103,13 @@ func ParseBulkUpdateCheckInsResponse(rsp *http.Response) (*BulkUpdateCheckInsRes
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28586,6 +31124,19 @@ func ParseBulkUpdateCheckInsResponse(rsp *http.Response) (*BulkUpdateCheckInsRes
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers BulkUpdateCheckInsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28622,6 +31173,13 @@ func ParseDeleteCheckInResponse(rsp *http.Response) (*DeleteCheckInResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28636,6 +31194,19 @@ func ParseDeleteCheckInResponse(rsp *http.Response) (*DeleteCheckInResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteCheckInResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28676,6 +31247,13 @@ func ParseGetCheckInResponse(rsp *http.Response) (*GetCheckInResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28690,6 +31268,19 @@ func ParseGetCheckInResponse(rsp *http.Response) (*GetCheckInResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetCheckInResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28730,6 +31321,13 @@ func ParseUpdateCheckInResponse(rsp *http.Response) (*UpdateCheckInResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28744,6 +31342,19 @@ func ParseUpdateCheckInResponse(rsp *http.Response) (*UpdateCheckInResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateCheckInResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28784,6 +31395,13 @@ func ParseListCheckInEventsResponse(rsp *http.Response) (*ListCheckInEventsRespo
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28798,6 +31416,19 @@ func ParseListCheckInEventsResponse(rsp *http.Response) (*ListCheckInEventsRespo
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListCheckInEventsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28831,6 +31462,13 @@ func ParseListDashboardsResponse(rsp *http.Response) (*ListDashboardsResponse, e
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28845,6 +31483,19 @@ func ParseListDashboardsResponse(rsp *http.Response) (*ListDashboardsResponse, e
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListDashboardsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28878,6 +31529,20 @@ func ParseCreateDashboardResponse(rsp *http.Response) (*CreateDashboardResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28885,6 +31550,19 @@ func ParseCreateDashboardResponse(rsp *http.Response) (*CreateDashboardResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateDashboardResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28914,6 +31592,13 @@ func ParseDeleteDashboardResponse(rsp *http.Response) (*DeleteDashboardResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28928,6 +31613,19 @@ func ParseDeleteDashboardResponse(rsp *http.Response) (*DeleteDashboardResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteDashboardResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -28961,6 +31659,13 @@ func ParseGetDashboardResponse(rsp *http.Response) (*GetDashboardResponse, error
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -28975,6 +31680,19 @@ func ParseGetDashboardResponse(rsp *http.Response) (*GetDashboardResponse, error
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetDashboardResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29008,6 +31726,13 @@ func ParseUpdateDashboardResponse(rsp *http.Response) (*UpdateDashboardResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29022,6 +31747,19 @@ func ParseUpdateDashboardResponse(rsp *http.Response) (*UpdateDashboardResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateDashboardResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29062,6 +31800,13 @@ func ParseListDeploysResponse(rsp *http.Response) (*ListDeploysResponse, error) 
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29076,6 +31821,19 @@ func ParseListDeploysResponse(rsp *http.Response) (*ListDeploysResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListDeploysResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29112,6 +31870,13 @@ func ParseDeleteDeployResponse(rsp *http.Response) (*DeleteDeployResponse, error
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29126,6 +31891,19 @@ func ParseDeleteDeployResponse(rsp *http.Response) (*DeleteDeployResponse, error
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteDeployResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29166,6 +31944,13 @@ func ParseGetDeployResponse(rsp *http.Response) (*GetDeployResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29180,6 +31965,19 @@ func ParseGetDeployResponse(rsp *http.Response) (*GetDeployResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetDeployResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29213,6 +32011,13 @@ func ParseListEnvironmentsResponse(rsp *http.Response) (*ListEnvironmentsRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29227,6 +32032,19 @@ func ParseListEnvironmentsResponse(rsp *http.Response) (*ListEnvironmentsRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListEnvironmentsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29260,6 +32078,20 @@ func ParseCreateEnvironmentResponse(rsp *http.Response) (*CreateEnvironmentRespo
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29267,6 +32099,19 @@ func ParseCreateEnvironmentResponse(rsp *http.Response) (*CreateEnvironmentRespo
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateEnvironmentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29300,6 +32145,13 @@ func ParseBulkDeleteEnvironmentsResponse(rsp *http.Response) (*BulkDeleteEnviron
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29314,6 +32166,19 @@ func ParseBulkDeleteEnvironmentsResponse(rsp *http.Response) (*BulkDeleteEnviron
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers BulkDeleteEnvironmentsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29347,6 +32212,13 @@ func ParseBulkUpdateEnvironmentsResponse(rsp *http.Response) (*BulkUpdateEnviron
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29361,6 +32233,19 @@ func ParseBulkUpdateEnvironmentsResponse(rsp *http.Response) (*BulkUpdateEnviron
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers BulkUpdateEnvironmentsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29390,6 +32275,13 @@ func ParseDeleteEnvironmentResponse(rsp *http.Response) (*DeleteEnvironmentRespo
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29404,6 +32296,19 @@ func ParseDeleteEnvironmentResponse(rsp *http.Response) (*DeleteEnvironmentRespo
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteEnvironmentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29437,6 +32342,13 @@ func ParseGetEnvironmentResponse(rsp *http.Response) (*GetEnvironmentResponse, e
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29451,6 +32363,19 @@ func ParseGetEnvironmentResponse(rsp *http.Response) (*GetEnvironmentResponse, e
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetEnvironmentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29484,6 +32409,13 @@ func ParseUpdateEnvironmentResponse(rsp *http.Response) (*UpdateEnvironmentRespo
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29498,6 +32430,19 @@ func ParseUpdateEnvironmentResponse(rsp *http.Response) (*UpdateEnvironmentRespo
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateEnvironmentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29538,6 +32483,13 @@ func ParseListFaultsResponse(rsp *http.Response) (*ListFaultsResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29552,6 +32504,19 @@ func ParseListFaultsResponse(rsp *http.Response) (*ListFaultsResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListFaultsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29585,6 +32550,13 @@ func ParseIgnoreFaultsResponse(rsp *http.Response) (*IgnoreFaultsResponse, error
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29599,6 +32571,19 @@ func ParseIgnoreFaultsResponse(rsp *http.Response) (*IgnoreFaultsResponse, error
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers IgnoreFaultsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29632,6 +32617,13 @@ func ParseResolveFaultsResponse(rsp *http.Response) (*ResolveFaultsResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29646,6 +32638,19 @@ func ParseResolveFaultsResponse(rsp *http.Response) (*ResolveFaultsResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ResolveFaultsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29686,6 +32691,13 @@ func ParseGetFaultSummaryResponse(rsp *http.Response) (*GetFaultSummaryResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29707,6 +32719,19 @@ func ParseGetFaultSummaryResponse(rsp *http.Response) (*GetFaultSummaryResponse,
 		}
 		response.JSON429 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetFaultSummaryResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29740,6 +32765,13 @@ func ParseUnignoreFaultsResponse(rsp *http.Response) (*UnignoreFaultsResponse, e
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29754,6 +32786,19 @@ func ParseUnignoreFaultsResponse(rsp *http.Response) (*UnignoreFaultsResponse, e
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UnignoreFaultsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29787,6 +32832,13 @@ func ParseUnresolveFaultsResponse(rsp *http.Response) (*UnresolveFaultsResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29801,6 +32853,19 @@ func ParseUnresolveFaultsResponse(rsp *http.Response) (*UnresolveFaultsResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UnresolveFaultsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29823,12 +32888,22 @@ func ParseDeleteFaultResponse(rsp *http.Response) (*DeleteFaultResponse, error) 
 	case rsp.StatusCode == 204:
 		break // No content-type
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -29844,6 +32919,29 @@ func ParseDeleteFaultResponse(rsp *http.Response) (*DeleteFaultResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers DeleteFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers DeleteFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29870,12 +32968,22 @@ func ParseGetFaultResponse(rsp *http.Response) (*GetFaultResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -29891,6 +32999,29 @@ func ParseGetFaultResponse(rsp *http.Response) (*GetFaultResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers GetFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers GetFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29917,12 +33048,22 @@ func ParseUpdateFaultResponse(rsp *http.Response) (*UpdateFaultResponse, error) 
 		}
 		response.JSON200 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -29938,6 +33079,29 @@ func ParseUpdateFaultResponse(rsp *http.Response) (*UpdateFaultResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers UpdateFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers UpdateFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -29964,12 +33128,22 @@ func ParseListFaultAffectedUsersResponse(rsp *http.Response) (*ListFaultAffected
 		}
 		response.JSON200 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -29985,6 +33159,29 @@ func ParseListFaultAffectedUsersResponse(rsp *http.Response) (*ListFaultAffected
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers ListFaultAffectedUsersResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers ListFaultAffectedUsersResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30011,12 +33208,22 @@ func ParseUnassignFaultResponse(rsp *http.Response) (*UnassignFaultResponse, err
 		}
 		response.JSON200 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30032,6 +33239,29 @@ func ParseUnassignFaultResponse(rsp *http.Response) (*UnassignFaultResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers UnassignFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers UnassignFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30058,12 +33288,22 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 		}
 		response.JSON200 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30079,6 +33319,29 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers AssignFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers AssignFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30119,6 +33382,13 @@ func ParseListCommentsResponse(rsp *http.Response) (*ListCommentsResponse, error
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30133,6 +33403,19 @@ func ParseListCommentsResponse(rsp *http.Response) (*ListCommentsResponse, error
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListCommentsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30173,6 +33456,13 @@ func ParseCreateCommentResponse(rsp *http.Response) (*CreateCommentResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30187,6 +33477,19 @@ func ParseCreateCommentResponse(rsp *http.Response) (*CreateCommentResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateCommentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30223,6 +33526,13 @@ func ParseDeleteCommentResponse(rsp *http.Response) (*DeleteCommentResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30237,6 +33547,19 @@ func ParseDeleteCommentResponse(rsp *http.Response) (*DeleteCommentResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteCommentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30277,6 +33600,13 @@ func ParseGetCommentResponse(rsp *http.Response) (*GetCommentResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30291,6 +33621,19 @@ func ParseGetCommentResponse(rsp *http.Response) (*GetCommentResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetCommentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30331,6 +33674,13 @@ func ParseUpdateCommentResponse(rsp *http.Response) (*UpdateCommentResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30345,6 +33695,19 @@ func ParseUpdateCommentResponse(rsp *http.Response) (*UpdateCommentResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateCommentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30371,12 +33734,22 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 		}
 		response.JSON202 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30392,6 +33765,29 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers MergeFaultsResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers MergeFaultsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30432,6 +33828,13 @@ func ParseListNoticesResponse(rsp *http.Response) (*ListNoticesResponse, error) 
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30446,6 +33849,19 @@ func ParseListNoticesResponse(rsp *http.Response) (*ListNoticesResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListNoticesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30472,6 +33888,9 @@ func ParseListFaultOccurrencesResponse(rsp *http.Response) (*ListFaultOccurrence
 		}
 		response.JSON200 = &dest
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
 		var dest BadRequest
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30485,6 +33904,13 @@ func ParseListFaultOccurrencesResponse(rsp *http.Response) (*ListFaultOccurrence
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30500,6 +33926,29 @@ func ParseListFaultOccurrencesResponse(rsp *http.Response) (*ListFaultOccurrence
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers ListFaultOccurrencesResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers ListFaultOccurrencesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30522,12 +33971,22 @@ func ParsePauseFaultRecordingResponse(rsp *http.Response) (*PauseFaultRecordingR
 	case rsp.StatusCode == 200:
 		break // No content-type
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30543,6 +34002,29 @@ func ParsePauseFaultRecordingResponse(rsp *http.Response) (*PauseFaultRecordingR
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers PauseFaultRecordingResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers PauseFaultRecordingResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30565,12 +34047,22 @@ func ParseResumeFaultRecordingResponse(rsp *http.Response) (*ResumeFaultRecordin
 	case rsp.StatusCode == 200:
 		break // No content-type
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30586,6 +34078,29 @@ func ParseResumeFaultRecordingResponse(rsp *http.Response) (*ResumeFaultRecordin
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers ResumeFaultRecordingResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers ResumeFaultRecordingResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30608,12 +34123,22 @@ func ParseUnsnoozeFaultResponse(rsp *http.Response) (*UnsnoozeFaultResponse, err
 	case rsp.StatusCode == 200:
 		break // No content-type
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30629,6 +34154,29 @@ func ParseUnsnoozeFaultResponse(rsp *http.Response) (*UnsnoozeFaultResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers UnsnoozeFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers UnsnoozeFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30651,12 +34199,22 @@ func ParseSnoozeFaultResponse(rsp *http.Response) (*SnoozeFaultResponse, error) 
 	case rsp.StatusCode == 200:
 		break // No content-type
 
+	case rsp.StatusCode == 301:
+		break // No content-type
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
@@ -30672,6 +34230,29 @@ func ParseSnoozeFaultResponse(rsp *http.Response) (*SnoozeFaultResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 301:
+		var headers SnoozeFaultResponse301Headers
+		if values := rsp.Header.Values("Location"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
+				return nil, err
+			}
+			headers.Location = value
+		}
+		response.Headers301 = &headers
+	case rsp.StatusCode == 403:
+		var headers SnoozeFaultResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31388,6 +34969,13 @@ func ParseGetProjectOccurrencesResponse(rsp *http.Response) (*GetProjectOccurren
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31409,6 +34997,19 @@ func ParseGetProjectOccurrencesResponse(rsp *http.Response) (*GetProjectOccurren
 		}
 		response.JSON429 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetProjectOccurrencesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31442,6 +35043,13 @@ func ParseListSitesResponse(rsp *http.Response) (*ListSitesResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31456,6 +35064,19 @@ func ParseListSitesResponse(rsp *http.Response) (*ListSitesResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListSitesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31489,6 +35110,20 @@ func ParseCreateSiteResponse(rsp *http.Response) (*CreateSiteResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31496,6 +35131,19 @@ func ParseCreateSiteResponse(rsp *http.Response) (*CreateSiteResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateSiteResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31525,6 +35173,13 @@ func ParseDeleteSiteResponse(rsp *http.Response) (*DeleteSiteResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31539,6 +35194,19 @@ func ParseDeleteSiteResponse(rsp *http.Response) (*DeleteSiteResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteSiteResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31572,6 +35240,13 @@ func ParseGetSiteResponse(rsp *http.Response) (*GetSiteResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31586,6 +35261,19 @@ func ParseGetSiteResponse(rsp *http.Response) (*GetSiteResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetSiteResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31619,6 +35307,13 @@ func ParseUpdateSiteResponse(rsp *http.Response) (*UpdateSiteResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31633,6 +35328,19 @@ func ParseUpdateSiteResponse(rsp *http.Response) (*UpdateSiteResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateSiteResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31673,6 +35381,13 @@ func ParseListUptimeChecksResponse(rsp *http.Response) (*ListUptimeChecksRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31687,6 +35402,19 @@ func ParseListUptimeChecksResponse(rsp *http.Response) (*ListUptimeChecksRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListUptimeChecksResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31727,6 +35455,13 @@ func ParseListOutagesResponse(rsp *http.Response) (*ListOutagesResponse, error) 
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31741,6 +35476,19 @@ func ParseListOutagesResponse(rsp *http.Response) (*ListOutagesResponse, error) 
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListOutagesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31781,6 +35529,13 @@ func ParseGetProjectStatsResponse(rsp *http.Response) (*GetProjectStatsResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31795,6 +35550,19 @@ func ParseGetProjectStatsResponse(rsp *http.Response) (*GetProjectStatsResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetProjectStatsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31902,6 +35670,13 @@ func ParseListStatusPagesResponse(rsp *http.Response) (*ListStatusPagesResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31916,6 +35691,19 @@ func ParseListStatusPagesResponse(rsp *http.Response) (*ListStatusPagesResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListStatusPagesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31949,6 +35737,13 @@ func ParseCreateStatusPageResponse(rsp *http.Response) (*CreateStatusPageRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31956,6 +35751,19 @@ func ParseCreateStatusPageResponse(rsp *http.Response) (*CreateStatusPageRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateStatusPageResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31985,6 +35793,13 @@ func ParseDeleteStatusPageResponse(rsp *http.Response) (*DeleteStatusPageRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -31999,6 +35814,19 @@ func ParseDeleteStatusPageResponse(rsp *http.Response) (*DeleteStatusPageRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteStatusPageResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32032,6 +35860,13 @@ func ParseGetStatusPageResponse(rsp *http.Response) (*GetStatusPageResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32046,6 +35881,19 @@ func ParseGetStatusPageResponse(rsp *http.Response) (*GetStatusPageResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetStatusPageResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32079,6 +35927,13 @@ func ParseUpdateStatusPageResponse(rsp *http.Response) (*UpdateStatusPageRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32093,6 +35948,19 @@ func ParseUpdateStatusPageResponse(rsp *http.Response) (*UpdateStatusPageRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateStatusPageResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32133,6 +36001,13 @@ func ParseListStatusPageIncidentsResponse(rsp *http.Response) (*ListStatusPageIn
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32147,6 +36022,19 @@ func ParseListStatusPageIncidentsResponse(rsp *http.Response) (*ListStatusPageIn
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListStatusPageIncidentsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32180,6 +36068,20 @@ func ParseCreateStatusPageIncidentResponse(rsp *http.Response) (*CreateStatusPag
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32187,6 +36089,19 @@ func ParseCreateStatusPageIncidentResponse(rsp *http.Response) (*CreateStatusPag
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateStatusPageIncidentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32216,6 +36131,13 @@ func ParseDeleteStatusPageIncidentResponse(rsp *http.Response) (*DeleteStatusPag
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32230,6 +36152,19 @@ func ParseDeleteStatusPageIncidentResponse(rsp *http.Response) (*DeleteStatusPag
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteStatusPageIncidentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32263,6 +36198,13 @@ func ParseGetStatusPageIncidentResponse(rsp *http.Response) (*GetStatusPageIncid
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32277,6 +36219,19 @@ func ParseGetStatusPageIncidentResponse(rsp *http.Response) (*GetStatusPageIncid
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetStatusPageIncidentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32310,6 +36265,13 @@ func ParseUpdateStatusPageIncidentResponse(rsp *http.Response) (*UpdateStatusPag
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32324,6 +36286,19 @@ func ParseUpdateStatusPageIncidentResponse(rsp *http.Response) (*UpdateStatusPag
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateStatusPageIncidentResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32364,6 +36339,13 @@ func ParseListIncidentUpdatesResponse(rsp *http.Response) (*ListIncidentUpdatesR
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32378,6 +36360,19 @@ func ParseListIncidentUpdatesResponse(rsp *http.Response) (*ListIncidentUpdatesR
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListIncidentUpdatesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32411,6 +36406,20 @@ func ParseCreateIncidentUpdateResponse(rsp *http.Response) (*CreateIncidentUpdat
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32418,6 +36427,19 @@ func ParseCreateIncidentUpdateResponse(rsp *http.Response) (*CreateIncidentUpdat
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateIncidentUpdateResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32447,6 +36469,13 @@ func ParseDeleteIncidentUpdateResponse(rsp *http.Response) (*DeleteIncidentUpdat
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32461,6 +36490,19 @@ func ParseDeleteIncidentUpdateResponse(rsp *http.Response) (*DeleteIncidentUpdat
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteIncidentUpdateResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32494,6 +36536,13 @@ func ParseGetIncidentUpdateResponse(rsp *http.Response) (*GetIncidentUpdateRespo
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32508,6 +36557,19 @@ func ParseGetIncidentUpdateResponse(rsp *http.Response) (*GetIncidentUpdateRespo
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetIncidentUpdateResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32541,6 +36603,13 @@ func ParseUpdateIncidentUpdateResponse(rsp *http.Response) (*UpdateIncidentUpdat
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32555,6 +36624,19 @@ func ParseUpdateIncidentUpdateResponse(rsp *http.Response) (*UpdateIncidentUpdat
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateIncidentUpdateResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32635,6 +36717,13 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32642,6 +36731,19 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateTeamResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32671,6 +36773,13 @@ func ParseDeleteTeamResponse(rsp *http.Response) (*DeleteTeamResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32685,6 +36794,19 @@ func ParseDeleteTeamResponse(rsp *http.Response) (*DeleteTeamResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteTeamResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32718,6 +36840,13 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32732,6 +36861,19 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetTeamResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32765,6 +36907,13 @@ func ParseUpdateTeamResponse(rsp *http.Response) (*UpdateTeamResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32779,6 +36928,19 @@ func ParseUpdateTeamResponse(rsp *http.Response) (*UpdateTeamResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateTeamResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32812,6 +36974,13 @@ func ParseListTeamInvitationsResponse(rsp *http.Response) (*ListTeamInvitationsR
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32826,6 +36995,19 @@ func ParseListTeamInvitationsResponse(rsp *http.Response) (*ListTeamInvitationsR
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListTeamInvitationsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32859,6 +37041,20 @@ func ParseCreateTeamInvitationResponse(rsp *http.Response) (*CreateTeamInvitatio
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32866,6 +37062,19 @@ func ParseCreateTeamInvitationResponse(rsp *http.Response) (*CreateTeamInvitatio
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers CreateTeamInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32895,6 +37104,13 @@ func ParseDeleteTeamInvitationResponse(rsp *http.Response) (*DeleteTeamInvitatio
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32909,6 +37125,19 @@ func ParseDeleteTeamInvitationResponse(rsp *http.Response) (*DeleteTeamInvitatio
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteTeamInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32942,6 +37171,13 @@ func ParseGetTeamInvitationResponse(rsp *http.Response) (*GetTeamInvitationRespo
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32956,6 +37192,19 @@ func ParseGetTeamInvitationResponse(rsp *http.Response) (*GetTeamInvitationRespo
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetTeamInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -32989,6 +37238,13 @@ func ParseUpdateTeamInvitationResponse(rsp *http.Response) (*UpdateTeamInvitatio
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33003,6 +37259,19 @@ func ParseUpdateTeamInvitationResponse(rsp *http.Response) (*UpdateTeamInvitatio
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateTeamInvitationResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -33036,6 +37305,13 @@ func ParseListTeamMembersResponse(rsp *http.Response) (*ListTeamMembersResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33050,6 +37326,19 @@ func ParseListTeamMembersResponse(rsp *http.Response) (*ListTeamMembersResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListTeamMembersResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -33079,6 +37368,13 @@ func ParseDeleteTeamMemberResponse(rsp *http.Response) (*DeleteTeamMemberRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33093,6 +37389,19 @@ func ParseDeleteTeamMemberResponse(rsp *http.Response) (*DeleteTeamMemberRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers DeleteTeamMemberResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -33126,6 +37435,13 @@ func ParseGetTeamMemberResponse(rsp *http.Response) (*GetTeamMemberResponse, err
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33140,6 +37456,19 @@ func ParseGetTeamMemberResponse(rsp *http.Response) (*GetTeamMemberResponse, err
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetTeamMemberResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -33173,6 +37502,13 @@ func ParseUpdateTeamMemberResponse(rsp *http.Response) (*UpdateTeamMemberRespons
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33187,6 +37523,19 @@ func ParseUpdateTeamMemberResponse(rsp *http.Response) (*UpdateTeamMemberRespons
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers UpdateTeamMemberResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil

@@ -162,7 +162,7 @@ func TestListStreams(t *testing.T) {
 		writeJSON(w, 0, `{"data":[
 		  {"id":"01h7vm19r5","name":"Default","slug":"default","internal":false},
 		  {"id":"01h7vm19r6","name":"Internal","slug":"internal","internal":true}
-		],"pagination":{"page":1,"per_page":25,"total_count":2,"total_pages":1}}`)
+		],"pagination":{"page":1,"per_page":25}}`)
 	}))
 	defer srv.Close()
 

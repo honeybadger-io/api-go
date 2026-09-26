@@ -54,8 +54,10 @@ info:
 
     ## Rate Limiting
 
-    API requests are rate limited to 360 requests per hour per user. Rate limit information
-    is returned in response headers:
+    API requests are rate limited per hour. User tokens and OAuth grants share
+    one limit per person; account tokens share one limit per account. The limit
+    is 360 requests per hour unless a higher one has been set for that person
+    or account. Rate limit information is returned in response headers:
 
     - `X-RateLimit-Limit`: Maximum requests per hour
     - `X-RateLimit-Remaining`: Remaining requests in current window
@@ -95,7 +97,7 @@ info:
 
     ## Response Format
 
-    All responses follow a consistent envelope structure:
+    Successful responses follow a consistent envelope structure:
 
     ```json
     {
@@ -111,6 +113,15 @@ info:
       "data": [ ... ],
       "pagination": { ... },
       "links": { ... },
+      "meta": { "request_id": "..." }
+    }
+    ```
+
+    Errors have no `data`:
+
+    ```json
+    {
+      "error": { "code": "...", "message": "..." },
       "meta": { "request_id": "..." }
     }
     ```
@@ -238,6 +249,11 @@ paths:
                         - string
                         - 'null'
                         format: date-time
+                        description: 'When the credential was last used before this
+                          request. Recorded at most once a minute, so it can lag by
+                          up to a minute; null on first use.
+
+                          '
                   meta:
                     type: object
                     properties:
@@ -341,6 +357,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -378,6 +396,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -420,6 +440,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -445,6 +467,8 @@ paths:
           description: Member removed
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -484,6 +508,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -502,7 +528,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/AccountInvitationInput"
+              "$ref": "#/components/schemas/AccountInvitationCreateInput"
       responses:
         '201':
           description: Invitation created
@@ -519,6 +545,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -554,6 +582,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -596,6 +626,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -621,6 +653,8 @@ paths:
           description: Invitation deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -680,7 +714,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/ProjectInput"
+              "$ref": "#/components/schemas/ProjectCreateInput"
       responses:
         '201':
           description: Project created
@@ -699,6 +733,10 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -731,6 +769,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -770,6 +810,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -792,6 +834,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -826,6 +870,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -865,6 +911,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -974,6 +1022,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1005,8 +1055,12 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1043,8 +1097,12 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1064,8 +1122,12 @@ paths:
       responses:
         '204':
           description: Fault deleted
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1156,6 +1218,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1203,6 +1267,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1248,6 +1314,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1293,6 +1361,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1337,6 +1407,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1381,8 +1453,12 @@ paths:
       responses:
         '200':
           description: Snooze applied. Response body is empty.
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1402,8 +1478,12 @@ paths:
       responses:
         '200':
           description: Snooze removed. Response body is empty.
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1441,8 +1521,12 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1473,8 +1557,12 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1548,8 +1636,12 @@ paths:
                         example: 67890
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1618,19 +1710,35 @@ paths:
                           - occurred_before
                           properties:
                             occurred_after:
-                              type: integer
+                              type: number
+                              format: double
+                              description: Unix timestamp, preserving fractional seconds.
                               example: 1704067200
                             occurred_before:
-                              type: integer
+                              type: number
+                              format: double
+                              description: Unix timestamp, preserving fractional seconds.
                               example: 1704070800
                         interval_seconds:
-                          type: integer
-                          description: Spacing between bucket timestamps.
+                          type:
+                          - integer
+                          - 'null'
+                          description: 'Spacing between bucket timestamps. Null when
+                            the requested window falls entirely outside retention.
+
+                            '
                           example: 60
+                        retention_truncated:
+                          type: boolean
+                          description: Whether retention narrowed the requested window.
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '400':
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1665,8 +1773,12 @@ paths:
                       "$ref": "#/components/schemas/AffectedUser"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1703,8 +1815,12 @@ paths:
       responses:
         '200':
           description: Recording paused. Response body is empty.
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1725,8 +1841,12 @@ paths:
       responses:
         '200':
           description: Recording resumed. Response body is empty.
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1772,6 +1892,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1857,6 +1979,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1897,6 +2021,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1938,6 +2064,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1984,6 +2112,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2013,6 +2143,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2053,6 +2185,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2073,7 +2207,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/SiteInput"
+              "$ref": "#/components/schemas/SiteCreateInput"
       responses:
         '201':
           description: Site created
@@ -2090,6 +2224,10 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -2127,6 +2265,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2171,6 +2311,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2198,6 +2340,8 @@ paths:
           description: Site deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2248,6 +2392,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2298,6 +2444,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2340,6 +2488,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2360,7 +2510,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/CheckInInput"
+              "$ref": "#/components/schemas/CheckInCreateInput"
       responses:
         '201':
           description: Check-in created
@@ -2379,6 +2529,10 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -2444,6 +2598,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2484,6 +2640,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2529,6 +2687,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2557,6 +2717,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2608,6 +2770,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2627,6 +2791,17 @@ paths:
       - "$ref": "#/components/parameters/Limit"
       - "$ref": "#/components/parameters/Before"
       - "$ref": "#/components/parameters/After"
+      - name: environment
+        in: query
+        description: Exact environment name to match. Ignored when blank.
+        schema:
+          type: string
+      - name: local_username
+        in: query
+        description: Exact deploy username to match. Ignored when blank; combines
+          with environment when both are provided.
+        schema:
+          type: string
       responses:
         '200':
           description: Success
@@ -2651,6 +2826,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2691,6 +2868,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2719,6 +2898,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2759,6 +2940,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2796,6 +2979,10 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -2832,6 +3019,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2875,6 +3064,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2901,6 +3092,8 @@ paths:
           description: Environment deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -2955,6 +3148,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3003,6 +3198,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3408,6 +3605,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3445,6 +3644,10 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -3481,6 +3684,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3527,6 +3732,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3553,6 +3760,8 @@ paths:
           description: Dashboard deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3590,10 +3799,14 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
       - bearer_auth:
         - alarms:read
@@ -3627,8 +3840,14 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
+        '503':
+          "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
       - bearer_auth:
         - alarms:write
@@ -3663,10 +3882,14 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
       - bearer_auth:
         - alarms:read
@@ -3706,10 +3929,14 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
+        '503':
+          "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
       - bearer_auth:
         - alarms:write
@@ -3732,10 +3959,14 @@ paths:
           description: Alarm deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
       - bearer_auth:
         - alarms:write
@@ -3784,10 +4015,14 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
       - bearer_auth:
         - alarms:read
@@ -3799,6 +4034,12 @@ paths:
       tags:
       - Teams
       parameters:
+      - name: name
+        in: query
+        description: Exact team name to match. Omit or leave blank to list all accessible
+          teams.
+        schema:
+          type: string
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -3841,7 +4082,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/TeamInput"
+              "$ref": "#/components/schemas/TeamCreateInput"
       responses:
         '201':
           description: Team created
@@ -3858,6 +4099,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -3893,6 +4136,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3935,6 +4180,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -3960,6 +4207,8 @@ paths:
           description: Team deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4005,6 +4254,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4048,6 +4299,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4096,6 +4349,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4127,6 +4382,8 @@ paths:
           description: Member removed
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4172,6 +4429,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4197,7 +4456,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/TeamInvitationInput"
+              "$ref": "#/components/schemas/TeamInvitationCreateInput"
       responses:
         '201':
           description: Invitation created
@@ -4214,6 +4473,10 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -4255,6 +4518,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4303,6 +4568,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4334,6 +4601,8 @@ paths:
           description: Invitation deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4375,6 +4644,8 @@ paths:
           "$ref": "#/components/responses/Unauthorized"
         '404':
           "$ref": "#/components/responses/NotFound"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
       security:
@@ -4391,7 +4662,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/StatusPageInput"
+              "$ref": "#/components/schemas/StatusPageCreateInput"
       responses:
         '201':
           description: Status page created
@@ -4408,6 +4679,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -4443,6 +4716,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4485,6 +4760,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4510,6 +4787,8 @@ paths:
           description: Status page deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4558,6 +4837,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4602,6 +4883,10 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -4643,6 +4928,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4693,6 +4980,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4724,6 +5013,8 @@ paths:
           description: Incident deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4778,6 +5069,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4826,6 +5119,10 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
       security:
@@ -4873,6 +5170,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4927,6 +5226,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -4965,6 +5266,8 @@ paths:
           description: Update deleted
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -5080,11 +5383,28 @@ paths:
                 type: object
                 required:
                 - data
+                - links
                 properties:
                   data:
                     type: object
                     description: Query result, as returned by the query service
                     additionalProperties: true
+                  links:
+                    type: object
+                    required:
+                    - web
+                    properties:
+                      web:
+                        type: string
+                        format: uri
+                        description: 'Absolute URL that re-runs this query in the
+                          Honeybadger web UI, on the web UI''s host rather than the
+                          API''s. It carries the request''s `ts` and `stream_ids`
+                          when sent, and its `timezone` (UTC when none was sent).
+                          Present even when `data` carries an `error` from a query
+                          that failed while running.
+
+                          '
                   meta:
                     type: object
         '422':
@@ -5139,10 +5459,11 @@ components:
       required:
       - id
       - active
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Ab3kL9
         name:
           type:
@@ -5167,6 +5488,8 @@ components:
           type: string
           format: date-time
           description: When the account was created
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     AccountInvitation:
       type: object
       description: An invitation to join an account
@@ -5177,11 +5500,11 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Ai9nRx
         account_id:
           type: string
-          description: Public ID of the account
+          description: ID of the account
           example: Ab3kL9
         email:
           type: string
@@ -5217,7 +5540,7 @@ components:
           properties:
             id:
               type: string
-              description: Public ID of the user
+              description: ID of the user
             name:
               type:
               - string
@@ -5234,7 +5557,7 @@ components:
           properties:
             id:
               type: string
-              description: Public ID of the user
+              description: ID of the user
             name:
               type:
               - string
@@ -5243,11 +5566,15 @@ components:
             email:
               type: string
               description: User email
+    AccountInvitationCreateInput:
+      description: Attributes for creating a account-invitation.
+      allOf:
+      - "$ref": "#/components/schemas/AccountInvitationInput"
+      - required:
+        - email
     AccountInvitationInput:
       type: object
       description: Writable account-invitation attributes
-      required:
-      - email
       properties:
         email:
           type: string
@@ -5263,8 +5590,8 @@ components:
           description: Create the member with email notifications off
         team_ids:
           type: array
-          description: 'Public IDs of teams to add the invitee to. IDs outside the
-            account resolve to nothing rather than attaching another tenant''s team.
+          description: 'IDs of teams to add the invitee to. IDs outside the account
+            resolve to nothing rather than attaching another tenant''s team.
 
             '
           items:
@@ -5299,15 +5626,15 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Am4wLq
         account_id:
           type: string
-          description: Public ID of the account
+          description: ID of the account
           example: Ab3kL9
         user_id:
           type: string
-          description: Public ID of the user
+          description: ID of the user
           example: Uz4wKm
         role:
           type: string
@@ -5351,6 +5678,7 @@ components:
       - project_id
       - name
       - state
+      - links
       properties:
         id:
           type: string
@@ -5358,7 +5686,7 @@ components:
           example: obs_abc123
         project_id:
           type: string
-          description: Public ID of the project this alarm belongs to
+          description: ID of the project this alarm belongs to
           example: Xk9mZp
         name:
           type: string
@@ -5443,9 +5771,8 @@ components:
           type: string
           format: date-time
           description: When the alarm was last updated
-        url:
-          type: string
-          description: URL to view the alarm in the dashboard
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     AlarmCreateInput:
       type: object
       description: An alarm and the observer that evaluates it
@@ -5534,14 +5861,15 @@ components:
       - project_id
       - type
       - active
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Ch9wLp
         project_id:
           type: string
-          description: Public ID of the project this channel belongs to
+          description: ID of the project this channel belongs to
           example: Xk9mZp
         type:
           type: string
@@ -5565,7 +5893,7 @@ components:
           type: array
           items:
             type: string
-          description: Public IDs of check-ins this channel monitors
+          description: IDs of check-ins this channel monitors
         excluded_environments:
           type: array
           items:
@@ -5595,11 +5923,13 @@ components:
         config:
           type: object
           description: 'Type-specific configuration fields. Sensitive values (API
-            keys, tokens) are masked. Hidden internal fields are omitted.
+            keys, tokens) are masked. Unset values may be null. Hidden internal fields
+            are omitted.
 
             '
           additionalProperties:
             oneOf:
+            - type: 'null'
             - type: string
             - type: boolean
             - type: integer
@@ -5619,6 +5949,8 @@ components:
           type: string
           format: date-time
           description: When the channel was created
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     IntegrationInput:
       type: object
       description: 'Integration attributes for create and update. On create, `type`
@@ -5668,8 +6000,8 @@ components:
             format: uuid
         check_in_ids:
           type: array
-          description: Public IDs of check-ins to scope this channel to. Empty means
-            every check-in.
+          description: IDs of check-ins to scope this channel to. Empty means every
+            check-in.
           items:
             type: string
         alarm_alert_ids:
@@ -5722,14 +6054,15 @@ components:
       - id
       - project_id
       - schedule_type
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Ci5xWq
         project_id:
           type: string
-          description: Public ID of the project this check-in belongs to
+          description: ID of the project this check-in belongs to
           example: Xk9mZp
         name:
           type:
@@ -5811,6 +6144,8 @@ components:
 
             '
           example: 1 day
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     CheckInBulkUpdateInput:
       type: object
       description: 'The project''s complete set of check-ins. This replaces rather
@@ -5846,7 +6181,7 @@ components:
       properties:
         check_in_id:
           type: string
-          description: Public ID of the check-in
+          description: ID of the check-in
           example: Ci5xWq
         state:
           type: string
@@ -5862,11 +6197,15 @@ components:
           - 'null'
           description: The payload reported with the check-in, as it was sent. Only
             retained on plans with advanced check-ins.
+    CheckInCreateInput:
+      description: Attributes for creating a check-in.
+      allOf:
+      - "$ref": "#/components/schemas/CheckInInput"
+      - required:
+        - name
     CheckInInput:
       type: object
       description: Writable check-in attributes
-      required:
-      - name
       properties:
         name:
           type: string
@@ -5921,10 +6260,11 @@ components:
       - id
       - fault_id
       - created_at
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Cm7pLx
         fault_id:
           type: integer
@@ -5940,15 +6280,18 @@ components:
               type:
               - string
               - 'null'
-              description: Public ID of the author
+              description: ID of the author
             name:
               type:
               - string
               - 'null'
               description: Name of the author
             email:
-              type: string
-              description: Email of the author
+              type:
+              - string
+              - 'null'
+              description: Email of the author; null for authors known only by name,
+                such as an account token or name-only feedback
         body:
           type:
           - string
@@ -5966,6 +6309,8 @@ components:
           type: string
           format: date-time
           description: When the comment was created
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     CommentInput:
       type: object
       description: Writable comment attributes
@@ -5983,14 +6328,15 @@ components:
       - id
       - project_id
       - title
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Db4rKn
         project_id:
           type: string
-          description: Public ID of the project this dashboard belongs to
+          description: ID of the project this dashboard belongs to
           example: Xk9mZp
         title:
           type: string
@@ -6025,6 +6371,8 @@ components:
           type: string
           format: date-time
           description: When the dashboard was last updated
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     DashboardWidget:
       type: object
       description: A widget on an Insights dashboard
@@ -6744,11 +7092,11 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Dp2yNk
         project_id:
           type: string
-          description: Public ID of the project this deploy belongs to
+          description: ID of the project this deploy belongs to
           example: Xk9mZp
         environment:
           type: string
@@ -6786,11 +7134,11 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: En6tRm
         project_id:
           type: string
-          description: Public ID of the project this environment belongs to
+          description: ID of the project this environment belongs to
           example: Xk9mZp
         name:
           type: string
@@ -6858,11 +7206,6 @@ components:
           - forbidden_attributes
           - service_unavailable
           - ambiguous_account
-          - account_parked
-          - account_inactive
-          - limit_reached
-          - feature_unavailable
-          - delete_failed
         message:
           type: string
           description: Human-readable explanation
@@ -6917,6 +7260,7 @@ components:
       - project_id
       - message
       - created_at
+      - links
       properties:
         id:
           type: integer
@@ -6925,7 +7269,7 @@ components:
           example: 12345
         project_id:
           type: string
-          description: Public ID of the project this fault belongs to
+          description: ID of the project this fault belongs to
           example: Xk9mZp
         klass:
           type:
@@ -6993,7 +7337,7 @@ components:
           properties:
             id:
               type: string
-              description: Public ID of the assignee
+              description: ID of the assignee
             name:
               type:
               - string
@@ -7020,7 +7364,7 @@ components:
                 description: URL of the ticket
               channel_id:
                 type: string
-                description: Public ID of the channel that created the ticket
+                description: ID of the channel that created the ticket
         resolve_on_deploy:
           type: boolean
           description: 'Whether this fault is waiting to be resolved by the next recorded
@@ -7033,6 +7377,8 @@ components:
             when the request supplied `occurred_after` or `occurred_before`.
 
             '
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     FaultAssignmentInput:
       type: object
       description: Who to assign a fault to
@@ -7041,9 +7387,9 @@ components:
       properties:
         assignee_id:
           type: string
-          description: 'Public ID of a user on the project. A public ID that is not
-            a member is rejected with 422 rather than silently unassigning. DELETE
-            the same path to unassign.
+          description: 'ID of a user on the project. An ID that is not a member is
+            rejected with 422 rather than silently unassigning. DELETE the same path
+            to unassign.
 
             '
           example: Xk9mZp
@@ -7153,9 +7499,9 @@ components:
           type:
           - string
           - 'null'
-          description: 'Public ID of a user on the project. Null unassigns. A public
-            ID that is not a member of this project is rejected with 422 rather than
-            silently unassigning.
+          description: 'ID of a user on the project. Null unassigns. An ID that is
+            not a member of this project is rejected with 422 rather than silently
+            unassigning.
 
             '
           example: Xk9mZp
@@ -7182,11 +7528,11 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Iu6tMn
         incident_id:
           type: string
-          description: Public ID of the incident
+          description: ID of the incident
           example: In3pKr
         message:
           type:
@@ -7300,7 +7646,7 @@ components:
           example: 12345
         project_id:
           type: string
-          description: Public ID of the project
+          description: ID of the project
           example: Xk9mZp
         environment:
           type:
@@ -7325,22 +7671,33 @@ components:
           type:
           - object
           - 'null'
-          description: Request details when the error occurred
+          description: Request details when the error occurred. Fields not reported
+            are null.
           properties:
             url:
-              type: string
+              type:
+              - string
+              - 'null'
               description: Request URL
             component:
-              type: string
+              type:
+              - string
+              - 'null'
               description: Controller or component name
             action:
-              type: string
+              type:
+              - string
+              - 'null'
               description: Action name
             params:
-              type: object
+              type:
+              - object
+              - 'null'
               description: Request parameters
             session:
-              type: object
+              type:
+              - object
+              - 'null'
               description: Session data
         context:
           type: object
@@ -7390,6 +7747,8 @@ components:
             type: string
           example:
           - params
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     NoticeFrame:
       type: object
       properties:
@@ -7511,7 +7870,7 @@ components:
       properties:
         project_id:
           type: string
-          description: Public ID of the project this series belongs to
+          description: ID of the project this series belongs to
           example: Xk9mZp
         buckets:
           type: array
@@ -7542,11 +7901,11 @@ components:
       properties:
         self:
           type: string
-          format: uri
+          format: uri-reference
           description: This page
         first:
           type: string
-          format: uri
+          format: uri-reference
           description: First page
         prev:
           type:
@@ -7558,10 +7917,6 @@ components:
           - string
           - 'null'
           description: Next page, or null on the last page
-        last:
-          type: string
-          format: uri
-          description: Last page
     Outage:
       type: object
       description: An uptime outage period
@@ -7570,6 +7925,7 @@ components:
       - site_id
       - down_at
       - created_at
+      - links
       properties:
         id:
           type: string
@@ -7600,17 +7956,14 @@ components:
           type: string
           format: date-time
           description: When the outage record was created
-        details_url:
-          type: string
-          description: URL of the site's page in the Honeybadger UI
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     Pagination:
       type: object
       description: Offset-based pagination information
       required:
       - page
       - per_page
-      - total_count
-      - total_pages
       properties:
         page:
           type: integer
@@ -7623,16 +7976,6 @@ components:
           minimum: 1
           maximum: 100
           example: 25
-        total_count:
-          type: integer
-          description: Total number of items across all pages
-          minimum: 0
-          example: 142
-        total_pages:
-          type: integer
-          description: Total number of pages
-          minimum: 0
-          example: 6
     Project:
       type: object
       description: A Honeybadger project
@@ -7641,14 +7984,15 @@ components:
       - account_id
       - name
       - active
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Xk9mZp
         account_id:
           type: string
-          description: Public ID of the account this project belongs to
+          description: ID of the account this project belongs to
           example: Ab3kL9
         name:
           type: string
@@ -7747,11 +8091,17 @@ components:
           type: string
           format: date-time
           description: When the project was created
+        links:
+          "$ref": "#/components/schemas/WebLinks"
+    ProjectCreateInput:
+      description: Attributes for creating a project.
+      allOf:
+      - "$ref": "#/components/schemas/ProjectInput"
+      - required:
+        - name
     ProjectInput:
       type: object
       description: Writable project attributes
-      required:
-      - name
       properties:
         name:
           type: string
@@ -7794,8 +8144,6 @@ components:
             never returns it.
 
             '
-        pivotal_project_id:
-          type: string
         asana_workspace_id:
           type: string
         customer_throttle:
@@ -7803,10 +8151,11 @@ components:
           description: Notices accepted per minute before throttling kicks in
         team_id:
           type: string
-          description: 'Public ID of a team on this account, granting it access when
-            the project is created. A team from another account resolves to nothing
-            rather than being attached. Create only — afterwards manage access through
-            the team''s projects.
+          description: 'ID of a team on this account to grant project access. Including
+            this field on create or update requires team:write in addition to the
+            operation''s project scope, and the user must be allowed to manage the
+            team. Without team:write the entire request is rejected with 403 insufficient_scope;
+            no other fields are saved. Unknown or foreign teams return 404.
 
             '
           example: Ab3kL9
@@ -7825,11 +8174,11 @@ components:
       properties:
         id:
           type: string
-          description: Public identifier for this key. Use it in paths.
+          description: Identifier for this key. Use it in paths.
           example: Kp7mZq2x
         project_id:
           type: string
-          description: Public identifier of the project the key belongs to.
+          description: Identifier of the project the key belongs to.
           example: Xk9mZp
         key:
           type: string
@@ -7869,6 +8218,7 @@ components:
       - name
       - url
       - active
+      - links
       properties:
         id:
           type: string
@@ -7877,7 +8227,7 @@ components:
           example: 9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47
         project_id:
           type: string
-          description: Public ID of the project this site belongs to
+          description: ID of the project this site belongs to
           example: Xk9mZp
         name:
           type: string
@@ -7956,12 +8306,18 @@ components:
           type: string
           format: date-time
           description: When the site was created
+        links:
+          "$ref": "#/components/schemas/WebLinks"
+    SiteCreateInput:
+      description: Attributes for creating a site.
+      allOf:
+      - "$ref": "#/components/schemas/SiteInput"
+      - required:
+        - name
+        - url
     SiteInput:
       type: object
       description: Writable uptime-check site attributes
-      required:
-      - name
-      - url
       properties:
         name:
           type: string
@@ -8053,14 +8409,15 @@ components:
       - account_id
       - name
       - url
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Sp7bMq
         account_id:
           type: string
-          description: Public ID of the account this status page belongs to
+          description: ID of the account this status page belongs to
           example: Ab3kL9
         name:
           type: string
@@ -8123,7 +8480,7 @@ components:
             properties:
               check_in_id:
                 type: string
-                description: Public ID of the check-in
+                description: ID of the check-in
               display_name:
                 type:
                 - string
@@ -8143,6 +8500,8 @@ components:
                 - 'null'
                 format: date-time
                 description: When the check-in last reported
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     StatusPageIncident:
       type: object
       description: 'An incident on a status page. An incident is a container for a
@@ -8154,14 +8513,15 @@ components:
       - title
       - build_type
       - updates
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: In3pKr
         status_page_id:
           type: string
-          description: Public ID of the status page
+          description: ID of the status page
           example: Sp7bMq
         title:
           type: string
@@ -8225,6 +8585,8 @@ components:
           description: The incident's thread, newest first. Always at least one update.
           items:
             "$ref": "#/components/schemas/IncidentUpdate"
+        links:
+          "$ref": "#/components/schemas/WebLinks"
     StatusPageIncidentCreateInput:
       type: object
       description: An incident and, optionally, the updates it opens with
@@ -8264,11 +8626,15 @@ components:
           type: boolean
         retro_notify_message:
           type: string
+    StatusPageCreateInput:
+      description: Attributes for creating a status-page.
+      allOf:
+      - "$ref": "#/components/schemas/StatusPageInput"
+      - required:
+        - name
     StatusPageInput:
       type: object
       description: Writable status-page attributes
-      required:
-      - name
       properties:
         name:
           type: string
@@ -8333,7 +8699,7 @@ components:
             properties:
               check_in_id:
                 type: string
-                description: Public ID of a check-in on this account
+                description: ID of a check-in on this account
               display_name:
                 type: string
               description:
@@ -8373,7 +8739,7 @@ components:
             '
         project_id:
           type: string
-          description: Public ID of the project this stream belongs to
+          description: ID of the project this stream belongs to
           example: Xk9mZp
         created_at:
           type: string
@@ -8385,14 +8751,15 @@ components:
       - id
       - account_id
       - name
+      - links
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Tm8qJv
         account_id:
           type: string
-          description: Public ID of the account this team belongs to
+          description: ID of the account this team belongs to
           example: Ab3kL9
         name:
           type: string
@@ -8409,21 +8776,26 @@ components:
           type: array
           items:
             type: string
-          description: Public IDs of projects assigned to this team
+          description: IDs of projects assigned to this team
+        links:
+          "$ref": "#/components/schemas/WebLinks"
+    TeamCreateInput:
+      description: Attributes for creating a team.
+      allOf:
+      - "$ref": "#/components/schemas/TeamInput"
+      - required:
+        - name
     TeamInput:
       type: object
       description: Writable team attributes
-      required:
-      - name
       properties:
         name:
           type: string
           example: Platform
         project_ids:
           type: array
-          description: 'Public IDs of projects this team can access. IDs outside the
-            account resolve to nothing rather than granting access to another tenant''s
-            project.
+          description: 'IDs of projects this team can access. IDs outside the account
+            resolve to nothing rather than granting access to another tenant''s project.
 
             '
           items:
@@ -8438,11 +8810,11 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Ti2hNp
         team_id:
           type: string
-          description: Public ID of the team
+          description: ID of the team
           example: Tm8qJv
         email:
           type: string
@@ -8476,7 +8848,7 @@ components:
           properties:
             id:
               type: string
-              description: Public ID of the user
+              description: ID of the user
             name:
               type:
               - string
@@ -8493,7 +8865,7 @@ components:
           properties:
             id:
               type: string
-              description: Public ID of the user
+              description: ID of the user
             name:
               type:
               - string
@@ -8502,11 +8874,15 @@ components:
             email:
               type: string
               description: User email
+    TeamInvitationCreateInput:
+      description: Attributes for creating a team-invitation.
+      allOf:
+      - "$ref": "#/components/schemas/TeamInvitationInput"
+      - required:
+        - email
     TeamInvitationInput:
       type: object
       description: Writable team-invitation attributes
-      required:
-      - email
       properties:
         email:
           type: string
@@ -8528,15 +8904,15 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Mm5rWk
         team_id:
           type: string
-          description: Public ID of the team
+          description: ID of the team
           example: Tm8qJv
         user_id:
           type: string
-          description: Public ID of the user
+          description: ID of the user
           example: Uz4wKm
         admin:
           type: boolean
@@ -8572,7 +8948,7 @@ components:
       properties:
         self:
           type: string
-          format: uri
+          format: uri-reference
           description: This page
         older:
           type:
@@ -8662,7 +9038,7 @@ components:
       properties:
         id:
           type: string
-          description: Unique public identifier
+          description: Unique identifier
           example: Uz4wKm
         email:
           type: string
@@ -8675,6 +9051,22 @@ components:
           - 'null'
           description: User display name
           example: Jane Smith
+    WebLinks:
+      type: object
+      description: Links into the Honeybadger web UI
+      readOnly: true
+      required:
+      - web
+      properties:
+        web:
+          type: string
+          format: uri
+          description: 'Absolute URL of this resource''s page in the Honeybadger web
+            UI, on the web UI''s host rather than the API''s. For a project provisioned
+            through Heroku, error, notice and comment links go through Heroku''s single
+            sign-on, on Heroku''s host.
+
+            '
   parameters:
     ProjectId:
       name: project_id
@@ -8857,6 +9249,32 @@ components:
       schema:
         type: string
   responses:
+    MergedFault:
+      description: 'This fault was merged into another fault. Location identifies
+        the surviving fault''s resource URL, including when the request targeted a
+        subresource or mutation of the merged fault.
+
+        '
+      headers:
+        Location:
+          required: true
+          description: Absolute URL of the surviving fault.
+          schema:
+            type: string
+            format: uri
+    AlarmServiceUnavailable:
+      description: The alarm service could not be reached or failed to handle the
+        request.
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: service_unavailable
+              message: Alarm service unavailable, please try again later
+            meta:
+              request_id: abc123
     Unauthorized:
       description: 'Authentication failed: the credential was missing, malformed,
         expired, revoked, or presented in a way v3 does not accept. `error.code` says

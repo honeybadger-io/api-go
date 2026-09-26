@@ -45,8 +45,8 @@ type AlarmHistoryEntry = map[string]any
 // ListHistory returns one page of an alarm's state changes.
 //
 // This endpoint's pagination object is the query service's own — page and
-// total_pages only, without the per_page and total_count the rest of v3 reports —
-// so it is exposed as a plain page rather than through ListResponse.Pagination.
+// total_pages, with no per_page and no links — so it is exposed as a plain page
+// rather than through ListResponse.Pagination.
 func (s *AlarmsService) ListHistory(ctx context.Context, projectID, alarmID string, opts ...Option) ([]AlarmHistoryEntry, error) {
 	ro := resolve(opts)
 	// Page only: this endpoint takes no per_page, another consequence of it

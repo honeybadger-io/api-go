@@ -10,15 +10,19 @@ import (
 	"github.com/oapi-codegen/nullable"
 )
 
+// offsetPage builds one page of a collection holding total items. The server no
+// longer reports the total; it links a next page while items remain.
 func offsetPage(items []string, page, perPage, total int) *ListResponse[string] {
+	links := &OffsetLinks{Self: fmt.Sprintf("/things?page=%d", page)}
+	if page*perPage < total {
+		links.Next = nullable.NewNullableWithValue(fmt.Sprintf("/things?page=%d", page+1))
+	} else {
+		links.Next = nullable.NewNullNullable[string]()
+	}
 	return &ListResponse[string]{
-		Data: items,
-		Pagination: &Pagination{
-			Page:       page,
-			PerPage:    perPage,
-			TotalCount: total,
-			TotalPages: (total + perPage - 1) / perPage,
-		},
+		Data:       items,
+		Pagination: &Pagination{Page: page, PerPage: perPage},
+		Links:      links,
 	}
 }
 

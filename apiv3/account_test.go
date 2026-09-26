@@ -37,7 +37,7 @@ func TestMeReachesTheRequestPath(t *testing.T) {
 	var gotPath string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotPath = r.URL.Path
-		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25,"total_count":0,"total_pages":0}}`)
+		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25}}`)
 	}))
 	defer srv.Close()
 
@@ -56,7 +56,7 @@ func TestExplicitAccountDoesNotAlterPath(t *testing.T) {
 	var gotPath string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotPath = r.URL.Path
-		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25,"total_count":0,"total_pages":0}}`)
+		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25}}`)
 	}))
 	defer srv.Close()
 

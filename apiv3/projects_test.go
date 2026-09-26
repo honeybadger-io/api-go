@@ -24,7 +24,7 @@ func TestProjectsListDecodesEnvelope(t *testing.T) {
 		}
 		writeJSON(w, 0, `{
 		  "data":[{"id":"Xk9mZp","account_id":"Ab3kL9","name":"My Rails App","active":true}],
-		  "pagination":{"page":2,"per_page":50,"total_count":51,"total_pages":2},
+		  "pagination":{"page":2,"per_page":50},
 		  "links":{"next":"https://example.test/next"},
 		  "meta":{"request_id":"req_list"}
 		}`)
@@ -43,7 +43,7 @@ func TestProjectsListDecodesEnvelope(t *testing.T) {
 	if resp.Data[0].Id != "Xk9mZp" || resp.Data[0].Name != "My Rails App" {
 		t.Errorf("project = %+v", resp.Data[0])
 	}
-	if resp.Pagination == nil || resp.Pagination.TotalCount != 51 {
+	if resp.Pagination == nil || resp.Pagination.Page != 2 || resp.Pagination.PerPage != 50 {
 		t.Errorf("Pagination = %+v", resp.Pagination)
 	}
 	if resp.TimeSeries != nil {
@@ -83,10 +83,12 @@ func TestProjectsListAllWalksPages(t *testing.T) {
 		switch r.URL.Query().Get("page") {
 		case "", "1":
 			writeJSON(w, 0, `{"data":[{"id":"p1","account_id":"a","name":"One","active":true}],
-			  "pagination":{"page":1,"per_page":1,"total_count":2,"total_pages":2}}`)
+			  "pagination":{"page":1,"per_page":1},
+			  "links":{"self":"/v3/projects?page=1","next":"/v3/projects?page=2"}}`)
 		case "2":
 			writeJSON(w, 0, `{"data":[{"id":"p2","account_id":"a","name":"Two","active":true}],
-			  "pagination":{"page":2,"per_page":1,"total_count":2,"total_pages":2}}`)
+			  "pagination":{"page":2,"per_page":1},
+			  "links":{"self":"/v3/projects?page=2","next":null}}`)
 		default:
 			t.Errorf("unexpected page %q", r.URL.Query().Get("page"))
 		}

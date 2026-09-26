@@ -20,9 +20,13 @@ import (
 // reason; ProjectParams and FaultParams do not need to.
 //
 // Unset fields are omitted rather than sent empty, so an update touches only what
-// it was given — with one exception the API imposes, noted on CheckIns.Update.
+// it was given.
 
-// ProjectParams are the writable fields of a project.
+// ProjectCreateParams are the fields of a new project. Name is required.
+type ProjectCreateParams = gen.ProjectCreateInput
+
+// ProjectParams are the writable fields of an existing project. Every field is
+// optional; an update changes only what it sets.
 type ProjectParams = gen.ProjectInput
 
 // FaultParams are the writable fields of a fault: resolved, ignored, tags, and
@@ -31,16 +35,13 @@ type ProjectParams = gen.ProjectInput
 type FaultParams = gen.FaultInput
 
 // Create makes a new project. Name is the only required field.
-func (s *ProjectsService) Create(ctx context.Context, p ProjectParams, opts ...Option) (*Project, error) {
+func (s *ProjectsService) Create(ctx context.Context, p ProjectCreateParams, opts ...Option) (*Project, error) {
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateProject(ctx, p)
 	})
 }
 
-// Update changes a project.
-//
-// Name is required even when only another field is changing: the update body is
-// the same schema as create. Every other unset field is omitted.
+// Update changes a project. Unset fields are omitted and left unchanged.
 func (s *ProjectsService) Update(ctx context.Context, projectID string, p ProjectParams, opts ...Option) (*Project, error) {
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateProject(ctx, projectID, p)
@@ -87,21 +88,10 @@ type CheckInParams struct {
 	Slug string
 }
 
-// apply fills a generated request body, leaving unset fields absent so an update
-// touches only what it was given.
-func (p CheckInParams) apply(body *gen.CheckInInput) {
-	body.Name = p.Name
-	if p.ScheduleType != "" {
-		st := gen.CheckInInputScheduleType(p.ScheduleType)
-		body.ScheduleType = &st
-	}
-	for field, value := range map[**string]string{
-		&body.ReportPeriod: p.ReportPeriod,
-		&body.GracePeriod:  p.GracePeriod,
-		&body.CronSchedule: p.CronSchedule,
-		&body.CronTimezone: p.CronTimezone,
-		&body.Slug:         p.Slug,
-	} {
+// setOptional points each target at its value, leaving empty values absent so an
+// update touches only what it was given.
+func setOptional(fields map[**string]string) {
+	for field, value := range fields {
 		if value != "" {
 			v := value
 			*field = &v
@@ -109,26 +99,52 @@ func (p CheckInParams) apply(body *gen.CheckInInput) {
 	}
 }
 
+func (p CheckInParams) toCreate() gen.CheckInCreateInput {
+	body := gen.CheckInCreateInput{Name: p.Name}
+	if p.ScheduleType != "" {
+		st := gen.CheckInCreateInputScheduleType(p.ScheduleType)
+		body.ScheduleType = &st
+	}
+	setOptional(map[**string]string{
+		&body.ReportPeriod: p.ReportPeriod,
+		&body.GracePeriod:  p.GracePeriod,
+		&body.CronSchedule: p.CronSchedule,
+		&body.CronTimezone: p.CronTimezone,
+		&body.Slug:         p.Slug,
+	})
+	return body
+}
+
+func (p CheckInParams) toUpdate() gen.CheckInInput {
+	var body gen.CheckInInput
+	if p.ScheduleType != "" {
+		st := gen.CheckInInputScheduleType(p.ScheduleType)
+		body.ScheduleType = &st
+	}
+	setOptional(map[**string]string{
+		&body.Name:         p.Name,
+		&body.ReportPeriod: p.ReportPeriod,
+		&body.GracePeriod:  p.GracePeriod,
+		&body.CronSchedule: p.CronSchedule,
+		&body.CronTimezone: p.CronTimezone,
+		&body.Slug:         p.Slug,
+	})
+	return body
+}
+
 // Create makes a new check-in.
 func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
-	var body gen.CheckInInput
-	p.apply(&body)
+	body := p.toCreate()
 
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateCheckIn(ctx, projectID, body)
 	})
 }
 
-// Update changes a check-in.
-//
-// Name is required even when only another field is changing: the API's update body
-// is the same schema as create, with name mandatory. A caller changing just the
-// grace period still has to supply the current name.
-//
-// Every other empty field is omitted, so an update touches only what it was given.
+// Update changes a check-in. Empty fields are omitted and left unchanged, so a
+// caller changing just the grace period sends just the grace period.
 func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
-	var body gen.CheckInInput
-	p.apply(&body)
+	body := p.toUpdate()
 
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateCheckIn(ctx, projectID, checkInID, body)

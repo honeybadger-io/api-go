@@ -13,7 +13,7 @@ func TestFaultsListSendsSearchQuery(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		gotQuery = r.URL.Query().Get("q")
 		gotPath = r.URL.Path
-		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25,"total_count":0,"total_pages":0}}`)
+		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25}}`)
 	}))
 	defer srv.Close()
 
@@ -35,7 +35,7 @@ func TestFaultsListDecodesFaults(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 0, `{"data":[
 		  {"id":1,"project_id":"Xk9mZp","klass":"RuntimeError","message":"boom","notices_count":42}
-		],"pagination":{"page":1,"per_page":25,"total_count":1,"total_pages":1},
+		],"pagination":{"page":1,"per_page":25},
 		"meta":{"request_id":"req_faults"}}`)
 	}))
 	defer srv.Close()
