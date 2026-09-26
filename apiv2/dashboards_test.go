@@ -105,7 +105,8 @@ func TestDashboardsGet(t *testing.T) {
 		"shared": true,
 		"created_at": "2024-01-01T00:00:00Z",
 		"updated_at": "2024-01-02T00:00:00Z",
-		"project_id": 123
+		"project_id": 123,
+		"url": "https://app.honeybadger.io/projects/123/insights/dashboards/abc123"
 	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -145,6 +146,10 @@ func TestDashboardsGet(t *testing.T) {
 
 	if dashboard.ProjectID != 123 {
 		t.Errorf("expected project_id 123, got %d", dashboard.ProjectID)
+	}
+
+	if dashboard.URL != "https://app.honeybadger.io/projects/123/insights/dashboards/abc123" {
+		t.Errorf("expected dashboard UI url, got %q", dashboard.URL)
 	}
 }
 

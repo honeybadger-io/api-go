@@ -26,7 +26,8 @@ func TestInsightsQuery(t *testing.T) {
 			"total_rows": 2,
 			"start_at": "2024-01-01T00:00:00Z",
 			"end_at": "2024-01-01T03:00:00Z"
-		}
+		},
+		"url": "https://app.honeybadger.io/projects/123/insights/query?query=stats+count%28%29+by+event_type%3A%3Astr&timezone=UTC"
 	}`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -87,6 +88,10 @@ func TestInsightsQuery(t *testing.T) {
 
 	if response.Error != nil {
 		t.Errorf("expected no inline error, got %v", response.Error)
+	}
+
+	if response.URL != "https://app.honeybadger.io/projects/123/insights/query?query=stats+count%28%29+by+event_type%3A%3Astr&timezone=UTC" {
+		t.Errorf("expected query UI url, got %q", response.URL)
 	}
 }
 

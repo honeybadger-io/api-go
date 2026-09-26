@@ -41,6 +41,8 @@ type InsightsQueryResponse struct {
 	Results []map[string]interface{} `json:"results"`
 	Meta    InsightsQueryMeta        `json:"meta"`
 	Error   *InsightsQueryError      `json:"error,omitempty"`
+	// URL opens the query in the Honeybadger UI; set only on success.
+	URL string `json:"url,omitempty"`
 }
 
 // Query executes a BadgerQL query against the project's insights data.
