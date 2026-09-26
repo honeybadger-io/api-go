@@ -34,8 +34,7 @@ type TokenInfo struct {
 	// the API surface as it stood when the grant was consented to.
 	Scopes []string
 
-	// AccountID is the account the credential is bound to. Passing it as an
-	// explicit account is how a caller recovers from ambiguous_account.
+	// AccountID is the account the credential is bound to.
 	AccountID string
 
 	// ProjectIDs are the projects the credential can reach. Empty means an
