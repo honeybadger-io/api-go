@@ -36,14 +36,6 @@ const versionSegment = "/v3"
 // single response exhaust memory.
 const maxBodyBytes = 64 << 20 // 64 MiB
 
-// AccountMe is the account_id sentinel v3 resolves from the credential.
-//
-// Deprecated: v3 no longer carries account IDs in paths. The account is
-// resolved from the credential; a credential covering several accounts
-// returns 422 ambiguous_account and must be replaced with one scoped to a
-// single account.
-const AccountMe = "me"
-
 // RateLimit is a snapshot of the rate-limit headers from a response. v3 allows
 // 360 requests per hour.
 type RateLimit struct {
@@ -82,11 +74,10 @@ type RequestIDHook func(ctx context.Context, status int, requestID string)
 //
 // Both clients above are independent; configuring one never affects the other.
 type Client struct {
-	baseURL       string
-	bearerToken   string
-	httpClient    *http.Client
-	requestID     RequestIDHook
-	defaultAcctID string
+	baseURL     string
+	bearerToken string
+	httpClient  *http.Client
+	requestID   RequestIDHook
 
 	// rateLimit is the only mutable state, and it is observational: it records
 	// the most recent response's headers for callers that want to check their
@@ -153,11 +144,10 @@ func withoutRedirects(hc *http.Client) *http.Client {
 // different budget.
 func (c *Client) clone() *Client {
 	copied := &Client{
-		baseURL:       c.baseURL,
-		bearerToken:   c.bearerToken,
-		httpClient:    c.httpClient,
-		requestID:     c.requestID,
-		defaultAcctID: c.defaultAcctID,
+		baseURL:     c.baseURL,
+		bearerToken: c.bearerToken,
+		httpClient:  c.httpClient,
+		requestID:   c.requestID,
 	}
 	return copied.rebind()
 }
@@ -222,27 +212,6 @@ func (c *Client) WithRequestIDHook(hook RequestIDHook) *Client {
 	next := c.clone()
 	next.requestID = hook
 	return next
-}
-
-// WithAccountID returns a client that uses the given account for every request,
-// replacing the `me` sentinel. Needed only for a credential covering more than
-// one account; a per-call InAccount option still takes precedence.
-func (c *Client) WithAccountID(id string) *Client {
-	next := c.clone()
-	next.defaultAcctID = id
-	return next
-}
-
-// accountID resolves which account a call should use: the per-call value, then
-// the client default, then the `me` sentinel.
-func (c *Client) accountID(perCall string) string {
-	if perCall != "" {
-		return perCall
-	}
-	if c.defaultAcctID != "" {
-		return c.defaultAcctID
-	}
-	return AccountMe
 }
 
 // LastRateLimit returns a snapshot of the rate-limit headers from the most

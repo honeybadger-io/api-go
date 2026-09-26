@@ -10,7 +10,7 @@ import (
 // carries none:
 //
 //	c.Faults.Get(ctx, projectID, faultID)
-//	c.Faults.Get(ctx, projectID, faultID, apiv3.InAccount("Ab3kL9"))
+//	c.Faults.List(ctx, projectID, apiv3.Page(2, 50))
 //
 // Options that do not apply to an operation are ignored rather than rejected —
 // each operation reads only the fields it understands. The exception is paging:
@@ -33,14 +33,13 @@ type ListAllOption interface {
 
 // requestOptions is the resolved set of per-request settings.
 type requestOptions struct {
-	accountID string
-	page      int
-	perPage   int
-	limit     int
-	before    string
-	after     string
-	query     string
-	order     string
+	page    int
+	perPage int
+	limit   int
+	before  string
+	after   string
+	query   string
+	order   string
 
 	// Time filters, as Unix seconds. Zero means unset — these endpoints have no
 	// meaningful use for the epoch.
@@ -97,19 +96,6 @@ func resolveListAll(opts []ListAllOption) requestOptions {
 		}
 	}
 	return ro
-}
-
-// accountOption selects the account a request addresses.
-type accountOption struct{ id string }
-
-func (o accountOption) apply(ro *requestOptions) { ro.accountID = o.id }
-func (o accountOption) listAll()                 {}
-
-// InAccount addresses a specific account instead of resolving one from the
-// credential. Needed when a credential covers more than one account, which is
-// the case that returns ambiguous_account.
-func InAccount(accountID string) ListAllOption {
-	return accountOption{id: accountID}
 }
 
 // pageOption selects one page of an offset-paginated collection.

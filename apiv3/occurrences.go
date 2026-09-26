@@ -29,10 +29,6 @@ type OccurrenceOptions struct {
 
 	// Environment counts only notices from faults in that environment.
 	Environment string
-
-	// AccountID addresses a specific account rather than resolving one from the
-	// credential.
-	AccountID string
 }
 
 // Occurrences returns notice counts over time for one project.
