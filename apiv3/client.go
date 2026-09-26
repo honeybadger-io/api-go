@@ -128,8 +128,23 @@ type Client struct {
 func NewClient() *Client {
 	return (&Client{
 		baseURL:    DefaultBaseURL,
-		httpClient: &http.Client{Timeout: 30 * time.Second},
+		httpClient: withoutRedirects(&http.Client{Timeout: 30 * time.Second}),
 	}).rebind()
+}
+
+// withoutRedirects returns a copy of hc that hands redirects back instead of
+// following them.
+//
+// The API redirects a request for a merged fault to the surviving one, and
+// net/http follows a 301 on POST, PUT or DELETE as a body-less GET. Followed, a
+// delete or assign of a merged fault would fetch the survivor and report success
+// having changed nothing. do turns the redirect into ErrFaultMerged instead.
+func withoutRedirects(hc *http.Client) *http.Client {
+	copied := *hc
+	copied.CheckRedirect = func(*http.Request, []*http.Request) error {
+		return http.ErrUseLastResponse
+	}
+	return &copied
 }
 
 // clone copies the configuration into a fresh Client with its own services and
@@ -188,12 +203,16 @@ func (c *Client) WithBearerToken(token string) *Client {
 // WithHTTPClient returns a client using the given HTTP client, for callers that
 // need their own transport, timeout, or instrumentation. A nil argument is
 // ignored, keeping the existing client rather than panicking on first use.
+//
+// The client is copied and its CheckRedirect replaced so redirects are never
+// followed: a followed redirect turns a write to a merged fault into a silent
+// no-op. hc itself is not modified.
 func (c *Client) WithHTTPClient(hc *http.Client) *Client {
 	if hc == nil {
 		return c
 	}
 	next := c.clone()
-	next.httpClient = hc
+	next.httpClient = withoutRedirects(hc)
 	return next
 }
 
@@ -318,10 +337,24 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int
 		apiErr := parseError(resp.StatusCode, body)
 		apiErr.Message = "reading response body: " + readErr.Error()
 		apiErr.RateLimit = rateLimit
+		apiErr.cause = readErr
 		return resp.StatusCode, nil, apiErr
 	}
 
 	c.reportRequestID(ctx, resp.StatusCode, body)
+
+	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
+		apiErr := parseError(resp.StatusCode, body)
+		apiErr.RateLimit = rateLimit
+		apiErr.Location = resp.Header.Get("Location")
+		apiErr.Message = "redirected to " + apiErr.Location
+		// The only redirect the API documents is a merged fault's 301.
+		if resp.StatusCode == http.StatusMovedPermanently && apiErr.Location != "" {
+			apiErr.Code = CodeFaultMerged
+			apiErr.Message = "fault was merged into " + apiErr.Location
+		}
+		return resp.StatusCode, nil, apiErr
+	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		apiErr := parseError(resp.StatusCode, body)

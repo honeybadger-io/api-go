@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -39,6 +41,12 @@ const (
 	CodeForbiddenAttributes   Code = "forbidden_attributes"
 	CodeServiceUnavailable    Code = "service_unavailable"
 	CodeAmbiguousAccount      Code = "ambiguous_account"
+
+	// CodeFaultMerged is set by the client, not sent by the API. The API answers
+	// a request for a merged fault with a 301 to the surviving fault and no body;
+	// the client reports that as an error rather than following it, so it needs a
+	// code of its own. See Error.MergedInto.
+	CodeFaultMerged Code = "fault_merged"
 )
 
 // Sentinels for errors.Is. Each matches any Error carrying the same code.
@@ -63,6 +71,7 @@ var (
 	ErrForbiddenAttributes   = &Error{Code: CodeForbiddenAttributes}
 	ErrServiceUnavailable    = &Error{Code: CodeServiceUnavailable}
 	ErrAmbiguousAccount      = &Error{Code: CodeAmbiguousAccount}
+	ErrFaultMerged           = &Error{Code: CodeFaultMerged}
 )
 
 // FieldError is one entry from a validation error's details.
@@ -93,6 +102,40 @@ type Error struct {
 	// Body is the raw response body, kept for diagnosing responses that do not
 	// match the documented envelope.
 	Body []byte
+
+	// Location is the redirect target of a 3xx response. For a merged fault it is
+	// the surviving fault's URL.
+	Location string
+
+	// cause is the underlying failure when the error did not come from the API's
+	// own response, such as a body read cut off by cancellation.
+	cause error
+}
+
+// Unwrap exposes the underlying failure, so errors.Is(err, context.Canceled)
+// works when a request was cancelled mid-response.
+func (e *Error) Unwrap() error { return e.cause }
+
+// MergedInto returns the surviving fault's id when the requested fault was
+// merged into another. ok is false for any other error, or when Location does
+// not name a fault.
+func (e *Error) MergedInto() (faultID int, ok bool) {
+	if e.Code != CodeFaultMerged {
+		return 0, false
+	}
+	u, err := url.Parse(e.Location)
+	if err != nil {
+		return 0, false
+	}
+	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+	for i := 0; i+1 < len(parts); i++ {
+		if parts[i] == "faults" {
+			if id, err := strconv.Atoi(parts[i+1]); err == nil && id > 0 {
+				return id, true
+			}
+		}
+	}
+	return 0, false
 }
 
 func (e *Error) Error() string {
