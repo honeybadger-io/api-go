@@ -39,6 +39,10 @@ type InsightsQuery struct {
 	Timezone string
 }
 
+// WebLinks are links into the Honeybadger web UI. v3 resources carry them as
+// Links, and so does a query result.
+type WebLinks = gen.WebLinks
+
 // InsightsResult is the outcome of a query.
 //
 // Data is deliberately untyped. The spec declines to pin the shape: it varies by
@@ -51,6 +55,10 @@ type InsightsResult struct {
 	Data      map[string]any `json:"data"`
 	Meta      map[string]any `json:"meta,omitempty"`
 	RequestID string         `json:"request_id,omitempty"`
+
+	// Links.Web re-runs the query in the Honeybadger web UI, with the same time
+	// range, streams and timezone. Present even when Data carries a query error.
+	Links WebLinks `json:"links"`
 }
 
 // Query runs a BadgerQL query against the project's event streams.
@@ -93,8 +101,9 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 	// the unwrapping once the server embeds the result properly; the object path
 	// needs no change when that happens.
 	var envelope struct {
-		Data json.RawMessage `json:"data"`
-		Meta map[string]any  `json:"meta"`
+		Data  json.RawMessage `json:"data"`
+		Meta  map[string]any  `json:"meta"`
+		Links WebLinks        `json:"links"`
 	}
 	if err := json.Unmarshal(raw, &envelope); err != nil {
 		return nil, malformed(status, raw, err)
@@ -105,7 +114,7 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 		return nil, malformed(status, raw, err)
 	}
 
-	result := &InsightsResult{Data: data, Meta: envelope.Meta}
+	result := &InsightsResult{Data: data, Meta: envelope.Meta, Links: envelope.Links}
 	if id, ok := envelope.Meta["request_id"].(string); ok {
 		result.RequestID = id
 	}

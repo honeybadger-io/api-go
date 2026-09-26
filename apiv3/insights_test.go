@@ -82,7 +82,8 @@ func TestInsightsQueryPassesResultThrough(t *testing.T) {
 		  "results":[{"count":42,"bucket":"2026-07-29T00:00:00Z"}],
 		  "fields":["count","bucket"],
 		  "total_rows":1
-		},"meta":{"request_id":"req_q"}}`)
+		},"links":{"web":"https://app.honeybadger.io/projects/1/insights?query=count%28%29"},
+		  "meta":{"request_id":"req_q"}}`)
 	}))
 	defer srv.Close()
 
@@ -105,6 +106,10 @@ func TestInsightsQueryPassesResultThrough(t *testing.T) {
 	}
 	if res.Data["total_rows"] != float64(1) {
 		t.Errorf("total_rows = %v", res.Data["total_rows"])
+	}
+	// The UI link rides in links.web, like every v3 resource's.
+	if want := "https://app.honeybadger.io/projects/1/insights?query=count%28%29"; res.Links.Web != want {
+		t.Errorf("Links.Web = %q, want %q", res.Links.Web, want)
 	}
 }
 
