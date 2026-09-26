@@ -6019,6 +6019,8 @@ components:
             value:
               type: number
               format: double
+              description: Threshold to compare against. `alert_result_count` takes
+                a whole number >= 0.
               example: 10
     AlarmHistoryEntry:
       type: object

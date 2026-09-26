@@ -1512,8 +1512,10 @@ type AlarmTriggerConfig struct {
 
 // AlarmTriggerConfig_Config defines model for AlarmTriggerConfig.Config.
 type AlarmTriggerConfig_Config struct {
-	Operator *string  `json:"operator,omitempty"`
-	Value    *float64 `json:"value,omitempty"`
+	Operator *string `json:"operator,omitempty"`
+
+	// Value Threshold to compare against. `alert_result_count` takes a whole number >= 0.
+	Value *float64 `json:"value,omitempty"`
 }
 
 // AlarmUpdateInput Writable alarm attributes
