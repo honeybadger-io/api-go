@@ -25,10 +25,8 @@ import (
 // Its fields are unexported and it is built through the three constructors
 // below, so the three intents stay distinct: named faults, faults matching a
 // search, or every fault in the project. A struct with both ids and a query set
-// is not constructible, which matters because the spec and the app disagree about
-// what that would mean — the spec says the query is ignored when ids are present,
-// while the Rails side filters by query first and applies the ids to the result.
-// A destructive operation should not depend on which of those is true.
+// is not constructible: the endpoint ignores the query and time filters whenever
+// ids are present, so such a request would read as a narrowing and not be one.
 //
 // The zero value is not a valid selection: see ErrEveryFault.
 type FaultSelection struct {
