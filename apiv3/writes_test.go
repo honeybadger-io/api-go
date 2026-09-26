@@ -215,7 +215,7 @@ func TestWriteInsufficientScopeNamesScope(t *testing.T) {
 		`{"error":{"code":"insufficient_scope","message":"Insufficient scope",
 		  "details":{"required_scope":"faults:write","token_scopes":["faults:read"]}}}`)
 
-	err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults(1))
+	_, err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults(1))
 	var apiErr *Error
 	if !asError(err, &apiErr) {
 		t.Fatalf("err = %T, want *apiv3.Error", err)

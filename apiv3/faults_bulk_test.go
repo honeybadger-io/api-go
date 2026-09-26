@@ -9,9 +9,9 @@ import (
 )
 
 func TestBulkFaultChangeSendsIDs(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
-	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(1, 2)); err != nil {
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(1, 2)); err != nil {
 		t.Fatalf("Resolve: %v", err)
 	}
 
@@ -31,9 +31,9 @@ func TestBulkFaultChangeSendsIDs(t *testing.T) {
 // must not reach the wire as both — it would read as a filter that silently did
 // nothing.
 func TestBulkFaultChangeByQueryOmitsIDs(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
-	if err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaultsMatching("is:unresolved")); err != nil {
+	if _, err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaultsMatching("is:unresolved")); err != nil {
 		t.Fatalf("Ignore: %v", err)
 	}
 
@@ -45,21 +45,40 @@ func TestBulkFaultChangeByQueryOmitsIDs(t *testing.T) {
 	}
 }
 
-// An empty selection is the whole project. The API accepts it — the body is
-// optional now — so refusing it is the client's job.
+// A bulk change on a fault from another project succeeds with a count of zero,
+// so the count has to reach the caller or the no-op reads as a success.
+func TestBulkFaultChangeReturnsTheCount(t *testing.T) {
+	c, _ := captureWrite(t, http.StatusOK,
+		`{"data":{"count":0,"dry_run":false,"fault_ids":[],"fault_ids_truncated":false}}`)
+
+	result, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(99))
+	if err != nil {
+		t.Fatalf("Resolve: %v", err)
+	}
+	if result.Count != 0 || result.DryRun {
+		t.Errorf("result = %+v, want count 0, not a dry run", result)
+	}
+}
+
+// An empty selection is refused before it is sent: the endpoint would reject it
+// anyway without all=true, and the client can say why.
 func TestBulkFaultChangeRefusesEmptySelection(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
+	call := func(f func(context.Context, string, FaultSelection, ...Option) (*FaultBulkResult, error), sel FaultSelection) func() error {
+		return func() error { _, err := f(context.Background(), "Xk9mZp", sel); return err }
+	}
 
 	for _, tc := range []struct {
 		name string
 		call func() error
 	}{
-		{"resolve", func() error { return c.Faults.Resolve(context.Background(), "Xk9mZp", FaultSelection{}) }},
-		{"unresolve", func() error { return c.Faults.Unresolve(context.Background(), "Xk9mZp", FaultSelection{}) }},
-		{"ignore", func() error { return c.Faults.Ignore(context.Background(), "Xk9mZp", FaultSelection{}) }},
-		{"unignore", func() error { return c.Faults.Unignore(context.Background(), "Xk9mZp", FaultSelection{}) }},
+		{"resolve", call(c.Faults.Resolve, FaultSelection{})},
+		{"unresolve", call(c.Faults.Unresolve, FaultSelection{})},
+		{"ignore", call(c.Faults.Ignore, FaultSelection{})},
+		{"unignore", call(c.Faults.Unignore, FaultSelection{})},
 		{"blank query", func() error {
-			return c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaultsMatching("  "))
+			_, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaultsMatching("  "))
+			return err
 		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -74,22 +93,55 @@ func TestBulkFaultChangeRefusesEmptySelection(t *testing.T) {
 	}
 }
 
-// The path fault is the source and is destroyed; the body names the keeper. Sent
-// the wrong way round, a merge deletes the fault the caller meant to keep.
-// The whole project is a real intent, but it has to be stated. This must send an
-// empty body rather than a wildcard query: the search runs against notices, so
-// "*" would miss a fault whose notices are not searchable.
-func TestSelectAllFaultsSendsNoFilter(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+// The whole project is a real intent, but it has to be stated: the endpoint
+// refuses an unfiltered change without all=true. It must not become a wildcard
+// query either — the search runs against notices, so "*" would miss a fault whose
+// notices are not searchable.
+func TestSelectAllFaultsSendsAll(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
-	if err := c.Faults.Unignore(context.Background(), "Xk9mZp", SelectAllFaults()); err != nil {
+	if _, err := c.Faults.Unignore(context.Background(), "Xk9mZp", SelectAllFaults()); err != nil {
 		t.Fatalf("Unignore: %v", err)
 	}
-	if len(got.body) != 0 {
-		t.Errorf("body = %v, want no filter", got.body)
+	if got.body["all"] != true {
+		t.Errorf("all = %v, want true", got.body["all"])
+	}
+	for _, absent := range []string{"q", "fault_ids"} {
+		if _, sent := got.body[absent]; sent {
+			t.Errorf("%s sent for the whole project: %v", absent, got.body)
+		}
 	}
 }
 
+// A dry run changes nothing server-side, so it must reach the wire, including
+// alongside named ids.
+func TestDryRunIsSent(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
+
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(1).DryRun()); err != nil {
+		t.Fatalf("Resolve: %v", err)
+	}
+	if got.body["dry_run"] != true {
+		t.Errorf("dry_run = %v, want true", got.body["dry_run"])
+	}
+}
+
+// The listing filters send fractional seconds, so the bulk filters must too, or
+// the same cutoff selects different faults in each.
+func TestBulkTimeFiltersKeepFractionalSeconds(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
+
+	sel := SelectAllFaults().OccurredBefore(time.Unix(1785300000, 500_000_000))
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); err != nil {
+		t.Fatalf("Resolve: %v", err)
+	}
+	if got.body["occurred_before"] != 1785300000.5 {
+		t.Errorf("occurred_before = %v, want 1785300000.5", got.body["occurred_before"])
+	}
+}
+
+// The path fault is the source and is destroyed; the body names the keeper. Sent
+// the wrong way round, a merge deletes the fault the caller meant to keep.
 func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 	c, got := captureWrite(t, http.StatusAccepted, `{"data":{
 		"batch_id":"WksB67FpRY3bZQ","source_id":201,"target_id":202}}`)
@@ -124,11 +176,11 @@ func TestMergeRefusesAFaultIntoItself(t *testing.T) {
 // Time filters bound a bulk change without naming ids. They apply only when
 // fault_ids is omitted, so they compose with a query and not with a list.
 func TestBulkFaultChangeSendsTimeFilters(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
 	cutoff := time.Unix(1785300000, 0)
 
 	sel := SelectFaultsMatching("is:unresolved").OccurredBefore(cutoff)
-	if err := c.Faults.Ignore(context.Background(), "Xk9mZp", sel); err != nil {
+	if _, err := c.Faults.Ignore(context.Background(), "Xk9mZp", sel); err != nil {
 		t.Fatalf("Ignore: %v", err)
 	}
 	if got.body["q"] != "is:unresolved" {
@@ -141,10 +193,10 @@ func TestBulkFaultChangeSendsTimeFilters(t *testing.T) {
 
 // A time filter is itself a bound, so it is a complete selection on its own.
 func TestTimeFilterAloneIsABoundedSelection(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
 	sel := FaultSelection{}.CreatedAfter(time.Unix(1785300000, 0))
-	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); err != nil {
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); err != nil {
 		t.Fatalf("Resolve: %v", err)
 	}
 	if got.body["created_after"] != float64(1785300000) {
@@ -158,13 +210,17 @@ func TestTimeFilterAloneIsABoundedSelection(t *testing.T) {
 // Naming ids and also filtering is contradictory: the endpoint ignores the
 // filters when ids are present, so the request would not mean what it reads as.
 func TestIDsWithTimeFiltersIsRefused(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, "")
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
 	sel := SelectFaults(1).OccurredBefore(time.Unix(1785300000, 0))
-	if err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); !errors.Is(err, ErrFilteredIDs) {
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); !errors.Is(err, ErrFilteredIDs) {
 		t.Fatalf("err = %v, want ErrFilteredIDs", err)
 	}
 	if got.method != "" {
 		t.Errorf("request reached the server: %s", got.method)
 	}
 }
+
+// bulkResult is a typical bulk-change response: the endpoints answer 200 with a
+// count of what changed, not 204.
+const bulkResult = `{"data":{"count":1,"dry_run":false,"fault_ids":[1],"fault_ids_truncated":false}}`

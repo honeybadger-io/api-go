@@ -36,10 +36,18 @@ type FaultSelection struct {
 	query string
 	all   bool
 
-	// Unix seconds, zero meaning unset. The endpoint takes these as JSON numbers.
+	dryRun bool
+
+	// Unix seconds with a fractional part, zero meaning unset. The endpoint takes
+	// these as JSON numbers, and the fraction matters: the listing filters send it
+	// too, and the same cutoff must select the same faults in both.
 	createdAfter   float64
 	occurredAfter  float64
 	occurredBefore float64
+}
+
+func unixSeconds(t time.Time) float64 {
+	return float64(t.UnixNano()) / float64(time.Second)
 }
 
 // CreatedAfter restricts the change to faults first seen after t.
@@ -48,19 +56,26 @@ type FaultSelection struct {
 //
 //	apiv3.SelectFaultsMatching("is:unresolved").OccurredBefore(cutoff)
 func (sel FaultSelection) CreatedAfter(t time.Time) FaultSelection {
-	sel.createdAfter = float64(t.Unix())
+	sel.createdAfter = unixSeconds(t)
 	return sel
 }
 
 // OccurredAfter restricts the change to faults with a notice after t.
 func (sel FaultSelection) OccurredAfter(t time.Time) FaultSelection {
-	sel.occurredAfter = float64(t.Unix())
+	sel.occurredAfter = unixSeconds(t)
 	return sel
 }
 
 // OccurredBefore restricts the change to faults with no notice since t.
 func (sel FaultSelection) OccurredBefore(t time.Time) FaultSelection {
-	sel.occurredBefore = float64(t.Unix())
+	sel.occurredBefore = unixSeconds(t)
+	return sel
+}
+
+// DryRun reports what the change would do without doing it: no state change,
+// no comments, no timeline entries. The result has the same shape either way.
+func (sel FaultSelection) DryRun() FaultSelection {
+	sel.dryRun = true
 	return sel
 }
 
@@ -81,23 +96,23 @@ func SelectFaultsMatching(query string) FaultSelection {
 	return FaultSelection{query: query}
 }
 
-// SelectAllFaults changes every fault in the project.
+// SelectAllFaults changes every fault in the project, or every fault the chained
+// time filters match.
 //
-// This sends no filter at all, which is what the endpoint treats as "everything".
-// A wildcard query is not the same thing: the search runs against notices, so a
-// fault whose notices are not searchable would be missed by "*" and caught here.
+// It sends all=true, which the endpoint requires before it will make an
+// unbounded change. A wildcard query is not the same thing: the search runs
+// against notices, so a fault whose notices are not searchable would be missed by
+// "*" and caught here.
 func SelectAllFaults() FaultSelection {
 	return FaultSelection{all: true}
 }
 
-// ErrEveryFault is returned when a bulk change would apply to the whole project
-// without having asked to.
+// ErrEveryFault is returned when a bulk change names no faults and sets no
+// filter, without having asked for the whole project.
 //
-// The request body is optional and an absent one means "everything the filters
-// match", so the zero-value selection is not a no-op: it resolves, ignores or
-// unignores every fault in the project. That is a plausible typo and an
-// implausible intention, so it is refused here rather than sent. Use
-// SelectAllFaults when the whole project really is the intent.
+// The endpoint refuses such a body unless it carries all=true, so sending it
+// would only earn a 422. It is refused here instead, with the fix in the message.
+// Use SelectAllFaults when the whole project really is the intent.
 var ErrEveryFault = errors.New(
 	"apiv3: a bulk fault change with no ids and no query applies to every fault in the project — " +
 		"name the faults with SelectFaults, filter them with SelectFaultsMatching, or say so " +
@@ -115,15 +130,25 @@ var ErrFilteredIDs = errors.New(
 
 // body renders the selection, or refuses one that is unbounded or contradictory.
 func (sel FaultSelection) body() (*gen.ResolveFaultsJSONRequestBody, error) {
+	body := &gen.ResolveFaultsJSONRequestBody{}
+	if sel.dryRun {
+		t := true
+		body.DryRun = &t
+	}
+
 	if len(sel.ids) > 0 {
 		if sel.filtered() {
 			return nil, ErrFilteredIDs
 		}
 		ids := sel.ids
-		return &gen.ResolveFaultsJSONRequestBody{FaultIds: &ids}, nil
+		body.FaultIds = &ids
+		return body, nil
 	}
 
-	body := &gen.ResolveFaultsJSONRequestBody{}
+	if sel.all {
+		t := true
+		body.All = &t
+	}
 	if query := strings.TrimSpace(sel.query); query != "" {
 		body.Q = &query
 	}
@@ -146,52 +171,60 @@ func (sel FaultSelection) body() (*gen.ResolveFaultsJSONRequestBody, error) {
 	return body, nil
 }
 
+// FaultBulkResult reports what a bulk change did.
+//
+// Count is exact and counts what changed rather than what matched: resolving ten
+// faults of which nine were already resolved reports 1. A request naming ids from
+// another project succeeds with Count 0, so a caller that expected a change must
+// check it. FaultIds is capped at 100; FaultIdsTruncated says when it was.
+type FaultBulkResult = gen.FaultBulkResult
+
 // The four bulk endpoints share one body schema, so they share one Go type: the
 // generated Unresolve/Ignore/Unignore bodies are structurally identical and
 // convertible.
 
 // Resolve marks faults as resolved.
-func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
+func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ResolveFaults(ctx, projectID, *body)
 	})
 }
 
 // Unresolve returns faults to the unresolved state.
-func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
+func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UnresolveFaults(ctx, projectID,
 			gen.UnresolveFaultsJSONRequestBody(*body))
 	})
 }
 
 // Ignore marks faults as ignored, which also stops collecting data for them.
-func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
+func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().IgnoreFaults(ctx, projectID,
 			gen.IgnoreFaultsJSONRequestBody(*body))
 	})
 }
 
 // Unignore stops ignoring faults.
-func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) error {
+func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UnignoreFaults(ctx, projectID,
 			gen.UnignoreFaultsJSONRequestBody(*body))
 	})
