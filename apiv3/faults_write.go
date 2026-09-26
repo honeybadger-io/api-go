@@ -297,14 +297,17 @@ func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID in
 	})
 }
 
+// Comment is a comment on a fault.
+type Comment = gen.Comment
+
 // AddComment attaches a comment to a fault.
 //
 // Commenting attributes text to a person, so an account token holding
 // faults:write is still refused with requires_user_token — there is nobody to
 // attribute it to. Check errors.Is(err, ErrRequiresUserToken).
-func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID int, comment string, opts ...Option) error {
+func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID int, comment string, opts ...Option) (*Comment, error) {
 	body := gen.CreateCommentJSONRequestBody{Body: comment}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateComment(ctx, projectID, faultID, body)
 	})
 }
@@ -327,17 +330,17 @@ func (s *FaultsService) Update(ctx context.Context, projectID string, faultID in
 // Assign gives a fault to a user.
 //
 // The id must belong to a member of the project; one that does not is rejected
-// with 422 rather than silently unassigning.
-func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID int, assigneeID string, opts ...Option) error {
+// with 422 rather than silently unassigning. Returns the fault as it now stands.
+func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID int, assigneeID string, opts ...Option) (*Fault, error) {
 	body := gen.AssignFaultJSONRequestBody{AssigneeId: assigneeID}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().AssignFault(ctx, projectID, faultID, body)
 	})
 }
 
-// Unassign removes a fault's assignee.
-func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID int, opts ...Option) error {
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+// Unassign removes a fault's assignee and returns the fault as it now stands.
+func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID int, opts ...Option) (*Fault, error) {
+	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UnassignFault(ctx, projectID, faultID)
 	})
 }

@@ -76,7 +76,7 @@ func TestCustomHTTPClientDoesNotFollowRedirects(t *testing.T) {
 	own := &http.Client{}
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").WithHTTPClient(own)
 
-	if err := c.Faults.Unassign(context.Background(), "Xk9mZp", 1); !errors.Is(err, ErrFaultMerged) {
+	if _, err := c.Faults.Unassign(context.Background(), "Xk9mZp", 1); !errors.Is(err, ErrFaultMerged) {
 		t.Fatalf("err = %v, want ErrFaultMerged", err)
 	}
 	if len(seen()) != 1 {

@@ -89,7 +89,7 @@ func TestAddCommentRequiresUserToken(t *testing.T) {
 	c, _ := captureWrite(t, http.StatusForbidden,
 		`{"error":{"code":"requires_user_token","message":"This endpoint records the person who acted"}}`)
 
-	err := c.Faults.AddComment(context.Background(), "Xk9mZp", 1, "looking into it")
+	_, err := c.Faults.AddComment(context.Background(), "Xk9mZp", 1, "looking into it")
 	if !errors.Is(err, ErrRequiresUserToken) {
 		t.Fatalf("err = %v, want ErrRequiresUserToken", err)
 	}
@@ -339,11 +339,14 @@ func TestDashboardsCreatePassesWidgetsThrough(t *testing.T) {
 	}
 }
 
-// Assignment is expressible now, through a dedicated endpoint.
+// Assignment goes through a dedicated endpoint, which answers with the fault as
+// it now stands.
 func TestFaultsAssignAndUnassign(t *testing.T) {
-	c, got := captureWrite(t, http.StatusNoContent, "")
+	c, got := captureWrite(t, http.StatusOK,
+		`{"data":{"id":1,"project_id":"Xk9mZp","assignee":{"id":"usr_1","email":"a@example.com"}}}`)
 
-	if err := c.Faults.Assign(context.Background(), "Xk9mZp", 1, "usr_1"); err != nil {
+	fault, err := c.Faults.Assign(context.Background(), "Xk9mZp", 1, "usr_1")
+	if err != nil {
 		t.Fatalf("Assign: %v", err)
 	}
 	if got.method != http.MethodPost {
@@ -352,13 +355,38 @@ func TestFaultsAssignAndUnassign(t *testing.T) {
 	if got.body["assignee_id"] != "usr_1" {
 		t.Errorf("assignee_id = %v", got.body["assignee_id"])
 	}
+	if a, err := fault.Assignee.Get(); err != nil || a.Id == nil || *a.Id != "usr_1" {
+		t.Errorf("returned assignee = %+v, %v", a, err)
+	}
 
-	c2, got2 := captureWrite(t, http.StatusNoContent, "")
-	if err := c2.Faults.Unassign(context.Background(), "Xk9mZp", 1); err != nil {
+	c2, got2 := captureWrite(t, http.StatusOK,
+		`{"data":{"id":1,"project_id":"Xk9mZp","assignee":null}}`)
+	fault, err = c2.Faults.Unassign(context.Background(), "Xk9mZp", 1)
+	if err != nil {
 		t.Fatalf("Unassign: %v", err)
 	}
 	if got2.method != http.MethodDelete {
 		t.Errorf("unassign method = %q, want DELETE", got2.method)
+	}
+	if !fault.Assignee.IsNull() {
+		t.Errorf("returned assignee = %v, want null", fault.Assignee)
+	}
+}
+
+// A comment comes back as created, with its id.
+func TestAddCommentReturnsTheComment(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated,
+		`{"data":{"id":"cmt_1","fault_id":1,"body":"looking into it","created_at":"2026-09-26T00:00:00Z"}}`)
+
+	comment, err := c.Faults.AddComment(context.Background(), "Xk9mZp", 1, "looking into it")
+	if err != nil {
+		t.Fatalf("AddComment: %v", err)
+	}
+	if got.body["body"] != "looking into it" {
+		t.Errorf("sent body = %v", got.body)
+	}
+	if comment.Id != "cmt_1" || comment.FaultId != 1 {
+		t.Errorf("comment = %+v", comment)
 	}
 }
 
