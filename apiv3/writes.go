@@ -237,23 +237,41 @@ func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmPar
 	})
 }
 
-// AlarmUpdateParams are the fields an alarm update can change.
+// AlarmUpdateParams are the fields an alarm update can change. Nil fields are
+// omitted and left unchanged.
 //
-// Pointers rather than strings so absent and empty are distinguishable: leaving a
-// field nil keeps it, while pointing at "" clears it. With plain strings there
-// would be no way to remove a description.
+// Pointers rather than values so absent and empty are distinguishable: pointing
+// Description at "" clears it, which a plain string could not express.
+//
+// The trigger is not here yet. The update schema declares trigger_config as an
+// untyped object rather than the trigger schema create uses, so there is no typed
+// field to set; that is a spec fix, not something to hand-roll here.
 type AlarmUpdateParams struct {
 	Name        *string
 	Description *string
+
+	// Query is the BadgerQL query evaluated on each check.
+	Query *string
+
+	// EvaluationPeriod and LookbackLag are compact durations: "10m", "1h".
+	EvaluationPeriod *string
+	LookbackLag      *string
+
+	// StreamIDs replaces the streams the query runs against.
+	StreamIDs *[]string
 }
 
-// Update changes an alarm's name or description.
-//
-// Those are the only fields the update schema declares — unlike create, which
-// takes the query, trigger and evaluation settings. Changing an alarm's behaviour
-// is therefore not possible through the API; delete and recreate it.
+// Update changes an alarm, including its query and evaluation window, without
+// losing its history the way deleting and recreating it would.
 func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams, opts ...Option) (*Alarm, error) {
-	body := gen.AlarmUpdateInput{Name: p.Name, Description: p.Description}
+	body := gen.AlarmUpdateInput{
+		Name:             p.Name,
+		Description:      p.Description,
+		Query:            p.Query,
+		EvaluationPeriod: p.EvaluationPeriod,
+		LookbackLag:      p.LookbackLag,
+		StreamIds:        p.StreamIDs,
+	}
 
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateAlarm(ctx, projectID, alarmID, body)

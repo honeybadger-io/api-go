@@ -412,6 +412,32 @@ func TestAlarmsUpdateCanClearDescription(t *testing.T) {
 	}
 }
 
+// An alarm's query and evaluation window can change in place, so it keeps its
+// history; only the fields supplied are sent.
+func TestAlarmsUpdateChangesBehaviour(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"a1","name":"Spike"}}`)
+
+	query, period := "filter level::str == \"error\"", "15m"
+	streams := []string{"s1"}
+	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1", AlarmUpdateParams{
+		Query: &query, EvaluationPeriod: &period, StreamIDs: &streams,
+	}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	if got.body["query"] != query || got.body["evaluation_period"] != period {
+		t.Errorf("body = %v", got.body)
+	}
+	if ids, ok := got.body["stream_ids"].([]any); !ok || len(ids) != 1 || ids[0] != "s1" {
+		t.Errorf("stream_ids = %v", got.body["stream_ids"])
+	}
+	for _, absent := range []string{"name", "description", "lookback_lag", "trigger_config"} {
+		if _, present := got.body[absent]; present {
+			t.Errorf("%s was sent though it was not supplied", absent)
+		}
+	}
+}
+
 // The fault listing's filters must reach the query string.
 func TestFaultsListSendsOrderAndTimeFilters(t *testing.T) {
 	var query url.Values
