@@ -1,14 +1,14 @@
 // Package apiv3 is a client for the Honeybadger v3 API.
 //
 // It wraps generated code (internal/gen) with a hand-written surface: auth,
-// pagination, typed errors, and account handling.
+// pagination, and typed errors.
 //
 // v3 rejects Honeybadger's older personal auth tokens. The accepted credentials
 // are scoped API tokens (`hbt_` personal, `hba_` account) and OAuth access
 // tokens, all presented as Bearer. There is no Basic-auth option here by
 // design; see WithBearerToken.
 //
-// For the v2 API, use the root package.
+// For the v2 API, use package apiv2.
 package apiv3
 
 import (

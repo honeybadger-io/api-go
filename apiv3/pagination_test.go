@@ -113,9 +113,14 @@ func TestCollectPagesRejectsEmptyPageWhenMorePromised(t *testing.T) {
 
 // An empty final page is fine: nothing more was promised.
 func TestCollectPagesAcceptsEmptyFinalPage(t *testing.T) {
+	var requested []int
 	fetch := func(ctx context.Context, page int) (*ListResponse[string], error) {
-		if page == 1 {
-			return offsetPage([]string{"a"}, 1, 1, 1), nil
+		requested = append(requested, page)
+		switch page {
+		case 1:
+			return offsetPage([]string{"a"}, 1, 1, 2), nil // links a next page
+		case 2:
+			return offsetPage(nil, 2, 1, 2), nil // empty, next is null
 		}
 		t.Fatalf("fetched page %d past the end", page)
 		return nil, nil
@@ -124,8 +129,11 @@ func TestCollectPagesAcceptsEmptyFinalPage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CollectPages: %v", err)
 	}
-	if len(got) != 1 {
-		t.Errorf("got %v, want 1 item", got)
+	if want := []string{"a"}; !equal(got, want) {
+		t.Errorf("got %v, want %v", got, want)
+	}
+	if want := []int{1, 2}; !equalInt(requested, want) {
+		t.Errorf("requested pages %v, want %v", requested, want)
 	}
 }
 

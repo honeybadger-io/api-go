@@ -31,10 +31,9 @@ jobs:
       - name: Verify dependencies
         run: go mod verify
 
-      # One platform only: generator output is identical everywhere, and each
-      # run downloads the generator, so repeating it only adds flake risk.
-      # oapi-codegen needs a newer toolchain than the matrix Go; GOTOOLCHAIN
-      # defaults to auto, so `go run` fetches it.
+      # One platform only: generator output is identical everywhere. The Makefile
+      # builds the generator pinned in internal/tools, whose go.mod may ask for a
+      # newer toolchain than the matrix Go; GOTOOLCHAIN defaults to auto.
       - name: Verify generated code matches the vendored spec
         if: matrix.os == 'ubuntu-latest'
         run: make verify-generated
