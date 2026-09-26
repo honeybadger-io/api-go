@@ -10,9 +10,9 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
 | Branch | `spec-fixes` |
-| Commit | `2e7313ea24` |
+| Commit | `4c119a5dc9` |
 | Vendored | 2026-09-26 |
-| sha256 | `10e786ee239fcfdf40d32eb02467bba29f270c7609494c2cd8f69eff935ab103` |
+| sha256 | `da02bfa765e74aa98d195fa875948bc673f19a048427ef43df04de40996e5eaa` |
 
 Record the branch, commit, **and checksum** on every refresh. The bundle is
 **gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of

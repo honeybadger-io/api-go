@@ -52,6 +52,15 @@ info:
     v1 and v2 wrapped bodies under the resource name (`{"project": {...}}`).
     v3 does not, anywhere.
 
+
+    Ids in a body (`team_id`, `site_ids`, `fault_ids` and the like) refer to
+    records by the same id the API returns for them. Each is resolved within
+    what the credential can see, and any id that doesn't resolve refuses the
+    whole request with 422 `validation_error`, naming the field and the unknown
+    ids. None is dropped silently, and the response is the same whether an id
+    doesn't exist or belongs to someone else. An id in the path that doesn't
+    resolve is a 404.
+
     ## Rate Limiting
 
     API requests are rate limited per hour. User tokens and OAuth grants share
@@ -712,6 +721,12 @@ paths:
       tags:
       - Projects
       parameters:
+      - name: name
+        in: query
+        description: Exact project name to match. Omit or leave blank to list all
+          accessible projects.
+        schema:
+          type: string
       - "$ref": "#/components/parameters/Page"
       - "$ref": "#/components/parameters/PerPage"
       responses:
@@ -1596,7 +1611,8 @@ paths:
     post:
       operationId: assignFault
       summary: Assign a fault
-      description: Assigns a fault to a user.
+      description: Assigns a fault to a user. `assignee_id` is required; DELETE this
+        path to unassign.
       tags:
       - Faults
       parameters:
@@ -1631,7 +1647,7 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - faults:write
@@ -1746,7 +1762,7 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - faults:write
@@ -2670,12 +2686,10 @@ paths:
     put:
       operationId: replaceCheckIns
       summary: Replace the project's check-ins
-      description: 'Sets the project''s check-ins to exactly what the payload lists.
-        Entries are matched to existing check-ins by slug: a match is updated, a new
-        slug is created, and any check-in the payload does not name is DELETED. The
-        response reports the operation performed for each slug, including the deletions.
+      description: |
+        Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 
-        '
+        All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
       tags:
       - Check-ins
       parameters:
@@ -5755,8 +5769,8 @@ components:
           description: Create the member with email notifications off
         team_ids:
           type: array
-          description: 'IDs of teams to add the invitee to. IDs outside the account
-            resolve to nothing rather than attaching another tenant''s team.
+          description: 'IDs of teams to add the invitee to. An id that isn''t a team
+            on this account is refused with 422.
 
             '
           items:
@@ -5957,7 +5971,8 @@ components:
         stream_ids:
           type: array
           description: 'Streams the query runs against. Defaults to every stream on
-            the project. IDs not belonging to the project are dropped.
+            the project. An id that isn''t one of the project''s streams is refused
+            with 422.
 
             '
           items:
@@ -6209,9 +6224,9 @@ components:
           description: Maximum notifications in a 10-minute window before flood control
         site_ids:
           type: array
-          description: 'Identifiers of sites to scope this channel to. Empty means
-            every site. IDs outside this project resolve to nothing rather than attaching
-            another tenant''s site.
+          description: 'Sites whose up and down events this channel receives. An empty
+            list turns site notifications off for this channel. An id that isn''t
+            one of this project''s sites is refused with 422.
 
             '
           items:
@@ -6219,8 +6234,11 @@ components:
             format: uuid
         check_in_ids:
           type: array
-          description: IDs of check-ins to scope this channel to. Empty means every
-            check-in.
+          description: 'Check-ins whose events this channel receives. An empty list
+            turns check-in notifications off for this channel. An id that isn''t one
+            of this project''s check-ins is refused with 422.
+
+            '
           items:
             type: string
         alarm_alert_ids:
@@ -7666,9 +7684,10 @@ components:
           example: false
         fault_ids:
           type: array
-          description: 'Integer IDs of the faults to change. Ids outside this project
-            select nothing. Omit to act on everything the query and time filters match,
-            which requires all=true when there are none.
+          description: 'Integer IDs of the faults to change. An id that isn''t a fault
+            in this project refuses the whole request with 422. Omit to act on everything
+            the query and time filters match, which requires all=true when there are
+            none.
 
             '
           items:
@@ -8406,14 +8425,16 @@ components:
             this field on create or update requires team:write in addition to the
             operation''s project scope, and the user must be allowed to manage the
             team. Without team:write the entire request is rejected with 403 insufficient_scope;
-            no other fields are saved. Unknown or foreign teams return 404.
+            no other fields are saved. An unknown or foreign team is refused with
+            422.
 
             '
           example: Ab3kL9
         purge_days:
           type: integer
           description: 'Days to retain notices. Accepted only on accounts with custom
-            retention; silently ignored otherwise.
+            retention; otherwise a value other than the current one (on create, the
+            default) is refused with 403 `feature_unavailable`.
 
             '
     ProjectKey:
@@ -8652,7 +8673,8 @@ components:
         timeout:
           type: integer
           description: 'Request timeout. Accepted only on accounts with the uptime-timeout
-            feature; ignored otherwise.
+            feature; otherwise a value other than the current one (on create, the
+            default) is refused with 403 `feature_unavailable`.
 
             '
     StatusPage:
@@ -8899,21 +8921,27 @@ components:
           example: status.example.com
         hide_branding:
           type: boolean
-          description: Advanced status pages only; ignored otherwise
+          description: Advanced status pages only; refused with 403 `feature_unavailable`
+            otherwise
         password_protected:
           type: boolean
-          description: Advanced status pages only; ignored otherwise
+          description: 'Needs advanced status pages and password protection on the
+            plan; refused with 403 `feature_unavailable` otherwise, so the page is
+            never left public behind a successful request.
+
+            '
         username:
           type: string
-          description: Basic-auth user when password protected. Advanced status pages
-            only
+          description: Basic-auth user when password protected. Needs password protection
+            on the plan
         password:
           type: string
-          description: Basic-auth password when password protected. Advanced status
-            pages only
+          description: Basic-auth password when password protected. Needs password
+            protection on the plan
         features:
           type: object
-          description: Presentation copy and styling. Advanced status pages only
+          description: Presentation copy and styling. Advanced status pages only;
+            refused with 403 `feature_unavailable` otherwise
           properties:
             home_link:
               type: string
@@ -9048,8 +9076,8 @@ components:
           example: Platform
         project_ids:
           type: array
-          description: 'IDs of projects this team can access. IDs outside the account
-            resolve to nothing rather than granting access to another tenant''s project.
+          description: 'IDs of projects this team can access. An id that isn''t a
+            project the caller can see is refused with 422.
 
             '
           items:
@@ -9752,6 +9780,22 @@ components:
                   details:
                   - field: q
                     message: unrecognised filter is:unresolved
+                meta:
+                  request_id: abc123
+            unknown_fault_ids:
+              summary: fault_ids named a fault that isn't in this project
+              description: 'Every id is resolved within the project, and one that
+                doesn''t resolve refuses the whole request, including a fault merged
+                away since it was fetched.
+
+                '
+              value:
+                error:
+                  code: validation_error
+                  message: 'fault_ids has unknown ids: 99999'
+                  details:
+                  - field: fault_ids
+                    message: 'has unknown ids: 99999'
                 meta:
                   request_id: abc123
             ambiguous_account:

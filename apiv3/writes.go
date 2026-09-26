@@ -204,7 +204,7 @@ type AlarmParams struct {
 	Description string
 
 	// StreamIDs are the streams the query runs against. Empty means every stream
-	// on the project. Ids not belonging to it are dropped by the API.
+	// on the project. An id that isn't one of its streams is refused with 422.
 	StreamIDs []string
 
 	// Trigger is optional; without one the alarm is created but never fires.

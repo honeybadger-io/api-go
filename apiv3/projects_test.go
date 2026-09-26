@@ -295,3 +295,25 @@ func TestProjectKeysGet(t *testing.T) {
 		t.Errorf("key = %+v", key)
 	}
 }
+
+// Named narrows the listing to one exact name, and is absent when unset.
+func TestProjectsListNamed(t *testing.T) {
+	var got []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = append(got, r.URL.Query().Get("name"))
+		writeJSON(w, 0, `{"data":[{"id":"Xk9mZp","account_id":"Ab3kL9","name":"My App","active":true}],
+		  "pagination":{"page":1,"per_page":25}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	if _, err := c.Projects.ListAll(context.Background(), Named("My App")); err != nil {
+		t.Fatalf("ListAll: %v", err)
+	}
+	if _, err := c.Projects.List(context.Background()); err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if len(got) != 2 || got[0] != "My App" || got[1] != "" {
+		t.Errorf("name params = %q", got)
+	}
+}

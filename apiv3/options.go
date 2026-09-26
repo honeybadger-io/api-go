@@ -40,6 +40,7 @@ type requestOptions struct {
 	after   string
 	query   string
 	order   string
+	name    string
 
 	// Time filters, as Unix seconds. Zero means unset — these endpoints have no
 	// meaningful use for the epoch.
@@ -174,6 +175,17 @@ func (o searchOption) listAll()                 {}
 // of inventing a surface that would need updating as the filter language grows.
 func Search(query string) ListAllOption {
 	return searchOption{q: query}
+}
+
+// nameOption filters a project listing by exact name.
+type nameOption struct{ name string }
+
+func (o nameOption) apply(ro *requestOptions) { ro.name = o.name }
+func (o nameOption) listAll()                 {}
+
+// Named filters a project listing to the project with exactly this name.
+func Named(name string) ListAllOption {
+	return nameOption{name: name}
 }
 
 // orderOption sorts a fault listing.

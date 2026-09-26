@@ -32,6 +32,9 @@ func (s *ProjectsService) ListAll(ctx context.Context, opts ...ListAllOption) ([
 func (s *ProjectsService) list(ctx context.Context, ro requestOptions) (*ListResponse[Project], error) {
 	params := &gen.ListProjectsParams{}
 	ro.applyOffset(&params.Page, &params.PerPage)
+	if ro.name != "" {
+		params.Name = &ro.name
+	}
 
 	return listOffset[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ListProjects(ctx, params)

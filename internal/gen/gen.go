@@ -1337,7 +1337,7 @@ type AccountInvitationCreateInput struct {
 	Email                     openapi_types.Email               `json:"email"`
 	Role                      *AccountInvitationCreateInputRole `json:"role,omitempty"`
 
-	// TeamIds IDs of teams to add the invitee to. IDs outside the account resolve to nothing rather than attaching another tenant's team.
+	// TeamIds IDs of teams to add the invitee to. An id that isn't a team on this account is refused with 422.
 	TeamIds *[]string `json:"team_ids,omitempty"`
 }
 
@@ -1351,7 +1351,7 @@ type AccountInvitationInput struct {
 	Email                     *openapi_types.Email        `json:"email,omitempty"`
 	Role                      *AccountInvitationInputRole `json:"role,omitempty"`
 
-	// TeamIds IDs of teams to add the invitee to. IDs outside the account resolve to nothing rather than attaching another tenant's team.
+	// TeamIds IDs of teams to add the invitee to. An id that isn't a team on this account is refused with 422.
 	TeamIds *[]string `json:"team_ids,omitempty"`
 }
 
@@ -1470,7 +1470,7 @@ type AlarmCreateInput struct {
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
 
-	// StreamIds Streams the query runs against. Defaults to every stream on the project. IDs not belonging to the project are dropped.
+	// StreamIds Streams the query runs against. Defaults to every stream on the project. An id that isn't one of the project's streams is refused with 422.
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on
@@ -2069,7 +2069,7 @@ type FaultSelectionInput struct {
 	// DryRun Report what the request would change without changing it — no state change, no comments, no timeline entries. The response has the same shape either way, with `dry_run` echoed back.
 	DryRun *bool `json:"dry_run,omitempty"`
 
-	// FaultIds Integer IDs of the faults to change. Ids outside this project select nothing. Omit to act on everything the query and time filters match, which requires all=true when there are none.
+	// FaultIds Integer IDs of the faults to change. An id that isn't a fault in this project refuses the whole request with 422. Omit to act on everything the query and time filters match, which requires all=true when there are none.
 	FaultIds *[]int `json:"fault_ids,omitempty"`
 
 	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
@@ -2228,7 +2228,7 @@ type IntegrationInput struct {
 	// AlarmOkIds IDs of alarms whose recovery events this channel receives.
 	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds IDs of check-ins to scope this channel to. Empty means every check-in.
+	// CheckInIds Check-ins whose events this channel receives. An empty list turns check-in notifications off for this channel. An id that isn't one of this project's check-ins is refused with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
 	// Environments Environment names this channel monitors (shorthand for setting included/excluded).
@@ -2255,7 +2255,7 @@ type IntegrationInput struct {
 	// Rate Rate threshold period (e.g. min, hour)
 	Rate *string `json:"rate,omitempty"`
 
-	// SiteIds Identifiers of sites to scope this channel to. Empty means every site. IDs outside this project resolve to nothing rather than attaching another tenant's site.
+	// SiteIds Sites whose up and down events this channel receives. An empty list turns site notifications off for this channel. An id that isn't one of this project's sites is refused with 422.
 	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
 
 	// Threshold Number of occurrences before rate_exceeded fires
@@ -2521,7 +2521,7 @@ type ProjectCreateInput struct {
 	Language *string `json:"language,omitempty"`
 	Name     string  `json:"name"`
 
-	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; silently ignored otherwise.
+	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
 	PurgeDays *int `json:"purge_days,omitempty"`
 
 	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded
@@ -2530,7 +2530,7 @@ type ProjectCreateInput struct {
 	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl *string `json:"source_url,omitempty"`
 
-	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. Unknown or foreign teams return 404.
+	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An unknown or foreign team is refused with 422.
 	TeamId *string `json:"team_id,omitempty"`
 
 	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
@@ -2557,7 +2557,7 @@ type ProjectInput struct {
 	Language *string `json:"language,omitempty"`
 	Name     *string `json:"name,omitempty"`
 
-	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; silently ignored otherwise.
+	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
 	PurgeDays *int `json:"purge_days,omitempty"`
 
 	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded
@@ -2566,7 +2566,7 @@ type ProjectInput struct {
 	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl *string `json:"source_url,omitempty"`
 
-	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. Unknown or foreign teams return 404.
+	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An unknown or foreign team is refused with 422.
 	TeamId *string `json:"team_id,omitempty"`
 
 	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
@@ -2695,7 +2695,7 @@ type SiteCreateInput struct {
 	RequestHeaders *map[string]string            `json:"request_headers,omitempty"`
 	RequestMethod  *SiteCreateInputRequestMethod `json:"request_method,omitempty"`
 
-	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
+	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
 	Timeout *int   `json:"timeout,omitempty"`
 	Url     string `json:"url"`
 
@@ -2742,7 +2742,7 @@ type SiteInput struct {
 	RequestHeaders *map[string]string      `json:"request_headers,omitempty"`
 	RequestMethod  *SiteInputRequestMethod `json:"request_method,omitempty"`
 
-	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
+	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
 	Timeout *int    `json:"timeout,omitempty"`
 	Url     *string `json:"url,omitempty"`
 
@@ -2848,23 +2848,23 @@ type StatusPageCreateInput struct {
 	// Domain Custom domain the page is served on
 	Domain *string `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Advanced status pages only
+	// Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
 	Features *StatusPageCreateInput_Features `json:"features,omitempty"`
 
-	// HideBranding Advanced status pages only; ignored otherwise
+	// HideBranding Advanced status pages only; refused with 403 `feature_unavailable` otherwise
 	HideBranding *bool  `json:"hide_branding,omitempty"`
 	Name         string `json:"name"`
 
-	// Password Basic-auth password when password protected. Advanced status pages only
+	// Password Basic-auth password when password protected. Needs password protection on the plan
 	Password *string `json:"password,omitempty"`
 
-	// PasswordProtected Advanced status pages only; ignored otherwise
+	// PasswordProtected Needs advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise, so the page is never left public behind a successful request.
 	PasswordProtected *bool `json:"password_protected,omitempty"`
 
 	// Sites Sites listed on the page, replacing the current set
 	Sites *[]StatusPageCreateInput_Sites `json:"sites,omitempty"`
 
-	// Username Basic-auth user when password protected. Advanced status pages only
+	// Username Basic-auth user when password protected. Needs password protection on the plan
 	Username *string `json:"username,omitempty"`
 }
 
@@ -2877,7 +2877,7 @@ type StatusPageCreateInput_CheckIns struct {
 	Position    *int    `json:"position,omitempty"`
 }
 
-// StatusPageCreateInput_Features Presentation copy and styling. Advanced status pages only
+// StatusPageCreateInput_Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
 type StatusPageCreateInput_Features struct {
 	CustomCss    *string `json:"custom_css,omitempty"`
 	DownCaption  *string `json:"down_caption,omitempty"`
@@ -2978,23 +2978,23 @@ type StatusPageInput struct {
 	// Domain Custom domain the page is served on
 	Domain *string `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Advanced status pages only
+	// Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
 	Features *StatusPageInput_Features `json:"features,omitempty"`
 
-	// HideBranding Advanced status pages only; ignored otherwise
+	// HideBranding Advanced status pages only; refused with 403 `feature_unavailable` otherwise
 	HideBranding *bool   `json:"hide_branding,omitempty"`
 	Name         *string `json:"name,omitempty"`
 
-	// Password Basic-auth password when password protected. Advanced status pages only
+	// Password Basic-auth password when password protected. Needs password protection on the plan
 	Password *string `json:"password,omitempty"`
 
-	// PasswordProtected Advanced status pages only; ignored otherwise
+	// PasswordProtected Needs advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise, so the page is never left public behind a successful request.
 	PasswordProtected *bool `json:"password_protected,omitempty"`
 
 	// Sites Sites listed on the page, replacing the current set
 	Sites *[]StatusPageInput_Sites `json:"sites,omitempty"`
 
-	// Username Basic-auth user when password protected. Advanced status pages only
+	// Username Basic-auth user when password protected. Needs password protection on the plan
 	Username *string `json:"username,omitempty"`
 }
 
@@ -3007,7 +3007,7 @@ type StatusPageInput_CheckIns struct {
 	Position    *int    `json:"position,omitempty"`
 }
 
-// StatusPageInput_Features Presentation copy and styling. Advanced status pages only
+// StatusPageInput_Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
 type StatusPageInput_Features struct {
 	CustomCss    *string `json:"custom_css,omitempty"`
 	DownCaption  *string `json:"down_caption,omitempty"`
@@ -3077,7 +3077,7 @@ type Team struct {
 type TeamCreateInput struct {
 	Name string `json:"name"`
 
-	// ProjectIds IDs of projects this team can access. IDs outside the account resolve to nothing rather than granting access to another tenant's project.
+	// ProjectIds IDs of projects this team can access. An id that isn't a project the caller can see is refused with 422.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
@@ -3085,7 +3085,7 @@ type TeamCreateInput struct {
 type TeamInput struct {
 	Name *string `json:"name,omitempty"`
 
-	// ProjectIds IDs of projects this team can access. IDs outside the account resolve to nothing rather than granting access to another tenant's project.
+	// ProjectIds IDs of projects this team can access. An id that isn't a project the caller can see is refused with 422.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
@@ -3473,6 +3473,9 @@ type GetNotice200JSONResponseBody struct {
 
 // ListProjectsParams defines parameters for ListProjects.
 type ListProjectsParams struct {
+	// Name Exact project name to match. Omit or leave blank to list all accessible projects.
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
+
 	// Page Page number (1-indexed)
 	Page *Page `form:"page,omitempty" json:"page,omitempty"`
 
@@ -5640,6 +5643,8 @@ type ClientInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
@@ -5648,6 +5653,8 @@ type ClientInterface interface {
 	// ReplaceCheckIns Replace the project's check-ins
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+	//
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6006,7 +6013,7 @@ type ClientInterface interface {
 
 	// AssignFaultWithBody Assign a fault
 	//
-	// Assigns a fault to a user.
+	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6015,7 +6022,7 @@ type ClientInterface interface {
 
 	// AssignFault Assign a fault
 	//
-	// Assigns a fault to a user.
+	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7359,6 +7366,8 @@ func (c *Client) CreateCheckIn(ctx context.Context, projectId ProjectId, body Cr
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+//
 // Takes any type of body and a specified content type.
 //
 // Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
@@ -7377,6 +7386,8 @@ func (c *Client) ReplaceCheckInsWithBody(ctx context.Context, projectId ProjectI
 // ReplaceCheckIns Replace the project's check-ins
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+//
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8165,7 +8176,7 @@ func (c *Client) UnassignFault(ctx context.Context, projectId ProjectId, faultId
 
 // AssignFaultWithBody Assign a fault
 //
-// Assigns a fault to a user.
+// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8184,7 +8195,7 @@ func (c *Client) AssignFaultWithBody(ctx context.Context, projectId ProjectId, f
 
 // AssignFault Assign a fault
 //
-// Assigns a fault to a user.
+// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10319,6 +10330,18 @@ func NewListProjectsRequest(server string, params *ListProjectsParams) (*http.Re
 		// styled parameters, preserving literal commas as delimiters
 		// per the OpenAPI spec (e.g. "color=blue,black,brown").
 		var rawQueryFragments []string
+
+		if params.Name != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "name", *params.Name, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
 
 		if params.Page != nil {
 
@@ -16598,6 +16621,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
@@ -16606,6 +16631,8 @@ type ClientWithResponsesInterface interface {
 	// ReplaceCheckInsWithResponse Replace the project's check-ins
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+	//
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17000,7 +17027,7 @@ type ClientWithResponsesInterface interface {
 
 	// AssignFaultWithBodyWithResponse Assign a fault
 	//
-	// Assigns a fault to a user.
+	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17009,7 +17036,7 @@ type ClientWithResponsesInterface interface {
 
 	// AssignFaultWithResponse Assign a fault
 	//
-	// Assigns a fault to a user.
+	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -22309,7 +22336,7 @@ type AssignFaultResponse struct {
 	// JSON409 the response for an HTTP 409 `application/json` response
 	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
-	JSON422 *AmbiguousAccount
+	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *AssignFaultResponse403Headers
 }
@@ -22340,7 +22367,7 @@ func (r AssignFaultResponse) GetJSON409() *FaultMergedConflict {
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r AssignFaultResponse) GetJSON422() *AmbiguousAccount {
+func (r AssignFaultResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
@@ -22800,7 +22827,7 @@ type MergeFaultsResponse struct {
 	// JSON409 the response for an HTTP 409 `application/json` response
 	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
-	JSON422 *AmbiguousAccount
+	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *MergeFaultsResponse403Headers
 }
@@ -22831,7 +22858,7 @@ func (r MergeFaultsResponse) GetJSON409() *FaultMergedConflict {
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r MergeFaultsResponse) GetJSON422() *AmbiguousAccount {
+func (r MergeFaultsResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
@@ -27725,6 +27752,8 @@ func (c *ClientWithResponses) CreateCheckInWithResponse(ctx context.Context, pro
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+//
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
@@ -27739,6 +27768,8 @@ func (c *ClientWithResponses) ReplaceCheckInsWithBodyWithResponse(ctx context.Co
 // ReplaceCheckInsWithResponse Replace the project's check-ins
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+//
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -28391,7 +28422,7 @@ func (c *ClientWithResponses) UnassignFaultWithResponse(ctx context.Context, pro
 
 // AssignFaultWithBodyWithResponse Assign a fault
 //
-// Assigns a fault to a user.
+// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -28406,7 +28437,7 @@ func (c *ClientWithResponses) AssignFaultWithBodyWithResponse(ctx context.Contex
 
 // AssignFaultWithResponse Assign a fault
 //
-// Assigns a fault to a user.
+// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -33784,7 +33815,7 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
-		var dest AmbiguousAccount
+		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -34224,7 +34255,7 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 		response.JSON409 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
-		var dest AmbiguousAccount
+		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

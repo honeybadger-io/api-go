@@ -83,7 +83,9 @@ func (sel FaultSelection) filtered() bool {
 		sel.createdAfter != 0 || sel.occurredAfter != 0 || sel.occurredBefore != 0
 }
 
-// SelectFaults changes the named faults. Ids outside the project select nothing.
+// SelectFaults changes the named faults. An id that isn't a fault in the project,
+// including one merged away since it was fetched, refuses the whole request with
+// 422.
 func SelectFaults(ids ...int) FaultSelection {
 	return FaultSelection{ids: ids}
 }
