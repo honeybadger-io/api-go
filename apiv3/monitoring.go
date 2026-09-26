@@ -2,6 +2,7 @@ package apiv3
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
@@ -42,12 +43,23 @@ func (s *AlarmsService) Get(ctx context.Context, projectID, alarmID string, opts
 // unchanged, the same arrangement as an Insights query result.
 type AlarmHistoryEntry = map[string]any
 
+// AlarmHistoryPage is one page of an alarm's state changes.
+//
+// TotalPages is the only end signal this endpoint gives: it has no links, so a
+// caller pages by incrementing Page until it reaches TotalPages. Zero means the
+// response did not say.
+type AlarmHistoryPage struct {
+	Entries    []AlarmHistoryEntry `json:"entries"`
+	Page       int                 `json:"page"`
+	TotalPages int                 `json:"total_pages"`
+}
+
 // ListHistory returns one page of an alarm's state changes.
 //
 // This endpoint's pagination object is the query service's own — page and
-// total_pages, with no per_page and no links — so it is exposed as a plain page
-// rather than through ListResponse.Pagination.
-func (s *AlarmsService) ListHistory(ctx context.Context, projectID, alarmID string, opts ...Option) ([]AlarmHistoryEntry, error) {
+// total_pages, with no per_page and no links — so it is returned as its own page
+// type rather than through ListResponse.
+func (s *AlarmsService) ListHistory(ctx context.Context, projectID, alarmID string, opts ...Option) (*AlarmHistoryPage, error) {
 	ro := resolve(opts)
 	// Page only: this endpoint takes no per_page, another consequence of it
 	// passing the query service's paging through rather than using v3's.
@@ -57,13 +69,36 @@ func (s *AlarmsService) ListHistory(ctx context.Context, projectID, alarmID stri
 		params.Page = &page
 	}
 
-	resp, err := listOffset[AlarmHistoryEntry](ctx, s.client, func() (*http.Response, error) {
+	status, body, err := s.client.do(ctx, func() (*http.Response, error) {
 		return s.client.gen().ListAlarmHistory(ctx, projectID, alarmID, params)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return resp.Data, nil
+	var envelope struct {
+		Data       []AlarmHistoryEntry                                 `json:"data"`
+		Pagination *gen.ListAlarmHistory200JSONResponseBody_Pagination `json:"pagination"`
+	}
+	if err := json.Unmarshal(body, &envelope); err != nil {
+		return nil, malformed(status, body, err)
+	}
+
+	page := &AlarmHistoryPage{Entries: envelope.Data, Page: ro.page}
+	if page.Entries == nil {
+		page.Entries = []AlarmHistoryEntry{}
+	}
+	if p := envelope.Pagination; p != nil {
+		if p.Page != nil {
+			page.Page = *p.Page
+		}
+		if p.TotalPages != nil {
+			page.TotalPages = *p.TotalPages
+		}
+	}
+	if page.Page == 0 {
+		page.Page = 1
+	}
+	return page, nil
 }
 
 // DashboardsService handles the dashboards resource.

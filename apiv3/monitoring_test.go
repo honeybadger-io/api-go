@@ -105,20 +105,24 @@ func TestAlarmsListHistoryPassesRowsThrough(t *testing.T) {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":[{"state":"triggered","at":"2026-07-29T00:00:00Z","value":91.5}],
-		  "pagination":{"page":1,"total_pages":1}}`)
+		  "pagination":{"page":1,"total_pages":4}}`)
 	}))
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	rows, err := c.Alarms.ListHistory(context.Background(), "Xk9mZp", "a1")
+	page, err := c.Alarms.ListHistory(context.Background(), "Xk9mZp", "a1")
 	if err != nil {
 		t.Fatalf("ListHistory: %v", err)
 	}
-	if len(rows) != 1 {
-		t.Fatalf("rows = %v, want 1", rows)
+	if len(page.Entries) != 1 {
+		t.Fatalf("entries = %v, want 1", page.Entries)
 	}
-	if rows[0]["state"] != "triggered" || rows[0]["value"] != 91.5 {
-		t.Errorf("row = %v", rows[0])
+	if page.Entries[0]["state"] != "triggered" || page.Entries[0]["value"] != 91.5 {
+		t.Errorf("entry = %v", page.Entries[0])
+	}
+	// total_pages is the only way to know more history exists.
+	if page.Page != 1 || page.TotalPages != 4 {
+		t.Errorf("page %d of %d, want 1 of 4", page.Page, page.TotalPages)
 	}
 }
 
