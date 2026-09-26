@@ -75,7 +75,8 @@ func (s *FaultsService) Get(ctx context.Context, projectID string, faultID int, 
 // app's {identifier => count} map.
 type AffectedUser = gen.AffectedUser
 
-// AffectedUsers returns the users a fault has affected.
+// AffectedUsers returns the users a fault has affected, at most 500 of them
+// whether or not a search is given.
 //
 // Search accepts the same filter syntax as the fault listing.
 func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, faultID int, opts ...Option) ([]AffectedUser, error) {

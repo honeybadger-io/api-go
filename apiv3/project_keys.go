@@ -61,3 +61,10 @@ func (s *ProjectKeysService) Delete(ctx context.Context, projectID, keyID string
 		return s.client.gen().DeleteProjectKey(ctx, projectID, keyID)
 	})
 }
+
+// Get returns one of a project's keys.
+func (s *ProjectKeysService) Get(ctx context.Context, projectID, keyID string, opts ...Option) (*ProjectKey, error) {
+	return getOne[ProjectKey](ctx, s.client, func() (*http.Response, error) {
+		return s.client.gen().GetProjectKey(ctx, projectID, keyID)
+	})
+}

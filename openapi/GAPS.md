@@ -14,9 +14,9 @@
 | --- | --- |
 | ~~`get_project_report` has no v3 endpoint~~ — closed by removal: Insights replaces project reports, and the MCP tool is gone | No path matches `reports/` |
 | ~~Integrations unconfirmed~~ — closed: v3 renamed channels to integrations (`listIntegrations` and friends) | `listChannels` looked like the replacement — same shape, and v2's own comment says "integrations (channels)" |
-| Alarm updates cannot change the trigger | `AlarmUpdateInput` now takes the query, streams and evaluation window, but declares `trigger_config` as an untyped object rather than the trigger schema `AlarmCreateInput` uses, so there is no typed field to set. Fix in the spec: reference the same trigger schema on both |
-| Alarm history entries are untyped | `listAlarmHistory` declares `data` items as a bare `type: object`, so `AlarmHistoryEntry` is `map[string]any`. Fix in the spec: a named schema for a history entry |
-| The alarm trigger value generates as float32 | `trigger_config.config.value` is `type: number` with no `format`, which oapi-codegen maps to float32, rounding thresholds above 2^24. Fix in the spec: `format: double` |
+| ~~Alarm updates cannot change the trigger~~ — closed at `f67fa6d973`: create, update and the `Alarm` response share `AlarmTriggerConfig`, and `AlarmUpdateParams.Trigger` sets it | `AlarmUpdateInput` now takes the query, streams and evaluation window, but declares `trigger_config` as an untyped object rather than the trigger schema `AlarmCreateInput` uses, so there is no typed field to set. Fix in the spec: reference the same trigger schema on both |
+| ~~Alarm history entries are untyped~~ — closed at `f67fa6d973` by the named `AlarmHistoryEntry`, which also moved history onto standard page pagination with links | `listAlarmHistory` declares `data` items as a bare `type: object`, so `AlarmHistoryEntry` is `map[string]any`. Fix in the spec: a named schema for a history entry |
+| ~~The alarm trigger value generates as float32~~ — closed at `f67fa6d973` by `format: double`; `AlarmTrigger.Value` is a float64 | `trigger_config.config.value` is `type: number` with no `format`, which oapi-codegen maps to float32, rounding thresholds above 2^24. Fix in the spec: `format: double` |
 | ~~A check-in update requires the name~~ — closed by the separate `CheckInCreateInput`: `name` is required on create only | The update body was the same schema as create, with `name` required, so changing only a grace period meant resending the name. Verified against a real server: the update **merges** — sending only name and grace_period left `report_period` and `slug` intact |
 | ~~A project update requires the name~~ — closed by the separate `ProjectCreateInput` | Same shape, same consequence |
 | ~~Widget and trigger types are anonymous~~ — closed at `2ee3eaa1f` by the named `DashboardWidget` component, plus `generate-types-for-anonymous-schemas` naming the trigger config | `DashboardInput.widgets` and `AlarmCreateInput.trigger_config` are inline objects, so a generated Go caller cannot construct them. `apiv3` passes widgets through as raw JSON and hand-rolls the trigger. Naming those schemas would remove both workarounds — and would also remove the overlay below |
@@ -183,6 +183,21 @@ The MCP tool keeps accepting `title`, since that is what v2 used, and maps it to
   published docs. `Error.Error` and `Error.Meta` are the cases that bite most.
 
 ## Fixed since this list started
+
+Closed by the bundle at `f67fa6d973` (`spec-fixes`):
+
+- A write to a merged fault answers 409 `fault_merged` with the survivor in
+  `details.merged_into`, rather than a 301 that a redirect-following client would
+  replay against the survivor. Reads keep the 301. `Error.MergedInto` reads
+  either.
+- Snooze, unsnooze, pause and resume return the fault, which gained
+  `recording_paused_until`, so `PauseRecording` and `ResumeRecording` return it
+  instead of a bare 204.
+- `getProjectKey` exists, so `ProjectKeys.Get` fetches one key instead of a
+  caller listing them all to find it.
+- Affected users are capped at 500 with or without a search, and the cap is
+  documented.
+- `bulkUpdateCheckIns` is `replaceCheckIns`, scoped `checkins:write`.
 
 Closed by the bundle at `2ee3eaa1f`:
 

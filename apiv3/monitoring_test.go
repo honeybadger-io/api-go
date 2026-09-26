@@ -98,14 +98,18 @@ func TestAlarmsListIsUnpaginated(t *testing.T) {
 	}
 }
 
-// Alarm history rows come straight from the query service, so they stay untyped.
-func TestAlarmsListHistoryPassesRowsThrough(t *testing.T) {
+const historyEntry = `{"id":"t1","observer_root_id":"a1","observer_id":"v7","status":"alarm",
+  "created_at":"2026-09-26T00:00:00Z","evaluation_started_at":"2026-09-25T23:55:00Z","evaluation_result":91.5}`
+
+// History entries are typed, and pages like every other page-numbered list.
+func TestAlarmsListHistory(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if want := "/v3/projects/Xk9mZp/alarms/a1/history"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
-		writeJSON(w, 0, `{"data":[{"state":"triggered","at":"2026-07-29T00:00:00Z","value":91.5}],
-		  "pagination":{"page":1,"total_pages":4}}`)
+		writeJSON(w, 0, `{"data":[`+historyEntry+`],
+		  "pagination":{"page":1,"per_page":25},
+		  "links":{"self":"/x?page=1","next":"/x?page=2"}}`)
 	}))
 	defer srv.Close()
 
@@ -114,20 +118,51 @@ func TestAlarmsListHistoryPassesRowsThrough(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ListHistory: %v", err)
 	}
-	if len(page.Entries) != 1 {
-		t.Fatalf("entries = %v, want 1", page.Entries)
+	if len(page.Data) != 1 {
+		t.Fatalf("entries = %v, want 1", page.Data)
 	}
-	if page.Entries[0]["state"] != "triggered" || page.Entries[0]["value"] != 91.5 {
-		t.Errorf("entry = %v", page.Entries[0])
+	entry := page.Data[0]
+	if entry.ObserverRootId != "a1" || entry.Id != "t1" {
+		t.Errorf("entry = %+v", entry)
 	}
-	// total_pages is the only way to know more history exists.
-	if page.Page != 1 || page.TotalPages != 4 {
-		t.Errorf("page %d of %d, want 1 of 4", page.Page, page.TotalPages)
+	if status, err := entry.Status.Get(); err != nil || status != "alarm" {
+		t.Errorf("status = %v, %v", status, err)
+	}
+	if result, err := entry.EvaluationResult.Get(); err != nil || result != 91.5 {
+		t.Errorf("evaluation_result = %v, %v", result, err)
+	}
+	if !hasNextPage(page.Links) {
+		t.Error("links.next was not surfaced")
 	}
 }
 
-// Alarm history takes page but no per_page, since its paging object is the query
-// service's rather than v3's.
+// ListAllHistory follows links.next to the end.
+func TestAlarmsListAllHistoryWalksPages(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Query().Get("page") {
+		case "", "1":
+			writeJSON(w, 0, `{"data":[`+historyEntry+`],"pagination":{"page":1,"per_page":25},
+			  "links":{"self":"/x?page=1","next":"/x?page=2"}}`)
+		case "2":
+			writeJSON(w, 0, `{"data":[`+historyEntry+`],"pagination":{"page":2,"per_page":25},
+			  "links":{"self":"/x?page=2","next":null}}`)
+		default:
+			t.Errorf("unexpected page %q", r.URL.Query().Get("page"))
+		}
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	all, err := c.Alarms.ListAllHistory(context.Background(), "Xk9mZp", "a1")
+	if err != nil {
+		t.Fatalf("ListAllHistory: %v", err)
+	}
+	if len(all) != 2 {
+		t.Errorf("got %d entries, want 2", len(all))
+	}
+}
+
+// Alarm history takes page but no per_page: its page size is fixed at 25.
 func TestAlarmHistorySendsPageOnly(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if got := r.URL.Query().Get("page"); got != "3" {
@@ -136,7 +171,7 @@ func TestAlarmHistorySendsPageOnly(t *testing.T) {
 		if _, present := r.URL.Query()["per_page"]; present {
 			t.Error("per_page was sent; this endpoint does not accept it")
 		}
-		writeJSON(w, 0, `{"data":[],"pagination":{"page":3,"total_pages":3}}`)
+		writeJSON(w, 0, `{"data":[],"pagination":{"page":3,"per_page":25},"links":{"self":"/x","next":null}}`)
 	}))
 	defer srv.Close()
 

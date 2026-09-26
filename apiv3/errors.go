@@ -42,10 +42,10 @@ const (
 	CodeServiceUnavailable    Code = "service_unavailable"
 	CodeAmbiguousAccount      Code = "ambiguous_account"
 
-	// CodeFaultMerged is set by the client, not sent by the API. The API answers
-	// a request for a merged fault with a 301 to the surviving fault and no body;
-	// the client reports that as an error rather than following it, so it needs a
-	// code of its own. See Error.MergedInto.
+	// CodeFaultMerged means the fault named was merged into another. A write to it
+	// answers 409 with this code and the survivor in details.merged_into. A read
+	// answers a 301 to the survivor with no body; the client does not follow it
+	// and reports it under this same code. See Error.MergedInto.
 	CodeFaultMerged Code = "fault_merged"
 )
 
@@ -123,6 +123,11 @@ func (e *Error) MergedInto() (faultID int, ok bool) {
 	if e.Code != CodeFaultMerged {
 		return 0, false
 	}
+	// A write's 409 names the survivor in its details.
+	if id, isNumber := e.Details["merged_into"].(float64); isNumber && id > 0 && id == float64(int(id)) {
+		return int(id), true
+	}
+	// A read's 301 names it only in the Location header.
 	u, err := url.Parse(e.Location)
 	if err != nil {
 		return 0, false

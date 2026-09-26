@@ -53,9 +53,15 @@ func TestDeleteAcceptsNoContent(t *testing.T) {
 }
 
 func TestPauseRecordingSendsBody(t *testing.T) {
-	c, got := captureWrite(t, http.StatusNoContent, "")
-	if err := c.Faults.PauseRecording(context.Background(), "Xk9mZp", 1, PauseDay); err != nil {
+	c, got := captureWrite(t, http.StatusOK,
+		`{"data":{"id":1,"project_id":"Xk9mZp","recording_paused_until":"2026-09-27T00:00:00Z"}}`)
+	fault, err := c.Faults.PauseRecording(context.Background(), "Xk9mZp", 1, PauseDay)
+	if err != nil {
 		t.Fatalf("pause: %v", err)
+	}
+	// The fault comes back saying until when recording is paused.
+	if until, err := fault.RecordingPausedUntil.Get(); err != nil || until.IsZero() {
+		t.Errorf("recording_paused_until = %v, %v", until, err)
 	}
 	wantPath := "/v3/projects/Xk9mZp/faults/1/pause_recording"
 	if got.path != wantPath {
@@ -70,8 +76,8 @@ func TestPauseRecordingSendsBody(t *testing.T) {
 }
 
 func TestResumeRecordingSendsNoBody(t *testing.T) {
-	c, got := captureWrite(t, http.StatusNoContent, "")
-	if err := c.Faults.ResumeRecording(context.Background(), "Xk9mZp", 1); err != nil {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":1,"project_id":"Xk9mZp","recording_paused_until":null}}`)
+	if _, err := c.Faults.ResumeRecording(context.Background(), "Xk9mZp", 1); err != nil {
 		t.Fatalf("resume: %v", err)
 	}
 	wantPath := "/v3/projects/Xk9mZp/faults/1/resume_recording"
@@ -463,6 +469,26 @@ func TestAlarmsUpdateChangesBehaviour(t *testing.T) {
 		if _, present := got.body[absent]; present {
 			t.Errorf("%s was sent though it was not supplied", absent)
 		}
+	}
+}
+
+// An update can change the trigger, and a fractional threshold survives.
+func TestAlarmsUpdateSendsTrigger(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"a1","name":"Spike"}}`)
+
+	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1", AlarmUpdateParams{
+		Trigger: &AlarmTrigger{Type: "alert_result_count", Operator: "gte", Value: 0.5},
+	}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	trigger, ok := got.body["trigger_config"].(map[string]any)
+	if !ok || trigger["type"] != "alert_result_count" {
+		t.Fatalf("trigger_config = %v", got.body["trigger_config"])
+	}
+	config, ok := trigger["config"].(map[string]any)
+	if !ok || config["operator"] != "gte" || config["value"] != 0.5 {
+		t.Errorf("trigger config = %v", trigger["config"])
 	}
 }
 

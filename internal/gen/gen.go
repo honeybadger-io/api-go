@@ -151,6 +151,27 @@ func (e AlarmState) Valid() bool {
 	}
 }
 
+// Defines values for AlarmHistoryEntryStatus.
+const (
+	AlarmHistoryEntryStatusAlarm       AlarmHistoryEntryStatus = "alarm"
+	AlarmHistoryEntryStatusLessThannil AlarmHistoryEntryStatus = "<nil>"
+	AlarmHistoryEntryStatusOk          AlarmHistoryEntryStatus = "ok"
+)
+
+// Valid indicates whether the value is a known member of the AlarmHistoryEntryStatus enum.
+func (e AlarmHistoryEntryStatus) Valid() bool {
+	switch e {
+	case AlarmHistoryEntryStatusAlarm:
+		return true
+	case AlarmHistoryEntryStatusLessThannil:
+		return true
+	case AlarmHistoryEntryStatusOk:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CheckInScheduleType.
 const (
 	CheckInScheduleTypeCron   CheckInScheduleType = "cron"
@@ -372,6 +393,7 @@ const (
 	ErrorBodyCodeAmbiguousAccount      ErrorBodyCode = "ambiguous_account"
 	ErrorBodyCodeCredentialInQuery     ErrorBodyCode = "credential_in_query"
 	ErrorBodyCodeDeleteFailed          ErrorBodyCode = "delete_failed"
+	ErrorBodyCodeFaultMerged           ErrorBodyCode = "fault_merged"
 	ErrorBodyCodeFeatureUnavailable    ErrorBodyCode = "feature_unavailable"
 	ErrorBodyCodeForbiddenAttributes   ErrorBodyCode = "forbidden_attributes"
 	ErrorBodyCodeInsufficientScope     ErrorBodyCode = "insufficient_scope"
@@ -402,6 +424,8 @@ func (e ErrorBodyCode) Valid() bool {
 	case ErrorBodyCodeCredentialInQuery:
 		return true
 	case ErrorBodyCodeDeleteFailed:
+		return true
+	case ErrorBodyCodeFaultMerged:
 		return true
 	case ErrorBodyCodeFeatureUnavailable:
 		return true
@@ -1063,15 +1087,15 @@ func (e ListAccountOccurrencesParamsPeriod) Valid() bool {
 	}
 }
 
-// Defines values for BulkUpdateCheckIns200JSONResponseBodyDataOperation.
+// Defines values for ReplaceCheckIns200JSONResponseBodyDataOperation.
 const (
-	Create BulkUpdateCheckIns200JSONResponseBodyDataOperation = "create"
-	Delete BulkUpdateCheckIns200JSONResponseBodyDataOperation = "delete"
-	Update BulkUpdateCheckIns200JSONResponseBodyDataOperation = "update"
+	Create ReplaceCheckIns200JSONResponseBodyDataOperation = "create"
+	Delete ReplaceCheckIns200JSONResponseBodyDataOperation = "delete"
+	Update ReplaceCheckIns200JSONResponseBodyDataOperation = "update"
 )
 
-// Valid indicates whether the value is a known member of the BulkUpdateCheckIns200JSONResponseBodyDataOperation enum.
-func (e BulkUpdateCheckIns200JSONResponseBodyDataOperation) Valid() bool {
+// Valid indicates whether the value is a known member of the ReplaceCheckIns200JSONResponseBodyDataOperation enum.
+func (e ReplaceCheckIns200JSONResponseBodyDataOperation) Valid() bool {
 	switch e {
 	case Create:
 		return true
@@ -1423,7 +1447,7 @@ type Alarm struct {
 	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
 
 	// TriggerConfig Trigger configuration for the alarm
-	TriggerConfig nullable.Nullable[map[string]interface{}] `json:"trigger_config,omitempty"`
+	TriggerConfig nullable.Nullable[AlarmTriggerConfig] `json:"trigger_config,omitempty"`
 
 	// UpdatedAt When the alarm was last updated
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
@@ -1450,19 +1474,46 @@ type AlarmCreateInput struct {
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on
-	TriggerConfig *AlarmCreateInput_TriggerConfig `json:"trigger_config,omitempty"`
+	TriggerConfig *AlarmTriggerConfig `json:"trigger_config,omitempty"`
 }
 
-// AlarmCreateInput_TriggerConfig_Config defines model for AlarmCreateInput.TriggerConfig.Config.
-type AlarmCreateInput_TriggerConfig_Config struct {
+// AlarmHistoryEntry One alarm state change, as recorded by the Insights backend
+type AlarmHistoryEntry struct {
+	// CreatedAt When the change was recorded
+	CreatedAt time.Time `json:"created_at"`
+
+	// EvaluationResult The value the trigger compared against its threshold
+	EvaluationResult nullable.Nullable[float64] `json:"evaluation_result"`
+
+	// EvaluationStartedAt Start of the window whose evaluation caused the change
+	EvaluationStartedAt time.Time `json:"evaluation_started_at"`
+
+	// Id Trigger identifier
+	Id string `json:"id"`
+
+	// ObserverId The version of the alarm that was evaluated. Editing an alarm creates a new version, and history spans every version.
+	ObserverId string `json:"observer_id"`
+
+	// ObserverRootId The alarm's ID
+	ObserverRootId string `json:"observer_root_id"`
+
+	// Status The state the alarm entered
+	Status nullable.Nullable[AlarmHistoryEntryStatus] `json:"status"`
+}
+
+// AlarmHistoryEntryStatus The state the alarm entered
+type AlarmHistoryEntryStatus string
+
+// AlarmTriggerConfig What turns the alarm on
+type AlarmTriggerConfig struct {
+	Config *AlarmTriggerConfig_Config `json:"config,omitempty"`
+	Type   string                     `json:"type"`
+}
+
+// AlarmTriggerConfig_Config defines model for AlarmTriggerConfig.Config.
+type AlarmTriggerConfig_Config struct {
 	Operator *string  `json:"operator,omitempty"`
-	Value    *float32 `json:"value,omitempty"`
-}
-
-// AlarmCreateInput_TriggerConfig What turns the alarm on
-type AlarmCreateInput_TriggerConfig struct {
-	Config *AlarmCreateInput_TriggerConfig_Config `json:"config,omitempty"`
-	Type   string                                 `json:"type"`
+	Value    *float64 `json:"value,omitempty"`
 }
 
 // AlarmUpdateInput Writable alarm attributes
@@ -1482,8 +1533,8 @@ type AlarmUpdateInput struct {
 	// StreamIds Stream identifiers to query
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
-	// TriggerConfig Trigger configuration for the alarm
-	TriggerConfig *map[string]interface{} `json:"trigger_config,omitempty"`
+	// TriggerConfig What turns the alarm on
+	TriggerConfig *AlarmTriggerConfig `json:"trigger_config,omitempty"`
 }
 
 // CheckIn A scheduled task check-in monitor
@@ -1864,7 +1915,7 @@ type ErrorBody struct {
 	// Code Machine-readable code. Branch on this rather than on the message, which is free text and may be the upstream service's own wording.
 	Code ErrorBodyCode `json:"code"`
 
-	// Details A list of field errors for `validation_error`, or an object naming the missing permission for `insufficient_scope`. Absent for every other code.
+	// Details A list of field errors for `validation_error`, an object naming the missing permission for `insufficient_scope`, or the surviving fault for `fault_merged`. Absent for every other code.
 	Details *json.RawMessage `json:"details,omitempty"`
 
 	// Message Human-readable explanation
@@ -1932,6 +1983,9 @@ type Fault struct {
 
 	// ProjectId ID of the project this fault belongs to
 	ProjectId string `json:"project_id"`
+
+	// RecordingPausedUntil When a recording pause ends; null when recording is not paused. Absent for a fault on an inactive project.
+	RecordingPausedUntil nullable.Nullable[time.Time] `json:"recording_paused_until,omitempty"`
 
 	// ResolveOnDeploy Whether this fault is waiting to be resolved by the next recorded deploy. Absent for a fault on an inactive project.
 	ResolveOnDeploy *bool `json:"resolve_on_deploy,omitempty"`
@@ -2178,7 +2232,7 @@ type IntegrationInput struct {
 	// Environments Environment names this channel monitors (shorthand for setting included/excluded).
 	Environments *[]string `json:"environments,omitempty"`
 
-	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create.
+	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create. Adding an event the type does not support is refused with 422.
 	Events *[]string `json:"events,omitempty"`
 
 	// ExcludedEnvironments Environment names excluded from notifications.
@@ -2590,8 +2644,8 @@ type Site struct {
 	// RequestBody Request body for POST/PUT checks
 	RequestBody nullable.Nullable[string] `json:"request_body,omitempty"`
 
-	// RequestHeaders Custom headers sent with check requests
-	RequestHeaders nullable.Nullable[map[string]interface{}] `json:"request_headers,omitempty"`
+	// RequestHeaders Custom headers sent with check requests, as header name to value
+	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers,omitempty"`
 
 	// RequestMethod HTTP method for checks
 	RequestMethod *string `json:"request_method,omitempty"`
@@ -2635,9 +2689,9 @@ type SiteCreateInput struct {
 	// RequestBody Body to send with the request
 	RequestBody *string `json:"request_body,omitempty"`
 
-	// RequestHeaders Headers to send with the request
-	RequestHeaders *[]SiteCreateInput_RequestHeaders `json:"request_headers,omitempty"`
-	RequestMethod  *SiteCreateInputRequestMethod     `json:"request_method,omitempty"`
+	// RequestHeaders Headers to send with the request, as header name to value. Replaces the stored headers; send `{}` to clear them.
+	RequestHeaders *map[string]string            `json:"request_headers,omitempty"`
+	RequestMethod  *SiteCreateInputRequestMethod `json:"request_method,omitempty"`
 
 	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
 	Timeout *int   `json:"timeout,omitempty"`
@@ -2655,12 +2709,6 @@ type SiteCreateInputLocations string
 
 // SiteCreateInputMatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
 type SiteCreateInputMatchType string
-
-// SiteCreateInput_RequestHeaders defines model for SiteCreateInput.RequestHeaders.
-type SiteCreateInput_RequestHeaders struct {
-	Key   *string `json:"key,omitempty"`
-	Value *string `json:"value,omitempty"`
-}
 
 // SiteCreateInputRequestMethod defines model for SiteCreateInput.RequestMethod.
 type SiteCreateInputRequestMethod string
@@ -2688,9 +2736,9 @@ type SiteInput struct {
 	// RequestBody Body to send with the request
 	RequestBody *string `json:"request_body,omitempty"`
 
-	// RequestHeaders Headers to send with the request
-	RequestHeaders *[]SiteInput_RequestHeaders `json:"request_headers,omitempty"`
-	RequestMethod  *SiteInputRequestMethod     `json:"request_method,omitempty"`
+	// RequestHeaders Headers to send with the request, as header name to value. Replaces the stored headers; send `{}` to clear them.
+	RequestHeaders *map[string]string      `json:"request_headers,omitempty"`
+	RequestMethod  *SiteInputRequestMethod `json:"request_method,omitempty"`
 
 	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; ignored otherwise.
 	Timeout *int    `json:"timeout,omitempty"`
@@ -2708,12 +2756,6 @@ type SiteInputLocations string
 
 // SiteInputMatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
 type SiteInputMatchType string
-
-// SiteInput_RequestHeaders defines model for SiteInput.RequestHeaders.
-type SiteInput_RequestHeaders struct {
-	Key   *string `json:"key,omitempty"`
-	Value *string `json:"value,omitempty"`
-}
 
 // SiteInputRequestMethod defines model for SiteInput.RequestMethod.
 type SiteInputRequestMethod string
@@ -3276,6 +3318,9 @@ type BadRequest = Error
 // FaultBulkRejected API error response
 type FaultBulkRejected = Error
 
+// FaultMergedConflict API error response
+type FaultMergedConflict = Error
+
 // Forbidden API error response
 type Forbidden = Error
 
@@ -3375,10 +3420,38 @@ type UpdateAccountMember200JSONResponseBody struct {
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
+// GetAccountUsage200JSONResponseBody_Data_Quota defines parameters for GetAccountUsage.
+type GetAccountUsage200JSONResponseBody_Data_Quota struct {
+	// CheckInsConsumed Check-ins in use
+	CheckInsConsumed int `json:"check_ins_consumed"`
+
+	// CheckInsLimit Check-ins allowed; null when unlimited
+	CheckInsLimit nullable.Nullable[int] `json:"check_ins_limit"`
+
+	// ErrorsConsumed Errors recorded this billing period
+	ErrorsConsumed int `json:"errors_consumed"`
+
+	// ErrorsLimit Errors allowed this billing period
+	ErrorsLimit int `json:"errors_limit"`
+
+	// UptimeConsumed Uptime monitors in use
+	UptimeConsumed int `json:"uptime_consumed"`
+
+	// UptimeLimit Uptime monitors allowed; null when unlimited
+	UptimeLimit nullable.Nullable[int] `json:"uptime_limit"`
+}
+
+// GetAccountUsage200JSONResponseBody_Data defines parameters for GetAccountUsage.
+type GetAccountUsage200JSONResponseBody_Data struct {
+	// Id Account ID
+	Id    string                                        `json:"id"`
+	Quota GetAccountUsage200JSONResponseBody_Data_Quota `json:"quota"`
+}
+
 // GetAccountUsage200JSONResponseBody defines parameters for GetAccountUsage.
 type GetAccountUsage200JSONResponseBody struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
+	Data GetAccountUsage200JSONResponseBody_Data `json:"data"`
+	Meta *ResponseMeta                           `json:"meta,omitempty"`
 }
 
 // GetNoticeParams defines parameters for GetNotice.
@@ -3503,19 +3576,16 @@ type ListAlarmHistoryParams struct {
 	Page *Page `form:"page,omitempty" json:"page,omitempty"`
 }
 
-// ListAlarmHistory200JSONResponseBody_Pagination defines parameters for ListAlarmHistory.
-type ListAlarmHistory200JSONResponseBody_Pagination struct {
-	Page       *int `json:"page,omitempty"`
-	TotalPages *int `json:"total_pages,omitempty"`
-}
-
 // ListAlarmHistory200JSONResponseBody defines parameters for ListAlarmHistory.
 type ListAlarmHistory200JSONResponseBody struct {
-	Data []map[string]interface{} `json:"data"`
-	Meta *ResponseMeta            `json:"meta,omitempty"`
+	Data []AlarmHistoryEntry `json:"data"`
 
-	// Pagination The query service's paging object, passed through
-	Pagination *ListAlarmHistory200JSONResponseBody_Pagination `json:"pagination,omitempty"`
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
+
+	// Pagination Offset-based pagination information
+	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
 // ListCheckInsParams defines parameters for ListCheckIns.
@@ -3546,22 +3616,22 @@ type CreateCheckIn201JSONResponseBody struct {
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
-// BulkUpdateCheckIns200JSONResponseBodyDataOperation defines parameters for BulkUpdateCheckIns.
-type BulkUpdateCheckIns200JSONResponseBodyDataOperation string
+// ReplaceCheckIns200JSONResponseBodyDataOperation defines parameters for ReplaceCheckIns.
+type ReplaceCheckIns200JSONResponseBodyDataOperation string
 
-// BulkUpdateCheckIns200JSONResponseBody_Data defines parameters for BulkUpdateCheckIns.
-type BulkUpdateCheckIns200JSONResponseBody_Data struct {
+// ReplaceCheckIns200JSONResponseBody_Data defines parameters for ReplaceCheckIns.
+type ReplaceCheckIns200JSONResponseBody_Data struct {
 	// Errors Present when success is false.
-	Errors    *[]string                                          `json:"errors,omitempty"`
-	Operation BulkUpdateCheckIns200JSONResponseBodyDataOperation `json:"operation"`
-	Slug      string                                             `json:"slug"`
-	Success   bool                                               `json:"success"`
+	Errors    *[]string                                       `json:"errors,omitempty"`
+	Operation ReplaceCheckIns200JSONResponseBodyDataOperation `json:"operation"`
+	Slug      string                                          `json:"slug"`
+	Success   bool                                            `json:"success"`
 }
 
-// BulkUpdateCheckIns200JSONResponseBody defines parameters for BulkUpdateCheckIns.
-type BulkUpdateCheckIns200JSONResponseBody struct {
-	Data []BulkUpdateCheckIns200JSONResponseBody_Data `json:"data"`
-	Meta *ResponseMeta                                `json:"meta,omitempty"`
+// ReplaceCheckIns200JSONResponseBody defines parameters for ReplaceCheckIns.
+type ReplaceCheckIns200JSONResponseBody struct {
+	Data []ReplaceCheckIns200JSONResponseBody_Data `json:"data"`
+	Meta *ResponseMeta                             `json:"meta,omitempty"`
 }
 
 // GetCheckIn200JSONResponseBody defines parameters for GetCheckIn.
@@ -3711,13 +3781,13 @@ type CreateEnvironment201JSONResponseBody struct {
 // BulkDeleteEnvironmentsJSONBody defines parameters for BulkDeleteEnvironments.
 type BulkDeleteEnvironmentsJSONBody struct {
 	// EnvironmentIds Public IDs of environments to delete
-	EnvironmentIds *[]string `json:"environment_ids,omitempty"`
+	EnvironmentIds []string `json:"environment_ids"`
 }
 
 // BulkDeleteEnvironments200JSONResponseBody_Data defines parameters for BulkDeleteEnvironments.
 type BulkDeleteEnvironments200JSONResponseBody_Data struct {
-	// DestroyedCount Number of environments deleted
-	DestroyedCount *int `json:"destroyed_count,omitempty"`
+	// Count Number of environments deleted
+	Count *int `json:"count,omitempty"`
 }
 
 // BulkDeleteEnvironments200JSONResponseBody defines parameters for BulkDeleteEnvironments.
@@ -3737,8 +3807,8 @@ type BulkUpdateEnvironmentsJSONBody struct {
 
 // BulkUpdateEnvironments200JSONResponseBody_Data defines parameters for BulkUpdateEnvironments.
 type BulkUpdateEnvironments200JSONResponseBody_Data struct {
-	// AffectedCount Number of environments updated
-	AffectedCount *int `json:"affected_count,omitempty"`
+	// Count Number of environments updated
+	Count *int `json:"count,omitempty"`
 }
 
 // BulkUpdateEnvironments200JSONResponseBody defines parameters for BulkUpdateEnvironments.
@@ -4082,6 +4152,27 @@ type PauseFaultRecordingJSONBody struct {
 // PauseFaultRecordingJSONBodyTime defines parameters for PauseFaultRecording.
 type PauseFaultRecordingJSONBodyTime string
 
+// PauseFaultRecording200JSONResponseBody defines parameters for PauseFaultRecording.
+type PauseFaultRecording200JSONResponseBody struct {
+	// Data A unique error fingerprint (fault)
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
+// ResumeFaultRecording200JSONResponseBody defines parameters for ResumeFaultRecording.
+type ResumeFaultRecording200JSONResponseBody struct {
+	// Data A unique error fingerprint (fault)
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
+// UnsnoozeFault200JSONResponseBody defines parameters for UnsnoozeFault.
+type UnsnoozeFault200JSONResponseBody struct {
+	// Data A unique error fingerprint (fault)
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
 // SnoozeFaultJSONBody defines parameters for SnoozeFault.
 type SnoozeFaultJSONBody struct {
 	// Count Snooze until this many additional occurrences have been received.
@@ -4096,6 +4187,13 @@ type SnoozeFaultJSONBodyCount int
 
 // SnoozeFaultJSONBodyTime defines parameters for SnoozeFault.
 type SnoozeFaultJSONBodyTime string
+
+// SnoozeFault200JSONResponseBody defines parameters for SnoozeFault.
+type SnoozeFault200JSONResponseBody struct {
+	// Data A unique error fingerprint (fault)
+	Data Fault         `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
 
 // RunInsightsQueryJSONBody defines parameters for RunInsightsQuery.
 type RunInsightsQueryJSONBody struct {
@@ -4112,18 +4210,14 @@ type RunInsightsQueryJSONBody struct {
 	Ts *string `json:"ts,omitempty"`
 }
 
-// RunInsightsQuery200JSONResponseBody_Links defines parameters for RunInsightsQuery.
-type RunInsightsQuery200JSONResponseBody_Links struct {
-	// Web Absolute URL that re-runs this query in the Honeybadger web UI, on the web UI's host rather than the API's. It carries the request's `ts` and `stream_ids` when sent, and its `timezone` (UTC when none was sent). Present even when `data` carries an `error` from a query that failed while running.
-	Web string `json:"web"`
-}
-
 // RunInsightsQuery200JSONResponseBody defines parameters for RunInsightsQuery.
 type RunInsightsQuery200JSONResponseBody struct {
 	// Data Query result, as returned by the query service
-	Data  map[string]interface{}                    `json:"data"`
-	Links RunInsightsQuery200JSONResponseBody_Links `json:"links"`
-	Meta  *map[string]interface{}                   `json:"meta,omitempty"`
+	Data map[string]interface{} `json:"data"`
+
+	// Links Links into the Honeybadger web UI
+	Links *WebLinks     `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 }
 
 // RunInsightsQuery422JSONResponseBody defines parameters for RunInsightsQuery.
@@ -4197,6 +4291,12 @@ type ListProjectKeys200JSONResponseBody struct {
 
 // CreateProjectKey201JSONResponseBody defines parameters for CreateProjectKey.
 type CreateProjectKey201JSONResponseBody struct {
+	Data ProjectKey    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
+// GetProjectKey200JSONResponseBody defines parameters for GetProjectKey.
+type GetProjectKey200JSONResponseBody struct {
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
@@ -4325,10 +4425,28 @@ type ListOutages200JSONResponseBody struct {
 	Pagination *TimeSeriesPagination `json:"pagination,omitempty"`
 }
 
+// GetProjectStats200JSONResponseBody_Data defines parameters for GetProjectStats.
+type GetProjectStats200JSONResponseBody_Data struct {
+	FaultCount int `json:"fault_count"`
+
+	// Id Project ID
+	Id string `json:"id"`
+
+	// NoticeCountMonth Notices in the last month; null when the count could not be computed
+	NoticeCountMonth nullable.Nullable[int] `json:"notice_count_month"`
+
+	// NoticeCountToday Notices in the last 24 hours; null when the count could not be computed
+	NoticeCountToday nullable.Nullable[int] `json:"notice_count_today"`
+
+	// NoticeCountWeek Notices in the last 7 days; null when the count could not be computed
+	NoticeCountWeek      nullable.Nullable[int] `json:"notice_count_week"`
+	UnresolvedFaultCount int                    `json:"unresolved_fault_count"`
+}
+
 // GetProjectStats200JSONResponseBody defines parameters for GetProjectStats.
 type GetProjectStats200JSONResponseBody struct {
-	Data map[string]interface{} `json:"data"`
-	Meta *ResponseMeta          `json:"meta,omitempty"`
+	Data GetProjectStats200JSONResponseBody_Data `json:"data"`
+	Meta *ResponseMeta                           `json:"meta,omitempty"`
 }
 
 // ListStreamsParams defines parameters for ListStreams.
@@ -4345,8 +4463,8 @@ type ListStreams200JSONResponseBody struct {
 	Data []Stream `json:"data"`
 
 	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks            `json:"links,omitempty"`
-	Meta  *map[string]interface{} `json:"meta,omitempty"`
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
 
 	// Pagination Offset-based pagination information
 	Pagination *Pagination `json:"pagination,omitempty"`
@@ -4631,15 +4749,10 @@ type GetToken200JSONResponseBody_Data struct {
 	Scopes *[]string `json:"scopes,omitempty"`
 }
 
-// GetToken200JSONResponseBody_Meta defines parameters for GetToken.
-type GetToken200JSONResponseBody_Meta struct {
-	RequestId *string `json:"request_id,omitempty"`
-}
-
 // GetToken200JSONResponseBody defines parameters for GetToken.
 type GetToken200JSONResponseBody struct {
-	Data *GetToken200JSONResponseBody_Data `json:"data,omitempty"`
-	Meta *GetToken200JSONResponseBody_Meta `json:"meta,omitempty"`
+	Data GetToken200JSONResponseBody_Data `json:"data"`
+	Meta *ResponseMeta                    `json:"meta,omitempty"`
 }
 
 // CreateAccountInvitationJSONRequestBody defines body for CreateAccountInvitation for application/json ContentType.
@@ -4666,8 +4779,8 @@ type UpdateAlarmJSONRequestBody = AlarmUpdateInput
 // CreateCheckInJSONRequestBody defines body for CreateCheckIn for application/json ContentType.
 type CreateCheckInJSONRequestBody = CheckInCreateInput
 
-// BulkUpdateCheckInsJSONRequestBody defines body for BulkUpdateCheckIns for application/json ContentType.
-type BulkUpdateCheckInsJSONRequestBody = CheckInBulkUpdateInput
+// ReplaceCheckInsJSONRequestBody defines body for ReplaceCheckIns for application/json ContentType.
+type ReplaceCheckInsJSONRequestBody = CheckInBulkUpdateInput
 
 // UpdateCheckInJSONRequestBody defines body for UpdateCheckIn for application/json ContentType.
 type UpdateCheckInJSONRequestBody = CheckInInput
@@ -5491,7 +5604,7 @@ type ClientInterface interface {
 	//
 	// Returns the trigger history for an alarm.
 	//
-	// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
+	// Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
 	//
 	// Corresponds with GET /projects/{project_id}/alarms/{alarm_id}/history (the `ListAlarmHistory` operationId).
 	ListAlarmHistory(ctx context.Context, projectId ProjectId, alarmId string, params *ListAlarmHistoryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -5521,23 +5634,23 @@ type ClientInterface interface {
 	// Corresponds with POST /projects/{project_id}/check_ins (the `CreateCheckIn` operationId).
 	CreateCheckIn(ctx context.Context, projectId ProjectId, body CreateCheckInJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// BulkUpdateCheckInsWithBody Replace the project's check-ins
+	// ReplaceCheckInsWithBody Replace the project's check-ins
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-	BulkUpdateCheckInsWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+	ReplaceCheckInsWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// BulkUpdateCheckIns Replace the project's check-ins
+	// ReplaceCheckIns Replace the project's check-ins
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-	BulkUpdateCheckIns(ctx context.Context, projectId ProjectId, body BulkUpdateCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+	ReplaceCheckIns(ctx context.Context, projectId ProjectId, body ReplaceCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteCheckIn Delete a check-in
 	//
@@ -5693,7 +5806,7 @@ type ClientInterface interface {
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+	// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 	BulkDeleteEnvironmentsWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// BulkDeleteEnvironments Bulk delete environments
@@ -5702,7 +5815,7 @@ type ClientInterface interface {
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+	// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 	BulkDeleteEnvironments(ctx context.Context, projectId ProjectId, body BulkDeleteEnvironmentsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// BulkUpdateEnvironmentsWithBody Bulk update environments
@@ -5877,7 +5990,7 @@ type ClientInterface interface {
 
 	// ListFaultAffectedUsers Get affected users
 	//
-	// Returns users affected by a fault.
+	// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
 	//
 	// Corresponds with GET /projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
 	ListFaultAffectedUsers(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6164,6 +6277,13 @@ type ClientInterface interface {
 	//
 	// Corresponds with DELETE /projects/{project_id}/keys/{key_id} (the `DeleteProjectKey` operationId).
 	DeleteProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetProjectKey Get a project key
+	//
+	// Returns a single ingestion key.
+	//
+	// Corresponds with GET /projects/{project_id}/keys/{key_id} (the `GetProjectKey` operationId).
+	GetProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateProjectKeyWithBody Update a project key
 	//
@@ -7163,7 +7283,7 @@ func (c *Client) UpdateAlarm(ctx context.Context, projectId ProjectId, alarmId s
 //
 // Returns the trigger history for an alarm.
 //
-// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
+// Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
 //
 // Corresponds with GET /projects/{project_id}/alarms/{alarm_id}/history (the `ListAlarmHistory` operationId).
 func (c *Client) ListAlarmHistory(ctx context.Context, projectId ProjectId, alarmId string, params *ListAlarmHistoryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7233,15 +7353,15 @@ func (c *Client) CreateCheckIn(ctx context.Context, projectId ProjectId, body Cr
 	return c.Client.Do(req)
 }
 
-// BulkUpdateCheckInsWithBody Replace the project's check-ins
+// ReplaceCheckInsWithBody Replace the project's check-ins
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-func (c *Client) BulkUpdateCheckInsWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewBulkUpdateCheckInsRequestWithBody(c.Server, projectId, contentType, body)
+// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+func (c *Client) ReplaceCheckInsWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReplaceCheckInsRequestWithBody(c.Server, projectId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -7252,15 +7372,15 @@ func (c *Client) BulkUpdateCheckInsWithBody(ctx context.Context, projectId Proje
 	return c.Client.Do(req)
 }
 
-// BulkUpdateCheckIns Replace the project's check-ins
+// ReplaceCheckIns Replace the project's check-ins
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-func (c *Client) BulkUpdateCheckIns(ctx context.Context, projectId ProjectId, body BulkUpdateCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewBulkUpdateCheckInsRequest(c.Server, projectId, body)
+// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+func (c *Client) ReplaceCheckIns(ctx context.Context, projectId ProjectId, body ReplaceCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReplaceCheckInsRequest(c.Server, projectId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -7605,7 +7725,7 @@ func (c *Client) CreateEnvironment(ctx context.Context, projectId ProjectId, bod
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 func (c *Client) BulkDeleteEnvironmentsWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewBulkDeleteEnvironmentsRequestWithBody(c.Server, projectId, contentType, body)
 	if err != nil {
@@ -7624,7 +7744,7 @@ func (c *Client) BulkDeleteEnvironmentsWithBody(ctx context.Context, projectId P
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 func (c *Client) BulkDeleteEnvironments(ctx context.Context, projectId ProjectId, body BulkDeleteEnvironmentsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewBulkDeleteEnvironmentsRequest(c.Server, projectId, body)
 	if err != nil {
@@ -8009,7 +8129,7 @@ func (c *Client) UpdateFault(ctx context.Context, projectId ProjectId, faultId F
 
 // ListFaultAffectedUsers Get affected users
 //
-// Returns users affected by a fault.
+// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
 //
 // Corresponds with GET /projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
 func (c *Client) ListFaultAffectedUsers(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8627,6 +8747,23 @@ func (c *Client) CreateProjectKey(ctx context.Context, projectId ProjectId, body
 // Corresponds with DELETE /projects/{project_id}/keys/{key_id} (the `DeleteProjectKey` operationId).
 func (c *Client) DeleteProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteProjectKeyRequest(c.Server, projectId, keyId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetProjectKey Get a project key
+//
+// Returns a single ingestion key.
+//
+// Corresponds with GET /projects/{project_id}/keys/{key_id} (the `GetProjectKey` operationId).
+func (c *Client) GetProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProjectKeyRequest(c.Server, projectId, keyId)
 	if err != nil {
 		return nil, err
 	}
@@ -10869,19 +11006,19 @@ func NewCreateCheckInRequestWithBody(server string, projectId ProjectId, content
 	return req, nil
 }
 
-// NewBulkUpdateCheckInsRequest calls the generic BulkUpdateCheckIns builder with application/json body
-func NewBulkUpdateCheckInsRequest(server string, projectId ProjectId, body BulkUpdateCheckInsJSONRequestBody) (*http.Request, error) {
+// NewReplaceCheckInsRequest calls the generic ReplaceCheckIns builder with application/json body
+func NewReplaceCheckInsRequest(server string, projectId ProjectId, body ReplaceCheckInsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewBulkUpdateCheckInsRequestWithBody(server, projectId, "application/json", bodyReader)
+	return NewReplaceCheckInsRequestWithBody(server, projectId, "application/json", bodyReader)
 }
 
-// NewBulkUpdateCheckInsRequestWithBody constructs an http.Request for the BulkUpdateCheckIns method, with any body, and a specified content type
-func NewBulkUpdateCheckInsRequestWithBody(server string, projectId ProjectId, contentType string, body io.Reader) (*http.Request, error) {
+// NewReplaceCheckInsRequestWithBody constructs an http.Request for the ReplaceCheckIns method, with any body, and a specified content type
+func NewReplaceCheckInsRequestWithBody(server string, projectId ProjectId, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -11726,7 +11863,7 @@ func NewBulkDeleteEnvironmentsRequestWithBody(server string, projectId ProjectId
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/projects/%s/environments/bulk_destroy", pathParam0)
+	operationPath := fmt.Sprintf("/projects/%s/environments/bulk_delete", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -11736,7 +11873,7 @@ func NewBulkDeleteEnvironmentsRequestWithBody(server string, projectId ProjectId
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -13858,6 +13995,47 @@ func NewDeleteProjectKeyRequest(server string, projectId ProjectId, keyId string
 	}
 
 	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetProjectKeyRequest constructs an http.Request for the GetProjectKey method
+func NewGetProjectKeyRequest(server string, projectId ProjectId, keyId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "key_id", keyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/keys/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -16380,7 +16558,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns the trigger history for an alarm.
 	//
-	// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
+	// Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -16414,23 +16592,23 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /projects/{project_id}/check_ins (the `CreateCheckIn` operationId).
 	CreateCheckInWithResponse(ctx context.Context, projectId ProjectId, body CreateCheckInJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCheckInResponse, error)
 
-	// BulkUpdateCheckInsWithBodyWithResponse Replace the project's check-ins
+	// ReplaceCheckInsWithBodyWithResponse Replace the project's check-ins
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-	BulkUpdateCheckInsWithBodyWithResponse(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkUpdateCheckInsResponse, error)
+	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+	ReplaceCheckInsWithBodyWithResponse(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceCheckInsResponse, error)
 
-	// BulkUpdateCheckInsWithResponse Replace the project's check-ins
+	// ReplaceCheckInsWithResponse Replace the project's check-ins
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-	BulkUpdateCheckInsWithResponse(ctx context.Context, projectId ProjectId, body BulkUpdateCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*BulkUpdateCheckInsResponse, error)
+	// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+	ReplaceCheckInsWithResponse(ctx context.Context, projectId ProjectId, body ReplaceCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceCheckInsResponse, error)
 
 	// DeleteCheckInWithResponse Delete a check-in
 	//
@@ -16606,7 +16784,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+	// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 	BulkDeleteEnvironmentsWithBodyWithResponse(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkDeleteEnvironmentsResponse, error)
 
 	// BulkDeleteEnvironmentsWithResponse Bulk delete environments
@@ -16615,7 +16793,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+	// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 	BulkDeleteEnvironmentsWithResponse(ctx context.Context, projectId ProjectId, body BulkDeleteEnvironmentsJSONRequestBody, reqEditors ...RequestEditorFn) (*BulkDeleteEnvironmentsResponse, error)
 
 	// BulkUpdateEnvironmentsWithBodyWithResponse Bulk update environments
@@ -16802,7 +16980,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListFaultAffectedUsersWithResponse Get affected users
 	//
-	// Returns users affected by a fault.
+	// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -17117,6 +17295,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with DELETE /projects/{project_id}/keys/{key_id} (the `DeleteProjectKey` operationId).
 	DeleteProjectKeyWithResponse(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*DeleteProjectKeyResponse, error)
+
+	// GetProjectKeyWithResponse Get a project key
+	//
+	// Returns a single ingestion key.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /projects/{project_id}/keys/{key_id} (the `GetProjectKey` operationId).
+	GetProjectKeyWithResponse(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*GetProjectKeyResponse, error)
 
 	// UpdateProjectKeyWithBodyWithResponse Update a project key
 	//
@@ -17622,6 +17809,11 @@ type ClientWithResponsesInterface interface {
 	GetTokenWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTokenResponse, error)
 }
 
+// GetAccountResponse403Headers the declared response headers of an HTTP 403 response for GetAccount
+type GetAccountResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -17629,10 +17821,14 @@ type GetAccountResponse struct {
 	JSON200 *GetAccount200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetAccountResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -17643,6 +17839,11 @@ func (r GetAccountResponse) GetJSON200() *GetAccount200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetAccountResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetAccountResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18347,6 +18548,11 @@ func (r UpdateAccountMemberResponse) ContentType() string {
 	return ""
 }
 
+// GetAccountUsageResponse403Headers the declared response headers of an HTTP 403 response for GetAccountUsage
+type GetAccountUsageResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetAccountUsageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18354,10 +18560,14 @@ type GetAccountUsageResponse struct {
 	JSON200 *GetAccountUsage200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetAccountUsageResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18368,6 +18578,11 @@ func (r GetAccountUsageResponse) GetJSON200() *GetAccountUsage200JSONResponseBod
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetAccountUsageResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetAccountUsageResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18409,6 +18624,11 @@ func (r GetAccountUsageResponse) ContentType() string {
 	return ""
 }
 
+// GetNoticeResponse403Headers the declared response headers of an HTTP 403 response for GetNotice
+type GetNoticeResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type GetNoticeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18418,8 +18638,12 @@ type GetNoticeResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetNoticeResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18435,6 +18659,11 @@ func (r GetNoticeResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r GetNoticeResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetNoticeResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18471,6 +18700,11 @@ func (r GetNoticeResponse) ContentType() string {
 	return ""
 }
 
+// ListProjectsResponse403Headers the declared response headers of an HTTP 403 response for ListProjects
+type ListProjectsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListProjectsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18480,10 +18714,14 @@ type ListProjectsResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListProjectsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18499,6 +18737,11 @@ func (r ListProjectsResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListProjectsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListProjectsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -18623,6 +18866,11 @@ func (r CreateProjectResponse) ContentType() string {
 	return ""
 }
 
+// ListAccountOccurrencesResponse403Headers the declared response headers of an HTTP 403 response for ListAccountOccurrences
+type ListAccountOccurrencesResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListAccountOccurrencesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -18632,12 +18880,16 @@ type ListAccountOccurrencesResponse struct {
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
 	// JSON429 the response for an HTTP 429 `application/json` response
 	JSON429 *RateLimitExceeded
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListAccountOccurrencesResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -18653,6 +18905,11 @@ func (r ListAccountOccurrencesResponse) GetJSON400() *BadRequest {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListAccountOccurrencesResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListAccountOccurrencesResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -19598,16 +19855,16 @@ func (r CreateCheckInResponse) ContentType() string {
 	return ""
 }
 
-// BulkUpdateCheckInsResponse403Headers the declared response headers of an HTTP 403 response for BulkUpdateCheckIns
-type BulkUpdateCheckInsResponse403Headers struct {
+// ReplaceCheckInsResponse403Headers the declared response headers of an HTTP 403 response for ReplaceCheckIns
+type ReplaceCheckInsResponse403Headers struct {
 	WWWAuthenticate *string
 }
 
-type BulkUpdateCheckInsResponse struct {
+type ReplaceCheckInsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
-	JSON200 *BulkUpdateCheckIns200JSONResponseBody
+	JSON200 *ReplaceCheckIns200JSONResponseBody
 	// JSON400 the response for an HTTP 400 `application/json` response
 	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
@@ -19619,46 +19876,46 @@ type BulkUpdateCheckInsResponse struct {
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
-	Headers403 *BulkUpdateCheckInsResponse403Headers
+	Headers403 *ReplaceCheckInsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r BulkUpdateCheckInsResponse) GetJSON200() *BulkUpdateCheckIns200JSONResponseBody {
+func (r ReplaceCheckInsResponse) GetJSON200() *ReplaceCheckIns200JSONResponseBody {
 	return r.JSON200
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
-func (r BulkUpdateCheckInsResponse) GetJSON400() *BadRequest {
+func (r ReplaceCheckInsResponse) GetJSON400() *BadRequest {
 	return r.JSON400
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
-func (r BulkUpdateCheckInsResponse) GetJSON401() *Unauthorized {
+func (r ReplaceCheckInsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r BulkUpdateCheckInsResponse) GetJSON403() *Forbidden {
+func (r ReplaceCheckInsResponse) GetJSON403() *Forbidden {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r BulkUpdateCheckInsResponse) GetJSON404() *NotFound {
+func (r ReplaceCheckInsResponse) GetJSON404() *NotFound {
 	return r.JSON404
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r BulkUpdateCheckInsResponse) GetJSON422() *ValidationError {
+func (r ReplaceCheckInsResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
 // GetBody returns the raw response body bytes
-func (r BulkUpdateCheckInsResponse) GetBody() []byte {
+func (r ReplaceCheckInsResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r BulkUpdateCheckInsResponse) Status() string {
+func (r ReplaceCheckInsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -19666,7 +19923,7 @@ func (r BulkUpdateCheckInsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r BulkUpdateCheckInsResponse) StatusCode() int {
+func (r ReplaceCheckInsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -19674,7 +19931,7 @@ func (r BulkUpdateCheckInsResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r BulkUpdateCheckInsResponse) ContentType() string {
+func (r ReplaceCheckInsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -20790,7 +21047,7 @@ type BulkDeleteEnvironmentsResponse struct {
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
-	JSON422 *AmbiguousAccount
+	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *BulkDeleteEnvironmentsResponse403Headers
 }
@@ -20816,7 +21073,7 @@ func (r BulkDeleteEnvironmentsResponse) GetJSON404() *NotFound {
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r BulkDeleteEnvironmentsResponse) GetJSON422() *AmbiguousAccount {
+func (r BulkDeleteEnvironmentsResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
@@ -20866,7 +21123,7 @@ type BulkUpdateEnvironmentsResponse struct {
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
-	JSON422 *AmbiguousAccount
+	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *BulkUpdateEnvironmentsResponse403Headers
 }
@@ -20892,7 +21149,7 @@ func (r BulkUpdateEnvironmentsResponse) GetJSON404() *NotFound {
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r BulkUpdateEnvironmentsResponse) GetJSON422() *AmbiguousAccount {
+func (r BulkUpdateEnvironmentsResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
@@ -21623,11 +21880,6 @@ func (r UnresolveFaultsResponse) ContentType() string {
 	return ""
 }
 
-// DeleteFaultResponse301Headers the declared response headers of an HTTP 301 response for DeleteFault
-type DeleteFaultResponse301Headers struct {
-	Location string
-}
-
 // DeleteFaultResponse403Headers the declared response headers of an HTTP 403 response for DeleteFault
 type DeleteFaultResponse403Headers struct {
 	WWWAuthenticate *string
@@ -21642,10 +21894,10 @@ type DeleteFaultResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *DeleteFaultResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *DeleteFaultResponse403Headers
 }
@@ -21663,6 +21915,11 @@ func (r DeleteFaultResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r DeleteFaultResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r DeleteFaultResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -21782,11 +22039,6 @@ func (r GetFaultResponse) ContentType() string {
 	return ""
 }
 
-// UpdateFaultResponse301Headers the declared response headers of an HTTP 301 response for UpdateFault
-type UpdateFaultResponse301Headers struct {
-	Location string
-}
-
 // UpdateFaultResponse403Headers the declared response headers of an HTTP 403 response for UpdateFault
 type UpdateFaultResponse403Headers struct {
 	WWWAuthenticate *string
@@ -21803,10 +22055,10 @@ type UpdateFaultResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *ValidationError
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *UpdateFaultResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *UpdateFaultResponse403Headers
 }
@@ -21829,6 +22081,11 @@ func (r UpdateFaultResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r UpdateFaultResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r UpdateFaultResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -21948,11 +22205,6 @@ func (r ListFaultAffectedUsersResponse) ContentType() string {
 	return ""
 }
 
-// UnassignFaultResponse301Headers the declared response headers of an HTTP 301 response for UnassignFault
-type UnassignFaultResponse301Headers struct {
-	Location string
-}
-
 // UnassignFaultResponse403Headers the declared response headers of an HTTP 403 response for UnassignFault
 type UnassignFaultResponse403Headers struct {
 	WWWAuthenticate *string
@@ -21969,10 +22221,10 @@ type UnassignFaultResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *UnassignFaultResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *UnassignFaultResponse403Headers
 }
@@ -21995,6 +22247,11 @@ func (r UnassignFaultResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r UnassignFaultResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r UnassignFaultResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -22031,11 +22288,6 @@ func (r UnassignFaultResponse) ContentType() string {
 	return ""
 }
 
-// AssignFaultResponse301Headers the declared response headers of an HTTP 301 response for AssignFault
-type AssignFaultResponse301Headers struct {
-	Location string
-}
-
 // AssignFaultResponse403Headers the declared response headers of an HTTP 403 response for AssignFault
 type AssignFaultResponse403Headers struct {
 	WWWAuthenticate *string
@@ -22052,10 +22304,10 @@ type AssignFaultResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *AssignFaultResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *AssignFaultResponse403Headers
 }
@@ -22078,6 +22330,11 @@ func (r AssignFaultResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r AssignFaultResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r AssignFaultResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -22522,11 +22779,6 @@ func (r UpdateCommentResponse) ContentType() string {
 	return ""
 }
 
-// MergeFaultsResponse301Headers the declared response headers of an HTTP 301 response for MergeFaults
-type MergeFaultsResponse301Headers struct {
-	Location string
-}
-
 // MergeFaultsResponse403Headers the declared response headers of an HTTP 403 response for MergeFaults
 type MergeFaultsResponse403Headers struct {
 	WWWAuthenticate *string
@@ -22543,10 +22795,10 @@ type MergeFaultsResponse struct {
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *MergeFaultsResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *MergeFaultsResponse403Headers
 }
@@ -22569,6 +22821,11 @@ func (r MergeFaultsResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r MergeFaultsResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r MergeFaultsResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -22778,11 +23035,6 @@ func (r ListFaultOccurrencesResponse) ContentType() string {
 	return ""
 }
 
-// PauseFaultRecordingResponse301Headers the declared response headers of an HTTP 301 response for PauseFaultRecording
-type PauseFaultRecordingResponse301Headers struct {
-	Location string
-}
-
 // PauseFaultRecordingResponse403Headers the declared response headers of an HTTP 403 response for PauseFaultRecording
 type PauseFaultRecordingResponse403Headers struct {
 	WWWAuthenticate *string
@@ -22791,18 +23043,25 @@ type PauseFaultRecordingResponse403Headers struct {
 type PauseFaultRecordingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *PauseFaultRecording200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
-	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *PauseFaultRecordingResponse301Headers
+	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *PauseFaultRecordingResponse403Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r PauseFaultRecordingResponse) GetJSON200() *PauseFaultRecording200JSONResponseBody {
+	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -22820,8 +23079,13 @@ func (r PauseFaultRecordingResponse) GetJSON404() *NotFound {
 	return r.JSON404
 }
 
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r PauseFaultRecordingResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
+}
+
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r PauseFaultRecordingResponse) GetJSON422() *AmbiguousAccount {
+func (r PauseFaultRecordingResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
@@ -22854,11 +23118,6 @@ func (r PauseFaultRecordingResponse) ContentType() string {
 	return ""
 }
 
-// ResumeFaultRecordingResponse301Headers the declared response headers of an HTTP 301 response for ResumeFaultRecording
-type ResumeFaultRecordingResponse301Headers struct {
-	Location string
-}
-
 // ResumeFaultRecordingResponse403Headers the declared response headers of an HTTP 403 response for ResumeFaultRecording
 type ResumeFaultRecordingResponse403Headers struct {
 	WWWAuthenticate *string
@@ -22867,18 +23126,25 @@ type ResumeFaultRecordingResponse403Headers struct {
 type ResumeFaultRecordingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *ResumeFaultRecording200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *ResumeFaultRecordingResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *ResumeFaultRecordingResponse403Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ResumeFaultRecordingResponse) GetJSON200() *ResumeFaultRecording200JSONResponseBody {
+	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -22894,6 +23160,11 @@ func (r ResumeFaultRecordingResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r ResumeFaultRecordingResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r ResumeFaultRecordingResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -22930,11 +23201,6 @@ func (r ResumeFaultRecordingResponse) ContentType() string {
 	return ""
 }
 
-// UnsnoozeFaultResponse301Headers the declared response headers of an HTTP 301 response for UnsnoozeFault
-type UnsnoozeFaultResponse301Headers struct {
-	Location string
-}
-
 // UnsnoozeFaultResponse403Headers the declared response headers of an HTTP 403 response for UnsnoozeFault
 type UnsnoozeFaultResponse403Headers struct {
 	WWWAuthenticate *string
@@ -22943,18 +23209,25 @@ type UnsnoozeFaultResponse403Headers struct {
 type UnsnoozeFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *UnsnoozeFault200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *UnsnoozeFaultResponse301Headers
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *UnsnoozeFaultResponse403Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UnsnoozeFaultResponse) GetJSON200() *UnsnoozeFault200JSONResponseBody {
+	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -22970,6 +23243,11 @@ func (r UnsnoozeFaultResponse) GetJSON403() *Forbidden {
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
 func (r UnsnoozeFaultResponse) GetJSON404() *NotFound {
 	return r.JSON404
+}
+
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r UnsnoozeFaultResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
 }
 
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
@@ -23006,11 +23284,6 @@ func (r UnsnoozeFaultResponse) ContentType() string {
 	return ""
 }
 
-// SnoozeFaultResponse301Headers the declared response headers of an HTTP 301 response for SnoozeFault
-type SnoozeFaultResponse301Headers struct {
-	Location string
-}
-
 // SnoozeFaultResponse403Headers the declared response headers of an HTTP 403 response for SnoozeFault
 type SnoozeFaultResponse403Headers struct {
 	WWWAuthenticate *string
@@ -23019,18 +23292,25 @@ type SnoozeFaultResponse403Headers struct {
 type SnoozeFaultResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *SnoozeFault200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
 	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
+	// JSON409 the response for an HTTP 409 `application/json` response
+	JSON409 *FaultMergedConflict
 	// JSON422 the response for an HTTP 422 `application/json` response
-	JSON422 *AmbiguousAccount
-	// Headers301 the parsed response headers for an HTTP 301 response
-	Headers301 *SnoozeFaultResponse301Headers
+	JSON422 *ValidationError
 	// Headers403 the parsed response headers for an HTTP 403 response
 	Headers403 *SnoozeFaultResponse403Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r SnoozeFaultResponse) GetJSON200() *SnoozeFault200JSONResponseBody {
+	return r.JSON200
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -23048,8 +23328,13 @@ func (r SnoozeFaultResponse) GetJSON404() *NotFound {
 	return r.JSON404
 }
 
+// GetJSON409 returns the response for an HTTP 409 `application/json` response
+func (r SnoozeFaultResponse) GetJSON409() *FaultMergedConflict {
+	return r.JSON409
+}
+
 // GetJSON422 returns the response for an HTTP 422 `application/json` response
-func (r SnoozeFaultResponse) GetJSON422() *AmbiguousAccount {
+func (r SnoozeFaultResponse) GetJSON422() *ValidationError {
 	return r.JSON422
 }
 
@@ -23258,8 +23543,6 @@ type CreateIntegrationResponse struct {
 	HTTPResponse *http.Response
 	// JSON201 the response for an HTTP 201 `application/json` response
 	JSON201 *CreateIntegration201JSONResponseBody
-	// JSON400 the response for an HTTP 400 `application/json` response
-	JSON400 *BadRequest
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -23275,11 +23558,6 @@ type CreateIntegrationResponse struct {
 // GetJSON201 returns the response for an HTTP 201 `application/json` response
 func (r CreateIntegrationResponse) GetJSON201() *CreateIntegration201JSONResponseBody {
 	return r.JSON201
-}
-
-// GetJSON400 returns the response for an HTTP 400 `application/json` response
-func (r CreateIntegrationResponse) GetJSON400() *BadRequest {
-	return r.JSON400
 }
 
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
@@ -23760,6 +24038,82 @@ func (r DeleteProjectKeyResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r DeleteProjectKeyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetProjectKeyResponse403Headers the declared response headers of an HTTP 403 response for GetProjectKey
+type GetProjectKeyResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
+type GetProjectKeyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *GetProjectKey200JSONResponseBody
+	// JSON401 the response for an HTTP 401 `application/json` response
+	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
+	// JSON404 the response for an HTTP 404 `application/json` response
+	JSON404 *NotFound
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *GetProjectKeyResponse403Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetProjectKeyResponse) GetJSON200() *GetProjectKey200JSONResponseBody {
+	return r.JSON200
+}
+
+// GetJSON401 returns the response for an HTTP 401 `application/json` response
+func (r GetProjectKeyResponse) GetJSON401() *Unauthorized {
+	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r GetProjectKeyResponse) GetJSON403() *Forbidden {
+	return r.JSON403
+}
+
+// GetJSON404 returns the response for an HTTP 404 `application/json` response
+func (r GetProjectKeyResponse) GetJSON404() *NotFound {
+	return r.JSON404
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r GetProjectKeyResponse) GetJSON422() *AmbiguousAccount {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r GetProjectKeyResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetProjectKeyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetProjectKeyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetProjectKeyResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -25763,6 +26117,11 @@ func (r UpdateIncidentUpdateResponse) ContentType() string {
 	return ""
 }
 
+// ListTeamsResponse403Headers the declared response headers of an HTTP 403 response for ListTeams
+type ListTeamsResponse403Headers struct {
+	WWWAuthenticate *string
+}
+
 type ListTeamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -25770,10 +26129,14 @@ type ListTeamsResponse struct {
 	JSON200 *ListTeams200JSONResponseBody
 	// JSON401 the response for an HTTP 401 `application/json` response
 	JSON401 *Unauthorized
+	// JSON403 the response for an HTTP 403 `application/json` response
+	JSON403 *Forbidden
 	// JSON404 the response for an HTTP 404 `application/json` response
 	JSON404 *NotFound
 	// JSON422 the response for an HTTP 422 `application/json` response
 	JSON422 *AmbiguousAccount
+	// Headers403 the parsed response headers for an HTTP 403 response
+	Headers403 *ListTeamsResponse403Headers
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
@@ -25784,6 +26147,11 @@ func (r ListTeamsResponse) GetJSON200() *ListTeams200JSONResponseBody {
 // GetJSON401 returns the response for an HTTP 401 `application/json` response
 func (r ListTeamsResponse) GetJSON401() *Unauthorized {
 	return r.JSON401
+}
+
+// GetJSON403 returns the response for an HTTP 403 `application/json` response
+func (r ListTeamsResponse) GetJSON403() *Forbidden {
+	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
@@ -27293,7 +27661,7 @@ func (c *ClientWithResponses) UpdateAlarmWithResponse(ctx context.Context, proje
 //
 // Returns the trigger history for an alarm.
 //
-// Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
+// Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -27351,34 +27719,34 @@ func (c *ClientWithResponses) CreateCheckInWithResponse(ctx context.Context, pro
 	return ParseCreateCheckInResponse(rsp)
 }
 
-// BulkUpdateCheckInsWithBodyWithResponse Replace the project's check-ins
+// ReplaceCheckInsWithBodyWithResponse Replace the project's check-ins
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-func (c *ClientWithResponses) BulkUpdateCheckInsWithBodyWithResponse(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkUpdateCheckInsResponse, error) {
-	rsp, err := c.BulkUpdateCheckInsWithBody(ctx, projectId, contentType, body, reqEditors...)
+// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+func (c *ClientWithResponses) ReplaceCheckInsWithBodyWithResponse(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceCheckInsResponse, error) {
+	rsp, err := c.ReplaceCheckInsWithBody(ctx, projectId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseBulkUpdateCheckInsResponse(rsp)
+	return ParseReplaceCheckInsResponse(rsp)
 }
 
-// BulkUpdateCheckInsWithResponse Replace the project's check-ins
+// ReplaceCheckInsWithResponse Replace the project's check-ins
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `BulkUpdateCheckIns` operationId).
-func (c *ClientWithResponses) BulkUpdateCheckInsWithResponse(ctx context.Context, projectId ProjectId, body BulkUpdateCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*BulkUpdateCheckInsResponse, error) {
-	rsp, err := c.BulkUpdateCheckIns(ctx, projectId, body, reqEditors...)
+// Corresponds with PUT /projects/{project_id}/check_ins/bulk_update (the `ReplaceCheckIns` operationId).
+func (c *ClientWithResponses) ReplaceCheckInsWithResponse(ctx context.Context, projectId ProjectId, body ReplaceCheckInsJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceCheckInsResponse, error) {
+	rsp, err := c.ReplaceCheckIns(ctx, projectId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseBulkUpdateCheckInsResponse(rsp)
+	return ParseReplaceCheckInsResponse(rsp)
 }
 
 // DeleteCheckInWithResponse Delete a check-in
@@ -27663,7 +28031,7 @@ func (c *ClientWithResponses) CreateEnvironmentWithResponse(ctx context.Context,
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 func (c *ClientWithResponses) BulkDeleteEnvironmentsWithBodyWithResponse(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*BulkDeleteEnvironmentsResponse, error) {
 	rsp, err := c.BulkDeleteEnvironmentsWithBody(ctx, projectId, contentType, body, reqEditors...)
 	if err != nil {
@@ -27678,7 +28046,7 @@ func (c *ClientWithResponses) BulkDeleteEnvironmentsWithBodyWithResponse(ctx con
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /projects/{project_id}/environments/bulk_destroy (the `BulkDeleteEnvironments` operationId).
+// Corresponds with POST /projects/{project_id}/environments/bulk_delete (the `BulkDeleteEnvironments` operationId).
 func (c *ClientWithResponses) BulkDeleteEnvironmentsWithResponse(ctx context.Context, projectId ProjectId, body BulkDeleteEnvironmentsJSONRequestBody, reqEditors ...RequestEditorFn) (*BulkDeleteEnvironmentsResponse, error) {
 	rsp, err := c.BulkDeleteEnvironments(ctx, projectId, body, reqEditors...)
 	if err != nil {
@@ -27991,7 +28359,7 @@ func (c *ClientWithResponses) UpdateFaultWithResponse(ctx context.Context, proje
 
 // ListFaultAffectedUsersWithResponse Get affected users
 //
-// Returns users affected by a fault.
+// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -28509,6 +28877,21 @@ func (c *ClientWithResponses) DeleteProjectKeyWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseDeleteProjectKeyResponse(rsp)
+}
+
+// GetProjectKeyWithResponse Get a project key
+//
+// Returns a single ingestion key.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /projects/{project_id}/keys/{key_id} (the `GetProjectKey` operationId).
+func (c *ClientWithResponses) GetProjectKeyWithResponse(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*GetProjectKeyResponse, error) {
+	rsp, err := c.GetProjectKey(ctx, projectId, keyId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetProjectKeyResponse(rsp)
 }
 
 // UpdateProjectKeyWithBodyWithResponse Update a project key
@@ -29372,6 +29755,13 @@ func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -29386,6 +29776,19 @@ func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetAccountResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30007,6 +30410,13 @@ func ParseGetAccountUsageResponse(rsp *http.Response) (*GetAccountUsageResponse,
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30021,6 +30431,19 @@ func ParseGetAccountUsageResponse(rsp *http.Response) (*GetAccountUsageResponse,
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetAccountUsageResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30061,6 +30484,13 @@ func ParseGetNoticeResponse(rsp *http.Response) (*GetNoticeResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30068,6 +30498,19 @@ func ParseGetNoticeResponse(rsp *http.Response) (*GetNoticeResponse, error) {
 		}
 		response.JSON404 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetNoticeResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30108,6 +30551,13 @@ func ParseListProjectsResponse(rsp *http.Response) (*ListProjectsResponse, error
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30122,6 +30572,19 @@ func ParseListProjectsResponse(rsp *http.Response) (*ListProjectsResponse, error
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListProjectsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -30236,6 +30699,13 @@ func ParseListAccountOccurrencesResponse(rsp *http.Response) (*ListAccountOccurr
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -30257,6 +30727,19 @@ func ParseListAccountOccurrencesResponse(rsp *http.Response) (*ListAccountOccurr
 		}
 		response.JSON429 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListAccountOccurrencesResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil
@@ -31068,22 +31551,22 @@ func ParseCreateCheckInResponse(rsp *http.Response) (*CreateCheckInResponse, err
 	return response, nil
 }
 
-// ParseBulkUpdateCheckInsResponse parses an HTTP response from a BulkUpdateCheckInsWithResponse call
-func ParseBulkUpdateCheckInsResponse(rsp *http.Response) (*BulkUpdateCheckInsResponse, error) {
+// ParseReplaceCheckInsResponse parses an HTTP response from a ReplaceCheckInsWithResponse call
+func ParseReplaceCheckInsResponse(rsp *http.Response) (*ReplaceCheckInsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &BulkUpdateCheckInsResponse{
+	response := &ReplaceCheckInsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest BulkUpdateCheckIns200JSONResponseBody
+		var dest ReplaceCheckIns200JSONResponseBody
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -31128,7 +31611,7 @@ func ParseBulkUpdateCheckInsResponse(rsp *http.Response) (*BulkUpdateCheckInsRes
 
 	switch {
 	case rsp.StatusCode == 403:
-		var headers BulkUpdateCheckInsResponse403Headers
+		var headers ReplaceCheckInsResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
 			var value string
 			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
@@ -32160,7 +32643,7 @@ func ParseBulkDeleteEnvironmentsResponse(rsp *http.Response) (*BulkDeleteEnviron
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
-		var dest AmbiguousAccount
+		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -32227,7 +32710,7 @@ func ParseBulkUpdateEnvironmentsResponse(rsp *http.Response) (*BulkUpdateEnviron
 		response.JSON404 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
-		var dest AmbiguousAccount
+		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -32888,9 +33371,6 @@ func ParseDeleteFaultResponse(rsp *http.Response) (*DeleteFaultResponse, error) 
 	case rsp.StatusCode == 204:
 		break // No content-type
 
-	case rsp.StatusCode == 301:
-		break // No content-type
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32912,6 +33392,13 @@ func ParseDeleteFaultResponse(rsp *http.Response) (*DeleteFaultResponse, error) 
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest AmbiguousAccount
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -32922,16 +33409,6 @@ func ParseDeleteFaultResponse(rsp *http.Response) (*DeleteFaultResponse, error) 
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers DeleteFaultResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers DeleteFaultResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -33048,9 +33525,6 @@ func ParseUpdateFaultResponse(rsp *http.Response) (*UpdateFaultResponse, error) 
 		}
 		response.JSON200 = &dest
 
-	case rsp.StatusCode == 301:
-		break // No content-type
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33072,6 +33546,13 @@ func ParseUpdateFaultResponse(rsp *http.Response) (*UpdateFaultResponse, error) 
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33082,16 +33563,6 @@ func ParseUpdateFaultResponse(rsp *http.Response) (*UpdateFaultResponse, error) 
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers UpdateFaultResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers UpdateFaultResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -33208,9 +33679,6 @@ func ParseUnassignFaultResponse(rsp *http.Response) (*UnassignFaultResponse, err
 		}
 		response.JSON200 = &dest
 
-	case rsp.StatusCode == 301:
-		break // No content-type
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33232,6 +33700,13 @@ func ParseUnassignFaultResponse(rsp *http.Response) (*UnassignFaultResponse, err
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest AmbiguousAccount
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33242,16 +33717,6 @@ func ParseUnassignFaultResponse(rsp *http.Response) (*UnassignFaultResponse, err
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers UnassignFaultResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers UnassignFaultResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -33288,9 +33753,6 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 		}
 		response.JSON200 = &dest
 
-	case rsp.StatusCode == 301:
-		break // No content-type
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33312,6 +33774,13 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest AmbiguousAccount
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33322,16 +33791,6 @@ func ParseAssignFaultResponse(rsp *http.Response) (*AssignFaultResponse, error) 
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers AssignFaultResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers AssignFaultResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -33734,9 +34193,6 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 		}
 		response.JSON202 = &dest
 
-	case rsp.StatusCode == 301:
-		break // No content-type
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33758,6 +34214,13 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest AmbiguousAccount
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -33768,16 +34231,6 @@ func ParseMergeFaultsResponse(rsp *http.Response) (*MergeFaultsResponse, error) 
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers MergeFaultsResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers MergeFaultsResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -33968,11 +34421,12 @@ func ParsePauseFaultRecordingResponse(rsp *http.Response) (*PauseFaultRecordingR
 	}
 
 	switch {
-	case rsp.StatusCode == 200:
-		break // No content-type
-
-	case rsp.StatusCode == 301:
-		break // No content-type
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PauseFaultRecording200JSONResponseBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -33995,8 +34449,15 @@ func ParsePauseFaultRecordingResponse(rsp *http.Response) (*PauseFaultRecordingR
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
-		var dest AmbiguousAccount
+		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -34005,16 +34466,6 @@ func ParsePauseFaultRecordingResponse(rsp *http.Response) (*PauseFaultRecordingR
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers PauseFaultRecordingResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers PauseFaultRecordingResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -34044,11 +34495,12 @@ func ParseResumeFaultRecordingResponse(rsp *http.Response) (*ResumeFaultRecordin
 	}
 
 	switch {
-	case rsp.StatusCode == 200:
-		break // No content-type
-
-	case rsp.StatusCode == 301:
-		break // No content-type
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ResumeFaultRecording200JSONResponseBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -34071,6 +34523,13 @@ func ParseResumeFaultRecordingResponse(rsp *http.Response) (*ResumeFaultRecordin
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest AmbiguousAccount
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -34081,16 +34540,6 @@ func ParseResumeFaultRecordingResponse(rsp *http.Response) (*ResumeFaultRecordin
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers ResumeFaultRecordingResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers ResumeFaultRecordingResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -34120,11 +34569,12 @@ func ParseUnsnoozeFaultResponse(rsp *http.Response) (*UnsnoozeFaultResponse, err
 	}
 
 	switch {
-	case rsp.StatusCode == 200:
-		break // No content-type
-
-	case rsp.StatusCode == 301:
-		break // No content-type
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest UnsnoozeFault200JSONResponseBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -34147,6 +34597,13 @@ func ParseUnsnoozeFaultResponse(rsp *http.Response) (*UnsnoozeFaultResponse, err
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
 		var dest AmbiguousAccount
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -34157,16 +34614,6 @@ func ParseUnsnoozeFaultResponse(rsp *http.Response) (*UnsnoozeFaultResponse, err
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers UnsnoozeFaultResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers UnsnoozeFaultResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -34196,11 +34643,12 @@ func ParseSnoozeFaultResponse(rsp *http.Response) (*SnoozeFaultResponse, error) 
 	}
 
 	switch {
-	case rsp.StatusCode == 200:
-		break // No content-type
-
-	case rsp.StatusCode == 301:
-		break // No content-type
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SnoozeFault200JSONResponseBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -34223,8 +34671,15 @@ func ParseSnoozeFaultResponse(rsp *http.Response) (*SnoozeFaultResponse, error) 
 		}
 		response.JSON404 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest FaultMergedConflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON409 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
-		var dest AmbiguousAccount
+		var dest ValidationError
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -34233,16 +34688,6 @@ func ParseSnoozeFaultResponse(rsp *http.Response) (*SnoozeFaultResponse, error) 
 	}
 
 	switch {
-	case rsp.StatusCode == 301:
-		var headers SnoozeFaultResponse301Headers
-		if values := rsp.Header.Values("Location"); len(values) > 0 {
-			var value string
-			if err := runtime.BindStyledParameterWithOptions("simple", "Location", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"}); err != nil {
-				return nil, err
-			}
-			headers.Location = value
-		}
-		response.Headers301 = &headers
 	case rsp.StatusCode == 403:
 		var headers SnoozeFaultResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
@@ -34426,13 +34871,6 @@ func ParseCreateIntegrationResponse(rsp *http.Response) (*CreateIntegrationRespo
 			return nil, err
 		}
 		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest BadRequest
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Unauthorized
@@ -34854,6 +35292,73 @@ func ParseDeleteProjectKeyResponse(rsp *http.Response) (*DeleteProjectKeyRespons
 	switch {
 	case rsp.StatusCode == 403:
 		var headers DeleteProjectKeyResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetProjectKeyResponse parses an HTTP response from a GetProjectKeyWithResponse call
+func ParseGetProjectKeyResponse(rsp *http.Response) (*GetProjectKeyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetProjectKeyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest GetProjectKey200JSONResponseBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest AmbiguousAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers GetProjectKeyResponse403Headers
 		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
 			var value string
 			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
@@ -36670,6 +37175,13 @@ func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 		}
 		response.JSON401 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON403 = &dest
+
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
 		var dest NotFound
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
@@ -36684,6 +37196,19 @@ func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 		}
 		response.JSON422 = &dest
 
+	}
+
+	switch {
+	case rsp.StatusCode == 403:
+		var headers ListTeamsResponse403Headers
+		if values := rsp.Header.Values("WWW-Authenticate"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "WWW-Authenticate", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.WWWAuthenticate = &value
+		}
+		response.Headers403 = &headers
 	}
 
 	return response, nil

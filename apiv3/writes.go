@@ -170,7 +170,18 @@ type AlarmTrigger struct {
 
 	// Operator and Value configure the comparison — "gt" and 10, say.
 	Operator string
-	Value    float32
+	Value    float64
+}
+
+// config renders the trigger in the shape create, update and the alarm response
+// all share.
+func (t AlarmTrigger) config() *gen.AlarmTriggerConfig {
+	cfg := &gen.AlarmTriggerConfig{Type: t.Type}
+	if t.Operator != "" || t.Value != 0 {
+		op, val := t.Operator, t.Value
+		cfg.Config = &gen.AlarmTriggerConfig_Config{Operator: &op, Value: &val}
+	}
+	return cfg
 }
 
 // AlarmParams are the writable fields of an alarm.
@@ -216,14 +227,7 @@ func (p AlarmParams) toCreate() gen.AlarmCreateInput {
 		body.StreamIds = &p.StreamIDs
 	}
 	if p.Trigger != nil {
-		body.TriggerConfig = &gen.AlarmCreateInput_TriggerConfig{Type: p.Trigger.Type}
-		if p.Trigger.Operator != "" || p.Trigger.Value != 0 {
-			op, val := p.Trigger.Operator, p.Trigger.Value
-			body.TriggerConfig.Config = &gen.AlarmCreateInput_TriggerConfig_Config{
-				Operator: &op,
-				Value:    &val,
-			}
-		}
+		body.TriggerConfig = p.Trigger.config()
 	}
 	return body
 }
@@ -242,10 +246,6 @@ func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmPar
 //
 // Pointers rather than values so absent and empty are distinguishable: pointing
 // Description at "" clears it, which a plain string could not express.
-//
-// The trigger is not here yet. The update schema declares trigger_config as an
-// untyped object rather than the trigger schema create uses, so there is no typed
-// field to set; that is a spec fix, not something to hand-roll here.
 type AlarmUpdateParams struct {
 	Name        *string
 	Description *string
@@ -259,9 +259,12 @@ type AlarmUpdateParams struct {
 
 	// StreamIDs replaces the streams the query runs against.
 	StreamIDs *[]string
+
+	// Trigger replaces the whole trigger configuration.
+	Trigger *AlarmTrigger
 }
 
-// Update changes an alarm, including its query and evaluation window, without
+// Update changes an alarm, including its query, window and trigger, without
 // losing its history the way deleting and recreating it would.
 func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams, opts ...Option) (*Alarm, error) {
 	body := gen.AlarmUpdateInput{
@@ -271,6 +274,9 @@ func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p
 		EvaluationPeriod: p.EvaluationPeriod,
 		LookbackLag:      p.LookbackLag,
 		StreamIds:        p.StreamIDs,
+	}
+	if p.Trigger != nil {
+		body.TriggerConfig = p.Trigger.config()
 	}
 
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {

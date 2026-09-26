@@ -193,6 +193,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                - data
                 properties:
                   data:
                     type: object
@@ -255,10 +257,7 @@ paths:
 
                           '
                   meta:
-                    type: object
-                    properties:
-                      request_id:
-                        type: string
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
   "/account":
@@ -288,6 +287,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -314,10 +315,51 @@ paths:
                 properties:
                   data:
                     type: object
+                    required:
+                    - id
+                    - quota
+                    properties:
+                      id:
+                        type: string
+                        description: Account ID
+                      quota:
+                        type: object
+                        required:
+                        - errors_limit
+                        - errors_consumed
+                        - uptime_limit
+                        - uptime_consumed
+                        - check_ins_limit
+                        - check_ins_consumed
+                        properties:
+                          errors_limit:
+                            type: integer
+                            description: Errors allowed this billing period
+                          errors_consumed:
+                            type: integer
+                            description: Errors recorded this billing period
+                          uptime_limit:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Uptime monitors allowed; null when unlimited
+                          uptime_consumed:
+                            type: integer
+                            description: Uptime monitors in use
+                          check_ins_limit:
+                            type:
+                            - integer
+                            - 'null'
+                            description: Check-ins allowed; null when unlimited
+                          check_ins_consumed:
+                            type: integer
+                            description: Check-ins in use
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -696,6 +738,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -864,6 +908,39 @@ paths:
                 properties:
                   data:
                     type: object
+                    required:
+                    - id
+                    - fault_count
+                    - unresolved_fault_count
+                    - notice_count_today
+                    - notice_count_week
+                    - notice_count_month
+                    properties:
+                      id:
+                        type: string
+                        description: Project ID
+                      fault_count:
+                        type: integer
+                      unresolved_fault_count:
+                        type: integer
+                      notice_count_today:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Notices in the last 24 hours; null when the count
+                          could not be computed
+                      notice_count_week:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Notices in the last 7 days; null when the count
+                          could not be computed
+                      notice_count_month:
+                        type:
+                        - integer
+                        - 'null'
+                        description: Notices in the last month; null when the count
+                          could not be computed
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '400':
@@ -963,6 +1040,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -1097,8 +1176,8 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1122,8 +1201,8 @@ paths:
       responses:
         '204':
           description: Fault deleted
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1452,9 +1531,20 @@ paths:
                     been received.
       responses:
         '200':
-          description: Snooze applied. Response body is empty.
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+          description: Snooze applied. Returns the fault.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1462,7 +1552,7 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - faults:write
@@ -1477,9 +1567,20 @@ paths:
       - "$ref": "#/components/parameters/FaultId"
       responses:
         '200':
-          description: Snooze removed. Response body is empty.
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+          description: Snooze removed. Returns the fault.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1521,8 +1622,8 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1557,8 +1658,8 @@ paths:
                     "$ref": "#/components/schemas/Fault"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1636,8 +1737,8 @@ paths:
                         example: 67890
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1750,7 +1851,10 @@ paths:
     get:
       operationId: listFaultAffectedUsers
       summary: Get affected users
-      description: Returns users affected by a fault.
+      description: 'Returns up to 500 users affected by a fault: those with the most
+        notices, counting only notices that match `q` when it is given. Not paginated.
+
+        '
       tags:
       - Faults
       parameters:
@@ -1814,9 +1918,20 @@ paths:
                   description: Pause recording for the given duration.
       responses:
         '200':
-          description: Recording paused. Response body is empty.
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+          description: Recording paused. Returns the fault.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1824,7 +1939,7 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - faults:write
@@ -1840,9 +1955,20 @@ paths:
       - "$ref": "#/components/parameters/FaultId"
       responses:
         '200':
-          description: Recording resumed. Response body is empty.
-        '301':
-          "$ref": "#/components/responses/MergedFault"
+          description: Recording resumed. Returns the fault.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/Fault"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '409':
+          "$ref": "#/components/responses/FaultMergedConflict"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -1937,6 +2063,8 @@ paths:
           "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
       security:
@@ -2540,7 +2668,7 @@ paths:
         - checkins:write
   "/projects/{project_id}/check_ins/bulk_update":
     put:
-      operationId: bulkUpdateCheckIns
+      operationId: replaceCheckIns
       summary: Replace the project's check-ins
       description: 'Sets the project''s check-ins to exactly what the payload lists.
         Entries are matched to existing check-ins by slug: a match is updated, a new
@@ -3141,7 +3269,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      affected_count:
+                      count:
                         type: integer
                         description: Number of environments updated
                   meta:
@@ -3153,12 +3281,12 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - projects:write
-  "/projects/{project_id}/environments/bulk_destroy":
-    delete:
+  "/projects/{project_id}/environments/bulk_delete":
+    post:
       operationId: bulkDeleteEnvironments
       summary: Bulk delete environments
       description: Deletes multiple environments at once.
@@ -3172,6 +3300,8 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+              - environment_ids
               properties:
                 environment_ids:
                   type: array
@@ -3191,7 +3321,7 @@ paths:
                   data:
                     type: object
                     properties:
-                      destroyed_count:
+                      count:
                         type: integer
                         description: Number of environments deleted
                   meta:
@@ -3203,7 +3333,7 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - projects:write
@@ -3282,8 +3412,6 @@ paths:
                     "$ref": "#/components/schemas/Integration"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '400':
-          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -3495,6 +3623,45 @@ paths:
       - bearer_auth:
         - projects:write
   "/projects/{project_id}/keys/{key_id}":
+    get:
+      operationId: getProjectKey
+      summary: Get a project key
+      description: Returns a single ingestion key.
+      tags:
+      - Project Keys
+      parameters:
+      - "$ref": "#/components/parameters/ProjectId"
+      - name: key_id
+        in: path
+        required: true
+        description: Key public ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    "$ref": "#/components/schemas/ProjectKey"
+                  meta:
+                    "$ref": "#/components/schemas/ResponseMeta"
+        '401':
+          "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
+      security:
+      - bearer_auth:
+        - projects:read
     patch:
       operationId: updateProjectKey
       summary: Update a project key
@@ -3977,7 +4144,7 @@ paths:
       description: |
         Returns the trigger history for an alarm.
 
-        Paged by the Insights backend rather than by this API, so `pagination` is that service's own object — `page` and `total_pages` only, with no `per_page` or `total_count` — and there is no `links` object. Advance by incrementing `page`.
+        Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
       tags:
       - Alarms
       parameters:
@@ -4002,15 +4169,11 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
+                      "$ref": "#/components/schemas/AlarmHistoryEntry"
                   pagination:
-                    type: object
-                    description: The query service's paging object, passed through
-                    properties:
-                      page:
-                        type: integer
-                      total_pages:
-                        type: integer
+                    "$ref": "#/components/schemas/Pagination"
+                  links:
+                    "$ref": "#/components/schemas/OffsetLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -4064,6 +4227,8 @@ paths:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
@@ -5310,7 +5475,7 @@ paths:
                   links:
                     "$ref": "#/components/schemas/OffsetLinks"
                   meta:
-                    type: object
+                    "$ref": "#/components/schemas/ResponseMeta"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -5371,12 +5536,10 @@ paths:
                   example: UTC
       responses:
         '200':
-          description: 'The query result. Its shape is defined by the Insights query
-            service rather than by this API, and varies with the query — an aggregation
-            returns different fields from an event listing. It is passed through unchanged,
-            so this schema deliberately does not pin it.
+          description: |
+            The query result. Its shape is defined by the Insights query service rather than by this API, and varies with the query — an aggregation returns different fields from an event listing. It is passed through unchanged, so this schema deliberately does not pin it.
 
-            '
+            `links.web` re-runs this query in the Honeybadger web UI. It carries the request's `ts` and `stream_ids` when sent, and its `timezone` (UTC when none was sent). Present even when `data` carries an `error` from a query that failed while running.
           content:
             application/json:
               schema:
@@ -5390,23 +5553,9 @@ paths:
                     description: Query result, as returned by the query service
                     additionalProperties: true
                   links:
-                    type: object
-                    required:
-                    - web
-                    properties:
-                      web:
-                        type: string
-                        format: uri
-                        description: 'Absolute URL that re-runs this query in the
-                          Honeybadger web UI, on the web UI''s host rather than the
-                          API''s. It carries the request''s `ts` and `stream_ids`
-                          when sent, and its `timezone` (UTC when none was sent).
-                          Present even when `data` carries an `error` from a query
-                          that failed while running.
-
-                          '
+                    "$ref": "#/components/schemas/WebLinks"
                   meta:
-                    type: object
+                    "$ref": "#/components/schemas/ResponseMeta"
         '422':
           description: 'The query was rejected. For a syntax or semantic error, `error.message`
             is the query service''s own message, since it is more specific than anything
@@ -5450,7 +5599,23 @@ components:
       scheme: bearer
       description: |
         Either credential v3 accepts, as a Bearer token: a scoped API token (prefixed `hbt_` for a personal one, `hba_` for an account one), or an OAuth access token issued to an application acting on a user's behalf.
-        Both are authorized the same way. An API token carries granular permissions directly; an OAuth grant carries `read` or `write`, which expand to the permission set covering the API surface as it stood when that grant was consented to — a grant never gains a capability added to the API afterwards.
+        Both are authorized the same way. An API token carries granular permissions directly, and each is checked on its own: a `:write` permission does not imply the matching `:read`, so a token holding `faults:write` alone cannot list or fetch faults.
+
+        An OAuth grant carries `read` or `write`, which expand to a fixed list of permissions that never grows, so a grant never gains a capability added to the API afterwards:
+
+        - `read`: `faults:read`, `insights:read`, `dashboards:read`,
+          `alarms:read`, `deploys:read`, `checkins:read`, `uptime:read`,
+          `projects:read`, `integrations:read`, `status_pages:read`,
+          `team:read`, `account:read`
+
+        - `write`: everything in `read`, plus `faults:write`,
+          `dashboards:write`, `alarms:write`, `deploys:write`,
+          `checkins:write`, `uptime:write`, `projects:write`,
+          `projects:create`, `integrations:write`, `status_pages:write`,
+          `team:write`
+
+
+        Neither covers `incidents:read` or `incidents:write`; use an API token for status page incidents.
         Bearer is the only accepted scheme. Unlike v2, v3 refuses HTTP basic (the token as username with a blank password, which is what `curl -u` sends) and refuses a credential in the `auth_token` query parameter.
   schemas:
     Account:
@@ -5742,10 +5907,10 @@ components:
           pattern: "^\\d+[smhdw]$"
           example: 1m
         trigger_config:
-          type:
-          - object
-          - 'null'
           description: Trigger configuration for the alarm
+          oneOf:
+          - "$ref": "#/components/schemas/AlarmTriggerConfig"
+          - type: 'null'
         error:
           type:
           - string
@@ -5807,23 +5972,7 @@ components:
             delay
           example: 1m
         trigger_config:
-          type: object
-          description: What turns the alarm on
-          required:
-          - type
-          properties:
-            type:
-              type: string
-              example: alert_result_count
-            config:
-              type: object
-              properties:
-                operator:
-                  type: string
-                  example: gt
-                value:
-                  type: number
-                  example: 10
+          "$ref": "#/components/schemas/AlarmTriggerConfig"
     AlarmUpdateInput:
       type: object
       description: Writable alarm attributes
@@ -5851,8 +6000,75 @@ components:
           pattern: "^\\d+[smhdw]$"
           example: 1m
         trigger_config:
+          "$ref": "#/components/schemas/AlarmTriggerConfig"
+    AlarmTriggerConfig:
+      type: object
+      description: What turns the alarm on
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          example: alert_result_count
+        config:
           type: object
-          description: Trigger configuration for the alarm
+          properties:
+            operator:
+              type: string
+              example: gt
+            value:
+              type: number
+              format: double
+              example: 10
+    AlarmHistoryEntry:
+      type: object
+      description: One alarm state change, as recorded by the Insights backend
+      required:
+      - id
+      - observer_root_id
+      - observer_id
+      - status
+      - created_at
+      - evaluation_started_at
+      - evaluation_result
+      properties:
+        id:
+          type: string
+          description: Trigger identifier
+        observer_root_id:
+          type: string
+          description: The alarm's ID
+          example: obs_abc123
+        observer_id:
+          type: string
+          description: 'The version of the alarm that was evaluated. Editing an alarm
+            creates a new version, and history spans every version.
+
+            '
+        status:
+          type:
+          - string
+          - 'null'
+          description: The state the alarm entered
+          enum:
+          - alarm
+          - ok
+          -
+        created_at:
+          type: string
+          format: date-time
+          description: When the change was recorded
+        evaluation_started_at:
+          type: string
+          format: date-time
+          description: Start of the window whose evaluation caused the change
+        evaluation_result:
+          type:
+          - number
+          - 'null'
+          format: double
+          description: The value the trigger compared against its threshold
+          example: 42
     Integration:
       type: object
       description: A notification integration
@@ -5974,7 +6190,8 @@ components:
         events:
           type: array
           description: 'Event names this channel notifies on. Defaults to the type''s
-            default events when omitted on create.
+            default events when omitted on create. Adding an event the type does not
+            support is refused with 422.
 
             '
           items:
@@ -7206,14 +7423,15 @@ components:
           - forbidden_attributes
           - service_unavailable
           - ambiguous_account
+          - fault_merged
         message:
           type: string
           description: Human-readable explanation
           example: Access denied
         details:
-          description: 'A list of field errors for `validation_error`, or an object
-            naming the missing permission for `insufficient_scope`. Absent for every
-            other code.
+          description: 'A list of field errors for `validation_error`, an object naming
+            the missing permission for `insufficient_scope`, or the surviving fault
+            for `fault_merged`. Absent for every other code.
 
             '
           oneOf:
@@ -7228,6 +7446,9 @@ components:
               so a client can tell the holder exactly what to re-grant.
 
               '
+            required:
+            - required_scope
+            - token_scopes
             properties:
               required_scope:
                 type: string
@@ -7238,6 +7459,25 @@ components:
                 description: The permissions the credential actually holds.
                 items:
                   type: string
+          - type: object
+            title: FaultMergedDetails
+            description: 'Where a merged fault went. Writes to a merged fault are
+              refused rather than redirected, so the caller decides whether to act
+              on the survivor.
+
+              '
+            required:
+            - merged_into
+            - location
+            properties:
+              merged_into:
+                type: integer
+                description: ID of the fault this one was merged into.
+                example: 12345
+              location:
+                type: string
+                format: uri
+                description: Absolute v3 URL of the surviving fault.
     ErrorDetail:
       type: object
       required:
@@ -7369,6 +7609,15 @@ components:
           type: boolean
           description: 'Whether this fault is waiting to be resolved by the next recorded
             deploy. Absent for a fault on an inactive project.
+
+            '
+        recording_paused_until:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: 'When a recording pause ends; null when recording is not paused.
+            Absent for a fault on an inactive project.
 
             '
         notices_count_in_range:
@@ -8288,7 +8537,10 @@ components:
           type:
           - object
           - 'null'
-          description: Custom headers sent with check requests
+          description: Custom headers sent with check requests, as header name to
+            value
+          additionalProperties:
+            type: string
         request_body:
           type:
           - string
@@ -8355,15 +8607,15 @@ components:
           type: string
           description: Body to send with the request
         request_headers:
-          type: array
-          description: Headers to send with the request
-          items:
-            type: object
-            properties:
-              key:
-                type: string
-              value:
-                type: string
+          type: object
+          description: 'Headers to send with the request, as header name to value.
+            Replaces the stored headers; send `{}` to clear them.
+
+            '
+          additionalProperties:
+            type: string
+          example:
+            Authorization: Bearer abc123
         frequency:
           type: integer
           enum:
@@ -9252,7 +9504,7 @@ components:
     MergedFault:
       description: 'This fault was merged into another fault. Location identifies
         the surviving fault''s resource URL, including when the request targeted a
-        subresource or mutation of the merged fault.
+        subresource of the merged fault. Only reads redirect; writes get a 409 `fault_merged`.
 
         '
       headers:
@@ -9262,6 +9514,26 @@ components:
           schema:
             type: string
             format: uri
+    FaultMergedConflict:
+      description: 'This fault was merged into another fault, so the write was not
+        applied. Writes are refused rather than redirected: a client that follows
+        redirects would otherwise turn the write into a read, or repeat it against
+        a fault the caller never named. `error.details` identifies the survivor.
+
+        '
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: fault_merged
+              message: This fault was merged into fault 12345
+              details:
+                merged_into: 12345
+                location: https://app.honeybadger.io/v3/projects/Xk9mZp/faults/12345
+            meta:
+              request_id: abc123
     AlarmServiceUnavailable:
       description: The alarm service could not be reached or failed to handle the
         request.

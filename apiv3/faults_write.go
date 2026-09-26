@@ -270,20 +270,22 @@ const (
 	PauseWeek PauseDuration = gen.PauseFaultRecordingJSONBodyTimeWeek
 )
 
-// PauseRecording stops recording new notices for a fault for the given duration.
-func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID int, duration PauseDuration, opts ...Option) error {
+// PauseRecording stops recording new notices for a fault for the given duration,
+// and returns the fault, whose RecordingPausedUntil says until when.
+func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID int, duration PauseDuration, opts ...Option) (*Fault, error) {
 	if !duration.Valid() {
-		return fmt.Errorf("apiv3: invalid pause duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
+		return nil, fmt.Errorf("apiv3: invalid pause duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
 	}
 	body := gen.PauseFaultRecordingJSONRequestBody{Time: duration}
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().PauseFaultRecording(ctx, projectID, faultID, body)
 	})
 }
 
-// ResumeRecording starts recording notices for a fault again.
-func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID int, opts ...Option) error {
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+// ResumeRecording starts recording notices for a fault again, and returns the
+// fault as it now stands.
+func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID int, opts ...Option) (*Fault, error) {
+	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ResumeFaultRecording(ctx, projectID, faultID)
 	})
 }
