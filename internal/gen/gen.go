@@ -172,24 +172,6 @@ func (e AlarmHistoryEntryStatus) Valid() bool {
 	}
 }
 
-// Defines values for CheckInScheduleType.
-const (
-	CheckInScheduleTypeCron   CheckInScheduleType = "cron"
-	CheckInScheduleTypeSimple CheckInScheduleType = "simple"
-)
-
-// Valid indicates whether the value is a known member of the CheckInScheduleType enum.
-func (e CheckInScheduleType) Valid() bool {
-	switch e {
-	case CheckInScheduleTypeCron:
-		return true
-	case CheckInScheduleTypeSimple:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for CheckInState.
 const (
 	CheckInStateMissing   CheckInState = "missing"
@@ -214,141 +196,90 @@ func (e CheckInState) Valid() bool {
 	}
 }
 
-// Defines values for CheckInBulkUpdateInputCheckInsScheduleType.
+// Defines values for CheckInScheduleType.
 const (
-	CheckInBulkUpdateInputCheckInsScheduleTypeCron   CheckInBulkUpdateInputCheckInsScheduleType = "cron"
-	CheckInBulkUpdateInputCheckInsScheduleTypeSimple CheckInBulkUpdateInputCheckInsScheduleType = "simple"
+	Cron   CheckInScheduleType = "cron"
+	Simple CheckInScheduleType = "simple"
 )
 
-// Valid indicates whether the value is a known member of the CheckInBulkUpdateInputCheckInsScheduleType enum.
-func (e CheckInBulkUpdateInputCheckInsScheduleType) Valid() bool {
+// Valid indicates whether the value is a known member of the CheckInScheduleType enum.
+func (e CheckInScheduleType) Valid() bool {
 	switch e {
-	case CheckInBulkUpdateInputCheckInsScheduleTypeCron:
+	case Cron:
 		return true
-	case CheckInBulkUpdateInputCheckInsScheduleTypeSimple:
+	case Simple:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for CheckInCreateInputScheduleType.
+// Defines values for DashboardChartConfigAreaGroupType.
 const (
-	CheckInCreateInputScheduleTypeCron   CheckInCreateInputScheduleType = "cron"
-	CheckInCreateInputScheduleTypeSimple CheckInCreateInputScheduleType = "simple"
+	DashboardChartConfigAreaGroupTypeEvents DashboardChartConfigAreaGroupType = "events"
+	DashboardChartConfigAreaGroupTypeFields DashboardChartConfigAreaGroupType = "fields"
 )
 
-// Valid indicates whether the value is a known member of the CheckInCreateInputScheduleType enum.
-func (e CheckInCreateInputScheduleType) Valid() bool {
+// Valid indicates whether the value is a known member of the DashboardChartConfigAreaGroupType enum.
+func (e DashboardChartConfigAreaGroupType) Valid() bool {
 	switch e {
-	case CheckInCreateInputScheduleTypeCron:
+	case DashboardChartConfigAreaGroupTypeEvents:
 		return true
-	case CheckInCreateInputScheduleTypeSimple:
+	case DashboardChartConfigAreaGroupTypeFields:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for CheckInInputScheduleType.
+// Defines values for DashboardChartConfigBarGroupType.
 const (
-	CheckInInputScheduleTypeCron   CheckInInputScheduleType = "cron"
-	CheckInInputScheduleTypeSimple CheckInInputScheduleType = "simple"
+	DashboardChartConfigBarGroupTypeEvents DashboardChartConfigBarGroupType = "events"
+	DashboardChartConfigBarGroupTypeFields DashboardChartConfigBarGroupType = "fields"
 )
 
-// Valid indicates whether the value is a known member of the CheckInInputScheduleType enum.
-func (e CheckInInputScheduleType) Valid() bool {
+// Valid indicates whether the value is a known member of the DashboardChartConfigBarGroupType enum.
+func (e DashboardChartConfigBarGroupType) Valid() bool {
 	switch e {
-	case CheckInInputScheduleTypeCron:
+	case DashboardChartConfigBarGroupTypeEvents:
 		return true
-	case CheckInInputScheduleTypeSimple:
+	case DashboardChartConfigBarGroupTypeFields:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for DashboardInputWidgetsConfigStreams.
+// Defines values for DashboardChartConfigBillboardGroupType.
 const (
-	DashboardInputWidgetsConfigStreamsDefault  DashboardInputWidgetsConfigStreams = "default"
-	DashboardInputWidgetsConfigStreamsInternal DashboardInputWidgetsConfigStreams = "internal"
+	DashboardChartConfigBillboardGroupTypeEvents DashboardChartConfigBillboardGroupType = "events"
+	DashboardChartConfigBillboardGroupTypeFields DashboardChartConfigBillboardGroupType = "fields"
 )
 
-// Valid indicates whether the value is a known member of the DashboardInputWidgetsConfigStreams enum.
-func (e DashboardInputWidgetsConfigStreams) Valid() bool {
+// Valid indicates whether the value is a known member of the DashboardChartConfigBillboardGroupType enum.
+func (e DashboardChartConfigBillboardGroupType) Valid() bool {
 	switch e {
-	case DashboardInputWidgetsConfigStreamsDefault:
+	case DashboardChartConfigBillboardGroupTypeEvents:
 		return true
-	case DashboardInputWidgetsConfigStreamsInternal:
+	case DashboardChartConfigBillboardGroupTypeFields:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for DashboardInputWidgetsConfigVisView.
+// Defines values for DashboardChartConfigLineGroupType.
 const (
-	Area      DashboardInputWidgetsConfigVisView = "area"
-	Bar       DashboardInputWidgetsConfigVisView = "bar"
-	Billboard DashboardInputWidgetsConfigVisView = "billboard"
-	Heatmap   DashboardInputWidgetsConfigVisView = "heatmap"
-	Histogram DashboardInputWidgetsConfigVisView = "histogram"
-	Line      DashboardInputWidgetsConfigVisView = "line"
-	Pie       DashboardInputWidgetsConfigVisView = "pie"
-	Scatter   DashboardInputWidgetsConfigVisView = "scatter"
-	Table     DashboardInputWidgetsConfigVisView = "table"
+	DashboardChartConfigLineGroupTypeEvents DashboardChartConfigLineGroupType = "events"
+	DashboardChartConfigLineGroupTypeFields DashboardChartConfigLineGroupType = "fields"
 )
 
-// Valid indicates whether the value is a known member of the DashboardInputWidgetsConfigVisView enum.
-func (e DashboardInputWidgetsConfigVisView) Valid() bool {
+// Valid indicates whether the value is a known member of the DashboardChartConfigLineGroupType enum.
+func (e DashboardChartConfigLineGroupType) Valid() bool {
 	switch e {
-	case Area:
+	case DashboardChartConfigLineGroupTypeEvents:
 		return true
-	case Bar:
-		return true
-	case Billboard:
-		return true
-	case Heatmap:
-		return true
-	case Histogram:
-		return true
-	case Line:
-		return true
-	case Pie:
-		return true
-	case Scatter:
-		return true
-	case Table:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for DashboardInputWidgetsType.
-const (
-	DashboardInputWidgetsTypeAlarms      DashboardInputWidgetsType = "alarms"
-	DashboardInputWidgetsTypeCheckins    DashboardInputWidgetsType = "checkins"
-	DashboardInputWidgetsTypeDeployments DashboardInputWidgetsType = "deployments"
-	DashboardInputWidgetsTypeErrors      DashboardInputWidgetsType = "errors"
-	DashboardInputWidgetsTypeInsightsVis DashboardInputWidgetsType = "insights_vis"
-	DashboardInputWidgetsTypeUptime      DashboardInputWidgetsType = "uptime"
-)
-
-// Valid indicates whether the value is a known member of the DashboardInputWidgetsType enum.
-func (e DashboardInputWidgetsType) Valid() bool {
-	switch e {
-	case DashboardInputWidgetsTypeAlarms:
-		return true
-	case DashboardInputWidgetsTypeCheckins:
-		return true
-	case DashboardInputWidgetsTypeDeployments:
-		return true
-	case DashboardInputWidgetsTypeErrors:
-		return true
-	case DashboardInputWidgetsTypeInsightsVis:
-		return true
-	case DashboardInputWidgetsTypeUptime:
+	case DashboardChartConfigLineGroupTypeFields:
 		return true
 	default:
 		return false
@@ -379,6 +310,159 @@ func (e DashboardWidgetType) Valid() bool {
 	case DashboardWidgetTypeInsightsVis:
 		return true
 	case DashboardWidgetTypeUptime:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetConfigAlarmsFilterState.
+const (
+	DashboardWidgetConfigAlarmsFilterStateAll       DashboardWidgetConfigAlarmsFilterState = "all"
+	DashboardWidgetConfigAlarmsFilterStateOk        DashboardWidgetConfigAlarmsFilterState = "ok"
+	DashboardWidgetConfigAlarmsFilterStateTriggered DashboardWidgetConfigAlarmsFilterState = "triggered"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetConfigAlarmsFilterState enum.
+func (e DashboardWidgetConfigAlarmsFilterState) Valid() bool {
+	switch e {
+	case DashboardWidgetConfigAlarmsFilterStateAll:
+		return true
+	case DashboardWidgetConfigAlarmsFilterStateOk:
+		return true
+	case DashboardWidgetConfigAlarmsFilterStateTriggered:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetConfigCheckinsSortOrder.
+const (
+	LastReported DashboardWidgetConfigCheckinsSortOrder = "last_reported"
+	Name         DashboardWidgetConfigCheckinsSortOrder = "name"
+	StateName    DashboardWidgetConfigCheckinsSortOrder = "state_name"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetConfigCheckinsSortOrder enum.
+func (e DashboardWidgetConfigCheckinsSortOrder) Valid() bool {
+	switch e {
+	case LastReported:
+		return true
+	case Name:
+		return true
+	case StateName:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetConfigErrorsSort.
+const (
+	LastSeenAsc  DashboardWidgetConfigErrorsSort = "last_seen_asc"
+	LastSeenDesc DashboardWidgetConfigErrorsSort = "last_seen_desc"
+	TimesAsc     DashboardWidgetConfigErrorsSort = "times_asc"
+	TimesDesc    DashboardWidgetConfigErrorsSort = "times_desc"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetConfigErrorsSort enum.
+func (e DashboardWidgetConfigErrorsSort) Valid() bool {
+	switch e {
+	case LastSeenAsc:
+		return true
+	case LastSeenDesc:
+		return true
+	case TimesAsc:
+		return true
+	case TimesDesc:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetConfigInsightsVisStreams.
+const (
+	DashboardWidgetConfigInsightsVisStreamsDefault  DashboardWidgetConfigInsightsVisStreams = "default"
+	DashboardWidgetConfigInsightsVisStreamsInternal DashboardWidgetConfigInsightsVisStreams = "internal"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetConfigInsightsVisStreams enum.
+func (e DashboardWidgetConfigInsightsVisStreams) Valid() bool {
+	switch e {
+	case DashboardWidgetConfigInsightsVisStreamsDefault:
+		return true
+	case DashboardWidgetConfigInsightsVisStreamsInternal:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetConfigInsightsVisVisView.
+const (
+	Area      DashboardWidgetConfigInsightsVisVisView = "area"
+	Bar       DashboardWidgetConfigInsightsVisVisView = "bar"
+	Billboard DashboardWidgetConfigInsightsVisVisView = "billboard"
+	Heatmap   DashboardWidgetConfigInsightsVisVisView = "heatmap"
+	Histogram DashboardWidgetConfigInsightsVisVisView = "histogram"
+	Line      DashboardWidgetConfigInsightsVisVisView = "line"
+	Pie       DashboardWidgetConfigInsightsVisVisView = "pie"
+	Scatter   DashboardWidgetConfigInsightsVisVisView = "scatter"
+	Table     DashboardWidgetConfigInsightsVisVisView = "table"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetConfigInsightsVisVisView enum.
+func (e DashboardWidgetConfigInsightsVisVisView) Valid() bool {
+	switch e {
+	case Area:
+		return true
+	case Bar:
+		return true
+	case Billboard:
+		return true
+	case Heatmap:
+		return true
+	case Histogram:
+		return true
+	case Line:
+		return true
+	case Pie:
+		return true
+	case Scatter:
+		return true
+	case Table:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DashboardWidgetInputType.
+const (
+	DashboardWidgetInputTypeAlarms      DashboardWidgetInputType = "alarms"
+	DashboardWidgetInputTypeCheckins    DashboardWidgetInputType = "checkins"
+	DashboardWidgetInputTypeDeployments DashboardWidgetInputType = "deployments"
+	DashboardWidgetInputTypeErrors      DashboardWidgetInputType = "errors"
+	DashboardWidgetInputTypeInsightsVis DashboardWidgetInputType = "insights_vis"
+	DashboardWidgetInputTypeUptime      DashboardWidgetInputType = "uptime"
+)
+
+// Valid indicates whether the value is a known member of the DashboardWidgetInputType enum.
+func (e DashboardWidgetInputType) Valid() bool {
+	switch e {
+	case DashboardWidgetInputTypeAlarms:
+		return true
+	case DashboardWidgetInputTypeCheckins:
+		return true
+	case DashboardWidgetInputTypeDeployments:
+		return true
+	case DashboardWidgetInputTypeErrors:
+		return true
+	case DashboardWidgetInputTypeInsightsVis:
+		return true
+	case DashboardWidgetInputTypeUptime:
 		return true
 	default:
 		return false
@@ -586,6 +670,294 @@ func (e IncidentUpdateInputStatus) Valid() bool {
 	}
 }
 
+// Defines values for IntegrationConfigDatadogEndpoint.
+const (
+	AP1    IntegrationConfigDatadogEndpoint = "AP1"
+	EU1    IntegrationConfigDatadogEndpoint = "EU1"
+	US1    IntegrationConfigDatadogEndpoint = "US1"
+	US1FED IntegrationConfigDatadogEndpoint = "US1-FED"
+	US3    IntegrationConfigDatadogEndpoint = "US3"
+	US5    IntegrationConfigDatadogEndpoint = "US5"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigDatadogEndpoint enum.
+func (e IntegrationConfigDatadogEndpoint) Valid() bool {
+	switch e {
+	case AP1:
+		return true
+	case EU1:
+		return true
+	case US1:
+		return true
+	case US1FED:
+		return true
+	case US3:
+		return true
+	case US5:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationConfigOpsGenieV2Endpoint.
+const (
+	EU      IntegrationConfigOpsGenieV2Endpoint = "EU"
+	Sandbox IntegrationConfigOpsGenieV2Endpoint = "Sandbox"
+	US      IntegrationConfigOpsGenieV2Endpoint = "US"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigOpsGenieV2Endpoint enum.
+func (e IntegrationConfigOpsGenieV2Endpoint) Valid() bool {
+	switch e {
+	case EU:
+		return true
+	case Sandbox:
+		return true
+	case US:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationConfigPagerDutyV2Severity.
+const (
+	IntegrationConfigPagerDutyV2SeverityCritical IntegrationConfigPagerDutyV2Severity = "critical"
+	IntegrationConfigPagerDutyV2SeverityError    IntegrationConfigPagerDutyV2Severity = "error"
+	IntegrationConfigPagerDutyV2SeverityInfo     IntegrationConfigPagerDutyV2Severity = "info"
+	IntegrationConfigPagerDutyV2SeverityWarning  IntegrationConfigPagerDutyV2Severity = "warning"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigPagerDutyV2Severity enum.
+func (e IntegrationConfigPagerDutyV2Severity) Valid() bool {
+	switch e {
+	case IntegrationConfigPagerDutyV2SeverityCritical:
+		return true
+	case IntegrationConfigPagerDutyV2SeverityError:
+		return true
+	case IntegrationConfigPagerDutyV2SeverityInfo:
+		return true
+	case IntegrationConfigPagerDutyV2SeverityWarning:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationConfigRootlyNotificationTargetType.
+const (
+	IntegrationConfigRootlyNotificationTargetTypeEscalationPolicy IntegrationConfigRootlyNotificationTargetType = "escalationPolicy"
+	IntegrationConfigRootlyNotificationTargetTypeService          IntegrationConfigRootlyNotificationTargetType = "service"
+	IntegrationConfigRootlyNotificationTargetTypeTeam             IntegrationConfigRootlyNotificationTargetType = "team"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigRootlyNotificationTargetType enum.
+func (e IntegrationConfigRootlyNotificationTargetType) Valid() bool {
+	switch e {
+	case IntegrationConfigRootlyNotificationTargetTypeEscalationPolicy:
+		return true
+	case IntegrationConfigRootlyNotificationTargetTypeService:
+		return true
+	case IntegrationConfigRootlyNotificationTargetTypeTeam:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationConfigWebHookPayloadVersion.
+const (
+	V2 IntegrationConfigWebHookPayloadVersion = "v2"
+	V3 IntegrationConfigWebHookPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigWebHookPayloadVersion enum.
+func (e IntegrationConfigWebHookPayloadVersion) Valid() bool {
+	switch e {
+	case V2:
+		return true
+	case V3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationCreateInputType.
+const (
+	AlertOps           IntegrationCreateInputType = "AlertOps"
+	Asana              IntegrationCreateInputType = "Asana"
+	Backlog            IntegrationCreateInputType = "Backlog"
+	Bitbucket          IntegrationCreateInputType = "Bitbucket"
+	CampfireV3         IntegrationCreateInputType = "CampfireV3"
+	ClickUp            IntegrationCreateInputType = "ClickUp"
+	ClickUpChat        IntegrationCreateInputType = "ClickUpChat"
+	Datadog            IntegrationCreateInputType = "Datadog"
+	DiscordWebhook     IntegrationCreateInputType = "DiscordWebhook"
+	Email              IntegrationCreateInputType = "Email"
+	Github             IntegrationCreateInputType = "Github"
+	Gitlab             IntegrationCreateInputType = "Gitlab"
+	GoogleHangoutsChat IntegrationCreateInputType = "GoogleHangoutsChat"
+	Ilert              IntegrationCreateInputType = "Ilert"
+	IncidentIo         IntegrationCreateInputType = "IncidentIo"
+	Instatus           IntegrationCreateInputType = "Instatus"
+	Intercom           IntegrationCreateInputType = "Intercom"
+	Jira               IntegrationCreateInputType = "Jira"
+	JiraCloud          IntegrationCreateInputType = "JiraCloud"
+	Linear             IntegrationCreateInputType = "Linear"
+	Mattermost         IntegrationCreateInputType = "Mattermost"
+	MicrosoftTeamsV2   IntegrationCreateInputType = "MicrosoftTeamsV2"
+	OpsGenieV2         IntegrationCreateInputType = "OpsGenieV2"
+	PagerDutyV2        IntegrationCreateInputType = "PagerDutyV2"
+	PagerTree          IntegrationCreateInputType = "PagerTree"
+	Redmine            IntegrationCreateInputType = "Redmine"
+	Rootly             IntegrationCreateInputType = "Rootly"
+	ShortcutV2         IntegrationCreateInputType = "ShortcutV2"
+	Slack              IntegrationCreateInputType = "Slack"
+	Sprintly           IntegrationCreateInputType = "Sprintly"
+	Trello             IntegrationCreateInputType = "Trello"
+	VictorOps          IntegrationCreateInputType = "VictorOps"
+	WebHook            IntegrationCreateInputType = "WebHook"
+	Zulip              IntegrationCreateInputType = "Zulip"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationCreateInputType enum.
+func (e IntegrationCreateInputType) Valid() bool {
+	switch e {
+	case AlertOps:
+		return true
+	case Asana:
+		return true
+	case Backlog:
+		return true
+	case Bitbucket:
+		return true
+	case CampfireV3:
+		return true
+	case ClickUp:
+		return true
+	case ClickUpChat:
+		return true
+	case Datadog:
+		return true
+	case DiscordWebhook:
+		return true
+	case Email:
+		return true
+	case Github:
+		return true
+	case Gitlab:
+		return true
+	case GoogleHangoutsChat:
+		return true
+	case Ilert:
+		return true
+	case IncidentIo:
+		return true
+	case Instatus:
+		return true
+	case Intercom:
+		return true
+	case Jira:
+		return true
+	case JiraCloud:
+		return true
+	case Linear:
+		return true
+	case Mattermost:
+		return true
+	case MicrosoftTeamsV2:
+		return true
+	case OpsGenieV2:
+		return true
+	case PagerDutyV2:
+		return true
+	case PagerTree:
+		return true
+	case Redmine:
+		return true
+	case Rootly:
+		return true
+	case ShortcutV2:
+		return true
+	case Slack:
+		return true
+	case Sprintly:
+		return true
+	case Trello:
+		return true
+	case VictorOps:
+		return true
+	case WebHook:
+		return true
+	case Zulip:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationEvent.
+const (
+	IntegrationEventAlarmAlert       IntegrationEvent = "alarm_alert"
+	IntegrationEventAlarmOk          IntegrationEvent = "alarm_ok"
+	IntegrationEventAssigned         IntegrationEvent = "assigned"
+	IntegrationEventCertWillExpire   IntegrationEvent = "cert_will_expire"
+	IntegrationEventCheckInMissing   IntegrationEvent = "check_in_missing"
+	IntegrationEventCheckInReporting IntegrationEvent = "check_in_reporting"
+	IntegrationEventCommented        IntegrationEvent = "commented"
+	IntegrationEventDeployed         IntegrationEvent = "deployed"
+	IntegrationEventDown             IntegrationEvent = "down"
+	IntegrationEventFlooded          IntegrationEvent = "flooded"
+	IntegrationEventOccurred         IntegrationEvent = "occurred"
+	IntegrationEventRateExceeded     IntegrationEvent = "rate_exceeded"
+	IntegrationEventResolved         IntegrationEvent = "resolved"
+	IntegrationEventUnresolved       IntegrationEvent = "unresolved"
+	IntegrationEventUp               IntegrationEvent = "up"
+	IntegrationEventVolumeSpike      IntegrationEvent = "volume_spike"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationEvent enum.
+func (e IntegrationEvent) Valid() bool {
+	switch e {
+	case IntegrationEventAlarmAlert:
+		return true
+	case IntegrationEventAlarmOk:
+		return true
+	case IntegrationEventAssigned:
+		return true
+	case IntegrationEventCertWillExpire:
+		return true
+	case IntegrationEventCheckInMissing:
+		return true
+	case IntegrationEventCheckInReporting:
+		return true
+	case IntegrationEventCommented:
+		return true
+	case IntegrationEventDeployed:
+		return true
+	case IntegrationEventDown:
+		return true
+	case IntegrationEventFlooded:
+		return true
+	case IntegrationEventOccurred:
+		return true
+	case IntegrationEventRateExceeded:
+		return true
+	case IntegrationEventResolved:
+		return true
+	case IntegrationEventUnresolved:
+		return true
+	case IntegrationEventUp:
+		return true
+	case IntegrationEventVolumeSpike:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for NoticeBacktraceMode.
 const (
 	NoticeBacktraceModeReported     NoticeBacktraceMode = "reported"
@@ -661,6 +1033,27 @@ func (e OccurrenceMetaPeriod) Valid() bool {
 	case OccurrenceMetaPeriodMonth:
 		return true
 	case OccurrenceMetaPeriodWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for PauseDuration.
+const (
+	PauseDurationDay  PauseDuration = "day"
+	PauseDurationHour PauseDuration = "hour"
+	PauseDurationWeek PauseDuration = "week"
+)
+
+// Valid indicates whether the value is a known member of the PauseDuration enum.
+func (e PauseDuration) Valid() bool {
+	switch e {
+	case PauseDurationDay:
+		return true
+	case PauseDurationHour:
+		return true
+	case PauseDurationWeek:
 		return true
 	default:
 		return false
@@ -1144,27 +1537,6 @@ func (e ListFaultsParamsSort) Valid() bool {
 	}
 }
 
-// Defines values for PauseFaultRecordingJSONBodyTime.
-const (
-	PauseFaultRecordingJSONBodyTimeDay  PauseFaultRecordingJSONBodyTime = "day"
-	PauseFaultRecordingJSONBodyTimeHour PauseFaultRecordingJSONBodyTime = "hour"
-	PauseFaultRecordingJSONBodyTimeWeek PauseFaultRecordingJSONBodyTime = "week"
-)
-
-// Valid indicates whether the value is a known member of the PauseFaultRecordingJSONBodyTime enum.
-func (e PauseFaultRecordingJSONBodyTime) Valid() bool {
-	switch e {
-	case PauseFaultRecordingJSONBodyTimeDay:
-		return true
-	case PauseFaultRecordingJSONBodyTimeHour:
-		return true
-	case PauseFaultRecordingJSONBodyTimeWeek:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for SnoozeFaultJSONBodyCount.
 const (
 	N10   SnoozeFaultJSONBodyCount = 10
@@ -1504,18 +1876,19 @@ type AlarmHistoryEntry struct {
 // AlarmHistoryEntryStatus The state the alarm entered
 type AlarmHistoryEntryStatus string
 
-// AlarmTriggerConfig What turns the alarm on
-type AlarmTriggerConfig struct {
-	Config *AlarmTriggerConfig_Config `json:"config,omitempty"`
-	Type   string                     `json:"type"`
-}
-
-// AlarmTriggerConfig_Config defines model for AlarmTriggerConfig.Config.
-type AlarmTriggerConfig_Config struct {
+// AlarmTriggerCondition When the trigger fires, as a comparison against the query's result
+type AlarmTriggerCondition struct {
 	Operator *string `json:"operator,omitempty"`
 
 	// Value Threshold to compare against. `alert_result_count` takes a whole number >= 0.
 	Value *float64 `json:"value,omitempty"`
+}
+
+// AlarmTriggerConfig What turns the alarm on
+type AlarmTriggerConfig struct {
+	// Config When the trigger fires, as a comparison against the query's result
+	Config *AlarmTriggerCondition `json:"config,omitempty"`
+	Type   string                 `json:"type"`
 }
 
 // AlarmUpdateInput Writable alarm attributes
@@ -1580,7 +1953,7 @@ type CheckIn struct {
 	// ReportedAt When the last report was received
 	ReportedAt nullable.Nullable[time.Time] `json:"reported_at,omitempty"`
 
-	// ScheduleType Type of schedule
+	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
 	ScheduleType CheckInScheduleType `json:"schedule_type"`
 
 	// Slug URL-safe identifier
@@ -1590,41 +1963,8 @@ type CheckIn struct {
 	State *CheckInState `json:"state,omitempty"`
 }
 
-// CheckInScheduleType Type of schedule
-type CheckInScheduleType string
-
 // CheckInState Current check-in state
 type CheckInState string
-
-// CheckInBulkUpdateInput The project's complete set of check-ins. This replaces rather than merges: any check-in the project has and this payload does not name is DELETED. Must be a non-empty array, and every entry needs a slug — an empty payload is rejected rather than taken to mean "delete all of them".
-type CheckInBulkUpdateInput struct {
-	CheckIns []CheckInBulkUpdateInput_CheckIns `json:"check_ins"`
-}
-
-// CheckInBulkUpdateInputCheckInsScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-type CheckInBulkUpdateInputCheckInsScheduleType string
-
-// CheckInBulkUpdateInput_CheckIns defines model for CheckInBulkUpdateInput.CheckIns.
-type CheckInBulkUpdateInput_CheckIns struct {
-	// CronSchedule Cron expression, required when `schedule_type` is `cron`
-	CronSchedule *string `json:"cron_schedule,omitempty"`
-
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
-	CronTimezone *string `json:"cron_timezone,omitempty"`
-
-	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
-	GracePeriod *string `json:"grace_period,omitempty"`
-	Name        *string `json:"name,omitempty"`
-
-	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
-	ReportPeriod *string `json:"report_period,omitempty"`
-
-	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-	ScheduleType *CheckInBulkUpdateInputCheckInsScheduleType `json:"schedule_type,omitempty"`
-
-	// Slug Identifies which check-in an entry refers to, so it is required here
-	Slug string `json:"slug"`
-}
 
 // CheckInCreateInput Attributes for creating a check-in.
 type CheckInCreateInput struct {
@@ -1642,14 +1982,11 @@ type CheckInCreateInput struct {
 	ReportPeriod *string `json:"report_period,omitempty"`
 
 	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-	ScheduleType *CheckInCreateInputScheduleType `json:"schedule_type,omitempty"`
+	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
 
 	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted.
 	Slug *string `json:"slug,omitempty"`
 }
-
-// CheckInCreateInputScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-type CheckInCreateInputScheduleType string
 
 // CheckInEvent A check-in event
 type CheckInEvent struct {
@@ -1682,14 +2019,41 @@ type CheckInInput struct {
 	ReportPeriod *string `json:"report_period,omitempty"`
 
 	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-	ScheduleType *CheckInInputScheduleType `json:"schedule_type,omitempty"`
+	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
 
 	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted.
 	Slug *string `json:"slug,omitempty"`
 }
 
-// CheckInInputScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-type CheckInInputScheduleType string
+// CheckInReplaceEntry One check-in in a replace request. Matched to an existing check-in by slug: a match is updated, and a new slug is created.
+type CheckInReplaceEntry struct {
+	// CronSchedule Cron expression, required when `schedule_type` is `cron`
+	CronSchedule *string `json:"cron_schedule,omitempty"`
+
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
+	CronTimezone *string `json:"cron_timezone,omitempty"`
+
+	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
+	GracePeriod *string `json:"grace_period,omitempty"`
+	Name        *string `json:"name,omitempty"`
+
+	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
+	ReportPeriod *string `json:"report_period,omitempty"`
+
+	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
+
+	// Slug Identifies which check-in an entry refers to, so it is required here
+	Slug string `json:"slug"`
+}
+
+// CheckInReplaceInput The project's complete set of check-ins. This replaces rather than merges: any check-in the project has and this payload does not name is DELETED. Must be a non-empty array, and every entry needs a slug — an empty payload is rejected rather than taken to mean "delete all of them".
+type CheckInReplaceInput struct {
+	CheckIns []CheckInReplaceEntry `json:"check_ins"`
+}
+
+// CheckInScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+type CheckInScheduleType string
 
 // Comment A comment on a fault
 type Comment struct {
@@ -1769,56 +2133,225 @@ type Dashboard struct {
 	Widgets *[]DashboardWidget `json:"widgets,omitempty"`
 }
 
+// DashboardChartConfigArea Like line, with the area under each series filled; series can be stacked.
+type DashboardChartConfigArea struct {
+	// GroupType `events` (default): one series from `yField`, split by `zField` if set; `fields`: every result field except `xField` becomes its own series
+	GroupType *DashboardChartConfigAreaGroupType `json:"groupType,omitempty"`
+
+	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// Stacked Stack series instead of overlaying them
+	Stacked *bool `json:"stacked,omitempty"`
+
+	// XField Alias for the x axis, typically a time bin such as `bin(1h)`
+	XField *string `json:"xField,omitempty"`
+
+	// YField Alias plotted as the series value; required when `groupType` is `events`
+	YField *string `json:"yField,omitempty"`
+
+	// ZField Alias whose distinct values split results into one series each
+	ZField *string `json:"zField,omitempty"`
+}
+
+// DashboardChartConfigAreaGroupType `events` (default): one series from `yField`, split by `zField` if set; `fields`: every result field except `xField` becomes its own series
+type DashboardChartConfigAreaGroupType string
+
+// DashboardChartConfigBar Bar chart of a value per category.
+type DashboardChartConfigBar struct {
+	// CategoryField Alias for the category axis; one bar per distinct value
+	CategoryField string `json:"categoryField"`
+
+	// GroupField Alias whose distinct values split bars into series (with `groupType` `events`)
+	GroupField *string `json:"groupField,omitempty"`
+
+	// GroupType `events` (default): series come from `groupField`; `fields`: every result field except `categoryField` becomes its own series
+	GroupType *DashboardChartConfigBarGroupType `json:"groupType,omitempty"`
+
+	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// Horizontal Render bars horizontally
+	Horizontal *bool `json:"horizontal,omitempty"`
+
+	// LabelField Alias rendered as a label on each bar
+	LabelField *string `json:"labelField,omitempty"`
+
+	// Stacked Stack series instead of grouping side by side
+	Stacked *bool `json:"stacked,omitempty"`
+
+	// ValueField Alias for bar height
+	ValueField string `json:"valueField"`
+
+	// ValueFieldUnit Unit used to format values: `percent`, `microseconds`, or `milliseconds`
+	ValueFieldUnit *string `json:"valueFieldUnit,omitempty"`
+}
+
+// DashboardChartConfigBarGroupType `events` (default): series come from `groupField`; `fields`: every result field except `categoryField` becomes its own series
+type DashboardChartConfigBarGroupType string
+
+// DashboardChartConfigBillboard Big-number stat tiles: one tile per result row (or one per result field when `groupType` is `fields`).
+type DashboardChartConfigBillboard struct {
+	// GroupType `events` (default): one tile per result row using `valueField`; `fields`: one tile per result field
+	GroupType *DashboardChartConfigBillboardGroupType `json:"groupType,omitempty"`
+
+	// StatusField Alias whose value drives the tile's status indicator
+	StatusField *string `json:"statusField,omitempty"`
+
+	// SubtitleField Alias shown below the value
+	SubtitleField *string `json:"subtitleField,omitempty"`
+
+	// TitleField Alias shown as the tile title
+	TitleField *string `json:"titleField,omitempty"`
+
+	// TitleURLField Alias containing a URL; makes the tile title a link
+	TitleURLField *string `json:"titleURLField,omitempty"`
+
+	// ValueField Alias shown as the big number; required when `groupType` is `events`
+	ValueField *string `json:"valueField,omitempty"`
+}
+
+// DashboardChartConfigBillboardGroupType `events` (default): one tile per result row using `valueField`; `fields`: one tile per result field
+type DashboardChartConfigBillboardGroupType string
+
+// DashboardChartConfigHeatmap Grid of cells colored by intensity. The query must sort by the x and y fields (`| sort x, y`) to render correctly.
+type DashboardChartConfigHeatmap struct {
+	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// Steps Number of color steps (default 5)
+	Steps *int `json:"steps,omitempty"`
+
+	// XField Alias for the x axis, typically a time bin such as `bin(1h)`
+	XField string `json:"xField"`
+
+	// YField Alias for the y axis
+	YField string `json:"yField"`
+
+	// YFieldUnit Unit used to format y values: `percent`, `microseconds`, or `milliseconds`
+	YFieldUnit *string `json:"yFieldUnit,omitempty"`
+
+	// ZField Alias for cell value/intensity
+	ZField string `json:"zField"`
+}
+
+// DashboardChartConfigHistogram Distribution of values across buckets.
+type DashboardChartConfigHistogram struct {
+	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// XField Alias for the x axis
+	XField string `json:"xField"`
+
+	// XFieldUnit Unit used to format x values: `percent`, `microseconds`, or `milliseconds`
+	XFieldUnit *string `json:"xFieldUnit,omitempty"`
+
+	// YField Alias for the y axis
+	YField string `json:"yField"`
+
+	// YFieldUnit Unit used to format y values: `percent`, `microseconds`, or `milliseconds`
+	YFieldUnit *string `json:"yFieldUnit,omitempty"`
+
+	// ZField Alias whose distinct values split results into one series each
+	ZField *string `json:"zField,omitempty"`
+}
+
+// DashboardChartConfigLine One or more series plotted over an x axis, usually time.
+type DashboardChartConfigLine struct {
+	// ColorField Alias whose values supply explicit series colors
+	ColorField *string `json:"colorField,omitempty"`
+
+	// GroupType `events` (default): one series from `yField`, split by `zField` if set; `fields`: every result field except `xField` becomes its own series
+	GroupType *DashboardChartConfigLineGroupType `json:"groupType,omitempty"`
+
+	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`; entries may also set `axis` (`left`|`right`) to plot a series on the right y axis. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// RightYAxisFormat Right y-axis format (accepted but not currently applied by the renderer)
+	RightYAxisFormat *string `json:"rightYAxisFormat,omitempty"`
+
+	// RightYAxisLabel Right y-axis label (accepted but not currently applied by the renderer)
+	RightYAxisLabel *string `json:"rightYAxisLabel,omitempty"`
+
+	// RightYAxisMax Right y-axis maximum (accepted but not currently applied by the renderer)
+	RightYAxisMax *float32 `json:"rightYAxisMax,omitempty"`
+
+	// RightYAxisMin Right y-axis minimum (accepted but not currently applied by the renderer)
+	RightYAxisMin *float32 `json:"rightYAxisMin,omitempty"`
+
+	// XField Alias for the x axis, typically a time bin such as `bin(1h)`
+	XField *string `json:"xField,omitempty"`
+
+	// XFieldUnit Unit used to format x values: `percent`, `microseconds`, or `milliseconds`
+	XFieldUnit *string `json:"xFieldUnit,omitempty"`
+
+	// YAxisLabel Left y-axis label (accepted but not currently applied by the renderer)
+	YAxisLabel *string `json:"yAxisLabel,omitempty"`
+
+	// YAxisMax Left y-axis maximum (accepted but not currently applied by the renderer)
+	YAxisMax *float32 `json:"yAxisMax,omitempty"`
+
+	// YAxisMin Left y-axis minimum (accepted but not currently applied by the renderer)
+	YAxisMin *float32 `json:"yAxisMin,omitempty"`
+
+	// YField Alias plotted as the series value; required when `groupType` is `events`
+	YField *string `json:"yField,omitempty"`
+
+	// YFieldUnit Unit used to format y values: `percent`, `microseconds`, or `milliseconds`
+	YFieldUnit *string `json:"yFieldUnit,omitempty"`
+
+	// ZField Alias whose distinct values split results into one series each
+	ZField *string `json:"zField,omitempty"`
+}
+
+// DashboardChartConfigLineGroupType `events` (default): one series from `yField`, split by `zField` if set; `fields`: every result field except `xField` becomes its own series
+type DashboardChartConfigLineGroupType string
+
+// DashboardChartConfigPie Proportional slices; one slice per result row.
+type DashboardChartConfigPie struct {
+	// Groups Per-slice display options keyed by slice name, e.g. `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// NameField Alias for slice labels
+	NameField string `json:"nameField"`
+
+	// ValueField Alias for slice sizes
+	ValueField string `json:"valueField"`
+}
+
+// DashboardChartConfigScatter Individual points plotted on two axes.
+type DashboardChartConfigScatter struct {
+	// GroupField Alias whose distinct values color the points
+	GroupField *string `json:"groupField,omitempty"`
+
+	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`. Advanced — usually omit
+	Groups *map[string]interface{} `json:"groups,omitempty"`
+
+	// ScaleField Alias that scales point size
+	ScaleField *string `json:"scaleField,omitempty"`
+
+	// XField Alias for the x axis
+	XField string `json:"xField"`
+
+	// YField Alias for the y axis
+	YField string `json:"yField"`
+}
+
+// DashboardChartConfigTable Raw result rows and columns. No config.
+type DashboardChartConfigTable = map[string]interface{}
+
 // DashboardInput defines model for DashboardInput.
 type DashboardInput struct {
-	DefaultTs *string                  `json:"default_ts,omitempty"`
-	Title     string                   `json:"title"`
-	Widgets   []DashboardInput_Widgets `json:"widgets"`
+	DefaultTs *string                 `json:"default_ts,omitempty"`
+	Title     string                  `json:"title"`
+	Widgets   *[]DashboardWidgetInput `json:"widgets,omitempty"`
 }
 
-// DashboardInputWidgetsConfigStreams defines model for DashboardInput.Widgets.Config.Streams.
-type DashboardInputWidgetsConfigStreams string
-
-// DashboardInputWidgetsConfigVisView defines model for DashboardInput.Widgets.Config.Vis.View.
-type DashboardInputWidgetsConfigVisView string
-
-// DashboardInput_Widgets_Config_Vis defines model for DashboardInput.Widgets.Config.Vis.
-type DashboardInput_Widgets_Config_Vis struct {
-	ChartConfig *map[string]interface{}            `json:"chart_config,omitempty"`
-	View        DashboardInputWidgetsConfigVisView `json:"view"`
-}
-
-// DashboardInput_Widgets_Config defines model for DashboardInput.Widgets.Config.
-type DashboardInput_Widgets_Config struct {
-	Query   *string                               `json:"query,omitempty"`
-	Streams *[]DashboardInputWidgetsConfigStreams `json:"streams,omitempty"`
-	Vis     *DashboardInput_Widgets_Config_Vis    `json:"vis,omitempty"`
-}
-
-// DashboardInput_Widgets_Grid defines model for DashboardInput.Widgets.Grid.
-type DashboardInput_Widgets_Grid struct {
-	H *int `json:"h,omitempty"`
-	W *int `json:"w,omitempty"`
-	X *int `json:"x,omitempty"`
-	Y *int `json:"y,omitempty"`
-}
-
-// DashboardInput_Widgets_Presentation defines model for DashboardInput.Widgets.Presentation.
-type DashboardInput_Widgets_Presentation struct {
-	Subtitle *string `json:"subtitle,omitempty"`
-	Title    *string `json:"title,omitempty"`
-}
-
-// DashboardInputWidgetsType defines model for DashboardInput.Widgets.Type.
-type DashboardInputWidgetsType string
-
-// DashboardInput_Widgets defines model for DashboardInput.Widgets.
-type DashboardInput_Widgets struct {
-	Config       *DashboardInput_Widgets_Config       `json:"config,omitempty"`
-	Grid         *DashboardInput_Widgets_Grid         `json:"grid,omitempty"`
-	Id           *string                              `json:"id,omitempty"`
-	Presentation *DashboardInput_Widgets_Presentation `json:"presentation,omitempty"`
-	Type         DashboardInputWidgetsType            `json:"type"`
+// DashboardUpdateInput Fields to change on a dashboard. A field left out keeps its current value. `widgets` replaces the whole list, so to remove a widget, send the list without it, keeping the others' `id`s so they stay the same widgets.
+type DashboardUpdateInput struct {
+	DefaultTs *string                 `json:"default_ts,omitempty"`
+	Title     *string                 `json:"title,omitempty"`
+	Widgets   *[]DashboardWidgetInput `json:"widgets,omitempty"`
 }
 
 // DashboardWidget A widget on an Insights dashboard
@@ -1855,6 +2388,114 @@ type DashboardWidget_Presentation struct {
 
 // DashboardWidgetType Which kind of widget, and therefore which config shape applies.
 type DashboardWidgetType string
+
+// DashboardWidgetConfigAlarms defines model for DashboardWidgetConfigAlarms.
+type DashboardWidgetConfigAlarms struct {
+	// FilterState Show all alarms or only those in one state
+	FilterState *DashboardWidgetConfigAlarmsFilterState `json:"filter_state,omitempty"`
+
+	// Limit Max alarms shown
+	Limit *int `json:"limit,omitempty"`
+}
+
+// DashboardWidgetConfigAlarmsFilterState Show all alarms or only those in one state
+type DashboardWidgetConfigAlarmsFilterState string
+
+// DashboardWidgetConfigCheckins defines model for DashboardWidgetConfigCheckins.
+type DashboardWidgetConfigCheckins struct {
+	// Limit Max check-ins shown
+	Limit *int `json:"limit,omitempty"`
+
+	// SortOrder Sort by state, name, or last report time
+	SortOrder *DashboardWidgetConfigCheckinsSortOrder `json:"sort_order,omitempty"`
+}
+
+// DashboardWidgetConfigCheckinsSortOrder Sort by state, name, or last report time
+type DashboardWidgetConfigCheckinsSortOrder string
+
+// DashboardWidgetConfigDeployments defines model for DashboardWidgetConfigDeployments.
+type DashboardWidgetConfigDeployments struct {
+	// Limit Max deploys shown
+	Limit *int `json:"limit,omitempty"`
+
+	// OverrideTime Use `ts` instead of the dashboard's time range
+	OverrideTime *bool `json:"override_time,omitempty"`
+
+	// Ts Time range used when `override_time` is true
+	Ts *string `json:"ts,omitempty"`
+}
+
+// DashboardWidgetConfigErrors defines model for DashboardWidgetConfigErrors.
+type DashboardWidgetConfigErrors struct {
+	// Limit Max errors shown
+	Limit *int `json:"limit,omitempty"`
+
+	// Query Error search query string to filter the list
+	Query *string `json:"query,omitempty"`
+
+	// Sort Sort order
+	Sort *DashboardWidgetConfigErrorsSort `json:"sort,omitempty"`
+}
+
+// DashboardWidgetConfigErrorsSort Sort order
+type DashboardWidgetConfigErrorsSort string
+
+// DashboardWidgetConfigInsightsVis defines model for DashboardWidgetConfigInsightsVis.
+type DashboardWidgetConfigInsightsVis struct {
+	// Query BadgerQL query producing the widget's data
+	Query *string `json:"query,omitempty"`
+
+	// Streams Streams to query (defaults to ["default"])
+	Streams *[]DashboardWidgetConfigInsightsVisStreams `json:"streams,omitempty"`
+
+	// Vis How to render the result: `{view, chart_config}`
+	Vis *DashboardWidgetConfigInsightsVis_Vis `json:"vis,omitempty"`
+}
+
+// DashboardWidgetConfigInsightsVisStreams defines model for DashboardWidgetConfigInsightsVis.Streams.
+type DashboardWidgetConfigInsightsVisStreams string
+
+// DashboardWidgetConfigInsightsVisVisView defines model for DashboardWidgetConfigInsightsVis.Vis.View.
+type DashboardWidgetConfigInsightsVisVisView string
+
+// DashboardWidgetConfigInsightsVis_Vis defines model for DashboardWidgetConfigInsightsVis.Vis.
+type DashboardWidgetConfigInsightsVis_Vis struct {
+	ChartConfig *map[string]interface{}                 `json:"chart_config,omitempty"`
+	View        DashboardWidgetConfigInsightsVisVisView `json:"view"`
+}
+
+// DashboardWidgetConfigUptime defines model for DashboardWidgetConfigUptime.
+type DashboardWidgetConfigUptime struct {
+	// Limit Max uptime monitors shown
+	Limit *int `json:"limit,omitempty"`
+}
+
+// DashboardWidgetInput defines model for DashboardWidgetInput.
+type DashboardWidgetInput struct {
+	// Config The widget's settings, as described by the DashboardWidgetConfig<type> schema for its `type`.
+	Config       *map[string]interface{}            `json:"config,omitempty"`
+	Grid         *DashboardWidgetInput_Grid         `json:"grid,omitempty"`
+	Id           *string                            `json:"id,omitempty"`
+	Presentation *DashboardWidgetInput_Presentation `json:"presentation,omitempty"`
+	Type         DashboardWidgetInputType           `json:"type"`
+}
+
+// DashboardWidgetInput_Grid defines model for DashboardWidgetInput.Grid.
+type DashboardWidgetInput_Grid struct {
+	H *int `json:"h,omitempty"`
+	W *int `json:"w,omitempty"`
+	X *int `json:"x,omitempty"`
+	Y *int `json:"y,omitempty"`
+}
+
+// DashboardWidgetInput_Presentation defines model for DashboardWidgetInput.Presentation.
+type DashboardWidgetInput_Presentation struct {
+	Subtitle *string `json:"subtitle,omitempty"`
+	Title    *string `json:"title,omitempty"`
+}
+
+// DashboardWidgetInputType defines model for DashboardWidgetInput.Type.
+type DashboardWidgetInputType string
 
 // Deploy A deploy event
 type Deploy struct {
@@ -2058,6 +2699,24 @@ type FaultInput struct {
 	Tags            *[]string `json:"tags,omitempty"`
 }
 
+// FaultMerge A queued merge
+type FaultMerge struct {
+	// BatchId Identifies the background merge
+	BatchId string `json:"batch_id"`
+
+	// SourceId ID of the fault merged away — the one from the path
+	SourceId int `json:"source_id"`
+
+	// TargetId ID of the fault kept
+	TargetId int `json:"target_id"`
+}
+
+// FaultMergeInput Names the fault to merge into
+type FaultMergeInput struct {
+	// TargetFaultId Integer ID of the fault to keep. Must be in the same project as the fault in the path, which is the one being merged away.
+	TargetFaultId int `json:"target_fault_id"`
+}
+
 // FaultSelectionInput Selects the faults a bulk operation applies to
 type FaultSelectionInput struct {
 	// All Apply to every fault the other filters match, which with no other filters is every fault in the project. Required to make an unbounded change explicit; ignored when fault_ids names specific faults.
@@ -2161,6 +2820,9 @@ type Integration struct {
 	// Config Type-specific configuration fields. Sensitive values (API keys, tokens) are masked. Unset values may be null. Hidden internal fields are omitted.
 	Config *map[string]Integration_Config `json:"config,omitempty"`
 
+	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration has its credentials. An OAuth integration created through the API starts turned off and not connected. Send the user to `links.web`, where they connect it, then turn it on with `active: true`. GitHub is different: the user installs the GitHub App on the repo from `links.web`, and turning the integration on is what attaches the installation, checked against the calling user's GitHub access (the project owner's for an account token). So a GitHub integration reports `connected: false` until it's turned on, unless the calling user signed in to Honeybadger with GitHub, in which case their GitHub token is attached when it's created.
+	Connected *bool `json:"connected,omitempty"`
+
 	// CreatedAt When the channel was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
@@ -2227,8 +2889,465 @@ type Integration_Config struct {
 	union json.RawMessage
 }
 
-// IntegrationInput Integration attributes for create and update. On create, `type` is required and determines which config fields are accepted. On update, `type` is ignored. Type-specific config fields are passed at the top level alongside common fields. Sensitive fields (API keys, tokens) sent as their masked value from a GET response are silently ignored — the original value is preserved.
-type IntegrationInput struct {
+// IntegrationConfigAlertOps defines model for IntegrationConfigAlertOps.
+type IntegrationConfigAlertOps struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// Url The URL from your [Honeybadger integration](https://honeybadger.alertops.com/admin/MappingRulesList.aspx) in AlertOps.
+	Url string `json:"url"`
+}
+
+// IntegrationConfigAsana defines model for IntegrationConfigAsana.
+type IntegrationConfigAsana struct {
+	// AsanaProjectId e.g. from a project view: app.asana.com/0/**3456789012345**/3456789012345.
+	AsanaProjectId string `json:"asana_project_id"`
+}
+
+// IntegrationConfigBacklog defines model for IntegrationConfigBacklog.
+type IntegrationConfigBacklog struct {
+	// ApiKey Your Backlog API key (generate one in Personal Settings > API). Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey string `json:"api_key"`
+
+	// BacklogProjectId The Backlog project to create issues in. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	BacklogProjectId  string  `json:"backlog_project_id"`
+	DescriptionFormat *string `json:"description_format,omitempty"`
+
+	// EnableWebhook When enabled Honeybadger will create a webhook in Backlog to sync issue status changes back to Honeybadger.
+	EnableWebhook *bool `json:"enable_webhook,omitempty"`
+
+	// IssueTypeId The type of issue to create. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	IssueTypeId string `json:"issue_type_id"`
+
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// PriorityId The priority level for new issues. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	PriorityId string `json:"priority_id"`
+
+	// ReopenStatusId The status to use when unresolving errors. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	ReopenStatusId string `json:"reopen_status_id"`
+
+	// ResolveStatusId The status to use when resolving errors. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	ResolveStatusId string `json:"resolve_status_id"`
+
+	// SpaceUrl Your Backlog space URL (e.g., https://example.backlog.com or https://example.backlog.jp).
+	SpaceUrl      string  `json:"space_url"`
+	SubjectFormat *string `json:"subject_format,omitempty"`
+}
+
+// IntegrationConfigBitbucket defines model for IntegrationConfigBitbucket.
+type IntegrationConfigBitbucket struct {
+	// Repo e.g. honeybadger-io/crywolf.
+	Repo string `json:"repo"`
+}
+
+// IntegrationConfigCampfireV3 defines model for IntegrationConfigCampfireV3.
+type IntegrationConfigCampfireV3 struct {
+	// ChatbotUrl The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#create-a-chatbot-integration-in-basecamp) for your Campfire chatbot.
+	ChatbotUrl string `json:"chatbot_url"`
+}
+
+// IntegrationConfigClickUp defines model for IntegrationConfigClickUp.
+type IntegrationConfigClickUp struct {
+	DescriptionFormat *string `json:"description_format,omitempty"`
+
+	// FolderId An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	FolderId *string `json:"folder_id,omitempty"`
+
+	// InitialStatusId The initial status when a task is created. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	InitialStatusId string `json:"initial_status_id"`
+
+	// ListId The ID of the list to create tasks for. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	ListId string `json:"list_id"`
+
+	// ReopenStatusId The task status when an error is reopened. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	ReopenStatusId string `json:"reopen_status_id"`
+
+	// ResolveStatusId The task status when an error is resolved. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	ResolveStatusId string `json:"resolve_status_id"`
+
+	// Tags Comma-separated list of tags.
+	Tags *string `json:"tags,omitempty"`
+
+	// TeamspaceId An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	TeamspaceId string `json:"teamspace_id"`
+
+	// TitleFormat You can customize the ClickUp task name, or you can leave this blank for the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	TitleFormat *string `json:"title_format,omitempty"`
+
+	// WorkspaceId An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	WorkspaceId string `json:"workspace_id"`
+}
+
+// IntegrationConfigClickUpChat defines model for IntegrationConfigClickUpChat.
+type IntegrationConfigClickUpChat struct {
+	// ChannelId An id from ClickUp Chat; the web UI lists the choices from ClickUp Chat. Look it up with ClickUp Chat's API or your tools for ClickUp Chat.
+	ChannelId string `json:"channel_id"`
+
+	// WorkspaceId An id from ClickUp Chat; the web UI lists the choices from ClickUp Chat. Look it up with ClickUp Chat's API or your tools for ClickUp Chat.
+	WorkspaceId string `json:"workspace_id"`
+}
+
+// IntegrationConfigDatadog defines model for IntegrationConfigDatadog.
+type IntegrationConfigDatadog struct {
+	// ApiKey Your Datadog API key. Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey   string                            `json:"api_key"`
+	Endpoint *IntegrationConfigDatadogEndpoint `json:"endpoint,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label       *string `json:"label,omitempty"`
+	SendMetrics *bool   `json:"send_metrics,omitempty"`
+}
+
+// IntegrationConfigDatadogEndpoint defines model for IntegrationConfigDatadog.Endpoint.
+type IntegrationConfigDatadogEndpoint string
+
+// IntegrationConfigDiscordWebhook defines model for IntegrationConfigDiscordWebhook.
+type IntegrationConfigDiscordWebhook struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// Url Get a Webhook URL in Discord under Channel Settings &rarr; Webhooks.
+	Url *string `json:"url,omitempty"`
+}
+
+// IntegrationConfigEmail defines model for IntegrationConfigEmail.
+type IntegrationConfigEmail struct {
+	Email string `json:"email"`
+
+	// EmailSubject You can customize the subject line for emails related to errors (when they occur, are assigned, etc.), or you can leave this blank for the default subject. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	EmailSubject *string `json:"email_subject,omitempty"`
+}
+
+// IntegrationConfigGithub defines model for IntegrationConfigGithub.
+type IntegrationConfigGithub struct {
+	// IssueType The [issue type](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/managing-issue-types-in-an-organization) to use when creating issues (e.g., 'Bug').
+	IssueType *string `json:"issue_type,omitempty"`
+
+	// Labels A comma-delimited list of labels to add when creating issues.
+	Labels *string `json:"labels,omitempty"`
+
+	// Repo e.g. honeybadger-io/crywolf.
+	Repo string `json:"repo"`
+
+	// RichBody When enabled, new issues are created with a detailed body that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to GitHub.
+	RichBody *bool `json:"rich_body,omitempty"`
+
+	// TitleFormat You can customize the Github issue title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	TitleFormat *string `json:"title_format,omitempty"`
+}
+
+// IntegrationConfigGitlab defines model for IntegrationConfigGitlab.
+type IntegrationConfigGitlab struct {
+	Labels *string `json:"labels,omitempty"`
+
+	// PersonalAccessToken Leave this blank unless you are using a self-hosted installation of GitLab. An access token can be generated in Settings -> Access Tokens in the GitLab UI. Returned masked; sending the masked value back leaves it unchanged.
+	PersonalAccessToken *string `json:"personal_access_token,omitempty"`
+
+	// Repo e.g. honeybadger-io/crywolf.
+	Repo string `json:"repo"`
+
+	// RichBody When enabled, new issues are created with a detailed body that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to GitLab.
+	RichBody *bool `json:"rich_body,omitempty"`
+
+	// ServerUrl You only need to change this if you are using a self-hosted installation of GitLab.
+	ServerUrl *string `json:"server_url,omitempty"`
+
+	// TitleFormat You can customize the GitLab issue title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	TitleFormat *string `json:"title_format,omitempty"`
+}
+
+// IntegrationConfigGoogleHangoutsChat defines model for IntegrationConfigGoogleHangoutsChat.
+type IntegrationConfigGoogleHangoutsChat struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// Url Please see [our documentation](https://docs.honeybadger.io/guides/integrations/google-chat/) for info on how to generate this.
+	Url string `json:"url"`
+}
+
+// IntegrationConfigIlert defines model for IntegrationConfigIlert.
+type IntegrationConfigIlert struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// Url The URL from your [Honeybadger integration](https://docs.ilert.com/inbound-integrations/honeybadger) in ilert.
+	Url string `json:"url"`
+}
+
+// IntegrationConfigIncidentIo defines model for IntegrationConfigIncidentIo.
+type IntegrationConfigIncidentIo struct {
+	AlertSourceLabel string `json:"alert_source_label"`
+
+	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey string `json:"api_key"`
+}
+
+// IntegrationConfigInstatus defines model for IntegrationConfigInstatus.
+type IntegrationConfigInstatus struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+	Url   *string `json:"url,omitempty"`
+}
+
+// IntegrationConfigIntercom defines model for IntegrationConfigIntercom.
+type IntegrationConfigIntercom struct {
+	// ContextField The field from the context hash that will be sent to Intercom as the user ID.
+	ContextField string `json:"context_field"`
+}
+
+// IntegrationConfigJira defines model for IntegrationConfigJira.
+type IntegrationConfigJira struct {
+	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger.
+	ComponentNames *string `json:"component_names,omitempty"`
+	IssueType      *string `json:"issue_type,omitempty"`
+
+	// Labels A comma-delimited list of labels to be added to the issues created by Honeybadger.
+	Labels *string `json:"labels,omitempty"`
+
+	// Password You can find or generate your API Token [here](https://id.atlassian.com/manage/api-tokens). Returned masked; sending the masked value back leaves it unchanged.
+	Password   string `json:"password"`
+	ProjectKey string `json:"project_key"`
+
+	// ReopenTransition The ID of the transition to be performed when unresolved.
+	ReopenTransition *string `json:"reopen_transition,omitempty"`
+
+	// ResolveTransition The ID of the transition to be performed when resolved.
+	ResolveTransition *string `json:"resolve_transition,omitempty"`
+
+	// RichBody When enabled, new issues are created with a detailed description that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to JIRA.
+	RichBody  *bool  `json:"rich_body,omitempty"`
+	ServerUrl string `json:"server_url"`
+
+	// SummaryFormat You can customize the JIRA issue summary, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	SummaryFormat *string `json:"summary_format,omitempty"`
+
+	// Username Your Jira email address.
+	Username string `json:"username"`
+}
+
+// IntegrationConfigJiraCloud defines model for IntegrationConfigJiraCloud.
+type IntegrationConfigJiraCloud struct {
+	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger. **NOTE: Components are not avaliable for next-gen projects.**.
+	ComponentNames *string `json:"component_names,omitempty"`
+	IssueType      *string `json:"issue_type,omitempty"`
+
+	// Labels A comma-delimited list of labels to be added to the issues created by Honeybadger.
+	Labels     *string `json:"labels,omitempty"`
+	ProjectKey string  `json:"project_key"`
+
+	// ReopenTransition The ID of the transition to be performed when unresolved.
+	ReopenTransition *string `json:"reopen_transition,omitempty"`
+
+	// ResolveTransition The ID of the transition to be performed when resolved.
+	ResolveTransition *string `json:"resolve_transition,omitempty"`
+
+	// RichBody When enabled, new issues are created with a detailed description that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to JIRA.
+	RichBody *bool `json:"rich_body,omitempty"`
+
+	// SummaryFormat You can customize the JIRA issue summary, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	SummaryFormat *string `json:"summary_format,omitempty"`
+}
+
+// IntegrationConfigLinear defines model for IntegrationConfigLinear.
+type IntegrationConfigLinear struct {
+	DescriptionFormat *string `json:"description_format,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label    *string   `json:"label,omitempty"`
+	LabelIds *[]string `json:"label_ids,omitempty"`
+
+	// LinearProjectId An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	LinearProjectId *string `json:"linear_project_id,omitempty"`
+
+	// ResolvedStateId An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	ResolvedStateId *string `json:"resolved_state_id,omitempty"`
+
+	// TeamId An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	TeamId      string  `json:"team_id"`
+	TitleFormat *string `json:"title_format,omitempty"`
+
+	// UnresolvedStateId We will use this state for new issues and when an existing issue is reopened. An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	UnresolvedStateId *string `json:"unresolved_state_id,omitempty"`
+}
+
+// IntegrationConfigMattermost defines model for IntegrationConfigMattermost.
+type IntegrationConfigMattermost struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+	Url   *string `json:"url,omitempty"`
+}
+
+// IntegrationConfigMicrosoftTeamsV2 defines model for IntegrationConfigMicrosoftTeamsV2.
+type IntegrationConfigMicrosoftTeamsV2 struct {
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// Url Get a Webhook URL in Microsoft Teams under Connectors &rarr; Incoming Webhook.
+	Url string `json:"url"`
+}
+
+// IntegrationConfigOpsGenieV2 defines model for IntegrationConfigOpsGenieV2.
+type IntegrationConfigOpsGenieV2 struct {
+	// ApiKey The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/) in OpsGenie. Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey   string                               `json:"api_key"`
+	Endpoint *IntegrationConfigOpsGenieV2Endpoint `json:"endpoint,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+}
+
+// IntegrationConfigOpsGenieV2Endpoint defines model for IntegrationConfigOpsGenieV2.Endpoint.
+type IntegrationConfigOpsGenieV2Endpoint string
+
+// IntegrationConfigPagerDutyV2 defines model for IntegrationConfigPagerDutyV2.
+type IntegrationConfigPagerDutyV2 struct {
+	// IntegrationKey 32 character alphanumeric integration key. Select "Honeybadger" from the Integration Type menu when creating a service for Honeybadger in PagerDuty. Returned masked; sending the masked value back leaves it unchanged.
+	IntegrationKey string `json:"integration_key"`
+
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// Severity The perceived severity of the events generated by this integration.
+	Severity *IntegrationConfigPagerDutyV2Severity `json:"severity,omitempty"`
+}
+
+// IntegrationConfigPagerDutyV2Severity The perceived severity of the events generated by this integration.
+type IntegrationConfigPagerDutyV2Severity string
+
+// IntegrationConfigPagerTree defines model for IntegrationConfigPagerTree.
+type IntegrationConfigPagerTree struct {
+	// Url Please see [PagerTree documentation](https://pagertree.com/knowledge-base/integration-honeybadger/) for info on generating this.
+	Url string `json:"url"`
+}
+
+// IntegrationConfigRedmine defines model for IntegrationConfigRedmine.
+type IntegrationConfigRedmine struct {
+	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey string `json:"api_key"`
+
+	// ReopenTransition The ID of the status for unresolved issues.
+	ReopenTransition *string `json:"reopen_transition,omitempty"`
+
+	// ResolveTransition The ID of the status for resolved issues.
+	ResolveTransition *string `json:"resolve_transition,omitempty"`
+
+	// ServerUrl The full path to the project: http://redmine.yourserver.com/projects/project-name.
+	ServerUrl string `json:"server_url"`
+}
+
+// IntegrationConfigRootly defines model for IntegrationConfigRootly.
+type IntegrationConfigRootly struct {
+	// Label Optional label to show in the integrations list.
+	Label                  *string                                        `json:"label,omitempty"`
+	NotificationTargetId   *string                                        `json:"notification_target_id,omitempty"`
+	NotificationTargetType *IntegrationConfigRootlyNotificationTargetType `json:"notification_target_type,omitempty"`
+
+	// WebhookAuthorizationToken Returned masked; sending the masked value back leaves it unchanged.
+	WebhookAuthorizationToken string `json:"webhook_authorization_token"`
+}
+
+// IntegrationConfigRootlyNotificationTargetType defines model for IntegrationConfigRootly.NotificationTargetType.
+type IntegrationConfigRootlyNotificationTargetType string
+
+// IntegrationConfigShortcutV2 defines model for IntegrationConfigShortcutV2.
+type IntegrationConfigShortcutV2 struct {
+	// ApiKey Available from Settings > Your Account > API Tokens. Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey            string  `json:"api_key"`
+	CustomFields      *string `json:"custom_fields,omitempty"`
+	DescriptionFormat *string `json:"description_format,omitempty"`
+
+	// InitialState An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	InitialState string `json:"initial_state"`
+
+	// OrganizationName e.g. app.shortcut.com/**yourorg**/dashboard.
+	OrganizationName string `json:"organization_name"`
+
+	// ReopenTransition An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	ReopenTransition string `json:"reopen_transition"`
+
+	// ResolveTransition An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	ResolveTransition string `json:"resolve_transition"`
+
+	// Team An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	Team        string  `json:"team"`
+	TitleFormat *string `json:"title_format,omitempty"`
+}
+
+// IntegrationConfigSlack defines model for IntegrationConfigSlack.
+type IntegrationConfigSlack struct {
+	// DisableBacktrace Remove backtrace from error event notifications.
+	DisableBacktrace *bool `json:"disable_backtrace,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+}
+
+// IntegrationConfigSprintly defines model for IntegrationConfigSprintly.
+type IntegrationConfigSprintly struct {
+	AccountEmail string `json:"account_email"`
+
+	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey string `json:"api_key"`
+
+	// ProductId e.g. sprint.ly/product/**1337**/#!/.
+	ProductId string `json:"product_id"`
+
+	// Tags A comma-separated list of tags to add to new defects.
+	Tags *string `json:"tags,omitempty"`
+}
+
+// IntegrationConfigTrello defines model for IntegrationConfigTrello.
+type IntegrationConfigTrello struct {
+	// BoardId An id from Trello; the web UI lists the choices from Trello. Look it up with Trello's API or your tools for Trello.
+	BoardId string `json:"board_id"`
+
+	// ListId An id from Trello; the web UI lists the choices from Trello. Look it up with Trello's API or your tools for Trello.
+	ListId string `json:"list_id"`
+
+	// TitleFormat You can customize the trello card title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	TitleFormat *string `json:"title_format,omitempty"`
+}
+
+// IntegrationConfigVictorOps defines model for IntegrationConfigVictorOps.
+type IntegrationConfigVictorOps struct {
+	// ApiKey Your Splunk On-Call API key. Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey string `json:"api_key"`
+
+	// Label Optional label to show in the integrations list.
+	Label *string `json:"label,omitempty"`
+
+	// RoutingKey Optional routing key for alert.
+	RoutingKey *string `json:"routing_key,omitempty"`
+}
+
+// IntegrationConfigWebHook defines model for IntegrationConfigWebHook.
+type IntegrationConfigWebHook struct {
+	// BearerToken Optional. When set, requests are sent with `Authorization: Bearer <token>`, for endpoints that require it. Returned masked; sending the masked value back leaves it unchanged.
+	BearerToken *string `json:"bearer_token,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label          *string                                 `json:"label,omitempty"`
+	PayloadVersion *IntegrationConfigWebHookPayloadVersion `json:"payload_version,omitempty"`
+	Url            string                                  `json:"url"`
+}
+
+// IntegrationConfigWebHookPayloadVersion defines model for IntegrationConfigWebHook.PayloadVersion.
+type IntegrationConfigWebHookPayloadVersion string
+
+// IntegrationConfigZulip defines model for IntegrationConfigZulip.
+type IntegrationConfigZulip struct {
+	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
+	ApiKey      string `json:"api_key"`
+	BotEmail    string `json:"bot_email"`
+	Channel     string `json:"channel"`
+	Topic       string `json:"topic"`
+	ZulipDomain string `json:"zulip_domain"`
+}
+
+// IntegrationCreateInput A new integration. `type` picks the integration, and `config` holds that type's settings. OAuth integrations (Slack, GitHub and the like) are created turned off; the user connects them from the integration's `links.web` page. Some required settings are the other service's ids (a Linear team, a Trello board), which a caller with access to that service can look up.
+type IntegrationCreateInput struct {
 	Active *bool `json:"active,omitempty"`
 
 	// AlarmAlertIds IDs of alarms whose alert events this channel receives.
@@ -2240,8 +3359,11 @@ type IntegrationInput struct {
 	// CheckInIds Check-ins whose events this channel receives. An empty list turns check-in notifications off for this channel. An id that isn't one of this project's check-ins is refused with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
+	// Config The type's settings, as described by its IntegrationConfig<type> schema.
+	Config *map[string]interface{} `json:"config,omitempty"`
+
 	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create. Adding an event the type does not support is refused with 422.
-	Events *[]string `json:"events,omitempty"`
+	Events *[]IntegrationEvent `json:"events,omitempty"`
 
 	// ExcludedEnvironments Environment names that never notify through this channel. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
@@ -2267,9 +3389,58 @@ type IntegrationInput struct {
 	// Threshold Number of occurrences before rate_exceeded fires
 	Threshold *int `json:"threshold,omitempty"`
 
-	// Type Integration type (create only). Must be an API-creatable type — OAuth types (Slack, GitHub, etc.) must be connected through the web UI. Use the short class name: WebHook, PagerDutyV2, Email, etc.
-	Type                 *string                `json:"type,omitempty"`
-	AdditionalProperties map[string]interface{} `json:"-"`
+	// Type Integration type. Its settings are in the IntegrationConfig<type> schema, e.g. IntegrationConfigWebHook.
+	Type IntegrationCreateInputType `json:"type"`
+}
+
+// IntegrationCreateInputType Integration type. Its settings are in the IntegrationConfig<type> schema, e.g. IntegrationConfigWebHook.
+type IntegrationCreateInputType string
+
+// IntegrationEvent An event an integration can notify on. Each integration type supports a subset, listed in IntegrationCreateInput's condition for that type.
+type IntegrationEvent string
+
+// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. The integration's type can't be changed, so a `type` in the body is ignored. Type-specific settings go under `config`, the same shape a GET returns, so a response can be sent back with changes; each create schema lists a type's settings.
+type IntegrationUpdateInput struct {
+	Active *bool `json:"active,omitempty"`
+
+	// AlarmAlertIds IDs of alarms whose alert events this channel receives.
+	AlarmAlertIds *[]string `json:"alarm_alert_ids,omitempty"`
+
+	// AlarmOkIds IDs of alarms whose recovery events this channel receives.
+	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
+
+	// CheckInIds Check-ins whose events this channel receives. An empty list turns check-in notifications off for this channel. An id that isn't one of this project's check-ins is refused with 422.
+	CheckInIds *[]string `json:"check_in_ids,omitempty"`
+
+	// Config Type-specific settings to change, the same keys a GET returns under `config`. See the IntegrationConfig schema for the integration's type. Secrets sent back masked, exactly as a GET returned them, are left unchanged. Hidden and OAuth-managed keys are ignored. Sending a setting outside `config` is refused with 422.
+	Config *map[string]interface{} `json:"config,omitempty"`
+
+	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create. Adding an event the type does not support is refused with 422.
+	Events *[]IntegrationEvent `json:"events,omitempty"`
+
+	// ExcludedEnvironments Environment names that never notify through this channel. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
+	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
+
+	// FilterEvents Events to filter, paired by position with filter_queries. Replaces the stored filters; send [] to clear them.
+	FilterEvents *[]string `json:"filter_events,omitempty"`
+
+	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only when the error matches the query.
+	FilterQueries *[]string `json:"filter_queries,omitempty"`
+
+	// IncludedEnvironments When non-empty, only these environment names notify through this channel, including ones that haven't reported yet. Empty means every environment not excluded.
+	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
+
+	// NotificationLimit Maximum notifications in a 10-minute window before flood control
+	NotificationLimit *int `json:"notification_limit,omitempty"`
+
+	// Rate Rate threshold period (e.g. min, hour)
+	Rate *string `json:"rate,omitempty"`
+
+	// SiteIds Sites whose up and down events this channel receives. An empty list turns site notifications off for this channel. An id that isn't one of this project's sites is refused with 422.
+	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
+
+	// Threshold Number of occurrences before rate_exceeded fires
+	Threshold *int `json:"threshold,omitempty"`
 }
 
 // Notice An individual error occurrence
@@ -2446,6 +3617,9 @@ type Pagination struct {
 	// PerPage Items per page
 	PerPage int `json:"per_page"`
 }
+
+// PauseDuration How long to pause recording for.
+type PauseDuration string
 
 // Project A Honeybadger project
 type Project struct {
@@ -4044,29 +5218,11 @@ type UpdateComment200JSONResponseBody struct {
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
-// MergeFaultsJSONBody defines parameters for MergeFaults.
-type MergeFaultsJSONBody struct {
-	// TargetFaultId Integer ID of the fault to keep. Must be in the same project as the fault in the path, which is the one being merged away.
-	TargetFaultId int `json:"target_fault_id"`
-}
-
-// MergeFaults202JSONResponseBody_Data defines parameters for MergeFaults.
-type MergeFaults202JSONResponseBody_Data struct {
-	// BatchId Identifies the background merge
-	BatchId string `json:"batch_id"`
-
-	// SourceId ID of the fault merged away — the one from the path
-	SourceId int `json:"source_id"`
-
-	// TargetId ID of the fault kept
-	TargetId int `json:"target_id"`
-}
-
 // MergeFaults202JSONResponseBody defines parameters for MergeFaults.
 type MergeFaults202JSONResponseBody struct {
 	// Data A queued merge
-	Data MergeFaults202JSONResponseBody_Data `json:"data"`
-	Meta *ResponseMeta                       `json:"meta,omitempty"`
+	Data FaultMerge    `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // ListNoticesParams defines parameters for ListNotices.
@@ -4156,12 +5312,9 @@ type ListFaultOccurrences200JSONResponseBody struct {
 
 // PauseFaultRecordingJSONBody defines parameters for PauseFaultRecording.
 type PauseFaultRecordingJSONBody struct {
-	// Time Pause recording for the given duration.
-	Time PauseFaultRecordingJSONBodyTime `json:"time"`
+	// Time How long to pause recording for.
+	Time PauseDuration `json:"time"`
 }
-
-// PauseFaultRecordingJSONBodyTime defines parameters for PauseFaultRecording.
-type PauseFaultRecordingJSONBodyTime string
 
 // PauseFaultRecording200JSONResponseBody defines parameters for PauseFaultRecording.
 type PauseFaultRecording200JSONResponseBody struct {
@@ -4791,7 +5944,7 @@ type UpdateAlarmJSONRequestBody = AlarmUpdateInput
 type CreateCheckInJSONRequestBody = CheckInCreateInput
 
 // ReplaceCheckInsJSONRequestBody defines body for ReplaceCheckIns for application/json ContentType.
-type ReplaceCheckInsJSONRequestBody = CheckInBulkUpdateInput
+type ReplaceCheckInsJSONRequestBody = CheckInReplaceInput
 
 // UpdateCheckInJSONRequestBody defines body for UpdateCheckIn for application/json ContentType.
 type UpdateCheckInJSONRequestBody = CheckInInput
@@ -4800,7 +5953,7 @@ type UpdateCheckInJSONRequestBody = CheckInInput
 type CreateDashboardJSONRequestBody = DashboardInput
 
 // UpdateDashboardJSONRequestBody defines body for UpdateDashboard for application/json ContentType.
-type UpdateDashboardJSONRequestBody = DashboardInput
+type UpdateDashboardJSONRequestBody = DashboardUpdateInput
 
 // CreateEnvironmentJSONRequestBody defines body for CreateEnvironment for application/json ContentType.
 type CreateEnvironmentJSONRequestBody = EnvironmentInput
@@ -4839,7 +5992,7 @@ type CreateCommentJSONRequestBody = CommentInput
 type UpdateCommentJSONRequestBody = CommentInput
 
 // MergeFaultsJSONRequestBody defines body for MergeFaults for application/json ContentType.
-type MergeFaultsJSONRequestBody MergeFaultsJSONBody
+type MergeFaultsJSONRequestBody = FaultMergeInput
 
 // PauseFaultRecordingJSONRequestBody defines body for PauseFaultRecording for application/json ContentType.
 type PauseFaultRecordingJSONRequestBody PauseFaultRecordingJSONBody
@@ -4851,10 +6004,10 @@ type SnoozeFaultJSONRequestBody SnoozeFaultJSONBody
 type RunInsightsQueryJSONRequestBody RunInsightsQueryJSONBody
 
 // CreateIntegrationJSONRequestBody defines body for CreateIntegration for application/json ContentType.
-type CreateIntegrationJSONRequestBody = IntegrationInput
+type CreateIntegrationJSONRequestBody = IntegrationCreateInput
 
 // UpdateIntegrationJSONRequestBody defines body for UpdateIntegration for application/json ContentType.
-type UpdateIntegrationJSONRequestBody = IntegrationInput
+type UpdateIntegrationJSONRequestBody = IntegrationUpdateInput
 
 // CreateProjectKeyJSONRequestBody defines body for CreateProjectKey for application/json ContentType.
 type CreateProjectKeyJSONRequestBody = ProjectKeyInput
@@ -4900,269 +6053,6 @@ type UpdateTeamInvitationJSONRequestBody = TeamInvitationInput
 
 // UpdateTeamMemberJSONRequestBody defines body for UpdateTeamMember for application/json ContentType.
 type UpdateTeamMemberJSONRequestBody = TeamMemberInput
-
-// Getter for additional properties for IntegrationInput. Returns the specified
-// element and whether it was found
-func (a IntegrationInput) Get(fieldName string) (value interface{}, found bool) {
-	if a.AdditionalProperties != nil {
-		value, found = a.AdditionalProperties[fieldName]
-	}
-	return
-}
-
-// Setter for additional properties for IntegrationInput
-func (a *IntegrationInput) Set(fieldName string, value interface{}) {
-	if a.AdditionalProperties == nil {
-		a.AdditionalProperties = make(map[string]interface{})
-	}
-	a.AdditionalProperties[fieldName] = value
-}
-
-// Override default JSON handling for IntegrationInput to handle AdditionalProperties
-func (a *IntegrationInput) UnmarshalJSON(b []byte) error {
-	object := make(map[string]json.RawMessage)
-	err := json.Unmarshal(b, &object)
-	if err != nil {
-		return err
-	}
-
-	if raw, found := object["active"]; found {
-		err = json.Unmarshal(raw, &a.Active)
-		if err != nil {
-			return fmt.Errorf("error reading 'active': %w", err)
-		}
-		delete(object, "active")
-	}
-
-	if raw, found := object["alarm_alert_ids"]; found {
-		err = json.Unmarshal(raw, &a.AlarmAlertIds)
-		if err != nil {
-			return fmt.Errorf("error reading 'alarm_alert_ids': %w", err)
-		}
-		delete(object, "alarm_alert_ids")
-	}
-
-	if raw, found := object["alarm_ok_ids"]; found {
-		err = json.Unmarshal(raw, &a.AlarmOkIds)
-		if err != nil {
-			return fmt.Errorf("error reading 'alarm_ok_ids': %w", err)
-		}
-		delete(object, "alarm_ok_ids")
-	}
-
-	if raw, found := object["check_in_ids"]; found {
-		err = json.Unmarshal(raw, &a.CheckInIds)
-		if err != nil {
-			return fmt.Errorf("error reading 'check_in_ids': %w", err)
-		}
-		delete(object, "check_in_ids")
-	}
-
-	if raw, found := object["events"]; found {
-		err = json.Unmarshal(raw, &a.Events)
-		if err != nil {
-			return fmt.Errorf("error reading 'events': %w", err)
-		}
-		delete(object, "events")
-	}
-
-	if raw, found := object["excluded_environments"]; found {
-		err = json.Unmarshal(raw, &a.ExcludedEnvironments)
-		if err != nil {
-			return fmt.Errorf("error reading 'excluded_environments': %w", err)
-		}
-		delete(object, "excluded_environments")
-	}
-
-	if raw, found := object["filter_events"]; found {
-		err = json.Unmarshal(raw, &a.FilterEvents)
-		if err != nil {
-			return fmt.Errorf("error reading 'filter_events': %w", err)
-		}
-		delete(object, "filter_events")
-	}
-
-	if raw, found := object["filter_queries"]; found {
-		err = json.Unmarshal(raw, &a.FilterQueries)
-		if err != nil {
-			return fmt.Errorf("error reading 'filter_queries': %w", err)
-		}
-		delete(object, "filter_queries")
-	}
-
-	if raw, found := object["included_environments"]; found {
-		err = json.Unmarshal(raw, &a.IncludedEnvironments)
-		if err != nil {
-			return fmt.Errorf("error reading 'included_environments': %w", err)
-		}
-		delete(object, "included_environments")
-	}
-
-	if raw, found := object["notification_limit"]; found {
-		err = json.Unmarshal(raw, &a.NotificationLimit)
-		if err != nil {
-			return fmt.Errorf("error reading 'notification_limit': %w", err)
-		}
-		delete(object, "notification_limit")
-	}
-
-	if raw, found := object["rate"]; found {
-		err = json.Unmarshal(raw, &a.Rate)
-		if err != nil {
-			return fmt.Errorf("error reading 'rate': %w", err)
-		}
-		delete(object, "rate")
-	}
-
-	if raw, found := object["site_ids"]; found {
-		err = json.Unmarshal(raw, &a.SiteIds)
-		if err != nil {
-			return fmt.Errorf("error reading 'site_ids': %w", err)
-		}
-		delete(object, "site_ids")
-	}
-
-	if raw, found := object["threshold"]; found {
-		err = json.Unmarshal(raw, &a.Threshold)
-		if err != nil {
-			return fmt.Errorf("error reading 'threshold': %w", err)
-		}
-		delete(object, "threshold")
-	}
-
-	if raw, found := object["type"]; found {
-		err = json.Unmarshal(raw, &a.Type)
-		if err != nil {
-			return fmt.Errorf("error reading 'type': %w", err)
-		}
-		delete(object, "type")
-	}
-
-	if len(object) != 0 {
-		a.AdditionalProperties = make(map[string]interface{})
-		for fieldName, fieldBuf := range object {
-			var fieldVal interface{}
-			err := json.Unmarshal(fieldBuf, &fieldVal)
-			if err != nil {
-				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
-			}
-			a.AdditionalProperties[fieldName] = fieldVal
-		}
-	}
-	return nil
-}
-
-// Override default JSON handling for IntegrationInput to handle AdditionalProperties
-func (a IntegrationInput) MarshalJSON() ([]byte, error) {
-	var err error
-	object := make(map[string]json.RawMessage)
-
-	if a.Active != nil {
-		object["active"], err = json.Marshal(a.Active)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'active': %w", err)
-		}
-	}
-
-	if a.AlarmAlertIds != nil {
-		object["alarm_alert_ids"], err = json.Marshal(a.AlarmAlertIds)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'alarm_alert_ids': %w", err)
-		}
-	}
-
-	if a.AlarmOkIds != nil {
-		object["alarm_ok_ids"], err = json.Marshal(a.AlarmOkIds)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'alarm_ok_ids': %w", err)
-		}
-	}
-
-	if a.CheckInIds != nil {
-		object["check_in_ids"], err = json.Marshal(a.CheckInIds)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'check_in_ids': %w", err)
-		}
-	}
-
-	if a.Events != nil {
-		object["events"], err = json.Marshal(a.Events)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'events': %w", err)
-		}
-	}
-
-	if a.ExcludedEnvironments != nil {
-		object["excluded_environments"], err = json.Marshal(a.ExcludedEnvironments)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'excluded_environments': %w", err)
-		}
-	}
-
-	if a.FilterEvents != nil {
-		object["filter_events"], err = json.Marshal(a.FilterEvents)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'filter_events': %w", err)
-		}
-	}
-
-	if a.FilterQueries != nil {
-		object["filter_queries"], err = json.Marshal(a.FilterQueries)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'filter_queries': %w", err)
-		}
-	}
-
-	if a.IncludedEnvironments != nil {
-		object["included_environments"], err = json.Marshal(a.IncludedEnvironments)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'included_environments': %w", err)
-		}
-	}
-
-	if a.NotificationLimit != nil {
-		object["notification_limit"], err = json.Marshal(a.NotificationLimit)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'notification_limit': %w", err)
-		}
-	}
-
-	if a.Rate != nil {
-		object["rate"], err = json.Marshal(a.Rate)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'rate': %w", err)
-		}
-	}
-
-	if a.SiteIds != nil {
-		object["site_ids"], err = json.Marshal(a.SiteIds)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'site_ids': %w", err)
-		}
-	}
-
-	if a.Threshold != nil {
-		object["threshold"], err = json.Marshal(a.Threshold)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'threshold': %w", err)
-		}
-	}
-
-	if a.Type != nil {
-		object["type"], err = json.Marshal(a.Type)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'type': %w", err)
-		}
-	}
-
-	for fieldName, field := range a.AdditionalProperties {
-		object[fieldName], err = json.Marshal(field)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
-		}
-	}
-	return json.Marshal(object)
-}
 
 // AsIntegrationConfig1 returns the union data inside the Integration_Config as a IntegrationConfig1
 func (t Integration_Config) AsIntegrationConfig1() (IntegrationConfig1, error) {
@@ -6198,7 +7088,7 @@ type ClientInterface interface {
 
 	// CreateIntegrationWithBody Create an integration
 	//
-	// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6207,7 +7097,7 @@ type ClientInterface interface {
 
 	// CreateIntegration Create an integration
 	//
-	// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -8581,7 +9471,7 @@ func (c *Client) ListIntegrations(ctx context.Context, projectId ProjectId, para
 
 // CreateIntegrationWithBody Create an integration
 //
-// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8600,7 +9490,7 @@ func (c *Client) CreateIntegrationWithBody(ctx context.Context, projectId Projec
 
 // CreateIntegration Create an integration
 //
-// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -17228,7 +18118,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateIntegrationWithBodyWithResponse Create an integration
 	//
-	// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17237,7 +18127,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateIntegrationWithResponse Create an integration
 	//
-	// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -28755,7 +29645,7 @@ func (c *ClientWithResponses) ListIntegrationsWithResponse(ctx context.Context, 
 
 // CreateIntegrationWithBodyWithResponse Create an integration
 //
-// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -28770,7 +29660,7 @@ func (c *ClientWithResponses) CreateIntegrationWithBodyWithResponse(ctx context.
 
 // CreateIntegrationWithResponse Create an integration
 //
-// Creates a notification integration for the project. The `type` field determines which config fields are required. OAuth integration types (Slack, GitHub, etc.) cannot be created via the API — set them up through the web UI first.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //

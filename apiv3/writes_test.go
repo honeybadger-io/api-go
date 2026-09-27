@@ -300,38 +300,17 @@ func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
 	}
 }
 
-// A dashboard with no widgets must send an empty array: the field is required and
-// a nil slice would serialise as null.
-func TestDashboardsCreateSendsEmptyWidgetArray(t *testing.T) {
+// A widget's config is the settings for its type, and every key survives — not
+// just the insights ones.
+func TestDashboardsCreateSendsWidgetConfig(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"d1","title":"Ops"}}`)
 
+	widgets := []DashboardWidget{{
+		Type:   "alarms",
+		Config: &map[string]interface{}{"limit": 5, "filter_state": "triggered"},
+	}}
 	if _, err := c.Dashboards.Create(context.Background(), "Xk9mZp",
-		DashboardParams{Title: "Ops"}); err != nil {
-		t.Fatalf("Create: %v", err)
-	}
-
-	widgets, present := got.body["widgets"]
-	if !present {
-		t.Fatal("widgets was not sent; the schema requires it")
-	}
-	if widgets == nil {
-		t.Error("widgets was null; an empty array is what the schema wants")
-	}
-	if arr, ok := widgets.([]any); !ok || len(arr) != 0 {
-		t.Errorf("widgets = %v, want []", widgets)
-	}
-}
-
-// Widgets pass through as raw JSON, since the generated widget type is an
-// anonymous struct a caller could not build.
-func TestDashboardsCreatePassesWidgetsThrough(t *testing.T) {
-	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"d1","title":"Ops"}}`)
-
-	_, err := c.Dashboards.Create(context.Background(), "Xk9mZp", DashboardParams{
-		Title:   "Ops",
-		Widgets: []byte(`[{"type":"errors","grid":{"x":0,"y":0,"w":6,"h":4}}]`),
-	})
-	if err != nil {
+		DashboardCreateParams{Title: "Ops", Widgets: &widgets}); err != nil {
 		t.Fatalf("Create: %v", err)
 	}
 
@@ -340,8 +319,28 @@ func TestDashboardsCreatePassesWidgetsThrough(t *testing.T) {
 		t.Fatalf("widgets = %v", got.body["widgets"])
 	}
 	widget, _ := arr[0].(map[string]any)
-	if widget["type"] != "errors" {
+	config, _ := widget["config"].(map[string]any)
+	if widget["type"] != "alarms" || config["limit"] != float64(5) || config["filter_state"] != "triggered" {
 		t.Errorf("widget = %v", widget)
+	}
+}
+
+// An update merges: a rename sends only the title, leaving the widgets alone.
+func TestDashboardsUpdateSendsOnlyWhatChanged(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"d1","title":"Renamed"}}`)
+
+	title := "Renamed"
+	if _, err := c.Dashboards.Update(context.Background(), "Xk9mZp", "d1",
+		DashboardUpdateParams{Title: &title}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if got.body["title"] != "Renamed" {
+		t.Errorf("title = %v", got.body["title"])
+	}
+	for _, absent := range []string{"widgets", "default_ts"} {
+		if _, present := got.body[absent]; present {
+			t.Errorf("%s was sent though it was not supplied", absent)
+		}
 	}
 }
 
@@ -393,32 +392,6 @@ func TestAddCommentReturnsTheComment(t *testing.T) {
 	}
 	if comment.Id != "cmt_1" || comment.FaultId != 1 {
 		t.Errorf("comment = %+v", comment)
-	}
-}
-
-// A dashboard update replaces rather than merges, so omitting widgets would clear
-// them. The client refuses instead of silently emptying the dashboard.
-func TestDashboardsUpdateRefusesWithoutWidgets(t *testing.T) {
-	c, _ := captureWrite(t, http.StatusOK, `{"data":{"id":"d1","title":"Ops"}}`)
-
-	_, err := c.Dashboards.Update(context.Background(), "Xk9mZp", "d1",
-		DashboardParams{Title: "Ops"})
-	if !errors.Is(err, ErrReplacesDashboard) {
-		t.Fatalf("err = %v, want ErrReplacesDashboard", err)
-	}
-}
-
-// Create is different: a new dashboard legitimately has no widgets, and the schema
-// requires the field, so an empty array is correct there.
-func TestDashboardsCreateAllowsNoWidgets(t *testing.T) {
-	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"d1","title":"Ops"}}`)
-
-	if _, err := c.Dashboards.Create(context.Background(), "Xk9mZp",
-		DashboardParams{Title: "Ops"}); err != nil {
-		t.Fatalf("Create: %v", err)
-	}
-	if arr, ok := got.body["widgets"].([]any); !ok || len(arr) != 0 {
-		t.Errorf("widgets = %v, want []", got.body["widgets"])
 	}
 }
 
@@ -542,5 +515,35 @@ func TestFaultsSummarySendsTimeFilters(t *testing.T) {
 	}
 	if got := query.Get("occurred_after"); got == "" {
 		t.Error("occurred_after was not sent; the filter would be silently ignored")
+	}
+}
+
+// Common fields sit at the top level and the type's settings under config, the
+// shape a GET returns.
+func TestIntegrationsCreateNestsSettingsUnderConfig(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated,
+		`{"data":{"id":"i1","project_id":"Xk9mZp","type":"WebHook","active":true,"links":{"web":"https://app/x"}}}`)
+
+	events := []IntegrationEvent{"occurred", "resolved"}
+	if _, err := c.Integrations.Create(context.Background(), "Xk9mZp", IntegrationCreateParams{
+		Type:   "WebHook",
+		Events: &events,
+		Config: &map[string]interface{}{"url": "https://example.com/hook", "label": "Deploys"},
+	}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	if got.body["type"] != "WebHook" {
+		t.Errorf("type = %v", got.body["type"])
+	}
+	if evs, ok := got.body["events"].([]any); !ok || len(evs) != 2 {
+		t.Errorf("events = %v", got.body["events"])
+	}
+	config, ok := got.body["config"].(map[string]any)
+	if !ok || config["url"] != "https://example.com/hook" || config["label"] != "Deploys" {
+		t.Errorf("config = %v", got.body["config"])
+	}
+	if _, flat := got.body["url"]; flat {
+		t.Error("url was sent at the top level; settings belong under config")
 	}
 }

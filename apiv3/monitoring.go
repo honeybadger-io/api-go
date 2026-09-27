@@ -142,23 +142,37 @@ func (s *IntegrationsService) Get(ctx context.Context, projectID, integrationID 
 	})
 }
 
-// IntegrationParams are the writable fields of an integration.
-type IntegrationParams = gen.IntegrationInput
+// IntegrationCreateParams are a new integration's fields. Type picks the
+// integration and Config holds that type's settings, the same keys a GET returns
+// under config; the spec's IntegrationConfig<Type> schemas list them, and the API
+// refuses a missing or unknown one with 422.
+type IntegrationCreateParams = gen.IntegrationCreateInput
+
+// IntegrationType names an integration kind: WebHook, Email, Slack, and so on.
+type IntegrationType = gen.IntegrationCreateInputType
+
+// IntegrationEvent names an event an integration can notify on.
+type IntegrationEvent = gen.IntegrationEvent
+
+// IntegrationUpdateParams are the fields an update can change. Nil fields are
+// left as they are; Config carries only the settings being changed.
+type IntegrationUpdateParams = gen.IntegrationUpdateInput
 
 // Create makes a new integration.
 //
-// Type is required on create and determines which config fields are valid.
-// OAuth integration types (Slack, GitHub, etc.) cannot be created via the API.
-func (s *IntegrationsService) Create(ctx context.Context, projectID string, p IntegrationParams, opts ...Option) (*Integration, error) {
+// OAuth types (Slack, GitHub and the like) are created turned off and not
+// connected: send the user to the integration's Links.Web to connect it, then
+// turn it on with an update setting Active.
+func (s *IntegrationsService) Create(ctx context.Context, projectID string, p IntegrationCreateParams, opts ...Option) (*Integration, error) {
 	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateIntegration(ctx, projectID, gen.CreateIntegrationJSONRequestBody(p))
+		return s.client.gen().CreateIntegration(ctx, projectID, p)
 	})
 }
 
 // Update changes an integration's settings.
-func (s *IntegrationsService) Update(ctx context.Context, projectID, integrationID string, p IntegrationParams, opts ...Option) (*Integration, error) {
+func (s *IntegrationsService) Update(ctx context.Context, projectID, integrationID string, p IntegrationUpdateParams, opts ...Option) (*Integration, error) {
 	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateIntegration(ctx, projectID, integrationID, gen.UpdateIntegrationJSONRequestBody(p))
+		return s.client.gen().UpdateIntegration(ctx, projectID, integrationID, p)
 	})
 }
 

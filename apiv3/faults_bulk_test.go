@@ -157,7 +157,7 @@ func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 	if got.body["target_fault_id"] != float64(202) {
 		t.Errorf("target_fault_id = %v, want the fault being kept", got.body["target_fault_id"])
 	}
-	if merge.BatchID != "WksB67FpRY3bZQ" || merge.SourceID != 201 || merge.TargetID != 202 {
+	if merge.BatchId != "WksB67FpRY3bZQ" || merge.SourceId != 201 || merge.TargetId != 202 {
 		t.Errorf("merge = %+v", merge)
 	}
 }

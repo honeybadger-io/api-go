@@ -230,17 +230,9 @@ func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel Faul
 	})
 }
 
-// FaultMerge is a merge accepted for background processing.
-type FaultMerge struct {
-	// BatchID identifies the background merge.
-	BatchID string `json:"batch_id"`
-
-	// SourceID is the fault that was merged away.
-	SourceID int `json:"source_id"`
-
-	// TargetID is the fault that was kept.
-	TargetID int `json:"target_id"`
-}
+// FaultMerge is a merge accepted for background processing: BatchId identifies
+// it, SourceId is the fault merged away and TargetId the fault kept.
+type FaultMerge = gen.FaultMerge
 
 // ErrMergeIntoSelf is returned when both fault ids are the same.
 var ErrMergeIntoSelf = errors.New("apiv3: a fault cannot be merged into itself")
@@ -264,12 +256,12 @@ func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFault
 }
 
 // PauseDuration controls how long recording is paused.
-type PauseDuration = gen.PauseFaultRecordingJSONBodyTime
+type PauseDuration = gen.PauseDuration
 
 const (
-	PauseHour PauseDuration = gen.PauseFaultRecordingJSONBodyTimeHour
-	PauseDay  PauseDuration = gen.PauseFaultRecordingJSONBodyTimeDay
-	PauseWeek PauseDuration = gen.PauseFaultRecordingJSONBodyTimeWeek
+	PauseHour PauseDuration = gen.PauseDurationHour
+	PauseDay  PauseDuration = gen.PauseDurationDay
+	PauseWeek PauseDuration = gen.PauseDurationWeek
 )
 
 // PauseRecording stops recording new notices for a fault for the given duration,

@@ -1,10 +1,7 @@
 package apiv3
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/honeybadger-io/api-go/internal/gen"
@@ -102,7 +99,7 @@ func setOptional(fields map[**string]string) {
 func (p CheckInParams) toCreate() gen.CheckInCreateInput {
 	body := gen.CheckInCreateInput{Name: p.Name}
 	if p.ScheduleType != "" {
-		st := gen.CheckInCreateInputScheduleType(p.ScheduleType)
+		st := gen.CheckInScheduleType(p.ScheduleType)
 		body.ScheduleType = &st
 	}
 	setOptional(map[**string]string{
@@ -118,7 +115,7 @@ func (p CheckInParams) toCreate() gen.CheckInCreateInput {
 func (p CheckInParams) toUpdate() gen.CheckInInput {
 	var body gen.CheckInInput
 	if p.ScheduleType != "" {
-		st := gen.CheckInInputScheduleType(p.ScheduleType)
+		st := gen.CheckInScheduleType(p.ScheduleType)
 		body.ScheduleType = &st
 	}
 	setOptional(map[**string]string{
@@ -179,7 +176,7 @@ func (t AlarmTrigger) config() *gen.AlarmTriggerConfig {
 	cfg := &gen.AlarmTriggerConfig{Type: t.Type}
 	if t.Operator != "" || t.Value != 0 {
 		op, val := t.Operator, t.Value
-		cfg.Config = &gen.AlarmTriggerConfig_Config{Operator: &op, Value: &val}
+		cfg.Config = &gen.AlarmTriggerCondition{Operator: &op, Value: &val}
 	}
 	return cfg
 }
@@ -291,91 +288,33 @@ func (s *AlarmsService) Delete(ctx context.Context, projectID, alarmID string, o
 	})
 }
 
-// DashboardParams are the writable fields of a dashboard.
-//
-// Widgets is raw JSON rather than a typed slice. The generated widget type is a
-// deeply nested anonymous struct inside an internal package, so a caller could
-// not construct one — passing the array through untouched is the only way to
-// support widgets at all until the spec names those schemas. The dashboards
-// reference topic documents the shape.
-type DashboardParams struct {
-	// Title is required.
-	Title string
+// DashboardCreateParams are a new dashboard's fields. Only Title is required;
+// Widgets defaults to none.
+type DashboardCreateParams = gen.DashboardInput
 
-	// DefaultTs is the dashboard's default time range, such as "P1D" or "week".
-	DefaultTs string
+// DashboardUpdateParams are the fields a dashboard update can change. Nil fields
+// keep their values. A Widgets list replaces the dashboard's widgets: leave one
+// out to remove it, and keep each widget's Id to keep its identity.
+type DashboardUpdateParams = gen.DashboardUpdateInput
 
-	// Widgets is a JSON array of widget objects. Nil sends an empty array on
-	// create; on update it is an error, because the write replaces the dashboard
-	// rather than merging into it.
-	Widgets json.RawMessage
-}
+// DashboardWidget is a widget as written. Config holds the settings for the
+// widget's Type; the spec's DashboardWidgetConfig<Type> schemas list them.
+type DashboardWidget = gen.DashboardWidgetInput
 
-// ErrReplacesDashboard is returned by Dashboards.Update when Widgets is nil.
-//
-// The update body is the whole resource, so a nil widget array would clear the
-// dashboard's widgets rather than leave them alone. Read the dashboard first and
-// pass its widgets back, changed or not.
-var ErrReplacesDashboard = errors.New(
-	"apiv3: a dashboard update replaces rather than merges, so Widgets must be supplied — " +
-		"read the dashboard first and pass its widgets back")
-
-// body builds the request payload.
-//
-// Marshalled here rather than through the generated struct because widgets must
-// reach the API as an empty array when there are none: the field is required and
-// not omitempty, so a nil slice would serialise as null.
-func (p DashboardParams) body() ([]byte, error) {
-	payload := struct {
-		Title     string          `json:"title"`
-		DefaultTs *string         `json:"default_ts,omitempty"`
-		Widgets   json.RawMessage `json:"widgets"`
-	}{Title: p.Title, Widgets: p.Widgets}
-
-	if p.DefaultTs != "" {
-		payload.DefaultTs = &p.DefaultTs
-	}
-	if len(payload.Widgets) == 0 {
-		payload.Widgets = json.RawMessage("[]")
-	}
-	return json.Marshal(payload)
-}
+// DashboardWidgetType names a widget kind: insights_vis, alarms, errors, and so on.
+type DashboardWidgetType = gen.DashboardWidgetInputType
 
 // Create makes a new dashboard.
-//
-// Title is the field on both sides now: the spec previously wrote it as name
-// while reading it as title, and settled on title.
-func (s *DashboardsService) Create(ctx context.Context, projectID string, p DashboardParams, opts ...Option) (*Dashboard, error) {
-	raw, err := p.body()
-	if err != nil {
-		return nil, err
-	}
-
+func (s *DashboardsService) Create(ctx context.Context, projectID string, p DashboardCreateParams, opts ...Option) (*Dashboard, error) {
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateDashboardWithBody(ctx, projectID,
-			"application/json", bytes.NewReader(raw))
+		return s.client.gen().CreateDashboard(ctx, projectID, p)
 	})
 }
 
-// Update changes a dashboard.
-//
-// Title and Widgets are both required: the update body is the whole resource, so
-// anything omitted is cleared rather than kept. DefaultTs has the same hazard —
-// leaving it empty resets a custom time range — so pass the current value along
-// with the change.
-func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID string, p DashboardParams, opts ...Option) (*Dashboard, error) {
-	if len(p.Widgets) == 0 {
-		return nil, ErrReplacesDashboard
-	}
-
-	raw, err := p.body()
-	if err != nil {
-		return nil, err
-	}
-
+// Update changes a dashboard, leaving whatever p omits as it is.
+func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID string, p DashboardUpdateParams, opts ...Option) (*Dashboard, error) {
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateDashboardWithBody(ctx, projectID,
-			dashboardID, "application/json", bytes.NewReader(raw))
+		return s.client.gen().UpdateDashboard(ctx, projectID, dashboardID, p)
 	})
 }
 
