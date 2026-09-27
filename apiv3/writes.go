@@ -52,99 +52,38 @@ func (s *ProjectsService) Delete(ctx context.Context, projectID string, opts ...
 	})
 }
 
-// CheckInParams are the writable fields of a check-in.
+// CheckInCreateParams are a new check-in's fields. Name is required, and so is
+// ReportPeriod for a simple schedule or CronSchedule for a cron one.
 //
-// The v3 schema now carries everything v2 accepted, including the cron fields
-// that define a cron check-in.
-type CheckInParams struct {
-	// Name is required on create.
-	Name string
+// CronTimezone is a Rails/ActiveSupport zone name rather than an IANA identifier
+// — "Central Time (US & Canada)", not "America/Chicago", which the API rejects.
+type CheckInCreateParams = gen.CheckInCreateInput
 
-	// ScheduleType is "simple" or "cron". A simple check-in expects a report every
-	// ReportPeriod; a cron one expects them on CronSchedule.
-	ScheduleType string
+// CheckInUpdateParams are the fields a check-in update can change. Nil fields keep
+// their values.
+type CheckInUpdateParams = gen.CheckInInput
 
-	// ReportPeriod is required for a simple schedule: a count and a unit
-	// ("10 minutes", "1 day") or HH:MM:SS.
-	ReportPeriod string
+// CheckInScheduleType is how a check-in expects its reports.
+type CheckInScheduleType = gen.CheckInScheduleType
 
-	// GracePeriod is how long after the expected time before the check-in counts
-	// as missing, in the same format as ReportPeriod.
-	GracePeriod string
-
-	// CronSchedule is required when ScheduleType is "cron".
-	CronSchedule string
-
-	// CronTimezone is a Rails/ActiveSupport zone name rather than an IANA
-	// identifier — "Central Time (US & Canada)", not "America/Chicago", which the
-	// API rejects. Required when ScheduleType is "cron".
-	CronTimezone string
-
-	// Slug is the short identifier in the check-in's reporting URL. Generated from
-	// the name when empty.
-	Slug string
-}
-
-// setOptional points each target at its value, leaving empty values absent so an
-// update touches only what it was given.
-func setOptional(fields map[**string]string) {
-	for field, value := range fields {
-		if value != "" {
-			v := value
-			*field = &v
-		}
-	}
-}
-
-func (p CheckInParams) toCreate() gen.CheckInCreateInput {
-	body := gen.CheckInCreateInput{Name: p.Name}
-	if p.ScheduleType != "" {
-		st := gen.CheckInScheduleType(p.ScheduleType)
-		body.ScheduleType = &st
-	}
-	setOptional(map[**string]string{
-		&body.ReportPeriod: p.ReportPeriod,
-		&body.GracePeriod:  p.GracePeriod,
-		&body.CronSchedule: p.CronSchedule,
-		&body.CronTimezone: p.CronTimezone,
-		&body.Slug:         p.Slug,
-	})
-	return body
-}
-
-func (p CheckInParams) toUpdate() gen.CheckInInput {
-	var body gen.CheckInInput
-	if p.ScheduleType != "" {
-		st := gen.CheckInScheduleType(p.ScheduleType)
-		body.ScheduleType = &st
-	}
-	setOptional(map[**string]string{
-		&body.Name:         p.Name,
-		&body.ReportPeriod: p.ReportPeriod,
-		&body.GracePeriod:  p.GracePeriod,
-		&body.CronSchedule: p.CronSchedule,
-		&body.CronTimezone: p.CronTimezone,
-		&body.Slug:         p.Slug,
-	})
-	return body
-}
+const (
+	// ScheduleSimple expects a report every ReportPeriod.
+	ScheduleSimple CheckInScheduleType = gen.Simple
+	// ScheduleCron expects reports on CronSchedule.
+	ScheduleCron CheckInScheduleType = gen.Cron
+)
 
 // Create makes a new check-in.
-func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
-	body := p.toCreate()
-
+func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInCreateParams, opts ...Option) (*CheckIn, error) {
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateCheckIn(ctx, projectID, body)
+		return s.client.gen().CreateCheckIn(ctx, projectID, p)
 	})
 }
 
-// Update changes a check-in. Empty fields are omitted and left unchanged, so a
-// caller changing just the grace period sends just the grace period.
-func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInParams, opts ...Option) (*CheckIn, error) {
-	body := p.toUpdate()
-
+// Update changes a check-in, leaving whatever p omits as it is.
+func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInUpdateParams, opts ...Option) (*CheckIn, error) {
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateCheckIn(ctx, projectID, checkInID, body)
+		return s.client.gen().UpdateCheckIn(ctx, projectID, checkInID, p)
 	})
 }
 
@@ -155,129 +94,54 @@ func (s *CheckInsService) Delete(ctx context.Context, projectID, checkInID strin
 	})
 }
 
-// AlarmTrigger is what turns an alarm on.
-//
-// The vocabulary is the API's, not arithmetic: Type is a trigger kind such as
-// "alert_result_count", and Operator is a name such as "gt" or "lt" rather than a
-// symbol. Verified against a running server — an alarm created with
-// {alert_result_count, gt, 10} stores and reports exactly that.
-type AlarmTrigger struct {
-	// Type is the trigger kind, such as "alert_result_count".
-	Type string
+// AlarmTriggerConfig is what turns an alarm on. It's sent whole: an update's
+// trigger replaces the stored one rather than merging into it.
+type AlarmTriggerConfig = gen.AlarmTriggerConfig
 
-	// Operator and Value configure the comparison — "gt" and 10, say.
-	Operator string
-	Value    float64
-}
+// AlarmTriggerCondition is the comparison a trigger makes, such as gt 10.
+type AlarmTriggerCondition = gen.AlarmTriggerCondition
 
-// config renders the trigger in the shape create, update and the alarm response
-// all share.
-func (t AlarmTrigger) config() *gen.AlarmTriggerConfig {
-	cfg := &gen.AlarmTriggerConfig{Type: t.Type}
-	if t.Operator != "" || t.Value != 0 {
-		op, val := t.Operator, t.Value
-		cfg.Config = &gen.AlarmTriggerCondition{Operator: &op, Value: &val}
-	}
-	return cfg
-}
+// AlarmTriggerType is a trigger kind.
+type AlarmTriggerType = gen.AlarmTriggerConfigType
 
-// AlarmParams are the writable fields of an alarm.
-//
-// Hand-written rather than aliased so the trigger reads as three flat fields
-// instead of a nested config object. The generated trigger type is now named and
-// constructible, so this is an ergonomic choice rather than a workaround.
-type AlarmParams struct {
-	// Name and Query are required on create.
-	Name  string
-	Query string
+// AlarmTriggerOperator is a named comparison. The API names them rather than
+// using symbols.
+type AlarmTriggerOperator = gen.AlarmTriggerConditionOperator
 
-	// EvaluationPeriod is the window each evaluation covers.
-	EvaluationPeriod string
+const (
+	// TriggerResultCount compares the number of results the query returns.
+	TriggerResultCount AlarmTriggerType = gen.AlertResultCount
 
-	// LookbackLag is how far behind now that window ends, allowing for ingestion
-	// delay.
-	LookbackLag string
+	OperatorGt  AlarmTriggerOperator = gen.Gt
+	OperatorGte AlarmTriggerOperator = gen.Gte
+	OperatorLt  AlarmTriggerOperator = gen.Lt
+	OperatorLte AlarmTriggerOperator = gen.Lte
+	OperatorEq  AlarmTriggerOperator = gen.Eq
+	OperatorNeq AlarmTriggerOperator = gen.Neq
+)
 
-	Description string
+// AlarmCreateParams are a new alarm's fields. Name and Query are required; an
+// alarm with no TriggerConfig is created but never fires. Nil StreamIds runs the
+// query against every stream on the project, while an empty list means none.
+type AlarmCreateParams = gen.AlarmCreateInput
 
-	// StreamIDs are the streams the query runs against. Empty means every stream
-	// on the project. An id that isn't one of its streams is refused with 422.
-	StreamIDs []string
+// AlarmUpdateParams are the fields an alarm update can change. Nil fields keep
+// their values: pointing Description at "" clears it, and StreamIds distinguishes
+// keeping the streams (nil) from none ([]).
+type AlarmUpdateParams = gen.AlarmUpdateInput
 
-	// Trigger is optional; without one the alarm is created but never fires.
-	Trigger *AlarmTrigger
-}
-
-func (p AlarmParams) toCreate() gen.AlarmCreateInput {
-	body := gen.AlarmCreateInput{Name: p.Name, Query: p.Query}
-	for field, value := range map[**string]string{
-		&body.EvaluationPeriod: p.EvaluationPeriod,
-		&body.LookbackLag:      p.LookbackLag,
-		&body.Description:      p.Description,
-	} {
-		if value != "" {
-			v := value
-			*field = &v
-		}
-	}
-	if len(p.StreamIDs) > 0 {
-		body.StreamIds = &p.StreamIDs
-	}
-	if p.Trigger != nil {
-		body.TriggerConfig = p.Trigger.config()
-	}
-	return body
-}
-
-// Create makes a new alarm. Name and Query are required; an alarm with no
-// trigger is created but never fires.
-func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmParams, opts ...Option) (*Alarm, error) {
-	body := p.toCreate()
+// Create makes a new alarm.
+func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmCreateParams, opts ...Option) (*Alarm, error) {
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().CreateAlarm(ctx, projectID, body)
+		return s.client.gen().CreateAlarm(ctx, projectID, p)
 	})
-}
-
-// AlarmUpdateParams are the fields an alarm update can change. Nil fields are
-// omitted and left unchanged.
-//
-// Pointers rather than values so absent and empty are distinguishable: pointing
-// Description at "" clears it, which a plain string could not express.
-type AlarmUpdateParams struct {
-	Name        *string
-	Description *string
-
-	// Query is the BadgerQL query evaluated on each check.
-	Query *string
-
-	// EvaluationPeriod and LookbackLag are compact durations: "10m", "1h".
-	EvaluationPeriod *string
-	LookbackLag      *string
-
-	// StreamIDs replaces the streams the query runs against.
-	StreamIDs *[]string
-
-	// Trigger replaces the whole trigger configuration.
-	Trigger *AlarmTrigger
 }
 
 // Update changes an alarm, including its query, window and trigger, without
 // losing its history the way deleting and recreating it would.
 func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams, opts ...Option) (*Alarm, error) {
-	body := gen.AlarmUpdateInput{
-		Name:             p.Name,
-		Description:      p.Description,
-		Query:            p.Query,
-		EvaluationPeriod: p.EvaluationPeriod,
-		LookbackLag:      p.LookbackLag,
-		StreamIds:        p.StreamIDs,
-	}
-	if p.Trigger != nil {
-		body.TriggerConfig = p.Trigger.config()
-	}
-
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
-		return s.client.gen().UpdateAlarm(ctx, projectID, alarmID, body)
+		return s.client.gen().UpdateAlarm(ctx, projectID, alarmID, p)
 	})
 }
 

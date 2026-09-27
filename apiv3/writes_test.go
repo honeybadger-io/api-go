@@ -122,8 +122,9 @@ func TestProjectsCreateSendsRequiredName(t *testing.T) {
 func TestCheckInUpdateOmitsUnsetFields(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"c1","name":"Nightly"}}`)
 
+	grace := "5m"
 	if _, err := c.CheckIns.Update(context.Background(), "Xk9mZp", "c1",
-		CheckInParams{GracePeriod: "5m"}); err != nil {
+		CheckInUpdateParams{GracePeriod: &grace}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 
@@ -141,12 +142,11 @@ func TestCheckInUpdateOmitsUnsetFields(t *testing.T) {
 func TestCheckInCreateSendsCronSchedule(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"c1","name":"Nightly"}}`)
 
-	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInParams{
-		Name:         "Nightly",
-		ScheduleType: "cron",
-		CronSchedule: "0 3 * * *",
-		// A Rails zone name, not an IANA identifier — the API rejects the latter.
-		CronTimezone: "Central Time (US & Canada)",
+	cron, schedule := "0 3 * * *", ScheduleCron
+	// A Rails zone name, not an IANA identifier — the API rejects the latter.
+	zone := "Central Time (US & Canada)"
+	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInCreateParams{
+		Name: "Nightly", ScheduleType: &schedule, CronSchedule: &cron, CronTimezone: &zone,
 	})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -166,11 +166,9 @@ func TestCheckInCreateSendsCronSchedule(t *testing.T) {
 func TestCheckInCreateSendsSpecifiedFields(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"c1","name":"Nightly"}}`)
 
-	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInParams{
-		Name:         "Nightly",
-		ScheduleType: "simple",
-		ReportPeriod: "1d",
-		GracePeriod:  "1h",
+	schedule, period, grace := ScheduleSimple, "1d", "1h"
+	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInCreateParams{
+		Name: "Nightly", ScheduleType: &schedule, ReportPeriod: &period, GracePeriod: &grace,
 	})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -272,13 +270,16 @@ func TestProjectsUpdateSendsFullSettings(t *testing.T) {
 func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
 
-	_, err := c.Alarms.Create(context.Background(), "Xk9mZp", AlarmParams{
+	period, lag := "5m", "1m"
+	streams := []string{"str_1"}
+	_, err := c.Alarms.Create(context.Background(), "Xk9mZp", AlarmCreateParams{
 		Name:             "Spike",
 		Query:            "count() > 100",
-		EvaluationPeriod: "5m",
-		LookbackLag:      "1m",
-		StreamIDs:        []string{"str_1"},
-		Trigger:          &AlarmTrigger{Type: "alert_result_count", Operator: "gt", Value: 100},
+		EvaluationPeriod: &period,
+		LookbackLag:      &lag,
+		StreamIds:        &streams,
+		TriggerConfig: &AlarmTriggerConfig{Type: TriggerResultCount,
+			Config: AlarmTriggerCondition{Operator: OperatorGt, Value: 100}},
 	})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -427,7 +428,7 @@ func TestAlarmsUpdateChangesBehaviour(t *testing.T) {
 	query, period := "filter level::str == \"error\"", "15m"
 	streams := []string{"s1"}
 	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1", AlarmUpdateParams{
-		Query: &query, EvaluationPeriod: &period, StreamIDs: &streams,
+		Query: &query, EvaluationPeriod: &period, StreamIds: &streams,
 	}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
@@ -445,12 +446,13 @@ func TestAlarmsUpdateChangesBehaviour(t *testing.T) {
 	}
 }
 
-// An update can change the trigger, and a fractional threshold survives.
+// An update can change the trigger, and the value keeps its precision.
 func TestAlarmsUpdateSendsTrigger(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"a1","name":"Spike"}}`)
 
 	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1", AlarmUpdateParams{
-		Trigger: &AlarmTrigger{Type: "alert_result_count", Operator: "gte", Value: 0.5},
+		TriggerConfig: &AlarmTriggerConfig{Type: TriggerResultCount,
+			Config: AlarmTriggerCondition{Operator: OperatorGte, Value: 0.5}},
 	}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
@@ -545,5 +547,28 @@ func TestIntegrationsCreateNestsSettingsUnderConfig(t *testing.T) {
 	}
 	if _, flat := got.body["url"]; flat {
 		t.Error("url was sent at the top level; settings belong under config")
+	}
+}
+
+// Nil StreamIds runs the query against every stream, while an empty list means
+// none; the two must reach the API differently.
+func TestAlarmsCreateDistinguishesNoStreamsFromEvery(t *testing.T) {
+	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
+	if _, err := c.Alarms.Create(context.Background(), "Xk9mZp",
+		AlarmCreateParams{Name: "Spike", Query: "q"}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if _, present := got.body["stream_ids"]; present {
+		t.Error("stream_ids was sent though it was nil")
+	}
+
+	c2, got2 := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
+	none := []string{}
+	if _, err := c2.Alarms.Create(context.Background(), "Xk9mZp",
+		AlarmCreateParams{Name: "Spike", Query: "q", StreamIds: &none}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if ids, ok := got2.body["stream_ids"].([]any); !ok || len(ids) != 0 {
+		t.Errorf("stream_ids = %v, want []", got2.body["stream_ids"])
 	}
 }
