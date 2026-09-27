@@ -6131,7 +6131,27 @@ components:
           type: array
           items:
             type: string
-          description: Environment names excluded from notifications
+          description: Environment names that never notify through this channel; takes
+            precedence over included_environments
+        included_environments:
+          type: array
+          items:
+            type: string
+          description: When non-empty, the only environment names that notify through
+            this channel
+        filter_events:
+          type: array
+          items:
+            type: string
+          description: Events that are filtered, paired by position with filter_queries
+        filter_queries:
+          type: array
+          items:
+            type: string
+          description: 'Search query for the event at the same position in filter_events.
+            That event notifies only when the error matches the query.
+
+            '
         alarm_alert_ids:
           type: array
           items:
@@ -6253,29 +6273,36 @@ components:
             type: string
         excluded_environments:
           type: array
-          description: Environment names excluded from notifications.
+          description: 'Environment names that never notify through this channel.
+            Takes precedence over included_environments. Names are stored as given,
+            so an environment can be excluded before it first reports.
+
+            '
           items:
             type: string
         included_environments:
           type: array
-          description: Environment names included in notifications (overrides excluded).
-          items:
-            type: string
-        environments:
-          type: array
-          description: Environment names this channel monitors (shorthand for setting
-            included/excluded).
+          description: 'When non-empty, only these environment names notify through
+            this channel, including ones that haven''t reported yet. Empty means every
+            environment not excluded.
+
+            '
           items:
             type: string
         filter_events:
           type: array
-          description: Event names to filter notifications on.
+          description: 'Events to filter, paired by position with filter_queries.
+            Replaces the stored filters; send [] to clear them.
+
+            '
           items:
             type: string
         filter_queries:
           type: array
-          description: Search queries paired with filter_events for conditional notification
-            filtering.
+          description: 'Search query for the event at the same position in filter_events.
+            That event notifies only when the error matches the query.
+
+            '
           items:
             type: string
       additionalProperties:

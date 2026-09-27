@@ -2173,11 +2173,20 @@ type Integration struct {
 	// Events Event types this channel listens for
 	Events *[]string `json:"events,omitempty"`
 
-	// ExcludedEnvironments Environment names excluded from notifications
+	// ExcludedEnvironments Environment names that never notify through this channel; takes precedence over included_environments
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
+
+	// FilterEvents Events that are filtered, paired by position with filter_queries
+	FilterEvents *[]string `json:"filter_events,omitempty"`
+
+	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only when the error matches the query.
+	FilterQueries *[]string `json:"filter_queries,omitempty"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
+
+	// IncludedEnvironments When non-empty, the only environment names that notify through this channel
+	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
 
 	// Links Links into the Honeybadger web UI
 	Links *WebLinks `json:"links,omitempty"`
@@ -2231,22 +2240,19 @@ type IntegrationInput struct {
 	// CheckInIds Check-ins whose events this channel receives. An empty list turns check-in notifications off for this channel. An id that isn't one of this project's check-ins is refused with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Environments Environment names this channel monitors (shorthand for setting included/excluded).
-	Environments *[]string `json:"environments,omitempty"`
-
 	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create. Adding an event the type does not support is refused with 422.
 	Events *[]string `json:"events,omitempty"`
 
-	// ExcludedEnvironments Environment names excluded from notifications.
+	// ExcludedEnvironments Environment names that never notify through this channel. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
 
-	// FilterEvents Event names to filter notifications on.
+	// FilterEvents Events to filter, paired by position with filter_queries. Replaces the stored filters; send [] to clear them.
 	FilterEvents *[]string `json:"filter_events,omitempty"`
 
-	// FilterQueries Search queries paired with filter_events for conditional notification filtering.
+	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only when the error matches the query.
 	FilterQueries *[]string `json:"filter_queries,omitempty"`
 
-	// IncludedEnvironments Environment names included in notifications (overrides excluded).
+	// IncludedEnvironments When non-empty, only these environment names notify through this channel, including ones that haven't reported yet. Empty means every environment not excluded.
 	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
@@ -4952,14 +4958,6 @@ func (a *IntegrationInput) UnmarshalJSON(b []byte) error {
 		delete(object, "check_in_ids")
 	}
 
-	if raw, found := object["environments"]; found {
-		err = json.Unmarshal(raw, &a.Environments)
-		if err != nil {
-			return fmt.Errorf("error reading 'environments': %w", err)
-		}
-		delete(object, "environments")
-	}
-
 	if raw, found := object["events"]; found {
 		err = json.Unmarshal(raw, &a.Events)
 		if err != nil {
@@ -5084,13 +5082,6 @@ func (a IntegrationInput) MarshalJSON() ([]byte, error) {
 		object["check_in_ids"], err = json.Marshal(a.CheckInIds)
 		if err != nil {
 			return nil, fmt.Errorf("error marshaling 'check_in_ids': %w", err)
-		}
-	}
-
-	if a.Environments != nil {
-		object["environments"], err = json.Marshal(a.Environments)
-		if err != nil {
-			return nil, fmt.Errorf("error marshaling 'environments': %w", err)
 		}
 	}
 
