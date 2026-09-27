@@ -12,7 +12,7 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Branch | `spec-fixes` |
 | Commit | `61f3d4c917` plus uncommitted schema reshape (flat integration create, dashboard merge, named enums) |
 | Vendored | 2026-09-27 |
-| sha256 | `9db58763f6a189d8af751d9f1ef451a92f8b33871e1b808b47ec1eb55fd8548f` |
+| sha256 | `f760f53d043df5a0e7ed6febcd141bce3cd43dcd36f69ce7f79741ec595b3ceb` |
 
 Record the branch, commit, **and checksum** on every refresh. The bundle is
 **gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of

@@ -172,6 +172,51 @@ func (e AlarmHistoryEntryStatus) Valid() bool {
 	}
 }
 
+// Defines values for AlarmTriggerConditionOperator.
+const (
+	Eq  AlarmTriggerConditionOperator = "eq"
+	Gt  AlarmTriggerConditionOperator = "gt"
+	Gte AlarmTriggerConditionOperator = "gte"
+	Lt  AlarmTriggerConditionOperator = "lt"
+	Lte AlarmTriggerConditionOperator = "lte"
+	Neq AlarmTriggerConditionOperator = "neq"
+)
+
+// Valid indicates whether the value is a known member of the AlarmTriggerConditionOperator enum.
+func (e AlarmTriggerConditionOperator) Valid() bool {
+	switch e {
+	case Eq:
+		return true
+	case Gt:
+		return true
+	case Gte:
+		return true
+	case Lt:
+		return true
+	case Lte:
+		return true
+	case Neq:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AlarmTriggerConfigType.
+const (
+	AlertResultCount AlarmTriggerConfigType = "alert_result_count"
+)
+
+// Valid indicates whether the value is a known member of the AlarmTriggerConfigType enum.
+func (e AlarmTriggerConfigType) Valid() bool {
+	switch e {
+	case AlertResultCount:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CheckInState.
 const (
 	CheckInStateMissing   CheckInState = "missing"
@@ -1709,7 +1754,7 @@ type AccountInvitationCreateInput struct {
 	Email                     openapi_types.Email               `json:"email"`
 	Role                      *AccountInvitationCreateInputRole `json:"role,omitempty"`
 
-	// TeamIds IDs of teams to add the invitee to. An id that isn't a team on this account is refused with 422.
+	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
 	TeamIds *[]string `json:"team_ids,omitempty"`
 }
 
@@ -1723,7 +1768,7 @@ type AccountInvitationInput struct {
 	Email                     *openapi_types.Email        `json:"email,omitempty"`
 	Role                      *AccountInvitationInputRole `json:"role,omitempty"`
 
-	// TeamIds IDs of teams to add the invitee to. An id that isn't a team on this account is refused with 422.
+	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
 	TeamIds *[]string `json:"team_ids,omitempty"`
 }
 
@@ -1842,10 +1887,10 @@ type AlarmCreateInput struct {
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
 
-	// StreamIds Streams the query runs against. Defaults to every stream on the project. An id that isn't one of the project's streams is refused with 422.
+	// StreamIds Streams the query runs against. Defaults to every stream on the project. An ID that isn't one of the project's streams fails the request with 422.
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
-	// TriggerConfig What turns the alarm on
+	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
 	TriggerConfig *AlarmTriggerConfig `json:"trigger_config,omitempty"`
 }
 
@@ -1876,20 +1921,28 @@ type AlarmHistoryEntry struct {
 // AlarmHistoryEntryStatus The state the alarm entered
 type AlarmHistoryEntryStatus string
 
-// AlarmTriggerCondition When the trigger fires, as a comparison against the query's result
+// AlarmTriggerCondition The comparison against the query's result that fires the trigger
 type AlarmTriggerCondition struct {
-	Operator *string `json:"operator,omitempty"`
+	Operator AlarmTriggerConditionOperator `json:"operator"`
 
 	// Value Threshold to compare against. `alert_result_count` takes a whole number >= 0.
-	Value *float64 `json:"value,omitempty"`
+	Value float64 `json:"value"`
 }
 
-// AlarmTriggerConfig What turns the alarm on
+// AlarmTriggerConditionOperator defines model for AlarmTriggerCondition.Operator.
+type AlarmTriggerConditionOperator string
+
+// AlarmTriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
 type AlarmTriggerConfig struct {
-	// Config When the trigger fires, as a comparison against the query's result
-	Config *AlarmTriggerCondition `json:"config,omitempty"`
-	Type   string                 `json:"type"`
+	// Config The comparison against the query's result that fires the trigger
+	Config AlarmTriggerCondition `json:"config"`
+
+	// Type `alert_result_count` compares the number of results the query returns.
+	Type AlarmTriggerConfigType `json:"type"`
 }
+
+// AlarmTriggerConfigType `alert_result_count` compares the number of results the query returns.
+type AlarmTriggerConfigType string
 
 // AlarmUpdateInput Writable alarm attributes
 type AlarmUpdateInput struct {
@@ -1908,7 +1961,7 @@ type AlarmUpdateInput struct {
 	// StreamIds Stream identifiers to query
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
-	// TriggerConfig What turns the alarm on
+	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
 	TriggerConfig *AlarmTriggerConfig `json:"trigger_config,omitempty"`
 }
 
@@ -2025,7 +2078,7 @@ type CheckInInput struct {
 	Slug *string `json:"slug,omitempty"`
 }
 
-// CheckInReplaceEntry One check-in in a replace request. Matched to an existing check-in by slug: a match is updated, and a new slug is created.
+// CheckInReplaceEntry One check-in in a replace request, matched to an existing check-in by slug. A match is updated, and an unmatched slug creates a new check-in.
 type CheckInReplaceEntry struct {
 	// CronSchedule Cron expression, required when `schedule_type` is `cron`
 	CronSchedule *string `json:"cron_schedule,omitempty"`
@@ -2347,7 +2400,7 @@ type DashboardInput struct {
 	Widgets   *[]DashboardWidgetInput `json:"widgets,omitempty"`
 }
 
-// DashboardUpdateInput Fields to change on a dashboard. A field left out keeps its current value. `widgets` replaces the whole list, so to remove a widget, send the list without it, keeping the others' `id`s so they stay the same widgets.
+// DashboardUpdateInput Fields to change on a dashboard. A field left out keeps its current value. `widgets` replaces the whole list: to remove a widget, send the list without it. A widget that keeps its `id` is updated in place, and one without an `id` is added.
 type DashboardUpdateInput struct {
 	DefaultTs *string                 `json:"default_ts,omitempty"`
 	Title     *string                 `json:"title,omitempty"`
@@ -2728,7 +2781,7 @@ type FaultSelectionInput struct {
 	// DryRun Report what the request would change without changing it — no state change, no comments, no timeline entries. The response has the same shape either way, with `dry_run` echoed back.
 	DryRun *bool `json:"dry_run,omitempty"`
 
-	// FaultIds Integer IDs of the faults to change. An id that isn't a fault in this project refuses the whole request with 422. Omit to act on everything the query and time filters match, which requires all=true when there are none.
+	// FaultIds Integer IDs of the faults to change. An ID that isn't a fault in this project fails the whole request with 422. Omit to act on everything the query and time filters match; with no filters, that requires all=true.
 	FaultIds *[]int `json:"fault_ids,omitempty"`
 
 	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
@@ -2820,7 +2873,7 @@ type Integration struct {
 	// Config Type-specific configuration fields. Sensitive values (API keys, tokens) are masked. Unset values may be null. Hidden internal fields are omitted.
 	Config *map[string]Integration_Config `json:"config,omitempty"`
 
-	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration has its credentials. An OAuth integration created through the API starts turned off and not connected. Send the user to `links.web`, where they connect it, then turn it on with `active: true`. GitHub is different: the user installs the GitHub App on the repo from `links.web`, and turning the integration on is what attaches the installation, checked against the calling user's GitHub access (the project owner's for an account token). So a GitHub integration reports `connected: false` until it's turned on, unless the calling user signed in to Honeybadger with GitHub, in which case their GitHub token is attached when it's created.
+	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration has its credentials. One created through the API starts inactive and unconnected, and is connected in the web UI at `links.web`. GitHub works through the GitHub App instead: the app is installed on the repo from `links.web`, and activating the integration attaches the installation, so it reports `connected: false` until then. The exception is a creator who signed in to Honeybadger with GitHub, whose token is attached on create.
 	Connected *bool `json:"connected,omitempty"`
 
 	// CreatedAt When the channel was created
@@ -2835,19 +2888,19 @@ type Integration struct {
 	// Events Event types this channel listens for
 	Events *[]string `json:"events,omitempty"`
 
-	// ExcludedEnvironments Environment names that never notify through this channel; takes precedence over included_environments
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments.
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
 
-	// FilterEvents Events that are filtered, paired by position with filter_queries
+	// FilterEvents Events that have a filter query, paired by position with filter_queries
 	FilterEvents *[]string `json:"filter_events,omitempty"`
 
-	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only when the error matches the query.
+	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only for errors that match it.
 	FilterQueries *[]string `json:"filter_queries,omitempty"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
-	// IncludedEnvironments When non-empty, the only environment names that notify through this channel
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration.
 	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
 
 	// Links Links into the Honeybadger web UI
@@ -2909,26 +2962,26 @@ type IntegrationConfigBacklog struct {
 	// ApiKey Your Backlog API key (generate one in Personal Settings > API). Returned masked; sending the masked value back leaves it unchanged.
 	ApiKey string `json:"api_key"`
 
-	// BacklogProjectId The Backlog project to create issues in. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	// BacklogProjectId The Backlog project to create issues in. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	BacklogProjectId  string  `json:"backlog_project_id"`
 	DescriptionFormat *string `json:"description_format,omitempty"`
 
 	// EnableWebhook When enabled Honeybadger will create a webhook in Backlog to sync issue status changes back to Honeybadger.
 	EnableWebhook *bool `json:"enable_webhook,omitempty"`
 
-	// IssueTypeId The type of issue to create. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	// IssueTypeId The type of issue to create. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	IssueTypeId string `json:"issue_type_id"`
 
 	// Label Optional label to show in the integrations list.
 	Label *string `json:"label,omitempty"`
 
-	// PriorityId The priority level for new issues. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	// PriorityId The priority level for new issues. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	PriorityId string `json:"priority_id"`
 
-	// ReopenStatusId The status to use when unresolving errors. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	// ReopenStatusId The status to use when unresolving errors. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ReopenStatusId string `json:"reopen_status_id"`
 
-	// ResolveStatusId The status to use when resolving errors. An id from Backlog; the web UI lists the choices from Backlog. Look it up with Backlog's API or your tools for Backlog.
+	// ResolveStatusId The status to use when resolving errors. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ResolveStatusId string `json:"resolve_status_id"`
 
 	// SpaceUrl Your Backlog space URL (e.g., https://example.backlog.com or https://example.backlog.jp).
@@ -2952,40 +3005,40 @@ type IntegrationConfigCampfireV3 struct {
 type IntegrationConfigClickUp struct {
 	DescriptionFormat *string `json:"description_format,omitempty"`
 
-	// FolderId An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// FolderId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	FolderId *string `json:"folder_id,omitempty"`
 
-	// InitialStatusId The initial status when a task is created. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// InitialStatusId The initial status when a task is created. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	InitialStatusId string `json:"initial_status_id"`
 
-	// ListId The ID of the list to create tasks for. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// ListId The ID of the list to create tasks for. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ListId string `json:"list_id"`
 
-	// ReopenStatusId The task status when an error is reopened. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// ReopenStatusId The task status when an error is reopened. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ReopenStatusId string `json:"reopen_status_id"`
 
-	// ResolveStatusId The task status when an error is resolved. An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// ResolveStatusId The task status when an error is resolved. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ResolveStatusId string `json:"resolve_status_id"`
 
 	// Tags Comma-separated list of tags.
 	Tags *string `json:"tags,omitempty"`
 
-	// TeamspaceId An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// TeamspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	TeamspaceId string `json:"teamspace_id"`
 
 	// TitleFormat You can customize the ClickUp task name, or you can leave this blank for the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
 	TitleFormat *string `json:"title_format,omitempty"`
 
-	// WorkspaceId An id from ClickUp; the web UI lists the choices from ClickUp. Look it up with ClickUp's API or your tools for ClickUp.
+	// WorkspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	WorkspaceId string `json:"workspace_id"`
 }
 
 // IntegrationConfigClickUpChat defines model for IntegrationConfigClickUpChat.
 type IntegrationConfigClickUpChat struct {
-	// ChannelId An id from ClickUp Chat; the web UI lists the choices from ClickUp Chat. Look it up with ClickUp Chat's API or your tools for ClickUp Chat.
+	// ChannelId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ChannelId string `json:"channel_id"`
 
-	// WorkspaceId An id from ClickUp Chat; the web UI lists the choices from ClickUp Chat. Look it up with ClickUp Chat's API or your tools for ClickUp Chat.
+	// WorkspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	WorkspaceId string `json:"workspace_id"`
 }
 
@@ -3008,7 +3061,7 @@ type IntegrationConfigDiscordWebhook struct {
 	// Label Optional label to show in the integrations list.
 	Label *string `json:"label,omitempty"`
 
-	// Url Get a Webhook URL in Discord under Channel Settings &rarr; Webhooks.
+	// Url Get a Webhook URL in Discord under Channel Settings → Webhooks.
 	Url *string `json:"url,omitempty"`
 }
 
@@ -3129,7 +3182,7 @@ type IntegrationConfigJira struct {
 
 // IntegrationConfigJiraCloud defines model for IntegrationConfigJiraCloud.
 type IntegrationConfigJiraCloud struct {
-	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger. **NOTE: Components are not avaliable for next-gen projects.**.
+	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger. **NOTE: Components are not avaliable for next-gen projects.**
 	ComponentNames *string `json:"component_names,omitempty"`
 	IssueType      *string `json:"issue_type,omitempty"`
 
@@ -3158,17 +3211,17 @@ type IntegrationConfigLinear struct {
 	Label    *string   `json:"label,omitempty"`
 	LabelIds *[]string `json:"label_ids,omitempty"`
 
-	// LinearProjectId An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	// LinearProjectId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	LinearProjectId *string `json:"linear_project_id,omitempty"`
 
-	// ResolvedStateId An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	// ResolvedStateId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ResolvedStateId *string `json:"resolved_state_id,omitempty"`
 
-	// TeamId An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	// TeamId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	TeamId      string  `json:"team_id"`
 	TitleFormat *string `json:"title_format,omitempty"`
 
-	// UnresolvedStateId We will use this state for new issues and when an existing issue is reopened. An id from Linear; the web UI lists the choices from Linear. Look it up with Linear's API or your tools for Linear.
+	// UnresolvedStateId We will use this state for new issues and when an existing issue is reopened. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	UnresolvedStateId *string `json:"unresolved_state_id,omitempty"`
 }
 
@@ -3184,7 +3237,7 @@ type IntegrationConfigMicrosoftTeamsV2 struct {
 	// Label Optional label to show in the integrations list.
 	Label *string `json:"label,omitempty"`
 
-	// Url Get a Webhook URL in Microsoft Teams under Connectors &rarr; Incoming Webhook.
+	// Url Get a Webhook URL in Microsoft Teams under Connectors → Incoming Webhook.
 	Url string `json:"url"`
 }
 
@@ -3258,19 +3311,19 @@ type IntegrationConfigShortcutV2 struct {
 	CustomFields      *string `json:"custom_fields,omitempty"`
 	DescriptionFormat *string `json:"description_format,omitempty"`
 
-	// InitialState An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	// InitialState The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	InitialState string `json:"initial_state"`
 
 	// OrganizationName e.g. app.shortcut.com/**yourorg**/dashboard.
 	OrganizationName string `json:"organization_name"`
 
-	// ReopenTransition An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	// ReopenTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ReopenTransition string `json:"reopen_transition"`
 
-	// ResolveTransition An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	// ResolveTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ResolveTransition string `json:"resolve_transition"`
 
-	// Team An id from Shortcut; the web UI lists the choices from Shortcut. Look it up with Shortcut's API or your tools for Shortcut.
+	// Team The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	Team        string  `json:"team"`
 	TitleFormat *string `json:"title_format,omitempty"`
 }
@@ -3300,10 +3353,10 @@ type IntegrationConfigSprintly struct {
 
 // IntegrationConfigTrello defines model for IntegrationConfigTrello.
 type IntegrationConfigTrello struct {
-	// BoardId An id from Trello; the web UI lists the choices from Trello. Look it up with Trello's API or your tools for Trello.
+	// BoardId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	BoardId string `json:"board_id"`
 
-	// ListId An id from Trello; the web UI lists the choices from Trello. Look it up with Trello's API or your tools for Trello.
+	// ListId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
 	ListId string `json:"list_id"`
 
 	// TitleFormat You can customize the trello card title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
@@ -3346,35 +3399,35 @@ type IntegrationConfigZulip struct {
 	ZulipDomain string `json:"zulip_domain"`
 }
 
-// IntegrationCreateInput A new integration. `type` picks the integration, and `config` holds that type's settings. OAuth integrations (Slack, GitHub and the like) are created turned off; the user connects them from the integration's `links.web` page. Some required settings are the other service's ids (a Linear team, a Trello board), which a caller with access to that service can look up.
+// IntegrationCreateInput A new integration. `type` picks the integration, and `config` holds that type's settings. OAuth integrations (Slack, GitHub and the like) are created inactive and are connected in the web UI at `links.web`. Some required settings are IDs from the other service, such as a Linear team or a Trello board.
 type IntegrationCreateInput struct {
 	Active *bool `json:"active,omitempty"`
 
-	// AlarmAlertIds IDs of alarms whose alert events this channel receives.
+	// AlarmAlertIds IDs of alarms whose alert events this integration receives.
 	AlarmAlertIds *[]string `json:"alarm_alert_ids,omitempty"`
 
-	// AlarmOkIds IDs of alarms whose recovery events this channel receives.
+	// AlarmOkIds IDs of alarms whose recovery events this integration receives.
 	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Check-ins whose events this channel receives. An empty list turns check-in notifications off for this channel. An id that isn't one of this project's check-ins is refused with 422.
+	// CheckInIds Check-ins whose events this integration receives. An empty list turns check-in notifications off. An ID that isn't one of this project's check-ins fails the request with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Config The type's settings, as described by its IntegrationConfig<type> schema.
+	// Config The type's settings, as described by IntegrationConfig<Type>.
 	Config *map[string]interface{} `json:"config,omitempty"`
 
-	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create. Adding an event the type does not support is refused with 422.
+	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422.
 	Events *[]IntegrationEvent `json:"events,omitempty"`
 
-	// ExcludedEnvironments Environment names that never notify through this channel. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
 
 	// FilterEvents Events to filter, paired by position with filter_queries. Replaces the stored filters; send [] to clear them.
 	FilterEvents *[]string `json:"filter_events,omitempty"`
 
-	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only when the error matches the query.
+	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only for errors that match it. Read only together with filter_events.
 	FilterQueries *[]string `json:"filter_queries,omitempty"`
 
-	// IncludedEnvironments When non-empty, only these environment names notify through this channel, including ones that haven't reported yet. Empty means every environment not excluded.
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded.
 	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
@@ -3383,51 +3436,51 @@ type IntegrationCreateInput struct {
 	// Rate Rate threshold period (e.g. min, hour)
 	Rate *string `json:"rate,omitempty"`
 
-	// SiteIds Sites whose up and down events this channel receives. An empty list turns site notifications off for this channel. An id that isn't one of this project's sites is refused with 422.
+	// SiteIds Sites whose up and down events this integration receives. An empty list turns site notifications off. An ID that isn't one of this project's sites fails the request with 422.
 	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
 
 	// Threshold Number of occurrences before rate_exceeded fires
 	Threshold *int `json:"threshold,omitempty"`
 
-	// Type Integration type. Its settings are in the IntegrationConfig<type> schema, e.g. IntegrationConfigWebHook.
+	// Type Integration type. Its settings are described by IntegrationConfig<Type>, e.g. IntegrationConfigWebHook.
 	Type IntegrationCreateInputType `json:"type"`
 }
 
-// IntegrationCreateInputType Integration type. Its settings are in the IntegrationConfig<type> schema, e.g. IntegrationConfigWebHook.
+// IntegrationCreateInputType Integration type. Its settings are described by IntegrationConfig<Type>, e.g. IntegrationConfigWebHook.
 type IntegrationCreateInputType string
 
-// IntegrationEvent An event an integration can notify on. Each integration type supports a subset, listed in IntegrationCreateInput's condition for that type.
+// IntegrationEvent An event an integration can notify on. Each type supports a subset, which IntegrationCreateInput lists per type.
 type IntegrationEvent string
 
-// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. The integration's type can't be changed, so a `type` in the body is ignored. Type-specific settings go under `config`, the same shape a GET returns, so a response can be sent back with changes; each create schema lists a type's settings.
+// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. The integration's type can't be changed, so a `type` in the body is ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. IntegrationConfig<Type> lists each type's settings.
 type IntegrationUpdateInput struct {
 	Active *bool `json:"active,omitempty"`
 
-	// AlarmAlertIds IDs of alarms whose alert events this channel receives.
+	// AlarmAlertIds IDs of alarms whose alert events this integration receives.
 	AlarmAlertIds *[]string `json:"alarm_alert_ids,omitempty"`
 
-	// AlarmOkIds IDs of alarms whose recovery events this channel receives.
+	// AlarmOkIds IDs of alarms whose recovery events this integration receives.
 	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Check-ins whose events this channel receives. An empty list turns check-in notifications off for this channel. An id that isn't one of this project's check-ins is refused with 422.
+	// CheckInIds Check-ins whose events this integration receives. An empty list turns check-in notifications off. An ID that isn't one of this project's check-ins fails the request with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Config Type-specific settings to change, the same keys a GET returns under `config`. See the IntegrationConfig schema for the integration's type. Secrets sent back masked, exactly as a GET returned them, are left unchanged. Hidden and OAuth-managed keys are ignored. Sending a setting outside `config` is refused with 422.
+	// Config Type-specific settings to change, the same keys a GET returns under `config`. See IntegrationConfig<Type> for the integration's type. Secrets sent back masked, exactly as a GET returned them, are left unchanged. Hidden and OAuth-managed keys are ignored. Sending a setting outside `config` is refused with 422.
 	Config *map[string]interface{} `json:"config,omitempty"`
 
-	// Events Event names this channel notifies on. Defaults to the type's default events when omitted on create. Adding an event the type does not support is refused with 422.
+	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422.
 	Events *[]IntegrationEvent `json:"events,omitempty"`
 
-	// ExcludedEnvironments Environment names that never notify through this channel. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
 	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
 
 	// FilterEvents Events to filter, paired by position with filter_queries. Replaces the stored filters; send [] to clear them.
 	FilterEvents *[]string `json:"filter_events,omitempty"`
 
-	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only when the error matches the query.
+	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only for errors that match it. Read only together with filter_events.
 	FilterQueries *[]string `json:"filter_queries,omitempty"`
 
-	// IncludedEnvironments When non-empty, only these environment names notify through this channel, including ones that haven't reported yet. Empty means every environment not excluded.
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded.
 	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
@@ -3436,7 +3489,7 @@ type IntegrationUpdateInput struct {
 	// Rate Rate threshold period (e.g. min, hour)
 	Rate *string `json:"rate,omitempty"`
 
-	// SiteIds Sites whose up and down events this channel receives. An empty list turns site notifications off for this channel. An id that isn't one of this project's sites is refused with 422.
+	// SiteIds Sites whose up and down events this integration receives. An empty list turns site notifications off. An ID that isn't one of this project's sites fails the request with 422.
 	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
 
 	// Threshold Number of occurrences before rate_exceeded fires
@@ -3618,7 +3671,7 @@ type Pagination struct {
 	PerPage int `json:"per_page"`
 }
 
-// PauseDuration How long to pause recording for.
+// PauseDuration How long to pause recording.
 type PauseDuration string
 
 // Project A Honeybadger project
@@ -3710,7 +3763,7 @@ type ProjectCreateInput struct {
 	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl *string `json:"source_url,omitempty"`
 
-	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An unknown or foreign team is refused with 422.
+	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An ID that isn't a team on this account fails the request with 422.
 	TeamId *string `json:"team_id,omitempty"`
 
 	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
@@ -3746,7 +3799,7 @@ type ProjectInput struct {
 	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl *string `json:"source_url,omitempty"`
 
-	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An unknown or foreign team is refused with 422.
+	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An ID that isn't a team on this account fails the request with 422.
 	TeamId *string `json:"team_id,omitempty"`
 
 	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
@@ -4028,23 +4081,23 @@ type StatusPageCreateInput struct {
 	// Domain Custom domain the page is served on
 	Domain *string `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
+	// Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
 	Features *StatusPageCreateInput_Features `json:"features,omitempty"`
 
-	// HideBranding Advanced status pages only; refused with 403 `feature_unavailable` otherwise
+	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
 	HideBranding *bool  `json:"hide_branding,omitempty"`
 	Name         string `json:"name"`
 
-	// Password Basic-auth password when password protected. Needs password protection on the plan
+	// Password Basic-auth password when password protected. Requires advanced status pages and password protection on the plan
 	Password *string `json:"password,omitempty"`
 
-	// PasswordProtected Needs advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise, so the page is never left public behind a successful request.
+	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise.
 	PasswordProtected *bool `json:"password_protected,omitempty"`
 
 	// Sites Sites listed on the page, replacing the current set
 	Sites *[]StatusPageCreateInput_Sites `json:"sites,omitempty"`
 
-	// Username Basic-auth user when password protected. Needs password protection on the plan
+	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan
 	Username *string `json:"username,omitempty"`
 }
 
@@ -4057,7 +4110,7 @@ type StatusPageCreateInput_CheckIns struct {
 	Position    *int    `json:"position,omitempty"`
 }
 
-// StatusPageCreateInput_Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
+// StatusPageCreateInput_Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
 type StatusPageCreateInput_Features struct {
 	CustomCss    *string `json:"custom_css,omitempty"`
 	DownCaption  *string `json:"down_caption,omitempty"`
@@ -4158,23 +4211,23 @@ type StatusPageInput struct {
 	// Domain Custom domain the page is served on
 	Domain *string `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
+	// Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
 	Features *StatusPageInput_Features `json:"features,omitempty"`
 
-	// HideBranding Advanced status pages only; refused with 403 `feature_unavailable` otherwise
+	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
 	HideBranding *bool   `json:"hide_branding,omitempty"`
 	Name         *string `json:"name,omitempty"`
 
-	// Password Basic-auth password when password protected. Needs password protection on the plan
+	// Password Basic-auth password when password protected. Requires advanced status pages and password protection on the plan
 	Password *string `json:"password,omitempty"`
 
-	// PasswordProtected Needs advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise, so the page is never left public behind a successful request.
+	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise.
 	PasswordProtected *bool `json:"password_protected,omitempty"`
 
 	// Sites Sites listed on the page, replacing the current set
 	Sites *[]StatusPageInput_Sites `json:"sites,omitempty"`
 
-	// Username Basic-auth user when password protected. Needs password protection on the plan
+	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan
 	Username *string `json:"username,omitempty"`
 }
 
@@ -4187,7 +4240,7 @@ type StatusPageInput_CheckIns struct {
 	Position    *int    `json:"position,omitempty"`
 }
 
-// StatusPageInput_Features Presentation copy and styling. Advanced status pages only; refused with 403 `feature_unavailable` otherwise
+// StatusPageInput_Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
 type StatusPageInput_Features struct {
 	CustomCss    *string `json:"custom_css,omitempty"`
 	DownCaption  *string `json:"down_caption,omitempty"`
@@ -4257,7 +4310,7 @@ type Team struct {
 type TeamCreateInput struct {
 	Name string `json:"name"`
 
-	// ProjectIds IDs of projects this team can access. An id that isn't a project the caller can see is refused with 422.
+	// ProjectIds IDs of projects this team can access. An ID that isn't a project the caller can see fails the request with 422.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
@@ -4265,7 +4318,7 @@ type TeamCreateInput struct {
 type TeamInput struct {
 	Name *string `json:"name,omitempty"`
 
-	// ProjectIds IDs of projects this team can access. An id that isn't a project the caller can see is refused with 422.
+	// ProjectIds IDs of projects this team can access. An ID that isn't a project the caller can see fails the request with 422.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 }
 
@@ -5312,7 +5365,7 @@ type ListFaultOccurrences200JSONResponseBody struct {
 
 // PauseFaultRecordingJSONBody defines parameters for PauseFaultRecording.
 type PauseFaultRecordingJSONBody struct {
-	// Time How long to pause recording for.
+	// Time How long to pause recording.
 	Time PauseDuration `json:"time"`
 }
 
@@ -6524,7 +6577,7 @@ type ClientInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6535,7 +6588,7 @@ type ClientInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6880,7 +6933,7 @@ type ClientInterface interface {
 
 	// ListFaultAffectedUsers Get affected users
 	//
-	// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
+	// Returns the 500 affected users with the most notices, counting only notices that match `q` when it's given. Not paginated.
 	//
 	// Corresponds with GET /projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
 	ListFaultAffectedUsers(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6894,7 +6947,7 @@ type ClientInterface interface {
 
 	// AssignFaultWithBody Assign a fault
 	//
-	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+	// Assigns a fault to a user. To unassign, DELETE the same path.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6903,7 +6956,7 @@ type ClientInterface interface {
 
 	// AssignFault Assign a fault
 	//
-	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+	// Assigns a fault to a user. To unassign, DELETE the same path.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7088,7 +7141,7 @@ type ClientInterface interface {
 
 	// CreateIntegrationWithBody Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7097,7 +7150,7 @@ type ClientInterface interface {
 
 	// CreateIntegration Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -8247,7 +8300,7 @@ func (c *Client) CreateCheckIn(ctx context.Context, projectId ProjectId, body Cr
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8268,7 +8321,7 @@ func (c *Client) ReplaceCheckInsWithBody(ctx context.Context, projectId ProjectI
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9023,7 +9076,7 @@ func (c *Client) UpdateFault(ctx context.Context, projectId ProjectId, faultId F
 
 // ListFaultAffectedUsers Get affected users
 //
-// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
+// Returns the 500 affected users with the most notices, counting only notices that match `q` when it's given. Not paginated.
 //
 // Corresponds with GET /projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
 func (c *Client) ListFaultAffectedUsers(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9057,7 +9110,7 @@ func (c *Client) UnassignFault(ctx context.Context, projectId ProjectId, faultId
 
 // AssignFaultWithBody Assign a fault
 //
-// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+// Assigns a fault to a user. To unassign, DELETE the same path.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9076,7 +9129,7 @@ func (c *Client) AssignFaultWithBody(ctx context.Context, projectId ProjectId, f
 
 // AssignFault Assign a fault
 //
-// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+// Assigns a fault to a user. To unassign, DELETE the same path.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9471,7 +9524,7 @@ func (c *Client) ListIntegrations(ctx context.Context, projectId ProjectId, para
 
 // CreateIntegrationWithBody Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9490,7 +9543,7 @@ func (c *Client) CreateIntegrationWithBody(ctx context.Context, projectId Projec
 
 // CreateIntegration Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -17502,7 +17555,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17513,7 +17566,7 @@ type ClientWithResponsesInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17890,7 +17943,7 @@ type ClientWithResponsesInterface interface {
 
 	// ListFaultAffectedUsersWithResponse Get affected users
 	//
-	// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
+	// Returns the 500 affected users with the most notices, counting only notices that match `q` when it's given. Not paginated.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
@@ -17908,7 +17961,7 @@ type ClientWithResponsesInterface interface {
 
 	// AssignFaultWithBodyWithResponse Assign a fault
 	//
-	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+	// Assigns a fault to a user. To unassign, DELETE the same path.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -17917,7 +17970,7 @@ type ClientWithResponsesInterface interface {
 
 	// AssignFaultWithResponse Assign a fault
 	//
-	// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+	// Assigns a fault to a user. To unassign, DELETE the same path.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18118,7 +18171,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateIntegrationWithBodyWithResponse Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18127,7 +18180,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateIntegrationWithResponse Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -28633,7 +28686,7 @@ func (c *ClientWithResponses) CreateCheckInWithResponse(ctx context.Context, pro
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -28650,7 +28703,7 @@ func (c *ClientWithResponses) ReplaceCheckInsWithBodyWithResponse(ctx context.Co
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account is refused with 403 `account_inactive` before anything is applied.
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29273,7 +29326,7 @@ func (c *ClientWithResponses) UpdateFaultWithResponse(ctx context.Context, proje
 
 // ListFaultAffectedUsersWithResponse Get affected users
 //
-// Returns up to 500 users affected by a fault: those with the most notices, counting only notices that match `q` when it is given. Not paginated.
+// Returns the 500 affected users with the most notices, counting only notices that match `q` when it's given. Not paginated.
 //
 // Returns a wrapper object for the known response body format(s).
 //
@@ -29303,7 +29356,7 @@ func (c *ClientWithResponses) UnassignFaultWithResponse(ctx context.Context, pro
 
 // AssignFaultWithBodyWithResponse Assign a fault
 //
-// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+// Assigns a fault to a user. To unassign, DELETE the same path.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29318,7 +29371,7 @@ func (c *ClientWithResponses) AssignFaultWithBodyWithResponse(ctx context.Contex
 
 // AssignFaultWithResponse Assign a fault
 //
-// Assigns a fault to a user. `assignee_id` is required; DELETE this path to unassign.
+// Assigns a fault to a user. To unassign, DELETE the same path.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29645,7 +29698,7 @@ func (c *ClientWithResponses) ListIntegrationsWithResponse(ctx context.Context, 
 
 // CreateIntegrationWithBodyWithResponse Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29660,7 +29713,7 @@ func (c *ClientWithResponses) CreateIntegrationWithBodyWithResponse(ctx context.
 
 // CreateIntegrationWithResponse Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings (see the IntegrationConfig schema for that type). OAuth integrations (Slack, GitHub, Linear and the like) are created turned off: send the user to the response's `links.web` to connect it, then turn it on with `active: true`.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
