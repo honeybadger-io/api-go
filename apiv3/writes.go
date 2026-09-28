@@ -9,15 +9,15 @@ import (
 
 // Creates and updates.
 //
-// Input types are aliased from the generated models where a caller can actually
-// construct one, and hand-written where they cannot. That line matters: an input
-// whose fields are plain types or the public nullable package is usable directly,
-// but one containing an enum or an anonymous struct is not, because those types
-// live in an internal package. AlarmParams and CheckInParams exist for that
-// reason; ProjectParams and FaultParams do not need to.
+// Input types are aliases of the generated request models, so a field the spec
+// adds shows up on the next re-vendor with no change here. The generated package
+// is internal, so the named types and enum constants a caller needs to fill one in
+// (CheckInScheduleType, AlarmTriggerConfig, OperatorGt and so on) are re-exported
+// alongside them. If an input ever needs a hand-written wrapper, that's a sign the
+// spec's shape wants fixing instead.
 //
-// Unset fields are omitted rather than sent empty, so an update touches only what
-// it was given.
+// Nil fields are omitted rather than sent empty, so an update touches only what it
+// was given.
 
 // ProjectCreateParams are the fields of a new project. Name is required.
 type ProjectCreateParams = gen.ProjectCreateInput

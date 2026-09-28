@@ -59,46 +59,14 @@ never carries Go-shaped annotations.
 
 ## Known spec issues
 
-The full list, with what the client does about each, is in
-[GAPS.md](GAPS.md). The summary below covers only what affects generation.
+Open gaps, deliberate decisions and the history are in [GAPS.md](GAPS.md). None
+of them affect generation: the bundle validates, every write body generates a
+plain struct that `apiv3` aliases directly, and the only overlay left is the
+deliberate `Error.details` mapping.
 
-### Write bodies that are narrower than v2
-
-These request schemas declare fewer fields than v2 accepted. A field absent from
-the schema does not appear in the generated request type at all, so `apiv3`
-cannot send it — the method follows the spec rather than inventing fields, and
-`apiv3/writes.go` documents each gap at the method.
-
-| Operation | Declared | v2 also accepted |
-| --- | --- | --- |
-| `assignFault` | bare `type: object` | the assignee |
-| `createAlarm` / `updateAlarm` | `name` | query, evaluation period, trigger config, lookback lag, streams |
-| `createDashboard` / `updateDashboard` | `name` | title, default_ts, widgets |
-| `createCheckIn` / `updateCheckIn` | name, schedule_type, report_period, grace_period | slug, cron schedule, timezone |
-| `updateProject` | `name` | resolve_errors_on_deploy, disable_public_links, user_url, source_url, purge_days, user_search_field |
-
-`Faults.Update` and `Faults.Assign` are absent from `apiv3` entirely: with a bare
-`type: object` there is nothing to build a typed method from, and guessing field
-names would produce a method that compiles and silently does nothing. The other
-fault state changes do not need them — v3 replaced v2's mutable PUT with discrete
-endpoints (`resolve`, `unresolve`, `ignore`, `unignore`, `pause_recording`,
-`resume_recording`, `merge`), all of which are fully specified.
-
-### `created_before` cannot express a timestamp
-
-`ListCheckInEvents`' `created_before` is `type: number`, which generates a
-`float32`. A float32 has a 24-bit mantissa, so at current epoch values its
-precision is coarser than two minutes — paging by it would skip or repeat events.
-`apiv3` does not expose the parameter, and walks by following links instead.
-Wants `int64`, or an opaque cursor like the other time-ordered collections.
-
-### Otherwise clean The bundle now validates — the source repo gained
-`lib/openapi/validator.rb` and a rake task, so a malformed bundle fails there
-rather than here.
-
-`apiv3` still treats `code` as an open string rather than the generated enum. The
-enum has grown from 10 to 20 values during v3's development, so a closed set would
-silently drop codes the client has not caught up with.
+`apiv3` treats `code` as an open string rather than the generated enum. The enum
+grew from 10 to 20 values during v3's development, so a closed set would silently
+drop codes the client hasn't caught up with.
 
 ### Fixed since first vendoring
 

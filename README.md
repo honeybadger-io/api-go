@@ -14,7 +14,7 @@ credential, not only new code.
 
 Both are built against a vendored OpenAPI bundle under `openapi/` — see
 [openapi/README.md](openapi/README.md) for refreshing it, and
-[openapi/GAPS.md](openapi/GAPS.md) for what v2 could do that v3 cannot yet.
+[openapi/GAPS.md](openapi/GAPS.md) for the remaining gaps and decisions.
 
 > **Moving from v0.8.0:** the v2 services used to live in the module root. They
 > are now in `apiv2`, so update the import path and use `apiv2.NewClient()`.
@@ -27,6 +27,8 @@ go get github.com/honeybadger-io/api-go
 ```
 
 ## Usage
+
+### v2
 
 ```go
 package main
@@ -66,6 +68,29 @@ func main() {
     for _, fault := range faults.Results {
         fmt.Printf("Fault: %s - %s\n", fault.Klass, fault.Message)
     }
+}
+```
+
+### v3
+
+```go
+client := apiv3.NewClient().WithBearerToken("hbt_...")
+
+// Every listing has a ListAll that walks the pages.
+projects, err := client.Projects.ListAll(ctx, apiv3.Named("My App"))
+if err != nil {
+    log.Fatal(err)
+}
+
+// Write params are the generated request types: nil fields are left as they
+// are, so an update sends only what it changes.
+title := "Ops"
+_, err = client.Dashboards.Update(ctx, projects[0].Id, dashboardID,
+    apiv3.DashboardUpdateParams{Title: &title})
+
+// Errors are typed; compare with errors.Is.
+if errors.Is(err, apiv3.ErrNotFound) {
+    // ...
 }
 ```
 
