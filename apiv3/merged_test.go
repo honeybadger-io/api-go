@@ -22,12 +22,12 @@ func mergedServer(t *testing.T) (*httptest.Server, func() []string) {
 		seen = append(seen, r.Method+" "+r.URL.Path)
 		mu.Unlock()
 		if r.URL.Path == "/v3/projects/Xk9mZp/faults/2" {
-			writeJSON(w, http.StatusOK, `{"data":{"id":2,"project_id":"Xk9mZp","klass":"Survivor"}}`)
+			writeJSON(w, http.StatusOK, `{"data":{"id":"2","project_id":"Xk9mZp","klass":"Survivor"}}`)
 			return
 		}
 		if r.Method != http.MethodGet {
 			writeJSON(w, http.StatusConflict, `{"error":{"code":"fault_merged","message":"Fault was merged",
-			  "details":{"merged_into":2,"location":"/v3/projects/Xk9mZp/faults/2"}}}`)
+			  "details":{"merged_into":"2","location":"/v3/projects/Xk9mZp/faults/2"}}}`)
 			return
 		}
 		w.Header().Set("Location", "http://"+r.Host+"/v3/projects/Xk9mZp/faults/2")
@@ -47,7 +47,7 @@ func TestWriteToMergedFaultNamesTheSurvivor(t *testing.T) {
 	srv, seen := mergedServer(t)
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
 
-	err := c.Faults.Delete(context.Background(), "Xk9mZp", 1)
+	err := c.Faults.Delete(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrFaultMerged) {
 		t.Fatalf("err = %v, want ErrFaultMerged", err)
 	}
@@ -55,8 +55,8 @@ func TestWriteToMergedFaultNamesTheSurvivor(t *testing.T) {
 	if !errors.As(err, &apiErr) {
 		t.Fatalf("err = %T, want *Error", err)
 	}
-	if id, ok := apiErr.MergedInto(); !ok || id != 2 {
-		t.Errorf("MergedInto() = %d, %v; want 2, true", id, ok)
+	if id, ok := apiErr.MergedInto(); !ok || id != "2" {
+		t.Errorf("MergedInto() = %q, %v; want 2, true", id, ok)
 	}
 	if got := seen(); len(got) != 1 || got[0] != "DELETE /v3/projects/Xk9mZp/faults/1" {
 		t.Errorf("requests = %v, want only the DELETE", got)
@@ -68,14 +68,14 @@ func TestGetMergedFaultReportsTheSurvivor(t *testing.T) {
 	srv, seen := mergedServer(t)
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
 
-	f, err := c.Faults.Get(context.Background(), "Xk9mZp", 1)
+	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrFaultMerged) {
 		t.Fatalf("Get = %+v, %v; want ErrFaultMerged", f, err)
 	}
 	var apiErr *Error
 	if errors.As(err, &apiErr) {
-		if id, ok := apiErr.MergedInto(); !ok || id != 2 {
-			t.Errorf("MergedInto() = %d, %v; want 2, true", id, ok)
+		if id, ok := apiErr.MergedInto(); !ok || id != "2" {
+			t.Errorf("MergedInto() = %q, %v; want 2, true", id, ok)
 		}
 	}
 	if len(seen()) != 1 {
@@ -90,7 +90,7 @@ func TestCustomHTTPClientDoesNotFollowRedirects(t *testing.T) {
 	own := &http.Client{}
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").WithHTTPClient(own)
 
-	if _, err := c.Faults.Get(context.Background(), "Xk9mZp", 1); !errors.Is(err, ErrFaultMerged) {
+	if _, err := c.Faults.Get(context.Background(), "Xk9mZp", "1"); !errors.Is(err, ErrFaultMerged) {
 		t.Fatalf("err = %v, want ErrFaultMerged", err)
 	}
 	if len(seen()) != 1 {

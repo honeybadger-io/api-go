@@ -2122,8 +2122,8 @@ type Comment struct {
 	// Event Event type associated with the comment
 	Event nullable.Nullable[string] `json:"event,omitempty"`
 
-	// FaultId Integer ID of the fault this comment belongs to
-	FaultId int `json:"fault_id"`
+	// FaultId ID of the fault this comment belongs to
+	FaultId string `json:"fault_id"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
@@ -2525,7 +2525,7 @@ type DashboardWidgetConfigUptime struct {
 
 // DashboardWidgetInput defines model for DashboardWidgetInput.
 type DashboardWidgetInput struct {
-	// Config The widget's settings, as described by the DashboardWidgetConfig<type> schema for its `type`.
+	// Config The widget's settings, as described by DashboardWidgetConfig<Type> for its `type`.
 	Config       *map[string]interface{}            `json:"config,omitempty"`
 	Grid         *DashboardWidgetInput_Grid         `json:"grid,omitempty"`
 	Id           *string                            `json:"id,omitempty"`
@@ -2653,8 +2653,8 @@ type Fault struct {
 	// Environment Environment name
 	Environment nullable.Nullable[string] `json:"environment,omitempty"`
 
-	// Id Fault ID (integer primary key; faults do not carry a public ID)
-	Id int `json:"id"`
+	// Id Unique identifier. Like every v3 ID it's an opaque string, although today it's the fault's number.
+	Id string `json:"id"`
 
 	// Ignored Whether the fault is ignored
 	Ignored *bool `json:"ignored,omitempty"`
@@ -2731,8 +2731,8 @@ type FaultBulkResult struct {
 	// DryRun True when nothing was written. Echoed back so a response is never ambiguous about whether it took effect.
 	DryRun bool `json:"dry_run"`
 
-	// FaultIds Integer IDs of the faults that changed, capped at 100. `count` is exact regardless; see fault_ids_truncated.
-	FaultIds []int `json:"fault_ids"`
+	// FaultIds IDs of the faults that changed, capped at 100. `count` is exact regardless; see fault_ids_truncated.
+	FaultIds []string `json:"fault_ids"`
 
 	// FaultIdsTruncated True when more faults changed than fault_ids lists.
 	FaultIdsTruncated *bool `json:"fault_ids_truncated,omitempty"`
@@ -2758,16 +2758,16 @@ type FaultMerge struct {
 	BatchId string `json:"batch_id"`
 
 	// SourceId ID of the fault merged away — the one from the path
-	SourceId int `json:"source_id"`
+	SourceId string `json:"source_id"`
 
 	// TargetId ID of the fault kept
-	TargetId int `json:"target_id"`
+	TargetId string `json:"target_id"`
 }
 
 // FaultMergeInput Names the fault to merge into
 type FaultMergeInput struct {
-	// TargetFaultId Integer ID of the fault to keep. Must be in the same project as the fault in the path, which is the one being merged away.
-	TargetFaultId int `json:"target_fault_id"`
+	// TargetFaultId ID of the fault to keep. Must be in the same project as the fault in the path, which is the one being merged away.
+	TargetFaultId string `json:"target_fault_id"`
 }
 
 // FaultSelectionInput Selects the faults a bulk operation applies to
@@ -2781,8 +2781,8 @@ type FaultSelectionInput struct {
 	// DryRun Report what the request would change without changing it — no state change, no comments, no timeline entries. The response has the same shape either way, with `dry_run` echoed back.
 	DryRun *bool `json:"dry_run,omitempty"`
 
-	// FaultIds Integer IDs of the faults to change. An ID that isn't a fault in this project fails the whole request with 422. Omit to act on everything the query and time filters match; with no filters, that requires all=true.
-	FaultIds *[]int `json:"fault_ids,omitempty"`
+	// FaultIds IDs of the faults to change. An ID that isn't a fault in this project fails the whole request with 422. Omit to act on everything the query and time filters match; with no filters, that requires all=true.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
 
 	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
 	OccurredAfter *float64 `json:"occurred_after,omitempty"`
@@ -2870,7 +2870,7 @@ type Integration struct {
 	// CheckInIds IDs of check-ins this channel monitors
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Config Type-specific configuration fields. Sensitive values (API keys, tokens) are masked. Unset values may be null. Hidden internal fields are omitted.
+	// Config Type-specific settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Sensitive values (API keys, tokens) are masked. Unset values may be null. Hidden internal fields are omitted.
 	Config *map[string]Integration_Config `json:"config,omitempty"`
 
 	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration has its credentials. One created through the API starts inactive and unconnected, and is connected in the web UI at `links.web`. GitHub works through the GitHub App instead: the app is installed on the repo from `links.web`, and activating the integration attaches the installation, so it reports `connected: false` until then. The exception is a creator who signed in to Honeybadger with GitHub, whose token is attached on create.
@@ -3412,7 +3412,7 @@ type IntegrationCreateInput struct {
 	// CheckInIds Check-ins whose events this integration receives. An empty list turns check-in notifications off. An ID that isn't one of this project's check-ins fails the request with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Config The type's settings, as described by IntegrationConfig<Type>.
+	// Config The type's settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 	Config *map[string]interface{} `json:"config,omitempty"`
 
 	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422.
@@ -3442,17 +3442,17 @@ type IntegrationCreateInput struct {
 	// Threshold Number of occurrences before rate_exceeded fires
 	Threshold *int `json:"threshold,omitempty"`
 
-	// Type Integration type. Its settings are described by IntegrationConfig<Type>, e.g. IntegrationConfigWebHook.
+	// Type Integration type. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/), and in its IntegrationConfig<Type> schema.
 	Type IntegrationCreateInputType `json:"type"`
 }
 
-// IntegrationCreateInputType Integration type. Its settings are described by IntegrationConfig<Type>, e.g. IntegrationConfigWebHook.
+// IntegrationCreateInputType Integration type. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/), and in its IntegrationConfig<Type> schema.
 type IntegrationCreateInputType string
 
 // IntegrationEvent An event an integration can notify on. Each type supports a subset, which IntegrationCreateInput lists per type.
 type IntegrationEvent string
 
-// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. The integration's type can't be changed, so a `type` in the body is ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. IntegrationConfig<Type> lists each type's settings.
+// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. The integration's type can't be changed, so a `type` in the body is ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 type IntegrationUpdateInput struct {
 	Active *bool `json:"active,omitempty"`
 
@@ -3465,7 +3465,7 @@ type IntegrationUpdateInput struct {
 	// CheckInIds Check-ins whose events this integration receives. An empty list turns check-in notifications off. An ID that isn't one of this project's check-ins fails the request with 422.
 	CheckInIds *[]string `json:"check_in_ids,omitempty"`
 
-	// Config Type-specific settings to change, the same keys a GET returns under `config`. See IntegrationConfig<Type> for the integration's type. Secrets sent back masked, exactly as a GET returned them, are left unchanged. Hidden and OAuth-managed keys are ignored. Sending a setting outside `config` is refused with 422.
+	// Config Type-specific settings to change, the same keys a GET returns under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Secrets sent back masked, exactly as a GET returned them, are left unchanged. Hidden and OAuth-managed keys are ignored. Sending a setting outside `config` is refused with 422.
 	Config *map[string]interface{} `json:"config,omitempty"`
 
 	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422.
@@ -3519,8 +3519,8 @@ type Notice struct {
 	// Environment Environment name, from the fault's environment or the notice's own environment_name. Null when neither is set.
 	Environment nullable.Nullable[string] `json:"environment,omitempty"`
 
-	// FaultId Integer ID of the fault this notice belongs to
-	FaultId int `json:"fault_id"`
+	// FaultId ID of the fault this notice belongs to
+	FaultId string `json:"fault_id"`
 
 	// Id The notice's token UUID, which addresses it globally
 	Id openapi_types.UUID `json:"id"`
@@ -4503,7 +4503,7 @@ type CreatedBefore = float64
 type FaultCreatedAfter = float64
 
 // FaultId defines model for FaultId.
-type FaultId = int
+type FaultId = string
 
 // FaultOccurredAfter defines model for FaultOccurredAfter.
 type FaultOccurredAfter = float64
@@ -7141,7 +7141,7 @@ type ClientInterface interface {
 
 	// CreateIntegrationWithBody Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7150,7 +7150,7 @@ type ClientInterface interface {
 
 	// CreateIntegration Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -9524,7 +9524,7 @@ func (c *Client) ListIntegrations(ctx context.Context, projectId ProjectId, para
 
 // CreateIntegrationWithBody Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9543,7 +9543,7 @@ func (c *Client) CreateIntegrationWithBody(ctx context.Context, projectId Projec
 
 // CreateIntegration Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -13468,7 +13468,7 @@ func NewDeleteFaultRequest(server string, projectId ProjectId, faultId FaultId) 
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13509,7 +13509,7 @@ func NewGetFaultRequest(server string, projectId ProjectId, faultId FaultId) (*h
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13561,7 +13561,7 @@ func NewUpdateFaultRequestWithBody(server string, projectId ProjectId, faultId F
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13604,7 +13604,7 @@ func NewListFaultAffectedUsersRequest(server string, projectId ProjectId, faultI
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13672,7 +13672,7 @@ func NewUnassignFaultRequest(server string, projectId ProjectId, faultId FaultId
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13724,7 +13724,7 @@ func NewAssignFaultRequestWithBody(server string, projectId ProjectId, faultId F
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13767,7 +13767,7 @@ func NewListCommentsRequest(server string, projectId ProjectId, faultId FaultId,
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13870,7 +13870,7 @@ func NewCreateCommentRequestWithBody(server string, projectId ProjectId, faultId
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13913,7 +13913,7 @@ func NewDeleteCommentRequest(server string, projectId ProjectId, faultId FaultId
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -13961,7 +13961,7 @@ func NewGetCommentRequest(server string, projectId ProjectId, faultId FaultId, c
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14020,7 +14020,7 @@ func NewUpdateCommentRequestWithBody(server string, projectId ProjectId, faultId
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14081,7 +14081,7 @@ func NewMergeFaultsRequestWithBody(server string, projectId ProjectId, faultId F
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14124,7 +14124,7 @@ func NewListNoticesRequest(server string, projectId ProjectId, faultId FaultId, 
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14228,7 +14228,7 @@ func NewListFaultOccurrencesRequest(server string, projectId ProjectId, faultId 
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14331,7 +14331,7 @@ func NewPauseFaultRecordingRequestWithBody(server string, projectId ProjectId, f
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14374,7 +14374,7 @@ func NewResumeFaultRecordingRequest(server string, projectId ProjectId, faultId 
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14415,7 +14415,7 @@ func NewUnsnoozeFaultRequest(server string, projectId ProjectId, faultId FaultId
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -14467,7 +14467,7 @@ func NewSnoozeFaultRequestWithBody(server string, projectId ProjectId, faultId F
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "fault_id", faultId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -18171,7 +18171,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateIntegrationWithBodyWithResponse Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -18180,7 +18180,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateIntegrationWithResponse Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -29698,7 +29698,7 @@ func (c *ClientWithResponses) ListIntegrationsWithResponse(ctx context.Context, 
 
 // CreateIntegrationWithBodyWithResponse Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -29713,7 +29713,7 @@ func (c *ClientWithResponses) CreateIntegrationWithBodyWithResponse(ctx context.
 
 // CreateIntegrationWithResponse Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, described for each type by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //

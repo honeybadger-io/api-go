@@ -30,7 +30,7 @@ import (
 //
 // The zero value is not a valid selection: see ErrEveryFault.
 type FaultSelection struct {
-	ids   []int
+	ids   []string
 	query string
 	all   bool
 
@@ -86,7 +86,7 @@ func (sel FaultSelection) filtered() bool {
 // SelectFaults changes the named faults. An id that isn't a fault in the project,
 // including one merged away since it was fetched, refuses the whole request with
 // 422.
-func SelectFaults(ids ...int) FaultSelection {
+func SelectFaults(ids ...string) FaultSelection {
 	return FaultSelection{ids: ids}
 }
 
@@ -245,7 +245,7 @@ var ErrMergeIntoSelf = errors.New("apiv3: a fault cannot be merged into itself")
 //
 // The merge runs in the background, so a successful call means accepted, not
 // done, and the returned ids let a caller confirm the direction the API applied.
-func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFaultID, targetFaultID int, opts ...Option) (*FaultMerge, error) {
+func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFaultID, targetFaultID string, opts ...Option) (*FaultMerge, error) {
 	if sourceFaultID == targetFaultID {
 		return nil, ErrMergeIntoSelf
 	}
@@ -266,7 +266,7 @@ const (
 
 // PauseRecording stops recording new notices for a fault for the given duration,
 // and returns the fault, whose RecordingPausedUntil says until when.
-func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID int, duration PauseDuration, opts ...Option) (*Fault, error) {
+func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID string, duration PauseDuration, opts ...Option) (*Fault, error) {
 	if !duration.Valid() {
 		return nil, fmt.Errorf("apiv3: invalid pause duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
 	}
@@ -278,14 +278,14 @@ func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, fa
 
 // ResumeRecording starts recording notices for a fault again, and returns the
 // fault as it now stands.
-func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID int, opts ...Option) (*Fault, error) {
+func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID string, opts ...Option) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ResumeFaultRecording(ctx, projectID, faultID)
 	})
 }
 
 // Delete removes a fault and its notices.
-func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID int, opts ...Option) error {
+func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID string, opts ...Option) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteFault(ctx, projectID, faultID)
 	})
@@ -299,7 +299,7 @@ type Comment = gen.Comment
 // Commenting attributes text to a person, so an account token holding
 // faults:write is still refused with requires_user_token — there is nobody to
 // attribute it to. Check errors.Is(err, ErrRequiresUserToken).
-func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID int, comment string, opts ...Option) (*Comment, error) {
+func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID string, comment string, opts ...Option) (*Comment, error) {
 	body := gen.CreateCommentJSONRequestBody{Body: comment}
 	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateComment(ctx, projectID, faultID, body)
@@ -315,7 +315,7 @@ func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultI
 //
 // AssigneeId is nullable: an explicit null unassigns, while leaving it
 // unspecified changes nothing.
-func (s *FaultsService) Update(ctx context.Context, projectID string, faultID int, p FaultParams, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Update(ctx context.Context, projectID string, faultID string, p FaultParams, opts ...Option) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateFault(ctx, projectID, faultID, p)
 	})
@@ -325,7 +325,7 @@ func (s *FaultsService) Update(ctx context.Context, projectID string, faultID in
 //
 // The id must belong to a member of the project; one that does not is rejected
 // with 422 rather than silently unassigning. Returns the fault as it now stands.
-func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID int, assigneeID string, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID string, assigneeID string, opts ...Option) (*Fault, error) {
 	body := gen.AssignFaultJSONRequestBody{AssigneeId: assigneeID}
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().AssignFault(ctx, projectID, faultID, body)
@@ -333,7 +333,7 @@ func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID in
 }
 
 // Unassign removes a fault's assignee and returns the fault as it now stands.
-func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID int, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID string, opts ...Option) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UnassignFault(ctx, projectID, faultID)
 	})

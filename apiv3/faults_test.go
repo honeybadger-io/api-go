@@ -34,7 +34,7 @@ func TestFaultsListSendsSearchQuery(t *testing.T) {
 func TestFaultsListDecodesFaults(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 0, `{"data":[
-		  {"id":1,"project_id":"Xk9mZp","klass":"RuntimeError","message":"boom","notices_count":42}
+		  {"id":"1","project_id":"Xk9mZp","klass":"RuntimeError","message":"boom","notices_count":42}
 		],"pagination":{"page":1,"per_page":25},
 		"meta":{"request_id":"req_faults"}}`)
 	}))
@@ -58,17 +58,17 @@ func TestFaultsGet(t *testing.T) {
 		if want := "/v3/projects/Xk9mZp/faults/101"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
-		writeJSON(w, 0, `{"data":{"id":101,"project_id":"Xk9mZp","klass":"RuntimeError"}}`)
+		writeJSON(w, 0, `{"data":{"id":"101","project_id":"Xk9mZp","klass":"RuntimeError"}}`)
 	}))
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	f, err := c.Faults.Get(context.Background(), "Xk9mZp", 101)
+	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "101")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
-	if f.Id != 101 {
-		t.Errorf("fault id = %d, want 101", f.Id)
+	if f.Id != "101" {
+		t.Errorf("fault id = %q, want 101", f.Id)
 	}
 }
 
@@ -76,12 +76,12 @@ func TestFaultsGet(t *testing.T) {
 // cleared" and "assignee was not returned" are different facts.
 func TestFaultNullableFieldsAreThreeState(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, 0, `{"data":{"id":1,"action":null}}`)
+		writeJSON(w, 0, `{"data":{"id":"1","action":null}}`)
 	}))
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	f, err := c.Faults.Get(context.Background(), "Xk9mZp", 1)
+	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
@@ -126,7 +126,7 @@ func TestFaultsListNoticesUsesTimeSeriesPagination(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	resp, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", 1, Limit(10))
+	resp, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", "1", Limit(10))
 	if err != nil {
 		t.Fatalf("ListNotices: %v", err)
 	}
@@ -169,7 +169,7 @@ func TestFaultsListAllNoticesFollowsOlderLinks(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", 1, Limit(1))
+	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", Limit(1))
 	if err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
@@ -192,7 +192,7 @@ func TestListAllNoticesRefusesOffHostLink(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
-	_, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", 1)
+	_, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrUntrustedLink) {
 		t.Fatalf("err = %v, want ErrUntrustedLink", err)
 	}
@@ -212,7 +212,7 @@ func TestListAllNoticesSendsNoAfterCursor(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	if _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", 1); err != nil {
+	if _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1"); err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 )
 
@@ -117,30 +116,28 @@ type Error struct {
 func (e *Error) Unwrap() error { return e.cause }
 
 // MergedInto returns the surviving fault's id when the requested fault was
-// merged into another. ok is false for any other error, or when Location does
-// not name a fault.
-func (e *Error) MergedInto() (faultID int, ok bool) {
+// merged into another. ok is false for any other error, or when neither the
+// details nor Location name a fault.
+func (e *Error) MergedInto() (faultID string, ok bool) {
 	if e.Code != CodeFaultMerged {
-		return 0, false
+		return "", false
 	}
 	// A write's 409 names the survivor in its details.
-	if id, isNumber := e.Details["merged_into"].(float64); isNumber && id > 0 && id == float64(int(id)) {
-		return int(id), true
+	if id, isString := e.Details["merged_into"].(string); isString && id != "" {
+		return id, true
 	}
 	// A read's 301 names it only in the Location header.
 	u, err := url.Parse(e.Location)
 	if err != nil {
-		return 0, false
+		return "", false
 	}
 	parts := strings.Split(strings.Trim(u.Path, "/"), "/")
 	for i := 0; i+1 < len(parts); i++ {
-		if parts[i] == "faults" {
-			if id, err := strconv.Atoi(parts[i+1]); err == nil && id > 0 {
-				return id, true
-			}
+		if parts[i] == "faults" && parts[i+1] != "" {
+			return parts[i+1], true
 		}
 	}
-	return 0, false
+	return "", false
 }
 
 func (e *Error) Error() string {

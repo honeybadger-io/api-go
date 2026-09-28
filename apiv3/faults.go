@@ -62,7 +62,7 @@ func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOp
 }
 
 // Get returns a single fault.
-func (s *FaultsService) Get(ctx context.Context, projectID string, faultID int, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Get(ctx context.Context, projectID string, faultID string, opts ...Option) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetFault(ctx, projectID, faultID)
 	})
@@ -79,7 +79,7 @@ type AffectedUser = gen.AffectedUser
 // whether or not a search is given.
 //
 // Search accepts the same filter syntax as the fault listing.
-func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, faultID int, opts ...Option) ([]AffectedUser, error) {
+func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, faultID string, opts ...Option) ([]AffectedUser, error) {
 	ro := resolve(opts)
 	params := &gen.ListFaultAffectedUsersParams{}
 	if ro.query != "" {
@@ -98,7 +98,7 @@ func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, fau
 
 // ListNotices returns one page of a fault's notices, newest first. Use Limit to
 // size the page, and Before or After to position within the collection.
-func (s *FaultsService) ListNotices(ctx context.Context, projectID string, faultID int, opts ...Option) (*ListResponse[Notice], error) {
+func (s *FaultsService) ListNotices(ctx context.Context, projectID string, faultID string, opts ...Option) (*ListResponse[Notice], error) {
 	return s.listNotices(ctx, projectID, faultID, resolve(opts))
 }
 
@@ -107,7 +107,7 @@ func (s *FaultsService) ListNotices(ctx context.Context, projectID string, fault
 // After the first page it follows links.older rather than re-deriving a cursor,
 // which is what the spec instructs and the only mechanism that also works for
 // collections that page on a timestamp.
-func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, faultID int, opts ...ListAllOption) ([]Notice, error) {
+func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, faultID string, opts ...ListAllOption) ([]Notice, error) {
 	ro := resolveListAll(opts)
 	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[Notice], error) {
 		if link != "" {
@@ -117,7 +117,7 @@ func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, fa
 	})
 }
 
-func (s *FaultsService) listNotices(ctx context.Context, projectID string, faultID int, ro requestOptions) (*ListResponse[Notice], error) {
+func (s *FaultsService) listNotices(ctx context.Context, projectID string, faultID string, ro requestOptions) (*ListResponse[Notice], error) {
 	params := &gen.ListNoticesParams{}
 	ro.applyTimeSeries(&params.Limit, &params.Before, &params.After)
 

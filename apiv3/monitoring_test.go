@@ -210,7 +210,7 @@ func TestFaultsAffectedUsers(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	data, err := c.Faults.AffectedUsers(context.Background(), "Xk9mZp", 1)
+	data, err := c.Faults.AffectedUsers(context.Background(), "Xk9mZp", "1")
 	if err != nil {
 		t.Fatalf("AffectedUsers: %v", err)
 	}

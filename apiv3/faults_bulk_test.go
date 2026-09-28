@@ -11,7 +11,7 @@ import (
 func TestBulkFaultChangeSendsIDs(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
-	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(1, 2)); err != nil {
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults("1", "2")); err != nil {
 		t.Fatalf("Resolve: %v", err)
 	}
 
@@ -19,7 +19,7 @@ func TestBulkFaultChangeSendsIDs(t *testing.T) {
 		t.Errorf("path = %q, want %q", got.path, want)
 	}
 	ids, ok := got.body["fault_ids"].([]any)
-	if !ok || len(ids) != 2 || ids[0] != float64(1) {
+	if !ok || len(ids) != 2 || ids[0] != "1" {
 		t.Errorf("fault_ids = %v", got.body["fault_ids"])
 	}
 	if _, sent := got.body["q"]; sent {
@@ -51,7 +51,7 @@ func TestBulkFaultChangeReturnsTheCount(t *testing.T) {
 	c, _ := captureWrite(t, http.StatusOK,
 		`{"data":{"count":0,"dry_run":false,"fault_ids":[],"fault_ids_truncated":false}}`)
 
-	result, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(99))
+	result, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults("99"))
 	if err != nil {
 		t.Fatalf("Resolve: %v", err)
 	}
@@ -118,7 +118,7 @@ func TestSelectAllFaultsSendsAll(t *testing.T) {
 func TestDryRunIsSent(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
-	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults(1).DryRun()); err != nil {
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", SelectFaults("1").DryRun()); err != nil {
 		t.Fatalf("Resolve: %v", err)
 	}
 	if got.body["dry_run"] != true {
@@ -144,9 +144,9 @@ func TestBulkTimeFiltersKeepFractionalSeconds(t *testing.T) {
 // the wrong way round, a merge deletes the fault the caller meant to keep.
 func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 	c, got := captureWrite(t, http.StatusAccepted, `{"data":{
-		"batch_id":"WksB67FpRY3bZQ","source_id":201,"target_id":202}}`)
+		"batch_id":"WksB67FpRY3bZQ","source_id":"201","target_id":"202"}}`)
 
-	merge, err := c.Faults.Merge(context.Background(), "Xk9mZp", 201, 202)
+	merge, err := c.Faults.Merge(context.Background(), "Xk9mZp", "201", "202")
 	if err != nil {
 		t.Fatalf("Merge: %v", err)
 	}
@@ -154,10 +154,10 @@ func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 	if want := "/v3/projects/Xk9mZp/faults/201/merge"; got.path != want {
 		t.Errorf("path = %q, want the source fault %q", got.path, want)
 	}
-	if got.body["target_fault_id"] != float64(202) {
+	if got.body["target_fault_id"] != "202" {
 		t.Errorf("target_fault_id = %v, want the fault being kept", got.body["target_fault_id"])
 	}
-	if merge.BatchId != "WksB67FpRY3bZQ" || merge.SourceId != 201 || merge.TargetId != 202 {
+	if merge.BatchId != "WksB67FpRY3bZQ" || merge.SourceId != "201" || merge.TargetId != "202" {
 		t.Errorf("merge = %+v", merge)
 	}
 }
@@ -165,7 +165,7 @@ func TestMergeMergesThePathFaultIntoTheBodyTarget(t *testing.T) {
 func TestMergeRefusesAFaultIntoItself(t *testing.T) {
 	c, got := captureWrite(t, http.StatusAccepted, "")
 
-	if _, err := c.Faults.Merge(context.Background(), "Xk9mZp", 1, 1); !errors.Is(err, ErrMergeIntoSelf) {
+	if _, err := c.Faults.Merge(context.Background(), "Xk9mZp", "1", "1"); !errors.Is(err, ErrMergeIntoSelf) {
 		t.Fatalf("err = %v, want ErrMergeIntoSelf", err)
 	}
 	if got.method != "" {
@@ -212,7 +212,7 @@ func TestTimeFilterAloneIsABoundedSelection(t *testing.T) {
 func TestIDsWithTimeFiltersIsRefused(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, bulkResult)
 
-	sel := SelectFaults(1).OccurredBefore(time.Unix(1785300000, 0))
+	sel := SelectFaults("1").OccurredBefore(time.Unix(1785300000, 0))
 	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp", sel); !errors.Is(err, ErrFilteredIDs) {
 		t.Fatalf("err = %v, want ErrFilteredIDs", err)
 	}
@@ -223,4 +223,4 @@ func TestIDsWithTimeFiltersIsRefused(t *testing.T) {
 
 // bulkResult is a typical bulk-change response: the endpoints answer 200 with a
 // count of what changed, not 204.
-const bulkResult = `{"data":{"count":1,"dry_run":false,"fault_ids":[1],"fault_ids_truncated":false}}`
+const bulkResult = `{"data":{"count":1,"dry_run":false,"fault_ids":["1"],"fault_ids_truncated":false}}`

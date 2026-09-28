@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-const commentJSON = `{"id":"cmt_1","fault_id":1,"body":"looking into it","created_at":"2026-09-26T00:00:00Z","author":{"name":"Kevin"}}`
+const commentJSON = `{"id":"cmt_1","fault_id":"1","body":"looking into it","created_at":"2026-09-26T00:00:00Z","author":{"name":"Kevin"}}`
 
 // Comments page by time, so ListAll follows links.older to the end.
 func TestListAllCommentsFollowsOlderLinks(t *testing.T) {
@@ -21,7 +21,7 @@ func TestListAllCommentsFollowsOlderLinks(t *testing.T) {
 			  "pagination":{"has_older":true,"limit":1},
 			  "links":{"self":"http://`+r.Host+`/v3/self","older":"http://`+r.Host+`/v3/comments/older"}}`)
 		case "/v3/comments/older":
-			writeJSON(w, 0, `{"data":[{"id":"cmt_0","fault_id":1,"created_at":"2026-09-25T00:00:00Z"}],
+			writeJSON(w, 0, `{"data":[{"id":"cmt_0","fault_id":"1","created_at":"2026-09-25T00:00:00Z"}],
 			  "pagination":{"has_older":false,"limit":1},
 			  "links":{"self":"http://`+r.Host+`/v3/comments/older"}}`)
 		default:
@@ -31,7 +31,7 @@ func TestListAllCommentsFollowsOlderLinks(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	all, err := c.Faults.ListAllComments(context.Background(), "Xk9mZp", 1, Limit(1))
+	all, err := c.Faults.ListAllComments(context.Background(), "Xk9mZp", "1", Limit(1))
 	if err != nil {
 		t.Fatalf("ListAllComments: %v", err)
 	}
@@ -44,7 +44,7 @@ func TestListAllCommentsFollowsOlderLinks(t *testing.T) {
 func TestUpdateCommentReturnsTheComment(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, `{"data":`+commentJSON+`}`)
 
-	comment, err := c.Faults.UpdateComment(context.Background(), "Xk9mZp", 1, "cmt_1", "looking into it")
+	comment, err := c.Faults.UpdateComment(context.Background(), "Xk9mZp", "1", "cmt_1", "looking into it")
 	if err != nil {
 		t.Fatalf("UpdateComment: %v", err)
 	}
@@ -64,7 +64,7 @@ func TestUpdateCommentReturnsTheComment(t *testing.T) {
 
 func TestGetAndDeleteComment(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, `{"data":`+commentJSON+`}`)
-	comment, err := c.Faults.GetComment(context.Background(), "Xk9mZp", 1, "cmt_1")
+	comment, err := c.Faults.GetComment(context.Background(), "Xk9mZp", "1", "cmt_1")
 	if err != nil || comment.Id != "cmt_1" {
 		t.Fatalf("GetComment = %+v, %v", comment, err)
 	}
@@ -73,7 +73,7 @@ func TestGetAndDeleteComment(t *testing.T) {
 	}
 
 	c2, got2 := captureWrite(t, http.StatusNoContent, "")
-	if err := c2.Faults.DeleteComment(context.Background(), "Xk9mZp", 1, "cmt_1"); err != nil {
+	if err := c2.Faults.DeleteComment(context.Background(), "Xk9mZp", "1", "cmt_1"); err != nil {
 		t.Fatalf("DeleteComment: %v", err)
 	}
 	if got2.method != http.MethodDelete {
@@ -85,7 +85,7 @@ func TestGetAndDeleteComment(t *testing.T) {
 func TestCommentWriteWithAccountTokenIsTyped(t *testing.T) {
 	c, _ := captureWrite(t, http.StatusForbidden,
 		`{"error":{"code":"requires_user_token","message":"This endpoint records the person who acted"}}`)
-	if _, err := c.Faults.UpdateComment(context.Background(), "Xk9mZp", 1, "cmt_1", "x"); !errors.Is(err, ErrRequiresUserToken) {
+	if _, err := c.Faults.UpdateComment(context.Background(), "Xk9mZp", "1", "cmt_1", "x"); !errors.Is(err, ErrRequiresUserToken) {
 		t.Fatalf("err = %v, want ErrRequiresUserToken", err)
 	}
 }

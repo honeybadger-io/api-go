@@ -54,7 +54,7 @@ info:
 
 
     IDs in a body (`team_id`, `site_ids`, `fault_ids` and the like) are the
-    same IDs the API returns for those records. Any that the credential can't
+    same IDs the API returns for those records. An ID the credential can't
     see fails the whole request with 422 `validation_error`, naming the field
     and the unknown IDs. None is dropped silently, and the response is the same
     whether an ID doesn't exist or belongs to someone else. An ID in the path
@@ -3359,10 +3359,11 @@ paths:
       operationId: createIntegration
       summary: Create an integration
       description: 'Creates a notification integration for the project. `type` picks
-        the integration, and `config` holds its settings, described for each type
-        by IntegrationConfig<Type>. OAuth integrations (Slack, GitHub, Linear and
-        the like) are created inactive and are connected in the web UI at the integration''s
-        `links.web`. `active: true` is refused with 422 until the integration is connected.
+        the integration, and `config` holds its settings, listed for each type in
+        [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
+        OAuth integrations (Slack, GitHub, Linear and the like) are created inactive
+        and are connected in the web UI at the integration''s `links.web`. `active:
+        true` is refused with 422 until the integration is connected.
 
         '
       tags:
@@ -6147,9 +6148,9 @@ components:
             '
         config:
           type: object
-          description: 'Type-specific configuration fields. Sensitive values (API
-            keys, tokens) are masked. Unset values may be null. Hidden internal fields
-            are omitted.
+          description: 'Type-specific settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
+            Sensitive values (API keys, tokens) are masked. Unset values may be null.
+            Hidden internal fields are omitted.
 
             '
           additionalProperties:
@@ -6181,8 +6182,8 @@ components:
       description: 'Fields to change on an integration. Omitted fields are left as
         they are. The integration''s type can''t be changed, so a `type` in the body
         is ignored. Type-specific settings go under `config`, in the shape a GET returns,
-        so a fetched integration can be edited and sent back. IntegrationConfig<Type>
-        lists each type''s settings.
+        so a fetched integration can be edited and sent back. Each type''s settings
+        are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 
         '
       properties:
@@ -6273,7 +6274,7 @@ components:
         config:
           type: object
           description: 'Type-specific settings to change, the same keys a GET returns
-            under `config`. See IntegrationConfig<Type> for the integration''s type.
+            under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
             Secrets sent back masked, exactly as a GET returned them, are left unchanged.
             Hidden and OAuth-managed keys are ignored. Sending a setting outside `config`
             is refused with 422.
@@ -6413,12 +6414,13 @@ components:
           - IncidentIo
           - Rootly
           - Backlog
-          description: Integration type. Its settings are described by IntegrationConfig<Type>,
-            e.g. IntegrationConfigWebHook.
+          description: Integration type. Each type's settings are listed in [Integration
+            types](https://docs.honeybadger.io/api/v3/integrations/types/), and in
+            its IntegrationConfig<Type> schema.
         config:
           type: object
           additionalProperties: true
-          description: The type's settings, as described by IntegrationConfig<Type>.
+          description: The type's settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
       allOf:
       - if:
           properties:
@@ -6427,6 +6429,7 @@ components:
           required:
           - type
         then:
+          title: Campfire
           description: Create a Campfire integration.
           required:
           - config
@@ -6459,6 +6462,7 @@ components:
           required:
           - type
         then:
+          title: Datadog
           description: Create a Datadog integration.
           required:
           - config
@@ -6486,6 +6490,7 @@ components:
           required:
           - type
         then:
+          title: Discord
           description: Create a Discord integration.
           properties:
             config:
@@ -6516,8 +6521,9 @@ components:
           required:
           - type
         then:
-          description: Create a GitHub integration. It's created inactive and is connected
-            in the web UI at `links.web`. It can be activated once it's connected.
+          title: GitHub
+          description: Create a GitHub integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6541,8 +6547,9 @@ components:
           required:
           - type
         then:
-          description: Create a GitLab integration. It's created inactive and is connected
-            in the web UI at `links.web`. It can be activated once it's connected.
+          title: GitLab
+          description: Create a GitLab integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6566,9 +6573,9 @@ components:
           required:
           - type
         then:
-          description: Create a Bitbucket integration. It's created inactive and is
-            connected in the web UI at `links.web`. It can be activated once it's
-            connected.
+          title: Bitbucket
+          description: Create a Bitbucket integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6592,8 +6599,9 @@ components:
           required:
           - type
         then:
-          description: Create an Asana integration. It's created inactive and is connected
-            in the web UI at `links.web`. It can be activated once it's connected.
+          title: Asana
+          description: Create an Asana integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6617,6 +6625,7 @@ components:
           required:
           - type
         then:
+          title: Jira
           description: Create a Jira integration.
           required:
           - config
@@ -6637,9 +6646,9 @@ components:
           required:
           - type
         then:
-          description: Create a Jira Cloud integration. It's created inactive and
-            is connected in the web UI at `links.web`. It can be activated once it's
-            connected.
+          title: Jira Cloud
+          description: Create a Jira Cloud integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6663,6 +6672,7 @@ components:
           required:
           - type
         then:
+          title: OpsGenie
           description: Create an OpsGenie integration.
           required:
           - config
@@ -6694,6 +6704,7 @@ components:
           required:
           - type
         then:
+          title: Redmine
           description: Create a Redmine integration.
           required:
           - config
@@ -6714,6 +6725,7 @@ components:
           required:
           - type
         then:
+          title: PagerDuty
           description: Create a PagerDuty integration.
           required:
           - config
@@ -6742,6 +6754,7 @@ components:
           required:
           - type
         then:
+          title: Sprintly
           description: Create a Sprintly integration.
           required:
           - config
@@ -6762,8 +6775,9 @@ components:
           required:
           - type
         then:
-          description: Create a Trello integration. It's created inactive and is connected
-            in the web UI at `links.web`. It can be activated once it's connected.
+          title: Trello
+          description: Create a Trello integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6787,8 +6801,9 @@ components:
           required:
           - type
         then:
-          description: Create a Linear integration. It's created inactive and is connected
-            in the web UI at `links.web`. It can be activated once it's connected.
+          title: Linear
+          description: Create a Linear integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -6812,8 +6827,9 @@ components:
           required:
           - type
         then:
-          description: Create a Slack integration. It's created inactive and is connected
-            in the web UI at `links.web`. It can be activated once it's connected.
+          title: Slack
+          description: Create a Slack integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigSlack"
@@ -6847,6 +6863,7 @@ components:
           required:
           - type
         then:
+          title: Mattermost
           description: Create a Mattermost integration.
           properties:
             config:
@@ -6877,6 +6894,7 @@ components:
           required:
           - type
         then:
+          title: Google Chat
           description: Create a Google Chat integration.
           required:
           - config
@@ -6909,6 +6927,7 @@ components:
           required:
           - type
         then:
+          title: Splunk On-Call
           description: Create a Splunk On-Call integration.
           required:
           - config
@@ -6935,6 +6954,7 @@ components:
           required:
           - type
         then:
+          title: Webhook
           description: Create a Webhook integration.
           required:
           - config
@@ -6967,6 +6987,7 @@ components:
           required:
           - type
         then:
+          title: Email
           description: Create an Email integration.
           required:
           - config
@@ -6999,9 +7020,9 @@ components:
           required:
           - type
         then:
-          description: Create an Intercom integration. It's created inactive and is
-            connected in the web UI at `links.web`. It can be activated once it's
-            connected.
+          title: Intercom
+          description: Create an Intercom integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -7021,6 +7042,7 @@ components:
           required:
           - type
         then:
+          title: AlertOps
           description: Create an AlertOps integration.
           required:
           - config
@@ -7052,6 +7074,7 @@ components:
           required:
           - type
         then:
+          title: Microsoft Teams
           description: Create a Microsoft Teams integration.
           required:
           - config
@@ -7084,6 +7107,7 @@ components:
           required:
           - type
         then:
+          title: Shortcut
           description: Create a Shortcut integration.
           required:
           - config
@@ -7104,6 +7128,7 @@ components:
           required:
           - type
         then:
+          title: PagerTree
           description: Create a PagerTree integration.
           required:
           - config
@@ -7134,6 +7159,7 @@ components:
           required:
           - type
         then:
+          title: Instatus
           description: Create an Instatus integration.
           properties:
             config:
@@ -7150,9 +7176,9 @@ components:
           required:
           - type
         then:
-          description: Create a ClickUp integration. It's created inactive and is
-            connected in the web UI at `links.web`. It can be activated once it's
-            connected.
+          title: ClickUp
+          description: Create a ClickUp integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -7176,9 +7202,9 @@ components:
           required:
           - type
         then:
-          description: Create a ClickUp Chat integration. It's created inactive and
-            is connected in the web UI at `links.web`. It can be activated once it's
-            connected.
+          title: ClickUp Chat
+          description: Create a ClickUp Chat integration. It starts inactive, is connected
+            in the web UI at `links.web`, and can be activated once connected.
           required:
           - config
           properties:
@@ -7214,6 +7240,7 @@ components:
           required:
           - type
         then:
+          title: ilert
           description: Create an ilert integration.
           required:
           - config
@@ -7245,6 +7272,7 @@ components:
           required:
           - type
         then:
+          title: Zulip
           description: Create a Zulip integration.
           required:
           - config
@@ -7277,6 +7305,7 @@ components:
           required:
           - type
         then:
+          title: incident.io
           description: Create an incident.io integration.
           required:
           - config
@@ -7305,6 +7334,7 @@ components:
           required:
           - type
         then:
+          title: Rootly
           description: Create a Rootly integration.
           required:
           - config
@@ -7337,6 +7367,7 @@ components:
           required:
           - type
         then:
+          title: Backlog
           description: Create a Backlog integration.
           required:
           - config
@@ -7350,6 +7381,13 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+      example:
+        type: WebHook
+        events:
+        - occurred
+        - resolved
+        config:
+          url: https://example.com/hook
     CheckIn:
       type: object
       description: A scheduled task check-in monitor
@@ -7474,6 +7512,7 @@ components:
         properties:
           slug:
             type: string
+            pattern: "\\S"
             description: Identifies which check-in an entry refers to, so it is required
               here
     CheckInScheduleType:
@@ -7497,13 +7536,13 @@ components:
           description: Identifies the background merge
           example: WksB67FpRY3bZQ
         source_id:
-          type: integer
+          type: string
           description: ID of the fault merged away — the one from the path
-          example: 12345
+          example: '12345'
         target_id:
-          type: integer
+          type: string
           description: ID of the fault kept
-          example: 67890
+          example: '67890'
     FaultMergeInput:
       type: object
       description: Names the fault to merge into
@@ -7511,12 +7550,12 @@ components:
       - target_fault_id
       properties:
         target_fault_id:
-          type: integer
-          description: 'Integer ID of the fault to keep. Must be in the same project
-            as the fault in the path, which is the one being merged away.
+          type: string
+          description: 'ID of the fault to keep. Must be in the same project as the
+            fault in the path, which is the one being merged away.
 
             '
-          example: 12345
+          example: '12345'
     AlarmTriggerCondition:
       type: object
       description: The comparison against the query's result that fires the trigger
@@ -7637,9 +7676,9 @@ components:
           description: Unique identifier
           example: Cm7pLx
         fault_id:
-          type: integer
-          description: Integer ID of the fault this comment belongs to
-          example: 12345
+          type: string
+          description: ID of the fault this comment belongs to
+          example: '12345'
         author:
           type:
           - object
@@ -8009,9 +8048,9 @@ components:
             - location
             properties:
               merged_into:
-                type: integer
+                type: string
                 description: ID of the fault this one was merged into.
-                example: 12345
+                example: '12345'
               location:
                 type: string
                 format: uri
@@ -8041,10 +8080,10 @@ components:
       - links
       properties:
         id:
-          type: integer
-          description: Fault ID (integer primary key; faults do not carry a public
-            ID)
-          example: 12345
+          type: string
+          description: Unique identifier. Like every v3 ID it's an opaque string,
+            although today it's the fault's number.
+          example: '12345'
         project_id:
           type: string
           description: ID of the project this fault belongs to
@@ -8202,16 +8241,16 @@ components:
           example: false
         fault_ids:
           type: array
-          description: 'Integer IDs of the faults to change. An ID that isn''t a fault
-            in this project fails the whole request with 422. Omit to act on everything
+          description: 'IDs of the faults to change. An ID that isn''t a fault in
+            this project fails the whole request with 422. Omit to act on everything
             the query and time filters match; with no filters, that requires all=true.
 
             '
           items:
-            type: integer
+            type: string
           example:
-          - 12345
-          - 12346
+          - '12345'
+          - '12346'
         q:
           type: string
           description: Search query, applied when fault_ids is omitted
@@ -8261,15 +8300,15 @@ components:
           example: false
         fault_ids:
           type: array
-          description: 'Integer IDs of the faults that changed, capped at 100. `count`
-            is exact regardless; see fault_ids_truncated.
+          description: 'IDs of the faults that changed, capped at 100. `count` is
+            exact regardless; see fault_ids_truncated.
 
             '
           items:
-            type: integer
+            type: string
           example:
-          - 12345
-          - 12346
+          - '12345'
+          - '12346'
         fault_ids_truncated:
           type: boolean
           description: True when more faults changed than fault_ids lists.
@@ -8428,9 +8467,9 @@ components:
           description: The notice's token UUID, which addresses it globally
           example: 1e2ba1f0-4f3c-4b1a-9c7e-6f2f5c0f1a3b
         fault_id:
-          type: integer
-          description: Integer ID of the fault this notice belongs to
-          example: 12345
+          type: string
+          description: ID of the fault this notice belongs to
+          example: '12345'
         project_id:
           type: string
           description: ID of the project
@@ -11461,8 +11500,8 @@ components:
         config:
           type: object
           additionalProperties: true
-          description: The widget's settings, as described by the DashboardWidgetConfig<type>
-            schema for its `type`.
+          description: The widget's settings, as described by DashboardWidgetConfig<Type>
+            for its `type`.
       allOf:
       - if:
           properties:
@@ -11525,11 +11564,10 @@ components:
       name: fault_id
       in: path
       required: true
-      description: Fault ID (integer primary key; faults do not have a separate public
-        ID)
+      description: Fault ID
       schema:
-        type: integer
-        example: 12345
+        type: string
+        example: '12345'
     Unmapped:
       name: unmapped
       in: query
@@ -11723,7 +11761,7 @@ components:
               code: fault_merged
               message: This fault was merged into fault 12345
               details:
-                merged_into: 12345
+                merged_into: '12345'
                 location: https://app.honeybadger.io/v3/projects/Xk9mZp/faults/12345
             meta:
               request_id: abc123

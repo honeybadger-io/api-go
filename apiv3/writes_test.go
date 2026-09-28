@@ -44,7 +44,7 @@ func captureWrite(t *testing.T, status int, response string) (*Client, *captured
 func TestDeleteAcceptsNoContent(t *testing.T) {
 	c, got := captureWrite(t, http.StatusNoContent, "")
 
-	if err := c.Faults.Delete(context.Background(), "Xk9mZp", 1); err != nil {
+	if err := c.Faults.Delete(context.Background(), "Xk9mZp", "1"); err != nil {
 		t.Fatalf("Delete: %v", err)
 	}
 	if got.method != http.MethodDelete {
@@ -54,8 +54,8 @@ func TestDeleteAcceptsNoContent(t *testing.T) {
 
 func TestPauseRecordingSendsBody(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK,
-		`{"data":{"id":1,"project_id":"Xk9mZp","recording_paused_until":"2026-09-27T00:00:00Z"}}`)
-	fault, err := c.Faults.PauseRecording(context.Background(), "Xk9mZp", 1, PauseDay)
+		`{"data":{"id":"1","project_id":"Xk9mZp","recording_paused_until":"2026-09-27T00:00:00Z"}}`)
+	fault, err := c.Faults.PauseRecording(context.Background(), "Xk9mZp", "1", PauseDay)
 	if err != nil {
 		t.Fatalf("pause: %v", err)
 	}
@@ -76,8 +76,8 @@ func TestPauseRecordingSendsBody(t *testing.T) {
 }
 
 func TestResumeRecordingSendsNoBody(t *testing.T) {
-	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":1,"project_id":"Xk9mZp","recording_paused_until":null}}`)
-	if _, err := c.Faults.ResumeRecording(context.Background(), "Xk9mZp", 1); err != nil {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"1","project_id":"Xk9mZp","recording_paused_until":null}}`)
+	if _, err := c.Faults.ResumeRecording(context.Background(), "Xk9mZp", "1"); err != nil {
 		t.Fatalf("resume: %v", err)
 	}
 	wantPath := "/v3/projects/Xk9mZp/faults/1/resume_recording"
@@ -95,7 +95,7 @@ func TestAddCommentRequiresUserToken(t *testing.T) {
 	c, _ := captureWrite(t, http.StatusForbidden,
 		`{"error":{"code":"requires_user_token","message":"This endpoint records the person who acted"}}`)
 
-	_, err := c.Faults.AddComment(context.Background(), "Xk9mZp", 1, "looking into it")
+	_, err := c.Faults.AddComment(context.Background(), "Xk9mZp", "1", "looking into it")
 	if !errors.Is(err, ErrRequiresUserToken) {
 		t.Fatalf("err = %v, want ErrRequiresUserToken", err)
 	}
@@ -219,7 +219,7 @@ func TestWriteInsufficientScopeNamesScope(t *testing.T) {
 		`{"error":{"code":"insufficient_scope","message":"Insufficient scope",
 		  "details":{"required_scope":"faults:write","token_scopes":["faults:read"]}}}`)
 
-	_, err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults(1))
+	_, err := c.Faults.Ignore(context.Background(), "Xk9mZp", SelectFaults("1"))
 	var apiErr *Error
 	if !asError(err, &apiErr) {
 		t.Fatalf("err = %T, want *apiv3.Error", err)
@@ -349,9 +349,9 @@ func TestDashboardsUpdateSendsOnlyWhatChanged(t *testing.T) {
 // it now stands.
 func TestFaultsAssignAndUnassign(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK,
-		`{"data":{"id":1,"project_id":"Xk9mZp","assignee":{"id":"usr_1","email":"a@example.com"}}}`)
+		`{"data":{"id":"1","project_id":"Xk9mZp","assignee":{"id":"usr_1","email":"a@example.com"}}}`)
 
-	fault, err := c.Faults.Assign(context.Background(), "Xk9mZp", 1, "usr_1")
+	fault, err := c.Faults.Assign(context.Background(), "Xk9mZp", "1", "usr_1")
 	if err != nil {
 		t.Fatalf("Assign: %v", err)
 	}
@@ -366,8 +366,8 @@ func TestFaultsAssignAndUnassign(t *testing.T) {
 	}
 
 	c2, got2 := captureWrite(t, http.StatusOK,
-		`{"data":{"id":1,"project_id":"Xk9mZp","assignee":null}}`)
-	fault, err = c2.Faults.Unassign(context.Background(), "Xk9mZp", 1)
+		`{"data":{"id":"1","project_id":"Xk9mZp","assignee":null}}`)
+	fault, err = c2.Faults.Unassign(context.Background(), "Xk9mZp", "1")
 	if err != nil {
 		t.Fatalf("Unassign: %v", err)
 	}
@@ -382,16 +382,16 @@ func TestFaultsAssignAndUnassign(t *testing.T) {
 // A comment comes back as created, with its id.
 func TestAddCommentReturnsTheComment(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated,
-		`{"data":{"id":"cmt_1","fault_id":1,"body":"looking into it","created_at":"2026-09-26T00:00:00Z"}}`)
+		`{"data":{"id":"cmt_1","fault_id":"1","body":"looking into it","created_at":"2026-09-26T00:00:00Z"}}`)
 
-	comment, err := c.Faults.AddComment(context.Background(), "Xk9mZp", 1, "looking into it")
+	comment, err := c.Faults.AddComment(context.Background(), "Xk9mZp", "1", "looking into it")
 	if err != nil {
 		t.Fatalf("AddComment: %v", err)
 	}
 	if got.body["body"] != "looking into it" {
 		t.Errorf("sent body = %v", got.body)
 	}
-	if comment.Id != "cmt_1" || comment.FaultId != 1 {
+	if comment.Id != "cmt_1" || comment.FaultId != "1" {
 		t.Errorf("comment = %+v", comment)
 	}
 }

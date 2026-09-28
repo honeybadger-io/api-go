@@ -73,6 +73,9 @@ Dashboards:
   straight back.
 
 Naming and types:
+- Fault ids are opaque strings, like every other v3 id: the path parameter,
+  `Fault.id`, the `fault_id` on notices and comments, bulk `fault_ids`, merge ids
+  and `details.merged_into`. The server still accepts numbers on input.
 - `CheckInScheduleType`, `AlarmTriggerCondition`, `PauseDuration`, `FaultMerge`,
   `FaultMergeInput` and `CheckInReplaceInput` are named components, so
   `CheckInParams`, `AlarmParams`, `AlarmTrigger` and `FaultMerge` stopped being
