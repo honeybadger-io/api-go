@@ -11,8 +11,7 @@ import (
 //
 // Both ends are inclusive, so each period returns one bucket more than its name
 // suggests: an hour gives 61 one-minute buckets, a day 25 hourly, a week 8 daily,
-// a month 31 daily. An unrecognised value falls back to hour, and the response's
-// meta says so rather than failing.
+// a month 31 daily. An unrecognised value is refused with 400 invalid_parameter.
 type OccurrencePeriod string
 
 const (
@@ -32,9 +31,7 @@ type OccurrenceOptions struct {
 }
 
 // Occurrences returns notice counts over time for one project.
-//
-// Untyped: the payload is a bucket series the spec does not pin.
-func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o OccurrenceOptions) (map[string]any, error) {
+func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o OccurrenceOptions) (*OccurrenceSeries, error) {
 	params := &gen.GetProjectOccurrencesParams{}
 	if o.Period != "" {
 		period := gen.GetProjectOccurrencesParamsPeriod(o.Period)
@@ -45,13 +42,9 @@ func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o O
 		params.Environment = &env
 	}
 
-	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
+	return getOne[OccurrenceSeries](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetProjectOccurrences(ctx, projectID, params)
 	})
-	if err != nil {
-		return nil, err
-	}
-	return *data, nil
 }
 
 // OccurrenceSeries is one project's notice counts, bucketed over the requested

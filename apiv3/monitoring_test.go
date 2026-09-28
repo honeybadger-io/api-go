@@ -221,3 +221,27 @@ func TestFaultsAffectedUsers(t *testing.T) {
 		t.Errorf("data[0] = %+v", data[0])
 	}
 }
+
+// A project's occurrence report is a typed bucket series.
+func TestProjectsOccurrencesIsTyped(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if want := "/v3/projects/Xk9mZp/occurrences"; r.URL.Path != want {
+			t.Errorf("path = %q, want %q", r.URL.Path, want)
+		}
+		if got := r.URL.Query().Get("period"); got != "day" {
+			t.Errorf("period = %q, want day", got)
+		}
+		writeJSON(w, 0, `{"data":{"project_id":"Xk9mZp","buckets":[{"timestamp":1790362800,"count":3},{"timestamp":1790366400,"count":0}]},
+		  "meta":{"period":"day","interval":"hour"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	series, err := c.Projects.Occurrences(context.Background(), "Xk9mZp", OccurrenceOptions{Period: PeriodDay})
+	if err != nil {
+		t.Fatalf("Occurrences: %v", err)
+	}
+	if series.ProjectId != "Xk9mZp" || len(series.Buckets) != 2 || series.Buckets[0].Count != 3 {
+		t.Errorf("series = %+v", series)
+	}
+}
