@@ -3,14 +3,14 @@
 #
 # `go run <module>@<version>` looked equivalent and was not: the version is not
 # recorded in any go.sum, so `go mod download` never fetches it, and generation
-# reaches the network. Worse, the generator needs Go 1.25 while this library
-# targets 1.24, so the request also triggers a toolchain switch, which is itself a
-# module lookup:
+# reaches the network, and when the generator needs a newer Go than the library
+# declares, the request also triggers a toolchain switch, which is itself a module
+# lookup:
 #
 #   go: switching to go >= 1.25.0: module lookup disabled by GOPROXY=off
 #
-# A separate module keeps that Go 1.25 floor off consumers who merely import the
-# client, while making the generator a checksummed dependency. Building it to
+# A separate module keeps the generator and its dependencies off consumers who
+# merely import the client, while making it a checksummed dependency. Building it to
 # ./bin first — rather than `go tool` in place — is what lets the paths in
 # codegen.yaml stay relative to this directory.
 OAPI_CODEGEN := bin/oapi-codegen

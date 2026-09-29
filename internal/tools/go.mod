@@ -1,11 +1,11 @@
 // Separate module so the code generator is a real, checksummed dependency
-// without dragging its Go floor into the library.
+// without dragging it into the library's module graph.
 //
-// oapi-codegen v2.8.0 requires Go 1.25. api-go itself targets 1.24 so consumers
-// on the previous release keep working, and a tool directive in the root go.mod
-// would raise that floor for everyone who merely imports the client. Keeping the
-// generator in its own module lets `go tool` resolve it from go.sum — no proxy
-// lookup at generation time — while the library's own requirements stay put.
+// A tool directive in the root go.mod would add oapi-codegen and everything it
+// depends on to the requirements of everyone who merely imports the client, and
+// would tie the library's Go floor to the generator's. Keeping the generator in
+// its own module lets `go tool` resolve it from go.sum — no proxy lookup at
+// generation time — while the library's own requirements stay put.
 module github.com/honeybadger-io/api-go/internal/tools
 
 go 1.25.0
