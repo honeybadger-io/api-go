@@ -1,9 +1,11 @@
 package apiv3
 
 import (
+	"bytes"
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -166,5 +168,27 @@ func TestRequestIDHookNotCalledWhenAbsent(t *testing.T) {
 	}
 	if called {
 		t.Error("hook fired for a response with no request_id")
+	}
+}
+
+// A body past the read cap is an error, not a quietly truncated response that
+// fails later as malformed JSON.
+func TestOversizedBodyIsAnError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":[`))
+		chunk := bytes.Repeat([]byte(" "), 1<<20)
+		for written := 0; written <= maxBodyBytes; written += len(chunk) {
+			if _, err := w.Write(chunk); err != nil {
+				return
+			}
+		}
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	_, err := c.Projects.List(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "exceeds") {
+		t.Fatalf("err = %v, want the oversized body reported", err)
 	}
 }

@@ -15,6 +15,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -299,7 +300,14 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int
 		c.mu.Unlock()
 	}
 
-	body, readErr := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes))
+	// Read one byte past the cap: LimitReader stops quietly at its limit, so
+	// without the extra byte an oversized body would look like a complete one
+	// and fail later as malformed JSON, or worse, decode as a partial result.
+	body, readErr := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes+1))
+	if readErr == nil && len(body) > maxBodyBytes {
+		body = body[:maxBodyBytes]
+		readErr = fmt.Errorf("response body exceeds %d bytes", maxBodyBytes)
+	}
 	if readErr != nil {
 		// A truncated body must not be mistaken for a short one. Report the read
 		// failure with the status attached, rather than decoding what arrived.

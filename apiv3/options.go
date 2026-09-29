@@ -206,6 +206,11 @@ type timeOption struct {
 }
 
 func (o timeOption) apply(ro *requestOptions) {
+	// A zero time means no filter. Converted, it would be a large negative
+	// timestamp (and UnixNano overflows that far back), sent as a real bound.
+	if o.at.IsZero() {
+		return
+	}
 	seconds := float64(o.at.UnixNano()) / float64(time.Second)
 	switch o.field {
 	case "created_after":

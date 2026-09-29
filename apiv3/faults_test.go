@@ -5,7 +5,9 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
+	"time"
 )
 
 func TestFaultsListSendsSearchQuery(t *testing.T) {
@@ -236,5 +238,23 @@ func TestFaultsListInsufficientScope(t *testing.T) {
 	}
 	if apiErr.RequiredScope() != "faults:read" {
 		t.Errorf("RequiredScope() = %q", apiErr.RequiredScope())
+	}
+}
+
+// A zero time means no filter, not a large negative timestamp.
+func TestZeroTimeFilterIsUnset(t *testing.T) {
+	var query url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		query = r.URL.Query()
+		writeJSON(w, 0, `{"data":[]}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	if _, err := c.Faults.List(context.Background(), "Xk9mZp", CreatedAfter(time.Time{})); err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if _, present := query["created_after"]; present {
+		t.Errorf("created_after = %q, want it absent for a zero time", query.Get("created_after"))
 	}
 }
