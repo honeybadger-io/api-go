@@ -16,7 +16,7 @@ Both are built against a vendored OpenAPI bundle under `openapi/` — see
 [openapi/README.md](openapi/README.md) for refreshing it, and
 [openapi/GAPS.md](openapi/GAPS.md) for the remaining gaps and decisions.
 
-> **Moving from v0.8.0:** the v2 services used to live in the module root. They
+> **Moving from v0.9.0 or earlier:** the v2 services used to live in the module root. They
 > are now in `apiv2`, so update the import path and use `apiv2.NewClient()`.
 > Nothing else about v2's surface changed.
 
