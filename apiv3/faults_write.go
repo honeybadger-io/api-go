@@ -44,8 +44,15 @@ type FaultSelection struct {
 	occurredBefore float64
 }
 
+// unixSeconds converts t to the fractional Unix seconds the API takes, with
+// zero, the "unset" value, for a zero time. Converted naively, a zero time is a
+// real bound in 1754 that matches every fault, and would count as a filter for
+// ErrEveryFault. It avoids UnixNano, which overflows outside 1678–2262.
 func unixSeconds(t time.Time) float64 {
-	return float64(t.UnixNano()) / float64(time.Second)
+	if t.IsZero() {
+		return 0
+	}
+	return float64(t.Unix()) + float64(t.Nanosecond())/float64(time.Second)
 }
 
 // CreatedAfter restricts the change to faults first seen after t.

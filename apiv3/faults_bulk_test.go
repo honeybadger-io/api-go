@@ -224,3 +224,26 @@ func TestIDsWithTimeFiltersIsRefused(t *testing.T) {
 // bulkResult is a typical bulk-change response: the endpoints answer 200 with a
 // count of what changed, not 204.
 const bulkResult = `{"data":{"count":1,"dry_run":false,"fault_ids":["1"],"fault_ids_truncated":false}}`
+
+// A zero time is no filter, so it neither slips past the every-fault guard nor
+// counts as a filter alongside ids. Converted naively it's a real bound in 1754
+// that matches every fault.
+func TestBulkZeroTimeIsNoFilter(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, bulkResult)
+
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp",
+		FaultSelection{}.CreatedAfter(time.Time{})); !errors.Is(err, ErrEveryFault) {
+		t.Errorf("zero CreatedAfter alone: err = %v, want ErrEveryFault", err)
+	}
+	if got.method != "" {
+		t.Errorf("a request was sent: %s %s", got.method, got.path)
+	}
+
+	if _, err := c.Faults.Resolve(context.Background(), "Xk9mZp",
+		SelectFaults("1").OccurredBefore(time.Time{})); err != nil {
+		t.Errorf("ids with a zero OccurredBefore: err = %v, want the ids sent unfiltered", err)
+	}
+	if _, sent := got.body["occurred_before"]; sent {
+		t.Errorf("occurred_before = %v, want it absent", got.body["occurred_before"])
+	}
+}

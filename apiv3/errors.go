@@ -127,7 +127,13 @@ func (e *Error) MergedInto() (faultID string, ok bool) {
 		return id, true
 	}
 	// A read's 301 names it only in the Location header.
-	u, err := url.Parse(e.Location)
+	return faultInLocation(e.Location)
+}
+
+// faultInLocation returns the fault id a redirect's Location points at, if it
+// points at a fault at all.
+func faultInLocation(location string) (faultID string, ok bool) {
+	u, err := url.Parse(location)
 	if err != nil {
 		return "", false
 	}

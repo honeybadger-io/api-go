@@ -117,3 +117,23 @@ func TestTruncatedBodyUnwrapsToItsCause(t *testing.T) {
 		t.Fatalf("err = %v, want it to unwrap to io.ErrUnexpectedEOF", err)
 	}
 }
+
+// Only a 301 to a fault is a merge. Any other redirect, such as http to https,
+// stays a plain redirect error.
+func TestRedirectElsewhereIsNotAMerge(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Location", "https://api.example.com/v3/projects")
+		w.WriteHeader(http.StatusMovedPermanently)
+	}))
+	t.Cleanup(srv.Close)
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+
+	_, err := c.Projects.List(context.Background())
+	var apiErr *Error
+	if !errors.As(err, &apiErr) || apiErr.StatusCode != http.StatusMovedPermanently {
+		t.Fatalf("err = %v, want the 301 reported", err)
+	}
+	if errors.Is(err, ErrFaultMerged) {
+		t.Errorf("a redirect to %s was reported as a merged fault", apiErr.Location)
+	}
+}

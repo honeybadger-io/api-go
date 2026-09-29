@@ -74,23 +74,42 @@ func main() {
 ### v3
 
 ```go
-client := apiv3.NewClient().WithBearerToken("hbt_...")
+package main
 
-// Every listing has a ListAll that walks the pages.
-projects, err := client.Projects.ListAll(ctx, apiv3.Named("My App"))
-if err != nil {
-    log.Fatal(err)
-}
+import (
+    "context"
+    "errors"
+    "fmt"
+    "log"
 
-// Write params are the generated request types: nil fields are left as they
-// are, so an update sends only what it changes.
-title := "Ops"
-_, err = client.Dashboards.Update(ctx, projects[0].Id, dashboardID,
-    apiv3.DashboardUpdateParams{Title: &title})
+    "github.com/honeybadger-io/api-go/apiv3"
+)
 
-// Errors are typed; compare with errors.Is.
-if errors.Is(err, apiv3.ErrNotFound) {
-    // ...
+func main() {
+    ctx := context.Background()
+    client := apiv3.NewClient().WithBearerToken("hbt_...")
+
+    // Every listing has a ListAll that walks the pages.
+    projects, err := client.Projects.ListAll(ctx, apiv3.Named("My App"))
+    if err != nil {
+        log.Fatal(err)
+    }
+    if len(projects) == 0 {
+        log.Fatal("no project named My App")
+    }
+
+    // Write params are the generated request types: nil fields are left as
+    // they are, so an update sends only what it changes.
+    title := "Ops"
+    _, err = client.Dashboards.Update(ctx, projects[0].Id, "dashboard-id",
+        apiv3.DashboardUpdateParams{Title: &title})
+
+    // Errors are typed; compare with errors.Is.
+    if errors.Is(err, apiv3.ErrNotFound) {
+        fmt.Println("no such dashboard")
+    } else if err != nil {
+        log.Fatal(err)
+    }
 }
 ```
 

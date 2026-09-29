@@ -325,8 +325,10 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int
 		apiErr.RateLimit = rateLimit
 		apiErr.Location = resp.Header.Get("Location")
 		apiErr.Message = "redirected to " + apiErr.Location
-		// The only redirect the API documents is a merged fault's 301.
-		if resp.StatusCode == http.StatusMovedPermanently && apiErr.Location != "" {
+		// The only redirect the API documents is a merged fault's 301. Anything
+		// else (an http-to-https hop, a proxy rewriting the path) stays a plain
+		// redirect error rather than being reported as a merge.
+		if _, isFault := faultInLocation(apiErr.Location); resp.StatusCode == http.StatusMovedPermanently && isFault {
 			apiErr.Code = CodeFaultMerged
 			apiErr.Message = "fault was merged into " + apiErr.Location
 		}
