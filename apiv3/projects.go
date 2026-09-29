@@ -42,7 +42,7 @@ func (s *ProjectsService) list(ctx context.Context, ro requestOptions) (*ListRes
 }
 
 // Get returns a single project by its opaque id.
-func (s *ProjectsService) Get(ctx context.Context, projectID string, opts ...Option) (*Project, error) {
+func (s *ProjectsService) Get(ctx context.Context, projectID string) (*Project, error) {
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetProject(ctx, projectID)
 	})

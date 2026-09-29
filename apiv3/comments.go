@@ -41,14 +41,14 @@ func (s *FaultsService) listComments(ctx context.Context, projectID string, faul
 }
 
 // GetComment returns one comment on a fault.
-func (s *FaultsService) GetComment(ctx context.Context, projectID string, faultID string, commentID string, opts ...Option) (*Comment, error) {
+func (s *FaultsService) GetComment(ctx context.Context, projectID string, faultID string, commentID string) (*Comment, error) {
 	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetComment(ctx, projectID, faultID, commentID)
 	})
 }
 
 // UpdateComment replaces a comment's body and returns the comment as stored.
-func (s *FaultsService) UpdateComment(ctx context.Context, projectID string, faultID string, commentID, body string, opts ...Option) (*Comment, error) {
+func (s *FaultsService) UpdateComment(ctx context.Context, projectID string, faultID string, commentID, body string) (*Comment, error) {
 	input := gen.UpdateCommentJSONRequestBody{Body: body}
 	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateComment(ctx, projectID, faultID, commentID, input)
@@ -56,7 +56,7 @@ func (s *FaultsService) UpdateComment(ctx context.Context, projectID string, fau
 }
 
 // DeleteComment removes a comment from a fault.
-func (s *FaultsService) DeleteComment(ctx context.Context, projectID string, faultID string, commentID string, opts ...Option) error {
+func (s *FaultsService) DeleteComment(ctx context.Context, projectID string, faultID string, commentID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteComment(ctx, projectID, faultID, commentID)
 	})

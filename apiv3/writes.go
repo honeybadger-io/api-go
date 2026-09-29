@@ -32,21 +32,21 @@ type ProjectParams = gen.ProjectInput
 type FaultParams = gen.FaultInput
 
 // Create makes a new project. Name is the only required field.
-func (s *ProjectsService) Create(ctx context.Context, p ProjectCreateParams, opts ...Option) (*Project, error) {
+func (s *ProjectsService) Create(ctx context.Context, p ProjectCreateParams) (*Project, error) {
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateProject(ctx, p)
 	})
 }
 
 // Update changes a project. Unset fields are omitted and left unchanged.
-func (s *ProjectsService) Update(ctx context.Context, projectID string, p ProjectParams, opts ...Option) (*Project, error) {
+func (s *ProjectsService) Update(ctx context.Context, projectID string, p ProjectParams) (*Project, error) {
 	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateProject(ctx, projectID, p)
 	})
 }
 
 // Delete removes a project.
-func (s *ProjectsService) Delete(ctx context.Context, projectID string, opts ...Option) error {
+func (s *ProjectsService) Delete(ctx context.Context, projectID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteProject(ctx, projectID)
 	})
@@ -74,21 +74,21 @@ const (
 )
 
 // Create makes a new check-in.
-func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInCreateParams, opts ...Option) (*CheckIn, error) {
+func (s *CheckInsService) Create(ctx context.Context, projectID string, p CheckInCreateParams) (*CheckIn, error) {
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateCheckIn(ctx, projectID, p)
 	})
 }
 
 // Update changes a check-in, leaving whatever p omits as it is.
-func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInUpdateParams, opts ...Option) (*CheckIn, error) {
+func (s *CheckInsService) Update(ctx context.Context, projectID, checkInID string, p CheckInUpdateParams) (*CheckIn, error) {
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateCheckIn(ctx, projectID, checkInID, p)
 	})
 }
 
 // Delete removes a check-in.
-func (s *CheckInsService) Delete(ctx context.Context, projectID, checkInID string, opts ...Option) error {
+func (s *CheckInsService) Delete(ctx context.Context, projectID, checkInID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteCheckIn(ctx, projectID, checkInID)
 	})
@@ -131,7 +131,7 @@ type AlarmCreateParams = gen.AlarmCreateInput
 type AlarmUpdateParams = gen.AlarmUpdateInput
 
 // Create makes a new alarm.
-func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmCreateParams, opts ...Option) (*Alarm, error) {
+func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmCreateParams) (*Alarm, error) {
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateAlarm(ctx, projectID, p)
 	})
@@ -139,14 +139,14 @@ func (s *AlarmsService) Create(ctx context.Context, projectID string, p AlarmCre
 
 // Update changes an alarm, including its query, window and trigger, without
 // losing its history the way deleting and recreating it would.
-func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams, opts ...Option) (*Alarm, error) {
+func (s *AlarmsService) Update(ctx context.Context, projectID, alarmID string, p AlarmUpdateParams) (*Alarm, error) {
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateAlarm(ctx, projectID, alarmID, p)
 	})
 }
 
 // Delete removes an alarm.
-func (s *AlarmsService) Delete(ctx context.Context, projectID, alarmID string, opts ...Option) error {
+func (s *AlarmsService) Delete(ctx context.Context, projectID, alarmID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteAlarm(ctx, projectID, alarmID)
 	})
@@ -169,21 +169,21 @@ type DashboardWidget = gen.DashboardWidgetInput
 type DashboardWidgetType = gen.DashboardWidgetInputType
 
 // Create makes a new dashboard.
-func (s *DashboardsService) Create(ctx context.Context, projectID string, p DashboardCreateParams, opts ...Option) (*Dashboard, error) {
+func (s *DashboardsService) Create(ctx context.Context, projectID string, p DashboardCreateParams) (*Dashboard, error) {
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateDashboard(ctx, projectID, p)
 	})
 }
 
 // Update changes a dashboard, leaving whatever p omits as it is.
-func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID string, p DashboardUpdateParams, opts ...Option) (*Dashboard, error) {
+func (s *DashboardsService) Update(ctx context.Context, projectID, dashboardID string, p DashboardUpdateParams) (*Dashboard, error) {
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateDashboard(ctx, projectID, dashboardID, p)
 	})
 }
 
 // Delete removes a dashboard.
-func (s *DashboardsService) Delete(ctx context.Context, projectID, dashboardID string, opts ...Option) error {
+func (s *DashboardsService) Delete(ctx context.Context, projectID, dashboardID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteDashboard(ctx, projectID, dashboardID)
 	})

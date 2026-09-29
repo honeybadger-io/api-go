@@ -191,7 +191,7 @@ type FaultBulkResult = gen.FaultBulkResult
 // convertible.
 
 // Resolve marks faults as resolved.
-func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
+func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel FaultSelection) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
 		return nil, err
@@ -202,7 +202,7 @@ func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel Fault
 }
 
 // Unresolve returns faults to the unresolved state.
-func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
+func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel FaultSelection) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
 		return nil, err
@@ -214,7 +214,7 @@ func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel Fau
 }
 
 // Ignore marks faults as ignored, which also stops collecting data for them.
-func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
+func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultSelection) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
 		return nil, err
@@ -226,7 +226,7 @@ func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultS
 }
 
 // Unignore stops ignoring faults.
-func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel FaultSelection, opts ...Option) (*FaultBulkResult, error) {
+func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel FaultSelection) (*FaultBulkResult, error) {
 	body, err := sel.body()
 	if err != nil {
 		return nil, err
@@ -252,7 +252,7 @@ var ErrMergeIntoSelf = errors.New("apiv3: a fault cannot be merged into itself")
 //
 // The merge runs in the background, so a successful call means accepted, not
 // done, and the returned ids let a caller confirm the direction the API applied.
-func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFaultID, targetFaultID string, opts ...Option) (*FaultMerge, error) {
+func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFaultID, targetFaultID string) (*FaultMerge, error) {
 	if sourceFaultID == targetFaultID {
 		return nil, ErrMergeIntoSelf
 	}
@@ -273,7 +273,7 @@ const (
 
 // PauseRecording stops recording new notices for a fault for the given duration,
 // and returns the fault, whose RecordingPausedUntil says until when.
-func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID string, duration PauseDuration, opts ...Option) (*Fault, error) {
+func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, faultID string, duration PauseDuration) (*Fault, error) {
 	if !duration.Valid() {
 		return nil, fmt.Errorf("apiv3: invalid pause duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
 	}
@@ -285,14 +285,14 @@ func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, fa
 
 // ResumeRecording starts recording notices for a fault again, and returns the
 // fault as it now stands.
-func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID string, opts ...Option) (*Fault, error) {
+func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID string) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ResumeFaultRecording(ctx, projectID, faultID)
 	})
 }
 
 // Delete removes a fault and its notices.
-func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID string, opts ...Option) error {
+func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteFault(ctx, projectID, faultID)
 	})
@@ -306,7 +306,7 @@ type Comment = gen.Comment
 // Commenting attributes text to a person, so an account token holding
 // faults:write is still refused with requires_user_token — there is nobody to
 // attribute it to. Check errors.Is(err, ErrRequiresUserToken).
-func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID string, comment string, opts ...Option) (*Comment, error) {
+func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID string, comment string) (*Comment, error) {
 	body := gen.CreateCommentJSONRequestBody{Body: comment}
 	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateComment(ctx, projectID, faultID, body)
@@ -322,7 +322,7 @@ func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultI
 //
 // AssigneeId is nullable: an explicit null unassigns, while leaving it
 // unspecified changes nothing.
-func (s *FaultsService) Update(ctx context.Context, projectID string, faultID string, p FaultParams, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Update(ctx context.Context, projectID string, faultID string, p FaultParams) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateFault(ctx, projectID, faultID, p)
 	})
@@ -332,7 +332,7 @@ func (s *FaultsService) Update(ctx context.Context, projectID string, faultID st
 //
 // The id must belong to a member of the project; one that does not is rejected
 // with 422 rather than silently unassigning. Returns the fault as it now stands.
-func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID string, assigneeID string, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID string, assigneeID string) (*Fault, error) {
 	body := gen.AssignFaultJSONRequestBody{AssigneeId: assigneeID}
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().AssignFault(ctx, projectID, faultID, body)
@@ -340,7 +340,7 @@ func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID st
 }
 
 // Unassign removes a fault's assignee and returns the fault as it now stands.
-func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID string, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID string) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UnassignFault(ctx, projectID, faultID)
 	})

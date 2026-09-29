@@ -69,7 +69,7 @@ type InsightsResult struct {
 // that lives on an unselected stream returns no rows, which looks exactly like
 // the events not existing — so list the project's streams first when a query
 // unexpectedly comes back empty.
-func (s *InsightsService) Query(ctx context.Context, projectID string, q InsightsQuery, opts ...Option) (*InsightsResult, error) {
+func (s *InsightsService) Query(ctx context.Context, projectID string, q InsightsQuery) (*InsightsResult, error) {
 	body := gen.RunInsightsQueryJSONRequestBody{Query: q.Query}
 	if len(q.StreamIDs) > 0 {
 		body.StreamIds = &q.StreamIDs

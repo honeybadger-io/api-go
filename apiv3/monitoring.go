@@ -23,14 +23,14 @@ type AlarmsService struct {
 // There is no ListAll counterpart because this endpoint is not paginated: it
 // declares no page parameters and returns no pagination object, so one call is
 // the whole collection.
-func (s *AlarmsService) List(ctx context.Context, projectID string, opts ...Option) (*ListResponse[Alarm], error) {
+func (s *AlarmsService) List(ctx context.Context, projectID string) (*ListResponse[Alarm], error) {
 	return listOffset[Alarm](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().ListAlarms(ctx, projectID)
 	})
 }
 
 // Get returns a single alarm.
-func (s *AlarmsService) Get(ctx context.Context, projectID, alarmID string, opts ...Option) (*Alarm, error) {
+func (s *AlarmsService) Get(ctx context.Context, projectID, alarmID string) (*Alarm, error) {
 	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetAlarm(ctx, projectID, alarmID)
 	})
@@ -97,7 +97,7 @@ func (s *DashboardsService) list(ctx context.Context, projectID string, ro reque
 }
 
 // Get returns a single dashboard.
-func (s *DashboardsService) Get(ctx context.Context, projectID, dashboardID string, opts ...Option) (*Dashboard, error) {
+func (s *DashboardsService) Get(ctx context.Context, projectID, dashboardID string) (*Dashboard, error) {
 	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetDashboard(ctx, projectID, dashboardID)
 	})
@@ -136,7 +136,7 @@ func (s *IntegrationsService) list(ctx context.Context, projectID string, ro req
 }
 
 // Get returns a single integration by its public ID.
-func (s *IntegrationsService) Get(ctx context.Context, projectID, integrationID string, opts ...Option) (*Integration, error) {
+func (s *IntegrationsService) Get(ctx context.Context, projectID, integrationID string) (*Integration, error) {
 	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetIntegration(ctx, projectID, integrationID)
 	})
@@ -163,21 +163,21 @@ type IntegrationUpdateParams = gen.IntegrationUpdateInput
 // OAuth types (Slack, GitHub and the like) are created turned off and not
 // connected: send the user to the integration's Links.Web to connect it, then
 // turn it on with an update setting Active.
-func (s *IntegrationsService) Create(ctx context.Context, projectID string, p IntegrationCreateParams, opts ...Option) (*Integration, error) {
+func (s *IntegrationsService) Create(ctx context.Context, projectID string, p IntegrationCreateParams) (*Integration, error) {
 	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateIntegration(ctx, projectID, p)
 	})
 }
 
 // Update changes an integration's settings.
-func (s *IntegrationsService) Update(ctx context.Context, projectID, integrationID string, p IntegrationUpdateParams, opts ...Option) (*Integration, error) {
+func (s *IntegrationsService) Update(ctx context.Context, projectID, integrationID string, p IntegrationUpdateParams) (*Integration, error) {
 	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateIntegration(ctx, projectID, integrationID, p)
 	})
 }
 
 // Delete removes an integration.
-func (s *IntegrationsService) Delete(ctx context.Context, projectID, integrationID string, opts ...Option) error {
+func (s *IntegrationsService) Delete(ctx context.Context, projectID, integrationID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteIntegration(ctx, projectID, integrationID)
 	})

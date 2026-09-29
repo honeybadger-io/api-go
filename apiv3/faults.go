@@ -62,7 +62,7 @@ func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOp
 }
 
 // Get returns a single fault.
-func (s *FaultsService) Get(ctx context.Context, projectID string, faultID string, opts ...Option) (*Fault, error) {
+func (s *FaultsService) Get(ctx context.Context, projectID string, faultID string) (*Fault, error) {
 	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetFault(ctx, projectID, faultID)
 	})

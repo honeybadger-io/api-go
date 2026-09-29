@@ -42,28 +42,28 @@ func (s *ProjectKeysService) list(ctx context.Context, projectID string, ro requ
 }
 
 // Create makes a new project key.
-func (s *ProjectKeysService) Create(ctx context.Context, projectID string, p ProjectKeyParams, opts ...Option) (*ProjectKey, error) {
+func (s *ProjectKeysService) Create(ctx context.Context, projectID string, p ProjectKeyParams) (*ProjectKey, error) {
 	return getOne[ProjectKey](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().CreateProjectKey(ctx, projectID, gen.CreateProjectKeyJSONRequestBody(p))
 	})
 }
 
 // Update changes a key's label.
-func (s *ProjectKeysService) Update(ctx context.Context, projectID, keyID string, p ProjectKeyParams, opts ...Option) (*ProjectKey, error) {
+func (s *ProjectKeysService) Update(ctx context.Context, projectID, keyID string, p ProjectKeyParams) (*ProjectKey, error) {
 	return getOne[ProjectKey](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().UpdateProjectKey(ctx, projectID, keyID, gen.UpdateProjectKeyJSONRequestBody(p))
 	})
 }
 
 // Delete removes a project key.
-func (s *ProjectKeysService) Delete(ctx context.Context, projectID, keyID string, opts ...Option) error {
+func (s *ProjectKeysService) Delete(ctx context.Context, projectID, keyID string) error {
 	return noContent(ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().DeleteProjectKey(ctx, projectID, keyID)
 	})
 }
 
 // Get returns one of a project's keys.
-func (s *ProjectKeysService) Get(ctx context.Context, projectID, keyID string, opts ...Option) (*ProjectKey, error) {
+func (s *ProjectKeysService) Get(ctx context.Context, projectID, keyID string) (*ProjectKey, error) {
 	return getOne[ProjectKey](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetProjectKey(ctx, projectID, keyID)
 	})

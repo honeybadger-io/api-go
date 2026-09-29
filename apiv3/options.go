@@ -12,10 +12,10 @@ import (
 //	c.Faults.Get(ctx, projectID, faultID)
 //	c.Faults.List(ctx, projectID, apiv3.Page(2, 50))
 //
-// Options that do not apply to an operation are ignored rather than rejected —
-// each operation reads only the fields it understands. The exception is paging:
-// ListAll methods take ListAllOption, a narrower interface that Page does not
-// satisfy, so a page number cannot be passed to a call that walks every page.
+// Only methods that read options accept them: a Get or a write takes none, so
+// passing one there is a compile error rather than a silent no-op. ListAll
+// methods take ListAllOption, a narrower interface that Page does not satisfy,
+// so a page number can't be passed to a call that walks every page either.
 type Option interface {
 	apply(*requestOptions)
 }

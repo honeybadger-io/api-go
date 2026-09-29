@@ -42,7 +42,7 @@ func (s *CheckInsService) list(ctx context.Context, projectID string, ro request
 }
 
 // Get returns a single check-in.
-func (s *CheckInsService) Get(ctx context.Context, projectID, checkInID string, opts ...Option) (*CheckIn, error) {
+func (s *CheckInsService) Get(ctx context.Context, projectID, checkInID string) (*CheckIn, error) {
 	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
 		return s.client.gen().GetCheckIn(ctx, projectID, checkInID)
 	})

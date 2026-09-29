@@ -64,7 +64,7 @@ func TestBulkFaultChangeReturnsTheCount(t *testing.T) {
 // anyway without all=true, and the client can say why.
 func TestBulkFaultChangeRefusesEmptySelection(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK, bulkResult)
-	call := func(f func(context.Context, string, FaultSelection, ...Option) (*FaultBulkResult, error), sel FaultSelection) func() error {
+	call := func(f func(context.Context, string, FaultSelection) (*FaultBulkResult, error), sel FaultSelection) func() error {
 		return func() error { _, err := f(context.Background(), "Xk9mZp", sel); return err }
 	}
 
