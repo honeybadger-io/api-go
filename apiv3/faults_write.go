@@ -301,11 +301,8 @@ func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID st
 // Comment is a comment on a fault.
 type Comment = gen.Comment
 
-// AddComment attaches a comment to a fault.
-//
-// Commenting attributes text to a person, so an account token holding
-// faults:write is still refused with requires_user_token — there is nobody to
-// attribute it to. Check errors.Is(err, ErrRequiresUserToken).
+// AddComment attaches a comment to a fault. Made with an account token, the
+// comment is attributed to the token's name.
 func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID string, comment string) (*Comment, error) {
 	body := gen.CreateCommentJSONRequestBody{Body: comment}
 	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {

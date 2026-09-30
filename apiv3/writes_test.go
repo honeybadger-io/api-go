@@ -89,18 +89,6 @@ func TestResumeRecordingSendsNoBody(t *testing.T) {
 	}
 }
 
-// An account token can hold faults:write and still be refused, because a comment
-// attributes text to a person.
-func TestAddCommentRequiresUserToken(t *testing.T) {
-	c, _ := captureWrite(t, http.StatusForbidden,
-		`{"error":{"code":"requires_user_token","message":"This endpoint records the person who acted"}}`)
-
-	_, err := c.Faults.AddComment(context.Background(), "Xk9mZp", "1", "looking into it")
-	if !errors.Is(err, ErrRequiresUserToken) {
-		t.Fatalf("err = %v, want ErrRequiresUserToken", err)
-	}
-}
-
 func TestProjectsCreateSendsRequiredName(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated,
 		`{"data":{"id":"Xk9mZp","account_id":"Ab3kL9","name":"New App","active":true}}`)

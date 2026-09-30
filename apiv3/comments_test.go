@@ -81,11 +81,12 @@ func TestGetAndDeleteComment(t *testing.T) {
 	}
 }
 
-// An account token cannot write a comment: there is no person to attribute it to.
-func TestCommentWriteWithAccountTokenIsTyped(t *testing.T) {
+// Only a comment's author can edit it, so an update the API refuses (as it does
+// for an account token, which has no user) comes back as ErrAccessDenied.
+func TestCommentUpdateByNonAuthorIsTyped(t *testing.T) {
 	c, _ := captureWrite(t, http.StatusForbidden,
-		`{"error":{"code":"requires_user_token","message":"This endpoint records the person who acted"}}`)
-	if _, err := c.Faults.UpdateComment(context.Background(), "Xk9mZp", "1", "cmt_1", "x"); !errors.Is(err, ErrRequiresUserToken) {
-		t.Fatalf("err = %v, want ErrRequiresUserToken", err)
+		`{"error":{"code":"access_denied","message":"You can only edit your own comments"}}`)
+	if _, err := c.Faults.UpdateComment(context.Background(), "Xk9mZp", "1", "cmt_1", "x"); !errors.Is(err, ErrAccessDenied) {
+		t.Fatalf("err = %v, want ErrAccessDenied", err)
 	}
 }

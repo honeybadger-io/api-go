@@ -10,9 +10,11 @@ import (
 // Comments live under a fault in v3's paths, so they are FaultsService methods
 // alongside AddComment rather than a service of their own.
 //
-// Writing a comment attributes text to a person, so an account token holding
-// faults:write is refused with requires_user_token for create, update and
-// delete. Check errors.Is(err, ErrRequiresUserToken).
+// An account token can write comments too, with limits. A comment it creates
+// is attributed to the token's name. It can't update a comment, since only a
+// comment's author can edit it and an account token has no user, so updates
+// fail with ErrAccessDenied. It can delete a comment only when it can manage
+// the project.
 
 // ListComments returns one page of a fault's comments, newest first.
 func (s *FaultsService) ListComments(ctx context.Context, projectID string, faultID string, opts ...Option) (*ListResponse[Comment], error) {
