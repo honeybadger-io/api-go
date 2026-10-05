@@ -15,6 +15,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -36,6 +37,10 @@ const versionSegment = "/v3"
 // this. A body beyond it is a malfunction, and reading it unbounded would let a
 // single response exhaust memory.
 const maxBodyBytes = 64 << 20 // 64 MiB
+
+// errBodyTooLarge marks a response cut off at maxBodyBytes, which a retry would
+// only hit again.
+var errBodyTooLarge = errors.New("response body too large")
 
 // RateLimit is a snapshot of the rate-limit headers from a response. v3 allows
 // 360 requests per hour.
@@ -312,7 +317,7 @@ func (c *Client) do(ctx context.Context, op operation) (int, []byte, error) {
 	body, readErr := io.ReadAll(io.LimitReader(resp.Body, maxBodyBytes+1))
 	if readErr == nil && len(body) > maxBodyBytes {
 		body = body[:maxBodyBytes]
-		readErr = fmt.Errorf("response body exceeds %d bytes", maxBodyBytes)
+		readErr = fmt.Errorf("response body exceeds %d bytes: %w", maxBodyBytes, errBodyTooLarge)
 	}
 	if readErr != nil {
 		// A truncated body must not be mistaken for a short one. Report the read
@@ -320,6 +325,7 @@ func (c *Client) do(ctx context.Context, op operation) (int, []byte, error) {
 		apiErr := parseError(resp.StatusCode, body)
 		apiErr.Message = "reading response body: " + readErr.Error()
 		apiErr.RateLimit = rateLimit
+		apiErr.retryAfter, apiErr.hasRetryAfter = parseRetryAfter(resp.Header)
 		apiErr.cause = readErr
 		return resp.StatusCode, nil, apiErr
 	}

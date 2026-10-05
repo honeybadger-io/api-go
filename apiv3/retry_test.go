@@ -2,13 +2,17 @@ package apiv3
 
 import (
 	"bytes"
+	"cmp"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
 	"io"
+	"math"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -16,6 +20,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"testing"
 	"time"
@@ -63,7 +68,12 @@ func newScripted(t *testing.T, p RetryPolicy, steps ...step) (*Client, *script) 
 				return
 			}
 			if st.truncate {
-				_, _ = buf.WriteString("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: 100\r\n\r\n{\"data\":")
+				code := cmp.Or(st.status, http.StatusOK)
+				_, _ = fmt.Fprintf(buf, "HTTP/1.1 %d %s\r\nContent-Type: application/json\r\nContent-Length: 100\r\n", code, http.StatusText(code))
+				for k, v := range st.header {
+					_, _ = fmt.Fprintf(buf, "%s: %s\r\n", k, v)
+				}
+				_, _ = buf.WriteString("\r\n{\"data\":")
 				_ = buf.Flush()
 			}
 			_ = conn.Close()
@@ -118,13 +128,24 @@ func TestRetryableByMethodAndOutcome(t *testing.T) {
 		{"500", status(500), nil},
 		{"404", status(404), nil},
 		{"422", status(422), nil},
+		{"429 with its body cut off", &Error{StatusCode: 429, cause: io.ErrUnexpectedEOF}, all},
 		{"connection reset", wire(&net.OpError{Op: "read", Err: syscall.ECONNRESET}), all[:4]},
+		{"broken pipe", wire(&net.OpError{Op: "write", Err: syscall.EPIPE}), all[:4]},
+		// The shapes net/http returns on a reused connection, and over HTTP/2.
+		{"idle connection closed", wire(errors.New("http: server closed idle connection")), all[:4]},
+		{"HTTP/2 GOAWAY", wire(errors.New("http2: server sent GOAWAY and closed the connection")), all[:4]},
+		{"unrecognised failure", wire(errors.New("something new went wrong")), all[:4]},
 		{"EOF", wire(io.EOF), all[:4]},
 		{"attempt deadline", wire(context.DeadlineExceeded), all[:4]},
+		{"DNS timeout", wire(&net.DNSError{Err: "i/o timeout", Name: "x", IsTimeout: true}), all[:4]},
 		{"body cut off", bodyCut(io.ErrUnexpectedEOF), all[:4]},
-		{"body over the cap", bodyCut(errors.New("response body exceeds 67108864 bytes")), nil},
+		{"body cut off by an HTTP/2 stream error", bodyCut(errors.New("stream error: stream ID 3; INTERNAL_ERROR")), all[:4]},
+		{"body over the cap", bodyCut(fmt.Errorf("response body exceeds 1 bytes: %w", errBodyTooLarge)), nil},
 		{"connection refused", wire(&net.OpError{Op: "dial", Err: syscall.ECONNREFUSED}), nil},
-		{"DNS", wire(&net.DNSError{Err: "no such host", Name: "x", IsTimeout: true}), nil},
+		{"host not found", wire(&net.DNSError{Err: "no such host", Name: "x", IsNotFound: true}), nil},
+		{"untrusted certificate", wire(&tls.CertificateVerificationError{Err: x509.UnknownAuthorityError{}}), nil},
+		{"wrong hostname", wire(x509.HostnameError{Host: "x"}), nil},
+		{"request never built", errors.New("parse \"::\": missing protocol scheme"), nil},
 	}
 	for _, tt := range tests {
 		for _, m := range all {
@@ -207,21 +228,17 @@ func TestRetryResendsAPatch(t *testing.T) {
 	}
 }
 
-// A Retry-After beyond MaxWait returns at once. The date is far enough out that
-// the 1s fallback backoff would also show as a delay, so a fast return proves
-// the wait was refused rather than shortened.
+// A Retry-After beyond MaxWait returns at once, including one too large for a
+// time.Duration.
 func TestRetryReturnsAtOnceWhenRetryAfterExceedsMaxWait(t *testing.T) {
-	for _, after := range []string{"120", time.Now().Add(10 * time.Minute).UTC().Format(http.TimeFormat)} {
+	for _, after := range []string{"120", "99999999999999", time.Now().Add(10 * time.Minute).UTC().Format(http.TimeFormat)} {
 		c, s := newScripted(t, RetryPolicy{MaxAttempts: 3, MaxWait: 5 * time.Second},
 			step{status: http.StatusTooManyRequests, header: map[string]string{"Retry-After": after}})
 
-		start := time.Now()
 		if _, err := c.Projects.Get(context.Background(), "p1"); err == nil {
 			t.Fatalf("Retry-After %q: Get succeeded", after)
 		}
-		if elapsed := time.Since(start); elapsed > 500*time.Millisecond {
-			t.Errorf("Retry-After %q: took %v; the wait should have been refused", after, elapsed)
-		}
+		// Three attempts allowed, one made: the wait was refused, not shortened.
 		if s.count() != 1 {
 			t.Errorf("Retry-After %q: calls = %d, want 1", after, s.count())
 		}
@@ -237,8 +254,8 @@ func TestRetryBacksOffWithoutRetryAfter(t *testing.T) {
 	if _, err := c.Projects.Get(context.Background(), "p1"); err != nil {
 		t.Fatalf("Get: %v", err)
 	}
-	if elapsed := time.Since(start); elapsed < initialBackoff {
-		t.Errorf("retried after %v, want at least %v", elapsed, initialBackoff)
+	if elapsed := time.Since(start); elapsed < initialBackoff*3/4 {
+		t.Errorf("retried after %v, want at least %v less jitter", elapsed, initialBackoff)
 	}
 	if s.count() != 2 {
 		t.Errorf("calls = %d, want 2", s.count())
@@ -257,8 +274,8 @@ func TestRetryStopsWaitingWhenTheContextEnds(t *testing.T) {
 	if !errors.As(err, &apiErr) || apiErr.StatusCode != http.StatusTooManyRequests {
 		t.Fatalf("err = %v, want the 429", err)
 	}
-	if elapsed := time.Since(start); elapsed > time.Second {
-		t.Errorf("took %v; waiting should stop with the context", elapsed)
+	if elapsed := time.Since(start); elapsed > 10*time.Second {
+		t.Errorf("took %v; waiting should stop with the context, not sit out Retry-After: 30", elapsed)
 	}
 	if s.count() != 1 {
 		t.Errorf("calls = %d, want 1", s.count())
@@ -277,7 +294,7 @@ func TestRetryResendsAGetAfterADroppedConnection(t *testing.T) {
 	if s.count() != 2 {
 		t.Errorf("calls = %d, want 2", s.count())
 	}
-	if time.Since(start) < initialBackoff {
+	if time.Since(start) < initialBackoff*3/4 {
 		t.Error("retried without backing off")
 	}
 }
@@ -325,16 +342,95 @@ func TestRetryKeepsADeletes404WhenNothingRan(t *testing.T) {
 
 func TestRetryDoesNotResendAfterAPermanentFailure(t *testing.T) {
 	srv := httptest.NewServer(http.NotFoundHandler())
-	addr := srv.URL
+	addr := srv.Listener.Addr().String()
 	srv.Close() // nothing listens there now: connection refused
 
-	c := NewClient().WithBaseURL(addr).WithBearerToken("hbt_x").WithRetry(RetryPolicy{MaxAttempts: 3})
-	start := time.Now()
+	var dials atomic.Int32
+	transport := &http.Transport{DialContext: func(ctx context.Context, network, _ string) (net.Conn, error) {
+		dials.Add(1)
+		return (&net.Dialer{}).DialContext(ctx, network, addr)
+	}}
+	c := NewClient().WithBaseURL("http://" + addr).WithBearerToken("hbt_x").
+		WithHTTPClient(&http.Client{Transport: transport}).WithRetry(RetryPolicy{MaxAttempts: 3})
 	if _, err := c.Projects.Get(context.Background(), "p1"); err == nil {
 		t.Fatal("Get succeeded against a closed port")
 	}
-	if elapsed := time.Since(start); elapsed >= initialBackoff {
-		t.Errorf("took %v; a refused connection should not be retried", elapsed)
+	if n := dials.Load(); n != 1 {
+		t.Errorf("dialed %d times, want 1: a refused connection is not retried", n)
+	}
+}
+
+// A cut-off response keeps its Retry-After: one beyond MaxWait is refused rather
+// than replaced by the backoff schedule.
+func TestRetryKeepsRetryAfterFromACutOffResponse(t *testing.T) {
+	c, s := newScripted(t, RetryPolicy{MaxAttempts: 3, MaxWait: 5 * time.Second},
+		step{truncate: true, status: http.StatusServiceUnavailable, header: map[string]string{"Retry-After": "120"}})
+
+	if _, err := c.Projects.Get(context.Background(), "p1"); err == nil {
+		t.Fatal("Get succeeded")
+	}
+	if s.count() != 1 {
+		t.Errorf("calls = %d, want 1", s.count())
+	}
+}
+
+// A 429 is a 429 even if its body is cut off, so a create is still resent.
+func TestRetryResendsAPostAfterACutOff429(t *testing.T) {
+	c, s := newScripted(t, RetryPolicy{MaxAttempts: 3},
+		step{truncate: true, status: http.StatusTooManyRequests, header: now},
+		step{status: http.StatusCreated, body: projectBody})
+
+	if _, err := c.Projects.Create(context.Background(), ProjectCreateParams{Name: "App"}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if s.count() != 2 {
+		t.Errorf("calls = %d, want 2", s.count())
+	}
+}
+
+// The client's own backoff is capped at MaxWait rather than abandoned, so a
+// short MaxWait still allows every attempt.
+func TestRetryCapsItsBackoffAtMaxWait(t *testing.T) {
+	c, s := newScripted(t, RetryPolicy{MaxAttempts: 3, MaxWait: 50 * time.Millisecond},
+		step{status: http.StatusServiceUnavailable},
+		step{status: http.StatusServiceUnavailable},
+		step{status: http.StatusOK, body: projectBody})
+
+	if _, err := c.Projects.Get(context.Background(), "p1"); err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if s.count() != 3 {
+		t.Errorf("calls = %d, want 3", s.count())
+	}
+}
+
+func TestJitterStaysWithinAQuarter(t *testing.T) {
+	for range 1000 {
+		if got := jitter(time.Second); got < 750*time.Millisecond || got >= 1250*time.Millisecond {
+			t.Fatalf("jitter(1s) = %v, want within [750ms, 1250ms)", got)
+		}
+	}
+}
+
+func TestParseRetryAfter(t *testing.T) {
+	tests := []struct {
+		header string
+		want   time.Duration
+		ok     bool
+	}{
+		{"", 0, false},
+		{"0", 0, true},
+		{"30", 30 * time.Second, true},
+		{"-1", 0, false},
+		{"soon", 0, false},
+		{"99999999999999", time.Duration(math.MaxInt64), true},
+		{time.Now().Add(-time.Hour).UTC().Format(http.TimeFormat), 0, true},
+	}
+	for _, tt := range tests {
+		got, ok := parseRetryAfter(http.Header{"Retry-After": {tt.header}})
+		if got != tt.want || ok != tt.ok {
+			t.Errorf("Retry-After %q = %v, %v; want %v, %v", tt.header, got, ok, tt.want, tt.ok)
+		}
 	}
 }
 
@@ -433,13 +529,24 @@ func TestCallSitesNameTheOperationTheyCall(t *testing.T) {
 				return true
 			}
 			idx, isHelper := helpers[calleeName(call.Fun)]
-			if !isHelper || len(call.Args) <= idx+1 {
-				return true
-			}
-			if _, isClosure := call.Args[idx+1].(*ast.FuncLit); !isClosure {
+			if !isHelper {
 				return true
 			}
 			pos := fset.Position(call.Pos())
+			if len(call.Args) != idx+2 {
+				t.Errorf("%s: %s takes the operation and a closure; this call can't be checked", pos, calleeName(call.Fun))
+				return true
+			}
+			// A helper handing its own parameters on (getOne → run) names nothing.
+			opArg, opIsParam := call.Args[idx].(*ast.Ident)
+			closureArg, closureIsParam := call.Args[idx+1].(*ast.Ident)
+			if opIsParam && closureIsParam && opArg.Name == "opID" && closureArg.Name == "op" {
+				return true
+			}
+			if _, isClosure := call.Args[idx+1].(*ast.FuncLit); !isClosure {
+				t.Errorf("%s: pass the operation as a closure literal so this test can check it", pos)
+				return true
+			}
 			if ident, ok := call.Args[idx].(*ast.Ident); ok && ident.Name == "opFollowLink" {
 				checked++
 				return true

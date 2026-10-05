@@ -2,11 +2,15 @@ package apiv3
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
-	"io"
+	"math"
+	"math/rand/v2"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
 	"syscall"
 	"time"
@@ -21,25 +25,32 @@ import (
 //
 //   - 429: every method is retried. The rate limit is checked before the
 //     request's action runs, so nothing happened.
-//   - 503, 502, 504, a timeout, or a dropped connection: GET, PATCH, PUT and
-//     DELETE are retried. POST never is: a create can store its record and
-//     still fail to answer.
+//   - 503, 502, 504, or a transport failure whose outcome is unknown (a
+//     timeout, a dropped or reset connection, an HTTP/2 GOAWAY, a response
+//     cut off part way): GET, PATCH, PUT and DELETE are retried. POST never
+//     is: a create can store its record and still fail to answer.
 //   - A retried DELETE that answers 404 succeeds, when an earlier attempt may
-//     have gone through: that attempt deleted it. After a 429, which ran
-//     nothing, a 404 is returned as it is.
-//   - Anything else is returned at once: other statuses, permanent transport
-//     failures (DNS, TLS, a refused connection), and the caller's own
-//     cancellation or deadline.
+//     have gone through: that attempt deleted it. The flip side is that a
+//     delete of an id that never existed reports success after, say, a 503
+//     and then a 404, so under WithRetry ErrNotFound from a delete isn't
+//     reliable. After a 429, which ran nothing, a 404 is returned as it is.
+//   - Anything else is returned at once: other statuses; failures that would
+//     only repeat (a host that doesn't resolve, a refused connection, a TLS
+//     certificate the client won't trust, a body over the size cap, a request
+//     that couldn't be built); and the caller's own cancellation or deadline.
+//     A TLS handshake that times out is a timeout, and is retried.
 //
 // Between attempts the client waits as long as Retry-After asks, in seconds or
-// as an HTTP date; without one it waits 1s, then 2s, then 4s and so on. A wait
-// longer than MaxWait isn't attempted: the error is returned straight away.
-// Waiting stops when the caller's context ends, and the last attempt's error is
-// returned.
+// as an HTTP date. A Retry-After longer than MaxWait isn't waited out: the error
+// is returned straight away. Without one it backs off from 1s, doubling, with
+// up to a quarter either way of jitter so clients sharing a credential don't
+// retry in step, and never waiting longer than MaxWait. Waiting stops when the
+// caller's context ends, and the last attempt's error is returned.
 //
-// MaxAttempts counts this package's attempts. net/http may itself resend a
-// GET, PUT or DELETE on a reused connection that closed before the request was
-// written, so the number of requests on the wire can be higher.
+// MaxAttempts counts this package's attempts. net/http resends a request
+// itself when a reused connection closed before any of it was written, and a
+// GET when it closed later, so the number of requests on the wire can be
+// higher.
 type RetryPolicy struct {
 	// MaxAttempts is the most attempts made, the first included. Zero or one
 	// means no retries.
@@ -115,12 +126,14 @@ func (c *Client) run(ctx context.Context, opID string, op operation) (int, []byt
 		}
 
 		wait, asked := retryAfterOf(err)
-		if !asked {
-			wait = backoff
-			backoff *= 2
-		}
-		if wait > maxWait {
+		if asked && wait > maxWait {
 			return status, body, err
+		}
+		if !asked {
+			wait = min(jitter(backoff), maxWait)
+			if backoff < maxWait {
+				backoff *= 2
+			}
 		}
 
 		timer := time.NewTimer(wait)
@@ -171,34 +184,49 @@ func retryable(ctx context.Context, method string, err error) bool {
 		}
 		return false
 	}
-	// No response at all.
-	return transient(err)
+	// No response at all. The HTTP client reports every failure to send as a
+	// *url.Error; anything else means the request was never built.
+	var urlErr *url.Error
+	return errors.As(err, &urlErr) && transient(err)
 }
 
 // throttled reports whether the API refused the request for its rate limit,
-// which it checks before doing anything else.
+// which it checks before doing anything else. The status settles it, even if
+// the body was cut off.
 func throttled(err error) bool {
 	var apiErr *Error
-	return errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusTooManyRequests && apiErr.cause == nil
+	return errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusTooManyRequests
 }
 
-// transient reports whether a transport failure leaves the outcome unknown: the
-// request may or may not have reached the server, and a second try may succeed.
-// Failures that will happen again the same way (DNS, TLS, a refused
-// connection) are not transient.
+// transient reports whether a failure to complete a request leaves its outcome
+// unknown, so that a second try may succeed. It is a deny-list: a request may
+// fail in many ways (a reset, a closed idle connection, a broken pipe, an
+// HTTP/2 GOAWAY or stream error, a timeout), and the method has already decided
+// whether resending is safe. Only failures that would repeat the same way are
+// refused.
 func transient(err error) bool {
-	var dnsErr *net.DNSError
-	if errors.As(err, &dnsErr) {
+	if errors.Is(err, errBodyTooLarge) || errors.Is(err, syscall.ECONNREFUSED) || errors.Is(err, http.ErrSchemeMismatch) {
 		return false
 	}
-	if errors.Is(err, context.DeadlineExceeded) ||
-		errors.Is(err, io.EOF) ||
-		errors.Is(err, io.ErrUnexpectedEOF) ||
-		errors.Is(err, syscall.ECONNRESET) {
-		return true
+	var dnsErr *net.DNSError
+	if errors.As(err, &dnsErr) && dnsErr.IsNotFound {
+		return false
 	}
-	var netErr net.Error
-	return errors.As(err, &netErr) && netErr.Timeout()
+	var (
+		verifyErr  *tls.CertificateVerificationError
+		alertErr   tls.AlertError
+		recordErr  tls.RecordHeaderError
+		authority  x509.UnknownAuthorityError
+		hostname   x509.HostnameError
+		invalidErr x509.CertificateInvalidError
+	)
+	return !errors.As(err, &verifyErr) && !errors.As(err, &alertErr) && !errors.As(err, &recordErr) &&
+		!errors.As(err, &authority) && !errors.As(err, &hostname) && !errors.As(err, &invalidErr)
+}
+
+// jitter spreads d over [0.75d, 1.25d).
+func jitter(d time.Duration) time.Duration {
+	return d*3/4 + rand.N(d/2)
 }
 
 // retryAfterOf returns the Retry-After of the response that failed, if any.
@@ -217,9 +245,13 @@ func parseRetryAfter(h http.Header) (time.Duration, bool) {
 	if v == "" {
 		return 0, false
 	}
-	if seconds, err := strconv.Atoi(v); err == nil {
+	if seconds, err := strconv.ParseInt(v, 10, 64); err == nil {
 		if seconds < 0 {
 			return 0, false
+		}
+		// A wait too long to represent is longer than anyone's MaxWait.
+		if seconds > math.MaxInt64/int64(time.Second) {
+			return time.Duration(math.MaxInt64), true
 		}
 		return time.Duration(seconds) * time.Second, true
 	}

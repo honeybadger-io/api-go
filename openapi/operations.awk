@@ -18,7 +18,8 @@
 # reconcile at the end.
 BEGIN {
   methods["get"] = "GET"; methods["post"] = "POST"; methods["put"] = "PUT"
-  methods["patch"] = "PATCH"; methods["delete"] = "DELETE"
+  methods["patch"] = "PATCH"; methods["delete"] = "DELETE"; methods["head"] = "HEAD"
+  methods["options"] = "OPTIONS"; methods["trace"] = "TRACE"
 
   print "// Code generated from openapi/bundled.yaml by openapi/operations.awk. DO NOT EDIT."
   print ""
@@ -53,6 +54,7 @@ in_paths && /^[a-z]/ { flush(); in_paths = 0; next }
 method != "" && /^      operationId: / {
   if (op != "") fail("method block declares a second operationId: " $2 " after " op)
   op = $2
+  gsub(/["']/, "", op)
   next
 }
 
@@ -76,6 +78,11 @@ END {
   flush()
   print "}"
 
+  # A layout change that hides every method line would reconcile 0 == 0.
+  if (emitted == 0) {
+    print "operations.awk: no operations found under paths:; has the bundle's layout changed?" > "/dev/stderr"
+    exit 1
+  }
   if (blocks != emitted) {
     print "operations.awk: " blocks " method blocks but " emitted " operations emitted" > "/dev/stderr"
     exit 1
