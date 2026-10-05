@@ -2958,7 +2958,7 @@ type IncidentUpdateInput struct {
 	// StartAt When the update takes effect. Only a scheduled_maintenance incident may set this in the future.
 	StartAt *time.Time `json:"start_at,omitempty"`
 
-	// StartNow Start the update immediately, ignoring start_at
+	// StartNow Start the update immediately, ignoring start_at. An update that has already started is left as it is, so sending it again changes nothing.
 	StartNow *bool                      `json:"start_now,omitempty"`
 	Status   *IncidentUpdateInputStatus `json:"status,omitempty"`
 }

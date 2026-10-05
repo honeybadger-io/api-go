@@ -9546,7 +9546,11 @@ components:
             incident may set this in the future.
         start_now:
           type: boolean
-          description: Start the update immediately, ignoring start_at
+          description: 'Start the update immediately, ignoring start_at. An update
+            that has already started is left as it is, so sending it again changes
+            nothing.
+
+            '
         should_notify:
           type: boolean
           description: Announce the update on the status page's connected accounts
