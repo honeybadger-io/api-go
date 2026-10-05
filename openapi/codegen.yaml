@@ -27,3 +27,10 @@ output-options:
   user-templates:
     client-with-responses.tmpl: |
       // ClientWithResponses is not generated: apiv3 decodes responses itself.
+
+# The read schemas mark server-set fields (id, project_id, created_at, ...)
+# readOnly and required: always in a response, never sent. By default
+# oapi-codegen makes a required readOnly field an optional pointer, so every id
+# would read as *string. Responses always carry them, so keep them values.
+compatibility:
+  disable-required-readonly-as-pointer: true

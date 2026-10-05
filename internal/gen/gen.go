@@ -241,6 +241,27 @@ func (e CheckInState) Valid() bool {
 	}
 }
 
+// Defines values for CheckInEventState.
+const (
+	CheckInEventStateMissing   CheckInEventState = "missing"
+	CheckInEventStatePaused    CheckInEventState = "paused"
+	CheckInEventStateReporting CheckInEventState = "reporting"
+)
+
+// Valid indicates whether the value is a known member of the CheckInEventState enum.
+func (e CheckInEventState) Valid() bool {
+	switch e {
+	case CheckInEventStateMissing:
+		return true
+	case CheckInEventStatePaused:
+		return true
+	case CheckInEventStateReporting:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CheckInScheduleType.
 const (
 	Cron   CheckInScheduleType = "cron"
@@ -717,28 +738,88 @@ func (e IncidentUpdateInputStatus) Valid() bool {
 
 // Defines values for IntegrationConfigDatadogEndpoint.
 const (
-	AP1    IntegrationConfigDatadogEndpoint = "AP1"
-	EU1    IntegrationConfigDatadogEndpoint = "EU1"
-	US1    IntegrationConfigDatadogEndpoint = "US1"
-	US1FED IntegrationConfigDatadogEndpoint = "US1-FED"
-	US3    IntegrationConfigDatadogEndpoint = "US3"
-	US5    IntegrationConfigDatadogEndpoint = "US5"
+	IntegrationConfigDatadogEndpointAP1         IntegrationConfigDatadogEndpoint = "AP1"
+	IntegrationConfigDatadogEndpointEU1         IntegrationConfigDatadogEndpoint = "EU1"
+	IntegrationConfigDatadogEndpointLessThannil IntegrationConfigDatadogEndpoint = "<nil>"
+	IntegrationConfigDatadogEndpointUS1         IntegrationConfigDatadogEndpoint = "US1"
+	IntegrationConfigDatadogEndpointUS1FED      IntegrationConfigDatadogEndpoint = "US1-FED"
+	IntegrationConfigDatadogEndpointUS3         IntegrationConfigDatadogEndpoint = "US3"
+	IntegrationConfigDatadogEndpointUS5         IntegrationConfigDatadogEndpoint = "US5"
 )
 
 // Valid indicates whether the value is a known member of the IntegrationConfigDatadogEndpoint enum.
 func (e IntegrationConfigDatadogEndpoint) Valid() bool {
 	switch e {
-	case AP1:
+	case IntegrationConfigDatadogEndpointAP1:
 		return true
-	case EU1:
+	case IntegrationConfigDatadogEndpointEU1:
 		return true
-	case US1:
+	case IntegrationConfigDatadogEndpointLessThannil:
 		return true
-	case US1FED:
+	case IntegrationConfigDatadogEndpointUS1:
 		return true
-	case US3:
+	case IntegrationConfigDatadogEndpointUS1FED:
 		return true
-	case US5:
+	case IntegrationConfigDatadogEndpointUS3:
+		return true
+	case IntegrationConfigDatadogEndpointUS5:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationConfigHipChatColor.
+const (
+	IntegrationConfigHipChatColorGray        IntegrationConfigHipChatColor = "gray"
+	IntegrationConfigHipChatColorGreen       IntegrationConfigHipChatColor = "green"
+	IntegrationConfigHipChatColorLessThannil IntegrationConfigHipChatColor = "<nil>"
+	IntegrationConfigHipChatColorPurple      IntegrationConfigHipChatColor = "purple"
+	IntegrationConfigHipChatColorRandom      IntegrationConfigHipChatColor = "random"
+	IntegrationConfigHipChatColorRed         IntegrationConfigHipChatColor = "red"
+	IntegrationConfigHipChatColorYellow      IntegrationConfigHipChatColor = "yellow"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigHipChatColor enum.
+func (e IntegrationConfigHipChatColor) Valid() bool {
+	switch e {
+	case IntegrationConfigHipChatColorGray:
+		return true
+	case IntegrationConfigHipChatColorGreen:
+		return true
+	case IntegrationConfigHipChatColorLessThannil:
+		return true
+	case IntegrationConfigHipChatColorPurple:
+		return true
+	case IntegrationConfigHipChatColorRandom:
+		return true
+	case IntegrationConfigHipChatColorRed:
+		return true
+	case IntegrationConfigHipChatColorYellow:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for IntegrationConfigOpsGenieEndpoint.
+const (
+	IntegrationConfigOpsGenieEndpointEU          IntegrationConfigOpsGenieEndpoint = "EU"
+	IntegrationConfigOpsGenieEndpointLessThannil IntegrationConfigOpsGenieEndpoint = "<nil>"
+	IntegrationConfigOpsGenieEndpointSandbox     IntegrationConfigOpsGenieEndpoint = "Sandbox"
+	IntegrationConfigOpsGenieEndpointUS          IntegrationConfigOpsGenieEndpoint = "US"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationConfigOpsGenieEndpoint enum.
+func (e IntegrationConfigOpsGenieEndpoint) Valid() bool {
+	switch e {
+	case IntegrationConfigOpsGenieEndpointEU:
+		return true
+	case IntegrationConfigOpsGenieEndpointLessThannil:
+		return true
+	case IntegrationConfigOpsGenieEndpointSandbox:
+		return true
+	case IntegrationConfigOpsGenieEndpointUS:
 		return true
 	default:
 		return false
@@ -747,19 +828,22 @@ func (e IntegrationConfigDatadogEndpoint) Valid() bool {
 
 // Defines values for IntegrationConfigOpsGenieV2Endpoint.
 const (
-	EU      IntegrationConfigOpsGenieV2Endpoint = "EU"
-	Sandbox IntegrationConfigOpsGenieV2Endpoint = "Sandbox"
-	US      IntegrationConfigOpsGenieV2Endpoint = "US"
+	IntegrationConfigOpsGenieV2EndpointEU          IntegrationConfigOpsGenieV2Endpoint = "EU"
+	IntegrationConfigOpsGenieV2EndpointLessThannil IntegrationConfigOpsGenieV2Endpoint = "<nil>"
+	IntegrationConfigOpsGenieV2EndpointSandbox     IntegrationConfigOpsGenieV2Endpoint = "Sandbox"
+	IntegrationConfigOpsGenieV2EndpointUS          IntegrationConfigOpsGenieV2Endpoint = "US"
 )
 
 // Valid indicates whether the value is a known member of the IntegrationConfigOpsGenieV2Endpoint enum.
 func (e IntegrationConfigOpsGenieV2Endpoint) Valid() bool {
 	switch e {
-	case EU:
+	case IntegrationConfigOpsGenieV2EndpointEU:
 		return true
-	case Sandbox:
+	case IntegrationConfigOpsGenieV2EndpointLessThannil:
 		return true
-	case US:
+	case IntegrationConfigOpsGenieV2EndpointSandbox:
+		return true
+	case IntegrationConfigOpsGenieV2EndpointUS:
 		return true
 	default:
 		return false
@@ -768,10 +852,11 @@ func (e IntegrationConfigOpsGenieV2Endpoint) Valid() bool {
 
 // Defines values for IntegrationConfigPagerDutyV2Severity.
 const (
-	IntegrationConfigPagerDutyV2SeverityCritical IntegrationConfigPagerDutyV2Severity = "critical"
-	IntegrationConfigPagerDutyV2SeverityError    IntegrationConfigPagerDutyV2Severity = "error"
-	IntegrationConfigPagerDutyV2SeverityInfo     IntegrationConfigPagerDutyV2Severity = "info"
-	IntegrationConfigPagerDutyV2SeverityWarning  IntegrationConfigPagerDutyV2Severity = "warning"
+	IntegrationConfigPagerDutyV2SeverityCritical    IntegrationConfigPagerDutyV2Severity = "critical"
+	IntegrationConfigPagerDutyV2SeverityError       IntegrationConfigPagerDutyV2Severity = "error"
+	IntegrationConfigPagerDutyV2SeverityInfo        IntegrationConfigPagerDutyV2Severity = "info"
+	IntegrationConfigPagerDutyV2SeverityLessThannil IntegrationConfigPagerDutyV2Severity = "<nil>"
+	IntegrationConfigPagerDutyV2SeverityWarning     IntegrationConfigPagerDutyV2Severity = "warning"
 )
 
 // Valid indicates whether the value is a known member of the IntegrationConfigPagerDutyV2Severity enum.
@@ -783,6 +868,8 @@ func (e IntegrationConfigPagerDutyV2Severity) Valid() bool {
 		return true
 	case IntegrationConfigPagerDutyV2SeverityInfo:
 		return true
+	case IntegrationConfigPagerDutyV2SeverityLessThannil:
+		return true
 	case IntegrationConfigPagerDutyV2SeverityWarning:
 		return true
 	default:
@@ -793,6 +880,7 @@ func (e IntegrationConfigPagerDutyV2Severity) Valid() bool {
 // Defines values for IntegrationConfigRootlyNotificationTargetType.
 const (
 	IntegrationConfigRootlyNotificationTargetTypeEscalationPolicy IntegrationConfigRootlyNotificationTargetType = "escalationPolicy"
+	IntegrationConfigRootlyNotificationTargetTypeLessThannil      IntegrationConfigRootlyNotificationTargetType = "<nil>"
 	IntegrationConfigRootlyNotificationTargetTypeService          IntegrationConfigRootlyNotificationTargetType = "service"
 	IntegrationConfigRootlyNotificationTargetTypeTeam             IntegrationConfigRootlyNotificationTargetType = "team"
 )
@@ -801,6 +889,8 @@ const (
 func (e IntegrationConfigRootlyNotificationTargetType) Valid() bool {
 	switch e {
 	case IntegrationConfigRootlyNotificationTargetTypeEscalationPolicy:
+		return true
+	case IntegrationConfigRootlyNotificationTargetTypeLessThannil:
 		return true
 	case IntegrationConfigRootlyNotificationTargetTypeService:
 		return true
@@ -813,16 +903,19 @@ func (e IntegrationConfigRootlyNotificationTargetType) Valid() bool {
 
 // Defines values for IntegrationConfigWebHookPayloadVersion.
 const (
-	V2 IntegrationConfigWebHookPayloadVersion = "v2"
-	V3 IntegrationConfigWebHookPayloadVersion = "v3"
+	IntegrationConfigWebHookPayloadVersionLessThannil IntegrationConfigWebHookPayloadVersion = "<nil>"
+	IntegrationConfigWebHookPayloadVersionV2          IntegrationConfigWebHookPayloadVersion = "v2"
+	IntegrationConfigWebHookPayloadVersionV3          IntegrationConfigWebHookPayloadVersion = "v3"
 )
 
 // Valid indicates whether the value is a known member of the IntegrationConfigWebHookPayloadVersion enum.
 func (e IntegrationConfigWebHookPayloadVersion) Valid() bool {
 	switch e {
-	case V2:
+	case IntegrationConfigWebHookPayloadVersionLessThannil:
 		return true
-	case V3:
+	case IntegrationConfigWebHookPayloadVersionV2:
+		return true
+	case IntegrationConfigWebHookPayloadVersionV3:
 		return true
 	default:
 		return false
@@ -1003,6 +1096,69 @@ func (e IntegrationEvent) Valid() bool {
 	}
 }
 
+// Defines values for IntegrationFilterEvent.
+const (
+	IntegrationFilterEventAlarmAlert       IntegrationFilterEvent = "alarm_alert"
+	IntegrationFilterEventAlarmOk          IntegrationFilterEvent = "alarm_ok"
+	IntegrationFilterEventAll              IntegrationFilterEvent = "all"
+	IntegrationFilterEventAssigned         IntegrationFilterEvent = "assigned"
+	IntegrationFilterEventCertWillExpire   IntegrationFilterEvent = "cert_will_expire"
+	IntegrationFilterEventCheckInMissing   IntegrationFilterEvent = "check_in_missing"
+	IntegrationFilterEventCheckInReporting IntegrationFilterEvent = "check_in_reporting"
+	IntegrationFilterEventCommented        IntegrationFilterEvent = "commented"
+	IntegrationFilterEventDeployed         IntegrationFilterEvent = "deployed"
+	IntegrationFilterEventDown             IntegrationFilterEvent = "down"
+	IntegrationFilterEventFlooded          IntegrationFilterEvent = "flooded"
+	IntegrationFilterEventOccurred         IntegrationFilterEvent = "occurred"
+	IntegrationFilterEventRateExceeded     IntegrationFilterEvent = "rate_exceeded"
+	IntegrationFilterEventResolved         IntegrationFilterEvent = "resolved"
+	IntegrationFilterEventUnresolved       IntegrationFilterEvent = "unresolved"
+	IntegrationFilterEventUp               IntegrationFilterEvent = "up"
+	IntegrationFilterEventVolumeSpike      IntegrationFilterEvent = "volume_spike"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationFilterEvent enum.
+func (e IntegrationFilterEvent) Valid() bool {
+	switch e {
+	case IntegrationFilterEventAlarmAlert:
+		return true
+	case IntegrationFilterEventAlarmOk:
+		return true
+	case IntegrationFilterEventAll:
+		return true
+	case IntegrationFilterEventAssigned:
+		return true
+	case IntegrationFilterEventCertWillExpire:
+		return true
+	case IntegrationFilterEventCheckInMissing:
+		return true
+	case IntegrationFilterEventCheckInReporting:
+		return true
+	case IntegrationFilterEventCommented:
+		return true
+	case IntegrationFilterEventDeployed:
+		return true
+	case IntegrationFilterEventDown:
+		return true
+	case IntegrationFilterEventFlooded:
+		return true
+	case IntegrationFilterEventOccurred:
+		return true
+	case IntegrationFilterEventRateExceeded:
+		return true
+	case IntegrationFilterEventResolved:
+		return true
+	case IntegrationFilterEventUnresolved:
+		return true
+	case IntegrationFilterEventUp:
+		return true
+	case IntegrationFilterEventVolumeSpike:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for NoticeBacktraceMode.
 const (
 	NoticeBacktraceModeReported     NoticeBacktraceMode = "reported"
@@ -1126,192 +1282,150 @@ func (e SiteState) Valid() bool {
 	}
 }
 
-// Defines values for SiteCreateInputFrequency.
+// Defines values for SiteFrequency.
 const (
-	SiteCreateInputFrequencyN1  SiteCreateInputFrequency = 1
-	SiteCreateInputFrequencyN15 SiteCreateInputFrequency = 15
-	SiteCreateInputFrequencyN2  SiteCreateInputFrequency = 2
-	SiteCreateInputFrequencyN5  SiteCreateInputFrequency = 5
+	N1  SiteFrequency = 1
+	N15 SiteFrequency = 15
+	N2  SiteFrequency = 2
+	N5  SiteFrequency = 5
 )
 
-// Valid indicates whether the value is a known member of the SiteCreateInputFrequency enum.
-func (e SiteCreateInputFrequency) Valid() bool {
+// Valid indicates whether the value is a known member of the SiteFrequency enum.
+func (e SiteFrequency) Valid() bool {
 	switch e {
-	case SiteCreateInputFrequencyN1:
+	case N1:
 		return true
-	case SiteCreateInputFrequencyN15:
+	case N15:
 		return true
-	case SiteCreateInputFrequencyN2:
+	case N2:
 		return true
-	case SiteCreateInputFrequencyN5:
+	case N5:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for SiteCreateInputLocations.
+// Defines values for SiteLocation.
 const (
-	SiteCreateInputLocationsFrankfurt SiteCreateInputLocations = "Frankfurt"
-	SiteCreateInputLocationsLondon    SiteCreateInputLocations = "London"
-	SiteCreateInputLocationsOregon    SiteCreateInputLocations = "Oregon"
-	SiteCreateInputLocationsSingapore SiteCreateInputLocations = "Singapore"
-	SiteCreateInputLocationsVirginia  SiteCreateInputLocations = "Virginia"
+	Frankfurt SiteLocation = "Frankfurt"
+	London    SiteLocation = "London"
+	Oregon    SiteLocation = "Oregon"
+	Singapore SiteLocation = "Singapore"
+	Virginia  SiteLocation = "Virginia"
 )
 
-// Valid indicates whether the value is a known member of the SiteCreateInputLocations enum.
-func (e SiteCreateInputLocations) Valid() bool {
+// Valid indicates whether the value is a known member of the SiteLocation enum.
+func (e SiteLocation) Valid() bool {
 	switch e {
-	case SiteCreateInputLocationsFrankfurt:
+	case Frankfurt:
 		return true
-	case SiteCreateInputLocationsLondon:
+	case London:
 		return true
-	case SiteCreateInputLocationsOregon:
+	case Oregon:
 		return true
-	case SiteCreateInputLocationsSingapore:
+	case Singapore:
 		return true
-	case SiteCreateInputLocationsVirginia:
+	case Virginia:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for SiteCreateInputMatchType.
+// Defines values for SiteMatchType.
 const (
-	SiteCreateInputMatchTypeJmespath SiteCreateInputMatchType = "jmespath"
-	SiteCreateInputMatchTypeSuccess  SiteCreateInputMatchType = "success"
+	Exact    SiteMatchType = "exact"
+	Exclude  SiteMatchType = "exclude"
+	Include  SiteMatchType = "include"
+	Jmespath SiteMatchType = "jmespath"
+	Success  SiteMatchType = "success"
 )
 
-// Valid indicates whether the value is a known member of the SiteCreateInputMatchType enum.
-func (e SiteCreateInputMatchType) Valid() bool {
+// Valid indicates whether the value is a known member of the SiteMatchType enum.
+func (e SiteMatchType) Valid() bool {
 	switch e {
-	case SiteCreateInputMatchTypeJmespath:
+	case Exact:
 		return true
-	case SiteCreateInputMatchTypeSuccess:
+	case Exclude:
+		return true
+	case Include:
+		return true
+	case Jmespath:
+		return true
+	case Success:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for SiteCreateInputRequestMethod.
+// Defines values for SiteRequestMethod.
 const (
-	SiteCreateInputRequestMethodDELETE SiteCreateInputRequestMethod = "DELETE"
-	SiteCreateInputRequestMethodGET    SiteCreateInputRequestMethod = "GET"
-	SiteCreateInputRequestMethodPATCH  SiteCreateInputRequestMethod = "PATCH"
-	SiteCreateInputRequestMethodPOST   SiteCreateInputRequestMethod = "POST"
-	SiteCreateInputRequestMethodPUT    SiteCreateInputRequestMethod = "PUT"
+	DELETE SiteRequestMethod = "DELETE"
+	GET    SiteRequestMethod = "GET"
+	PATCH  SiteRequestMethod = "PATCH"
+	POST   SiteRequestMethod = "POST"
+	PUT    SiteRequestMethod = "PUT"
 )
 
-// Valid indicates whether the value is a known member of the SiteCreateInputRequestMethod enum.
-func (e SiteCreateInputRequestMethod) Valid() bool {
+// Valid indicates whether the value is a known member of the SiteRequestMethod enum.
+func (e SiteRequestMethod) Valid() bool {
 	switch e {
-	case SiteCreateInputRequestMethodDELETE:
+	case DELETE:
 		return true
-	case SiteCreateInputRequestMethodGET:
+	case GET:
 		return true
-	case SiteCreateInputRequestMethodPATCH:
+	case PATCH:
 		return true
-	case SiteCreateInputRequestMethodPOST:
+	case POST:
 		return true
-	case SiteCreateInputRequestMethodPUT:
+	case PUT:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for SiteInputFrequency.
+// Defines values for StatusPageCheckInsState.
 const (
-	SiteInputFrequencyN1  SiteInputFrequency = 1
-	SiteInputFrequencyN15 SiteInputFrequency = 15
-	SiteInputFrequencyN2  SiteInputFrequency = 2
-	SiteInputFrequencyN5  SiteInputFrequency = 5
+	StatusPageCheckInsStateMissing   StatusPageCheckInsState = "missing"
+	StatusPageCheckInsStatePaused    StatusPageCheckInsState = "paused"
+	StatusPageCheckInsStatePending   StatusPageCheckInsState = "pending"
+	StatusPageCheckInsStateReporting StatusPageCheckInsState = "reporting"
 )
 
-// Valid indicates whether the value is a known member of the SiteInputFrequency enum.
-func (e SiteInputFrequency) Valid() bool {
+// Valid indicates whether the value is a known member of the StatusPageCheckInsState enum.
+func (e StatusPageCheckInsState) Valid() bool {
 	switch e {
-	case SiteInputFrequencyN1:
+	case StatusPageCheckInsStateMissing:
 		return true
-	case SiteInputFrequencyN15:
+	case StatusPageCheckInsStatePaused:
 		return true
-	case SiteInputFrequencyN2:
+	case StatusPageCheckInsStatePending:
 		return true
-	case SiteInputFrequencyN5:
+	case StatusPageCheckInsStateReporting:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for SiteInputLocations.
+// Defines values for StatusPageSitesState.
 const (
-	SiteInputLocationsFrankfurt SiteInputLocations = "Frankfurt"
-	SiteInputLocationsLondon    SiteInputLocations = "London"
-	SiteInputLocationsOregon    SiteInputLocations = "Oregon"
-	SiteInputLocationsSingapore SiteInputLocations = "Singapore"
-	SiteInputLocationsVirginia  SiteInputLocations = "Virginia"
+	StatusPageSitesStateDown    StatusPageSitesState = "down"
+	StatusPageSitesStatePending StatusPageSitesState = "pending"
+	StatusPageSitesStateUp      StatusPageSitesState = "up"
 )
 
-// Valid indicates whether the value is a known member of the SiteInputLocations enum.
-func (e SiteInputLocations) Valid() bool {
+// Valid indicates whether the value is a known member of the StatusPageSitesState enum.
+func (e StatusPageSitesState) Valid() bool {
 	switch e {
-	case SiteInputLocationsFrankfurt:
+	case StatusPageSitesStateDown:
 		return true
-	case SiteInputLocationsLondon:
+	case StatusPageSitesStatePending:
 		return true
-	case SiteInputLocationsOregon:
-		return true
-	case SiteInputLocationsSingapore:
-		return true
-	case SiteInputLocationsVirginia:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for SiteInputMatchType.
-const (
-	SiteInputMatchTypeJmespath SiteInputMatchType = "jmespath"
-	SiteInputMatchTypeSuccess  SiteInputMatchType = "success"
-)
-
-// Valid indicates whether the value is a known member of the SiteInputMatchType enum.
-func (e SiteInputMatchType) Valid() bool {
-	switch e {
-	case SiteInputMatchTypeJmespath:
-		return true
-	case SiteInputMatchTypeSuccess:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for SiteInputRequestMethod.
-const (
-	SiteInputRequestMethodDELETE SiteInputRequestMethod = "DELETE"
-	SiteInputRequestMethodGET    SiteInputRequestMethod = "GET"
-	SiteInputRequestMethodPATCH  SiteInputRequestMethod = "PATCH"
-	SiteInputRequestMethodPOST   SiteInputRequestMethod = "POST"
-	SiteInputRequestMethodPUT    SiteInputRequestMethod = "PUT"
-)
-
-// Valid indicates whether the value is a known member of the SiteInputRequestMethod enum.
-func (e SiteInputRequestMethod) Valid() bool {
-	switch e {
-	case SiteInputRequestMethodDELETE:
-		return true
-	case SiteInputRequestMethodGET:
-		return true
-	case SiteInputRequestMethodPATCH:
-		return true
-	case SiteInputRequestMethodPOST:
-		return true
-	case SiteInputRequestMethodPUT:
+	case StatusPageSitesStateUp:
 		return true
 	default:
 		return false
@@ -1546,6 +1660,21 @@ func (e ReplaceCheckIns200JSONResponseBodyDataOperation) Valid() bool {
 	}
 }
 
+// Defines values for ReplaceCheckIns200JSONResponseBodyDataSuccess.
+const (
+	True ReplaceCheckIns200JSONResponseBodyDataSuccess = true
+)
+
+// Valid indicates whether the value is a known member of the ReplaceCheckIns200JSONResponseBodyDataSuccess enum.
+func (e ReplaceCheckIns200JSONResponseBodyDataSuccess) Valid() bool {
+	switch e {
+	case True:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ListFaultsParamsOrder.
 const (
 	ListFaultsParamsOrderFrequent ListFaultsParamsOrder = "frequent"
@@ -1603,27 +1732,6 @@ func (e SnoozeFaultJSONBodyCount) Valid() bool {
 	}
 }
 
-// Defines values for SnoozeFaultJSONBodyTime.
-const (
-	SnoozeFaultJSONBodyTimeDay  SnoozeFaultJSONBodyTime = "day"
-	SnoozeFaultJSONBodyTimeHour SnoozeFaultJSONBodyTime = "hour"
-	SnoozeFaultJSONBodyTimeWeek SnoozeFaultJSONBodyTime = "week"
-)
-
-// Valid indicates whether the value is a known member of the SnoozeFaultJSONBodyTime enum.
-func (e SnoozeFaultJSONBodyTime) Valid() bool {
-	switch e {
-	case SnoozeFaultJSONBodyTimeDay:
-		return true
-	case SnoozeFaultJSONBodyTimeHour:
-		return true
-	case SnoozeFaultJSONBodyTimeWeek:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for GetProjectOccurrencesParamsPeriod.
 const (
 	GetProjectOccurrencesParamsPeriodDay   GetProjectOccurrencesParamsPeriod = "day"
@@ -1675,22 +1783,22 @@ type Account struct {
 	Active bool `json:"active"`
 
 	// CreatedAt When the account was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Email Primary account email
-	Email nullable.Nullable[openapi_types.Email] `json:"email,omitempty"`
+	Email nullable.Nullable[openapi_types.Email] `json:"email"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// Name Account name
-	Name nullable.Nullable[string] `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name"`
 
 	// Parked Whether the account is parked (temporarily inactive)
-	Parked *bool `json:"parked,omitempty"`
+	Parked bool `json:"parked"`
 }
 
 // AccountInvitation An invitation to join an account
@@ -1755,7 +1863,7 @@ type AccountInvitationCreateInput struct {
 	Role                      *AccountInvitationCreateInputRole `json:"role,omitempty"`
 
 	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
-	TeamIds *[]string `json:"team_ids,omitempty"`
+	TeamIds nullable.Nullable[[]string] `json:"team_ids,omitempty"`
 }
 
 // AccountInvitationCreateInputRole defines model for AccountInvitationCreateInput.Role.
@@ -1769,7 +1877,7 @@ type AccountInvitationInput struct {
 	Role                      *AccountInvitationInputRole `json:"role,omitempty"`
 
 	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
-	TeamIds *[]string `json:"team_ids,omitempty"`
+	TeamIds nullable.Nullable[[]string] `json:"team_ids,omitempty"`
 }
 
 // AccountInvitationInputRole defines model for AccountInvitationInput.Role.
@@ -1819,7 +1927,7 @@ type AffectedUser struct {
 	User string `json:"user"`
 }
 
-// Alarm An Insights alarm
+// Alarm An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
 type Alarm struct {
 	// CreatedAt When the alarm was created
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -1840,7 +1948,7 @@ type Alarm struct {
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// LookbackLag How far behind now the window ends, allowing for ingestion delay. Same compact duration format as evaluation_period.
 	LookbackLag nullable.Nullable[string] `json:"lookback_lag,omitempty"`
@@ -1863,7 +1971,7 @@ type Alarm struct {
 	// StreamIds Associated stream identifiers
 	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
 
-	// TriggerConfig Trigger configuration for the alarm
+	// TriggerConfig What turns the alarm on; null if the stored alarm has none. Updates replace the whole object.
 	TriggerConfig nullable.Nullable[AlarmTriggerConfig] `json:"trigger_config,omitempty"`
 
 	// UpdatedAt When the alarm was last updated
@@ -1875,23 +1983,23 @@ type AlarmState string
 
 // AlarmCreateInput An alarm and the observer that evaluates it
 type AlarmCreateInput struct {
-	Description *string `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description,omitempty"`
 
-	// EvaluationPeriod Window each evaluation covers
-	EvaluationPeriod *string `json:"evaluation_period,omitempty"`
+	// EvaluationPeriod Window each evaluation covers. At least 1m and less than a week (`w` units are refused).
+	EvaluationPeriod string `json:"evaluation_period"`
 
 	// LookbackLag How far behind now the window ends, allowing for ingestion delay
-	LookbackLag *string `json:"lookback_lag,omitempty"`
-	Name        string  `json:"name"`
+	LookbackLag string `json:"lookback_lag"`
+	Name        string `json:"name"`
 
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
 
-	// StreamIds Streams the query runs against. Defaults to every stream on the project. An ID that isn't one of the project's streams fails the request with 422.
+	// StreamIds Streams the query runs against. A set; can't be empty. Left out, every current stream in the project, which a read then lists. An ID that isn't one of the project's streams fails the request with 422. A set; order is ignored and duplicates are dropped.
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
-	TriggerConfig *AlarmTriggerConfig `json:"trigger_config,omitempty"`
+	TriggerConfig AlarmTriggerConfig `json:"trigger_config"`
 }
 
 // AlarmHistoryEntry One alarm state change, as recorded by the Insights backend
@@ -1946,7 +2054,7 @@ type AlarmTriggerConfigType string
 
 // AlarmUpdateInput Writable alarm attributes
 type AlarmUpdateInput struct {
-	Description *string `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description,omitempty"`
 
 	// EvaluationPeriod Window each evaluation covers, as a compact duration
 	EvaluationPeriod *string `json:"evaluation_period,omitempty"`
@@ -1958,7 +2066,7 @@ type AlarmUpdateInput struct {
 	// Query BadgerQL query evaluated on each check
 	Query *string `json:"query,omitempty"`
 
-	// StreamIds Stream identifiers to query
+	// StreamIds Stream identifiers to query. A set; order is ignored and duplicates are dropped.
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
@@ -1968,7 +2076,7 @@ type AlarmUpdateInput struct {
 // CheckIn A scheduled task check-in monitor
 type CheckIn struct {
 	// CreatedAt When the check-in was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// CronSchedule Cron expression (for cron schedule type)
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
@@ -1977,69 +2085,50 @@ type CheckIn struct {
 	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// ExpectedAt When the next report is expected
-	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at,omitempty"`
+	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
 
-	// GracePeriod How long after the expected time before the check-in is missing. A Postgres interval, rendered the way it is written: a count and a unit, or HH:MM:SS.
-	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
+	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text. Zero reads as `00:00:00`.
+	GracePeriod string `json:"grace_period"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// MissedCount Number of consecutive missed reports
-	MissedCount *int `json:"missed_count,omitempty"`
+	MissedCount int `json:"missed_count"`
 
 	// Name Display name
-	Name nullable.Nullable[string] `json:"name,omitempty"`
+	Name nullable.Nullable[string] `json:"name"`
 
 	// ProjectId ID of the project this check-in belongs to
 	ProjectId string `json:"project_id"`
 
-	// ReportPeriod How often a report is expected, for `simple` schedules. Same interval format as `grace_period`. Null for `cron` schedules, which use `cron_schedule`.
+	// ReportPeriod How often a report is expected, for `simple` schedules. Same format as `grace_period`. Null for `cron` schedules, which use `cron_schedule`.
 	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
 
 	// ReportUrl URL to ping when the task completes
-	ReportUrl *string `json:"report_url,omitempty"`
+	ReportUrl string `json:"report_url"`
 
 	// ReportedAt When the last report was received
-	ReportedAt nullable.Nullable[time.Time] `json:"reported_at,omitempty"`
+	ReportedAt nullable.Nullable[time.Time] `json:"reported_at"`
 
 	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
 	ScheduleType CheckInScheduleType `json:"schedule_type"`
 
 	// Slug URL-safe identifier
-	Slug nullable.Nullable[string] `json:"slug,omitempty"`
+	Slug nullable.Nullable[string] `json:"slug"`
 
 	// State Current check-in state
-	State *CheckInState `json:"state,omitempty"`
+	State CheckInState `json:"state"`
 }
 
 // CheckInState Current check-in state
 type CheckInState string
 
 // CheckInCreateInput Attributes for creating a check-in.
-type CheckInCreateInput struct {
-	// CronSchedule Cron expression, required when `schedule_type` is `cron`
-	CronSchedule *string `json:"cron_schedule,omitempty"`
-
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
-	CronTimezone *string `json:"cron_timezone,omitempty"`
-
-	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
-	GracePeriod *string `json:"grace_period,omitempty"`
-	Name        string  `json:"name"`
-
-	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
-	ReportPeriod *string `json:"report_period,omitempty"`
-
-	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
-	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
-
-	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted.
-	Slug *string `json:"slug,omitempty"`
-}
+type CheckInCreateInput = CheckInInput
 
 // CheckInEvent A check-in event
 type CheckInEvent struct {
@@ -2053,47 +2142,54 @@ type CheckInEvent struct {
 	Payload nullable.Nullable[string] `json:"payload,omitempty"`
 
 	// State The state the check-in entered
-	State string `json:"state"`
+	State CheckInEventState `json:"state"`
 }
 
-// CheckInInput Writable check-in attributes
+// CheckInEventState The state the check-in entered
+type CheckInEventState string
+
+// CheckInInput Writable check-in attributes. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
 type CheckInInput struct {
-	// CronSchedule Cron expression, required when `schedule_type` is `cron`
-	CronSchedule *string `json:"cron_schedule,omitempty"`
+	// CronSchedule Cron expression, required when `schedule_type` is `cron`.
+	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
-	CronTimezone *string `json:"cron_timezone,omitempty"`
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Send null to reset to `UTC`.
+	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
-	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
-	GracePeriod *string `json:"grace_period,omitempty"`
-	Name        *string `json:"name,omitempty"`
+	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`; zero is `00:00:00`. Send null to reset to zero.
+	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
 
-	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
-	ReportPeriod *string `json:"report_period,omitempty"`
+	// Name Send null to clear; an unnamed check-in shows its ID.
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text.
+	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
+
+	// ScheduleType Switching to `simple` clears `cron_schedule` and resets `cron_timezone` to `UTC`; switching to `cron` clears `report_period`.
 	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
 
-	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted.
-	Slug *string `json:"slug,omitempty"`
+	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted. Send null to clear. Renaming it breaks jobs reporting to `…/check_in/<project key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
+	Slug nullable.Nullable[string] `json:"slug,omitempty"`
 }
 
 // CheckInReplaceEntry One check-in in a replace request, matched to an existing check-in by slug. A match is updated, and an unmatched slug creates a new check-in.
 type CheckInReplaceEntry struct {
-	// CronSchedule Cron expression, required when `schedule_type` is `cron`
-	CronSchedule *string `json:"cron_schedule,omitempty"`
+	// CronSchedule Cron expression, required when `schedule_type` is `cron`.
+	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`.
-	CronTimezone *string `json:"cron_timezone,omitempty"`
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Send null to reset to `UTC`.
+	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
-	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`.
-	GracePeriod *string `json:"grace_period,omitempty"`
-	Name        *string `json:"name,omitempty"`
+	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`; zero is `00:00:00`. Send null to reset to zero.
+	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
 
-	// ReportPeriod How often a report is expected, for `simple` schedules. A count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless `schedule_type` is `cron`, and may not be zero.
-	ReportPeriod *string `json:"report_period,omitempty"`
+	// Name Send null to clear; an unnamed check-in shows its ID.
+	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text.
+	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
+
+	// ScheduleType Switching to `simple` clears `cron_schedule` and resets `cron_timezone` to `UTC`; switching to `cron` clears `report_period`.
 	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
 
 	// Slug Identifies which check-in an entry refers to, so it is required here
@@ -2111,16 +2207,16 @@ type CheckInScheduleType string
 // Comment A comment on a fault
 type Comment struct {
 	// Author Author of the comment
-	Author nullable.Nullable[Comment_Author] `json:"author,omitempty"`
+	Author nullable.Nullable[Comment_Author] `json:"author"`
 
 	// Body Comment body text
-	Body nullable.Nullable[string] `json:"body,omitempty"`
+	Body nullable.Nullable[string] `json:"body"`
 
 	// CreatedAt When the comment was created
 	CreatedAt time.Time `json:"created_at"`
 
 	// Event Event type associated with the comment
-	Event nullable.Nullable[string] `json:"event,omitempty"`
+	Event nullable.Nullable[string] `json:"event"`
 
 	// FaultId ID of the fault this comment belongs to
 	FaultId string `json:"fault_id"`
@@ -2129,10 +2225,10 @@ type Comment struct {
 	Id string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// Source Source of the comment
-	Source *string `json:"source,omitempty"`
+	Source string `json:"source"`
 }
 
 // Comment_Author Author of the comment
@@ -2156,34 +2252,34 @@ type CommentInput struct {
 // Dashboard An Insights dashboard
 type Dashboard struct {
 	// CreatedAt When the dashboard was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// DefaultTs Default time range for the dashboard
-	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
+	DefaultTs nullable.Nullable[string] `json:"default_ts"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// IsDefault Whether this is the default dashboard
-	IsDefault *bool `json:"is_default,omitempty"`
+	IsDefault bool `json:"is_default"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// ProjectId ID of the project this dashboard belongs to
 	ProjectId string `json:"project_id"`
 
 	// Shared Whether the dashboard is shared with all team members
-	Shared *bool `json:"shared,omitempty"`
+	Shared bool `json:"shared"`
 
 	// Title Dashboard title
 	Title string `json:"title"`
 
 	// UpdatedAt When the dashboard was last updated
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
 
 	// Widgets The dashboard's widgets, in the same shape a write accepts — the read and write forms are identical, including `config.streams` as stream slugs (`stream_ids` exists only inside the model).
-	Widgets *[]DashboardWidget `json:"widgets,omitempty"`
+	Widgets []DashboardWidget `json:"widgets"`
 }
 
 // DashboardChartConfigArea Like line, with the area under each series filled; series can be stacked.
@@ -2395,16 +2491,18 @@ type DashboardChartConfigTable = map[string]interface{}
 
 // DashboardInput defines model for DashboardInput.
 type DashboardInput struct {
-	DefaultTs *string                 `json:"default_ts,omitempty"`
-	Title     string                  `json:"title"`
-	Widgets   *[]DashboardWidgetInput `json:"widgets,omitempty"`
+	// DefaultTs Default time range. Send null to clear.
+	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
+	Title     string                    `json:"title"`
+	Widgets   *[]DashboardWidgetInput   `json:"widgets,omitempty"`
 }
 
 // DashboardUpdateInput Fields to change on a dashboard. A field left out keeps its current value. `widgets` replaces the whole list: to remove a widget, send the list without it. A widget that keeps its `id` is updated in place, and one without an `id` is added.
 type DashboardUpdateInput struct {
-	DefaultTs *string                 `json:"default_ts,omitempty"`
-	Title     *string                 `json:"title,omitempty"`
-	Widgets   *[]DashboardWidgetInput `json:"widgets,omitempty"`
+	// DefaultTs Default time range. Send null to clear.
+	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
+	Title     *string                   `json:"title,omitempty"`
+	Widgets   *[]DashboardWidgetInput   `json:"widgets,omitempty"`
 }
 
 // DashboardWidget A widget on an Insights dashboard
@@ -2553,31 +2651,31 @@ type DashboardWidgetInputType string
 // Deploy A deploy event
 type Deploy struct {
 	// CreatedAt When the deploy was recorded
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
-	// Environment Deploy environment
-	Environment string `json:"environment"`
+	// Environment Deploy environment; null when the deploy named none
+	Environment nullable.Nullable[string] `json:"environment"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// LocalUsername Username of the person who triggered the deploy
-	LocalUsername nullable.Nullable[string] `json:"local_username,omitempty"`
+	LocalUsername nullable.Nullable[string] `json:"local_username"`
 
 	// ProjectId ID of the project this deploy belongs to
 	ProjectId string `json:"project_id"`
 
 	// Repository Source control repository
-	Repository nullable.Nullable[string] `json:"repository,omitempty"`
+	Repository nullable.Nullable[string] `json:"repository"`
 
 	// Revision Source control revision
-	Revision nullable.Nullable[string] `json:"revision,omitempty"`
+	Revision nullable.Nullable[string] `json:"revision"`
 }
 
 // Environment A project environment configuration
 type Environment struct {
 	// CreatedAt When the environment was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt nullable.Nullable[time.Time] `json:"created_at"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
@@ -2586,18 +2684,27 @@ type Environment struct {
 	Name string `json:"name"`
 
 	// Notifications Whether notifications fire for this environment.
-	Notifications *bool `json:"notifications,omitempty"`
+	Notifications bool `json:"notifications"`
 
 	// ProjectId ID of the project this environment belongs to
 	ProjectId string `json:"project_id"`
 }
 
-// EnvironmentInput Writable environment attributes
-type EnvironmentInput struct {
+// EnvironmentCreateInput A new environment. Names are unique per project and case-sensitive.
+type EnvironmentCreateInput struct {
 	Name string `json:"name"`
 
-	// Notifications Whether notifications are sent for faults in this environment
-	Notifications *bool `json:"notifications,omitempty"`
+	// Notifications Whether errors in this environment notify. Send null for the default.
+	Notifications nullable.Nullable[bool] `json:"notifications,omitempty"`
+}
+
+// EnvironmentInput Fields to change on an environment. Omitted fields are unchanged. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
+type EnvironmentInput struct {
+	// Name Can only be sent with its current value; an environment can't be renamed.
+	Name *string `json:"name,omitempty"`
+
+	// Notifications Whether errors in this environment notify. Send null to reset to true.
+	Notifications nullable.Nullable[bool] `json:"notifications,omitempty"`
 }
 
 // Error API error response
@@ -2611,7 +2718,7 @@ type ErrorBody struct {
 	// Code Machine-readable code. Branch on this rather than on the message, which is free text and may be the upstream service's own wording.
 	Code ErrorBodyCode `json:"code"`
 
-	// Details A list of field errors for `validation_error`, an object naming the missing permission for `insufficient_scope`, or the surviving fault for `fault_merged`. Absent for every other code.
+	// Details A list of field errors for `validation_error`, `invalid_parameter`, `feature_unavailable`, and `limit_reached` from PUT /check_ins; an object naming the missing permission for `insufficient_scope`, or the surviving fault for `fault_merged`. Absent for every other code.
 	Details *json.RawMessage `json:"details,omitempty"`
 
 	// Message Human-readable explanation
@@ -2637,6 +2744,9 @@ type Fault struct {
 
 	// Assignee User assigned to this fault
 	Assignee nullable.Nullable[Fault_Assignee] `json:"assignee,omitempty"`
+
+	// AssigneeId Same as `assignee.id`. Written by POST …/assign.
+	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
 
 	// CommentsCount Number of comments on this fault
 	CommentsCount *int `json:"comments_count,omitempty"`
@@ -2666,7 +2776,7 @@ type Fault struct {
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// Message Error message
 	Message string `json:"message"`
@@ -2689,11 +2799,14 @@ type Fault struct {
 	// Resolved Whether the fault is resolved
 	Resolved *bool `json:"resolved,omitempty"`
 
+	// Snoozed Whether a snooze is in effect now. A new snooze replaces any existing one.
+	Snoozed *bool `json:"snoozed,omitempty"`
+
 	// Tags Tags assigned to this fault
 	Tags *[]string `json:"tags,omitempty"`
 
 	// Tickets Issue tracker tickets linked to this fault
-	Tickets nullable.Nullable[[]Fault_Tickets] `json:"tickets,omitempty"`
+	Tickets *[]Fault_Tickets `json:"tickets,omitempty"`
 }
 
 // Fault_Assignee User assigned to this fault
@@ -2747,9 +2860,9 @@ type FaultInput struct {
 	// ResolveOnDeploy Resolve this fault the next time a deploy is recorded. Not a column on the fault — it is stored as a pending resolution — so it is applied after the update succeeds and is echoed back on the fault as `resolve_on_deploy`.
 	//
 	// Setting it on a fault that is already resolved or ignored does nothing, since those states clear any pending resolution. Sending false removes a pending resolution.
-	ResolveOnDeploy *bool     `json:"resolve_on_deploy,omitempty"`
-	Resolved        *bool     `json:"resolved,omitempty"`
-	Tags            *[]string `json:"tags,omitempty"`
+	ResolveOnDeploy *bool                       `json:"resolve_on_deploy,omitempty"`
+	Resolved        *bool                       `json:"resolved,omitempty"`
+	Tags            nullable.Nullable[[]string] `json:"tags,omitempty"`
 }
 
 // FaultMerge A queued merge
@@ -2839,7 +2952,7 @@ type IncidentUpdateInput struct {
 	Message  *string                      `json:"message,omitempty"`
 	Severity *IncidentUpdateInputSeverity `json:"severity,omitempty"`
 
-	// ShouldNotify Announce the update on the status page's connected accounts
+	// ShouldNotify Announce the update on the status page's connected accounts and email the status page's subscribers
 	ShouldNotify *bool `json:"should_notify,omitempty"`
 
 	// StartAt When the update takes effect. Only a scheduled_maintenance incident may set this in the future.
@@ -2862,22 +2975,28 @@ type Integration struct {
 	Active bool `json:"active"`
 
 	// AlarmAlertIds IDs of alarms whose alert events this integration receives
-	AlarmAlertIds *[]string `json:"alarm_alert_ids,omitempty"`
+	AlarmAlertIds []string `json:"alarm_alert_ids"`
 
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives
-	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
+	AlarmOkIds []string `json:"alarm_ok_ids"`
+
+	// AllCheckIns Whether the integration follows every check-in in the project, including ones added later. When true, check_in_ids is [].
+	AllCheckIns bool `json:"all_check_ins"`
+
+	// AllSites Whether the integration follows every site in the project, including ones added later. When true, site_ids is [].
+	AllSites bool `json:"all_sites"`
 
 	// CheckInIds IDs of check-ins this channel monitors
-	CheckInIds *[]string `json:"check_in_ids,omitempty"`
+	CheckInIds []string `json:"check_in_ids"`
 
-	// Config Type-specific settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Sensitive values (API keys, tokens) are masked. Unset values may be null. Hidden internal fields are omitted.
-	Config *map[string]Integration_Config `json:"config,omitempty"`
+	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Secrets are never returned.
+	Config map[string]interface{} `json:"config"`
 
 	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration has its credentials. One created through the API starts inactive and unconnected, and is connected in the web UI at `links.web`. GitHub works through the GitHub App instead: the app is installed on the repo from `links.web`, and activating the integration attaches the installation, so it reports `connected: false` until then. The exception is a creator who signed in to Honeybadger with GitHub, whose token is attached on create.
 	Connected *bool `json:"connected,omitempty"`
 
 	// CreatedAt When the channel was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Error Whether the channel is in an error state
 	Error *bool `json:"error,omitempty"`
@@ -2886,171 +3005,166 @@ type Integration struct {
 	ErrorReason *string `json:"error_reason,omitempty"`
 
 	// Events Event types this channel listens for
-	Events *[]string `json:"events,omitempty"`
+	Events []string `json:"events"`
 
 	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments.
-	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
+	ExcludedEnvironments []string `json:"excluded_environments"`
 
-	// FilterEvents Events that have a filter query, paired by position with filter_queries
-	FilterEvents *[]string `json:"filter_events,omitempty"`
-
-	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only for errors that match it.
-	FilterQueries *[]string `json:"filter_queries,omitempty"`
+	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query.
+	Filters []IntegrationFilter `json:"filters"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration.
-	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
+	IncludedEnvironments []string `json:"included_environments"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
-	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
+	NotificationLimit nullable.Nullable[int] `json:"notification_limit"`
 
 	// ProjectId ID of the project this channel belongs to
 	ProjectId string `json:"project_id"`
 
-	// Rate Rate period for rate_exceeded events (e.g. min, hour)
-	Rate *string `json:"rate,omitempty"`
+	// Rate Rate period for rate_exceeded (e.g. min, hour)
+	Rate string `json:"rate"`
 
 	// SiteIds Identifiers of sites this channel monitors
-	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
+	SiteIds []openapi_types.UUID `json:"site_ids"`
 
-	// Threshold Occurrence threshold for rate_exceeded events
-	Threshold *int `json:"threshold,omitempty"`
+	// Threshold Occurrence threshold before rate_exceeded fires
+	Threshold int `json:"threshold"`
 
 	// Type Integration type
 	Type string `json:"type"`
 }
 
-// IntegrationConfig1 defines model for Integration.Config.1.
-type IntegrationConfig1 = string
-
-// IntegrationConfig2 defines model for Integration.Config.2.
-type IntegrationConfig2 = bool
-
-// IntegrationConfig3 defines model for Integration.Config.3.
-type IntegrationConfig3 = int
-
-// IntegrationConfig4 defines model for Integration.Config.4.
-type IntegrationConfig4 = []string
-
-// Integration_Config defines model for Integration.Config.
-type Integration_Config struct {
-	union json.RawMessage
-}
-
 // IntegrationConfigAlertOps defines model for IntegrationConfigAlertOps.
 type IntegrationConfigAlertOps struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// Url The URL from your [Honeybadger integration](https://honeybadger.alertops.com/admin/MappingRulesList.aspx) in AlertOps.
-	Url string `json:"url"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
 
 // IntegrationConfigAsana defines model for IntegrationConfigAsana.
 type IntegrationConfigAsana struct {
 	// AsanaProjectId e.g. from a project view: app.asana.com/0/**3456789012345**/3456789012345.
-	AsanaProjectId string `json:"asana_project_id"`
+	AsanaProjectId nullable.Nullable[string] `json:"asana_project_id,omitempty"`
 }
 
 // IntegrationConfigBacklog defines model for IntegrationConfigBacklog.
 type IntegrationConfigBacklog struct {
-	// ApiKey Your Backlog API key (generate one in Personal Settings > API). Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey string `json:"api_key"`
+	// ApiKey Your Backlog API key (generate one in Personal Settings > API). Never returned. Leave it out of an update to keep it.
+	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 
 	// BacklogProjectId The Backlog project to create issues in. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	BacklogProjectId  string  `json:"backlog_project_id"`
-	DescriptionFormat *string `json:"description_format,omitempty"`
+	BacklogProjectId  nullable.Nullable[string] `json:"backlog_project_id,omitempty"`
+	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
 	// EnableWebhook When enabled Honeybadger will create a webhook in Backlog to sync issue status changes back to Honeybadger.
-	EnableWebhook *bool `json:"enable_webhook,omitempty"`
+	EnableWebhook nullable.Nullable[bool] `json:"enable_webhook,omitempty"`
 
 	// IssueTypeId The type of issue to create. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	IssueTypeId string `json:"issue_type_id"`
+	IssueTypeId nullable.Nullable[string] `json:"issue_type_id,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// PriorityId The priority level for new issues. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	PriorityId string `json:"priority_id"`
+	PriorityId nullable.Nullable[string] `json:"priority_id,omitempty"`
 
 	// ReopenStatusId The status to use when unresolving errors. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ReopenStatusId string `json:"reopen_status_id"`
+	ReopenStatusId nullable.Nullable[string] `json:"reopen_status_id,omitempty"`
 
 	// ResolveStatusId The status to use when resolving errors. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ResolveStatusId string `json:"resolve_status_id"`
+	ResolveStatusId nullable.Nullable[string] `json:"resolve_status_id,omitempty"`
 
 	// SpaceUrl Your Backlog space URL (e.g., https://example.backlog.com or https://example.backlog.jp).
-	SpaceUrl      string  `json:"space_url"`
-	SubjectFormat *string `json:"subject_format,omitempty"`
+	SpaceUrl      nullable.Nullable[string] `json:"space_url,omitempty"`
+	SubjectFormat nullable.Nullable[string] `json:"subject_format,omitempty"`
 }
 
 // IntegrationConfigBitbucket defines model for IntegrationConfigBitbucket.
 type IntegrationConfigBitbucket struct {
 	// Repo e.g. honeybadger-io/crywolf.
-	Repo string `json:"repo"`
+	Repo nullable.Nullable[string] `json:"repo,omitempty"`
+}
+
+// IntegrationConfigCampfire defines model for IntegrationConfigCampfire.
+type IntegrationConfigCampfire struct {
+	RoomName  nullable.Nullable[string] `json:"room_name,omitempty"`
+	Subdomain nullable.Nullable[string] `json:"subdomain,omitempty"`
+
+	// Token Never returned. Leave it out of an update to keep it.
+	Token nullable.Nullable[string] `json:"token,omitempty"`
+}
+
+// IntegrationConfigCampfireV2 defines model for IntegrationConfigCampfireV2.
+type IntegrationConfigCampfireV2 struct {
+	// CampfireUrl Add the URL for your Campfire channel. ex: https://3.basecamp.com/3537905/buckets/7994437/chats/828327173.
+	CampfireUrl nullable.Nullable[string] `json:"campfire_url,omitempty"`
 }
 
 // IntegrationConfigCampfireV3 defines model for IntegrationConfigCampfireV3.
 type IntegrationConfigCampfireV3 struct {
 	// ChatbotUrl The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#create-a-chatbot-integration-in-basecamp) for your Campfire chatbot.
-	ChatbotUrl string `json:"chatbot_url"`
+	ChatbotUrl nullable.Nullable[string] `json:"chatbot_url,omitempty"`
 }
 
 // IntegrationConfigClickUp defines model for IntegrationConfigClickUp.
 type IntegrationConfigClickUp struct {
-	DescriptionFormat *string `json:"description_format,omitempty"`
+	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
 	// FolderId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	FolderId *string `json:"folder_id,omitempty"`
+	FolderId nullable.Nullable[string] `json:"folder_id,omitempty"`
 
 	// InitialStatusId The initial status when a task is created. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	InitialStatusId string `json:"initial_status_id"`
+	InitialStatusId nullable.Nullable[string] `json:"initial_status_id,omitempty"`
 
 	// ListId The ID of the list to create tasks for. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ListId string `json:"list_id"`
+	ListId nullable.Nullable[string] `json:"list_id,omitempty"`
 
 	// ReopenStatusId The task status when an error is reopened. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ReopenStatusId string `json:"reopen_status_id"`
+	ReopenStatusId nullable.Nullable[string] `json:"reopen_status_id,omitempty"`
 
 	// ResolveStatusId The task status when an error is resolved. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ResolveStatusId string `json:"resolve_status_id"`
+	ResolveStatusId nullable.Nullable[string] `json:"resolve_status_id,omitempty"`
 
 	// Tags Comma-separated list of tags.
-	Tags *string `json:"tags,omitempty"`
+	Tags nullable.Nullable[string] `json:"tags,omitempty"`
 
 	// TeamspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	TeamspaceId string `json:"teamspace_id"`
+	TeamspaceId nullable.Nullable[string] `json:"teamspace_id,omitempty"`
 
 	// TitleFormat You can customize the ClickUp task name, or you can leave this blank for the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	TitleFormat *string `json:"title_format,omitempty"`
+	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 
 	// WorkspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	WorkspaceId string `json:"workspace_id"`
+	WorkspaceId nullable.Nullable[string] `json:"workspace_id,omitempty"`
 }
 
 // IntegrationConfigClickUpChat defines model for IntegrationConfigClickUpChat.
 type IntegrationConfigClickUpChat struct {
 	// ChannelId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ChannelId string `json:"channel_id"`
+	ChannelId nullable.Nullable[string] `json:"channel_id,omitempty"`
 
 	// WorkspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	WorkspaceId string `json:"workspace_id"`
+	WorkspaceId nullable.Nullable[string] `json:"workspace_id,omitempty"`
 }
 
 // IntegrationConfigDatadog defines model for IntegrationConfigDatadog.
 type IntegrationConfigDatadog struct {
-	// ApiKey Your Datadog API key. Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey   string                            `json:"api_key"`
-	Endpoint *IntegrationConfigDatadogEndpoint `json:"endpoint,omitempty"`
+	// ApiKey Your Datadog API key. Never returned. Leave it out of an update to keep it.
+	ApiKey   nullable.Nullable[string]                           `json:"api_key,omitempty"`
+	Endpoint nullable.Nullable[IntegrationConfigDatadogEndpoint] `json:"endpoint,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label       *string `json:"label,omitempty"`
-	SendMetrics *bool   `json:"send_metrics,omitempty"`
+	Label       nullable.Nullable[string] `json:"label,omitempty"`
+	SendMetrics nullable.Nullable[bool]   `json:"send_metrics,omitempty"`
 }
 
 // IntegrationConfigDatadogEndpoint defines model for IntegrationConfigDatadog.Endpoint.
@@ -3059,211 +3173,264 @@ type IntegrationConfigDatadogEndpoint string
 // IntegrationConfigDiscordWebhook defines model for IntegrationConfigDiscordWebhook.
 type IntegrationConfigDiscordWebhook struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// Url Get a Webhook URL in Discord under Channel Settings → Webhooks.
-	Url *string `json:"url,omitempty"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
 
 // IntegrationConfigEmail defines model for IntegrationConfigEmail.
 type IntegrationConfigEmail struct {
-	Email string `json:"email"`
+	Email nullable.Nullable[string] `json:"email,omitempty"`
 
 	// EmailSubject You can customize the subject line for emails related to errors (when they occur, are assigned, etc.), or you can leave this blank for the default subject. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	EmailSubject *string `json:"email_subject,omitempty"`
+	EmailSubject nullable.Nullable[string] `json:"email_subject,omitempty"`
+}
+
+// IntegrationConfigFlowdock defines model for IntegrationConfigFlowdock.
+type IntegrationConfigFlowdock struct {
+	// ApiToken Never returned. Leave it out of an update to keep it.
+	ApiToken nullable.Nullable[string] `json:"api_token,omitempty"`
+
+	// Tags A comma-separated list of tags.
+	Tags nullable.Nullable[string] `json:"tags,omitempty"`
 }
 
 // IntegrationConfigGithub defines model for IntegrationConfigGithub.
 type IntegrationConfigGithub struct {
 	// IssueType The [issue type](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/managing-issue-types-in-an-organization) to use when creating issues (e.g., 'Bug').
-	IssueType *string `json:"issue_type,omitempty"`
+	IssueType nullable.Nullable[string] `json:"issue_type,omitempty"`
 
 	// Labels A comma-delimited list of labels to add when creating issues.
-	Labels *string `json:"labels,omitempty"`
+	Labels nullable.Nullable[string] `json:"labels,omitempty"`
 
 	// Repo e.g. honeybadger-io/crywolf.
-	Repo string `json:"repo"`
+	Repo nullable.Nullable[string] `json:"repo,omitempty"`
 
 	// RichBody When enabled, new issues are created with a detailed body that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to GitHub.
-	RichBody *bool `json:"rich_body,omitempty"`
+	RichBody nullable.Nullable[bool] `json:"rich_body,omitempty"`
 
 	// TitleFormat You can customize the Github issue title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	TitleFormat *string `json:"title_format,omitempty"`
+	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 }
 
 // IntegrationConfigGitlab defines model for IntegrationConfigGitlab.
 type IntegrationConfigGitlab struct {
-	Labels *string `json:"labels,omitempty"`
+	Labels nullable.Nullable[string] `json:"labels,omitempty"`
 
-	// PersonalAccessToken Leave this blank unless you are using a self-hosted installation of GitLab. An access token can be generated in Settings -> Access Tokens in the GitLab UI. Returned masked; sending the masked value back leaves it unchanged.
-	PersonalAccessToken *string `json:"personal_access_token,omitempty"`
+	// PersonalAccessToken Leave this blank unless you are using a self-hosted installation of GitLab. An access token can be generated in Settings -> Access Tokens in the GitLab UI. Never returned. Leave it out of an update to keep it.
+	PersonalAccessToken nullable.Nullable[string] `json:"personal_access_token,omitempty"`
 
 	// Repo e.g. honeybadger-io/crywolf.
-	Repo string `json:"repo"`
+	Repo nullable.Nullable[string] `json:"repo,omitempty"`
 
 	// RichBody When enabled, new issues are created with a detailed body that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to GitLab.
-	RichBody *bool `json:"rich_body,omitempty"`
+	RichBody nullable.Nullable[bool] `json:"rich_body,omitempty"`
 
 	// ServerUrl You only need to change this if you are using a self-hosted installation of GitLab.
-	ServerUrl *string `json:"server_url,omitempty"`
+	ServerUrl nullable.Nullable[string] `json:"server_url,omitempty"`
 
 	// TitleFormat You can customize the GitLab issue title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	TitleFormat *string `json:"title_format,omitempty"`
+	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 }
 
 // IntegrationConfigGoogleHangoutsChat defines model for IntegrationConfigGoogleHangoutsChat.
 type IntegrationConfigGoogleHangoutsChat struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// Url Please see [our documentation](https://docs.honeybadger.io/guides/integrations/google-chat/) for info on how to generate this.
-	Url string `json:"url"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
+
+// IntegrationConfigHipChat defines model for IntegrationConfigHipChat.
+type IntegrationConfigHipChat struct {
+	Alert nullable.Nullable[bool] `json:"alert,omitempty"`
+
+	// AuthToken Never returned. Leave it out of an update to keep it.
+	AuthToken nullable.Nullable[string]                        `json:"auth_token,omitempty"`
+	Color     nullable.Nullable[IntegrationConfigHipChatColor] `json:"color,omitempty"`
+	Room      nullable.Nullable[string]                        `json:"room,omitempty"`
+	Url       nullable.Nullable[string]                        `json:"url,omitempty"`
+}
+
+// IntegrationConfigHipChatColor defines model for IntegrationConfigHipChat.Color.
+type IntegrationConfigHipChatColor string
 
 // IntegrationConfigIlert defines model for IntegrationConfigIlert.
 type IntegrationConfigIlert struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// Url The URL from your [Honeybadger integration](https://docs.ilert.com/inbound-integrations/honeybadger) in ilert.
-	Url string `json:"url"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
 
 // IntegrationConfigIncidentIo defines model for IntegrationConfigIncidentIo.
 type IntegrationConfigIncidentIo struct {
-	AlertSourceLabel string `json:"alert_source_label"`
+	AlertSourceLabel nullable.Nullable[string] `json:"alert_source_label,omitempty"`
 
-	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey string `json:"api_key"`
+	// ApiKey Never returned. Leave it out of an update to keep it.
+	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 }
 
 // IntegrationConfigInstatus defines model for IntegrationConfigInstatus.
 type IntegrationConfigInstatus struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
-	Url   *string `json:"url,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
+	Url   nullable.Nullable[string] `json:"url,omitempty"`
 }
 
 // IntegrationConfigIntercom defines model for IntegrationConfigIntercom.
 type IntegrationConfigIntercom struct {
 	// ContextField The field from the context hash that will be sent to Intercom as the user ID.
-	ContextField string `json:"context_field"`
+	ContextField nullable.Nullable[string] `json:"context_field,omitempty"`
 }
 
 // IntegrationConfigJira defines model for IntegrationConfigJira.
 type IntegrationConfigJira struct {
 	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger.
-	ComponentNames *string `json:"component_names,omitempty"`
-	IssueType      *string `json:"issue_type,omitempty"`
+	ComponentNames nullable.Nullable[string] `json:"component_names,omitempty"`
+	IssueType      nullable.Nullable[string] `json:"issue_type,omitempty"`
 
 	// Labels A comma-delimited list of labels to be added to the issues created by Honeybadger.
-	Labels *string `json:"labels,omitempty"`
+	Labels nullable.Nullable[string] `json:"labels,omitempty"`
 
-	// Password You can find or generate your API Token [here](https://id.atlassian.com/manage/api-tokens). Returned masked; sending the masked value back leaves it unchanged.
-	Password   string `json:"password"`
-	ProjectKey string `json:"project_key"`
+	// Password You can find or generate your API Token [here](https://id.atlassian.com/manage/api-tokens). Never returned. Leave it out of an update to keep it.
+	Password   nullable.Nullable[string] `json:"password,omitempty"`
+	ProjectKey nullable.Nullable[string] `json:"project_key,omitempty"`
 
 	// ReopenTransition The ID of the transition to be performed when unresolved.
-	ReopenTransition *string `json:"reopen_transition,omitempty"`
+	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
 
 	// ResolveTransition The ID of the transition to be performed when resolved.
-	ResolveTransition *string `json:"resolve_transition,omitempty"`
+	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
 
 	// RichBody When enabled, new issues are created with a detailed description that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to JIRA.
-	RichBody  *bool  `json:"rich_body,omitempty"`
-	ServerUrl string `json:"server_url"`
+	RichBody  nullable.Nullable[bool]   `json:"rich_body,omitempty"`
+	ServerUrl nullable.Nullable[string] `json:"server_url,omitempty"`
 
 	// SummaryFormat You can customize the JIRA issue summary, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	SummaryFormat *string `json:"summary_format,omitempty"`
+	SummaryFormat nullable.Nullable[string] `json:"summary_format,omitempty"`
 
 	// Username Your Jira email address.
-	Username string `json:"username"`
+	Username nullable.Nullable[string] `json:"username,omitempty"`
 }
 
 // IntegrationConfigJiraCloud defines model for IntegrationConfigJiraCloud.
 type IntegrationConfigJiraCloud struct {
 	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger. **NOTE: Components are not avaliable for next-gen projects.**
-	ComponentNames *string `json:"component_names,omitempty"`
-	IssueType      *string `json:"issue_type,omitempty"`
+	ComponentNames nullable.Nullable[string] `json:"component_names,omitempty"`
+	IssueType      nullable.Nullable[string] `json:"issue_type,omitempty"`
 
 	// Labels A comma-delimited list of labels to be added to the issues created by Honeybadger.
-	Labels     *string `json:"labels,omitempty"`
-	ProjectKey string  `json:"project_key"`
+	Labels     nullable.Nullable[string] `json:"labels,omitempty"`
+	ProjectKey nullable.Nullable[string] `json:"project_key,omitempty"`
 
 	// ReopenTransition The ID of the transition to be performed when unresolved.
-	ReopenTransition *string `json:"reopen_transition,omitempty"`
+	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
 
 	// ResolveTransition The ID of the transition to be performed when resolved.
-	ResolveTransition *string `json:"resolve_transition,omitempty"`
+	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
 
 	// RichBody When enabled, new issues are created with a detailed description that includes context, parameters, and the backtrace. When disabled, only a short backtrace excerpt and a link back to Honeybadger are sent. Note that enabling this sends more potentially sensitive data to JIRA.
-	RichBody *bool `json:"rich_body,omitempty"`
+	RichBody nullable.Nullable[bool] `json:"rich_body,omitempty"`
 
 	// SummaryFormat You can customize the JIRA issue summary, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	SummaryFormat *string `json:"summary_format,omitempty"`
+	SummaryFormat nullable.Nullable[string] `json:"summary_format,omitempty"`
 }
 
 // IntegrationConfigLinear defines model for IntegrationConfigLinear.
 type IntegrationConfigLinear struct {
-	DescriptionFormat *string `json:"description_format,omitempty"`
+	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label    *string   `json:"label,omitempty"`
-	LabelIds *[]string `json:"label_ids,omitempty"`
+	Label    nullable.Nullable[string]   `json:"label,omitempty"`
+	LabelIds nullable.Nullable[[]string] `json:"label_ids,omitempty"`
 
 	// LinearProjectId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	LinearProjectId *string `json:"linear_project_id,omitempty"`
+	LinearProjectId nullable.Nullable[string] `json:"linear_project_id,omitempty"`
 
 	// ResolvedStateId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ResolvedStateId *string `json:"resolved_state_id,omitempty"`
+	ResolvedStateId nullable.Nullable[string] `json:"resolved_state_id,omitempty"`
 
 	// TeamId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	TeamId      string  `json:"team_id"`
-	TitleFormat *string `json:"title_format,omitempty"`
+	TeamId      nullable.Nullable[string] `json:"team_id,omitempty"`
+	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 
 	// UnresolvedStateId We will use this state for new issues and when an existing issue is reopened. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	UnresolvedStateId *string `json:"unresolved_state_id,omitempty"`
+	UnresolvedStateId nullable.Nullable[string] `json:"unresolved_state_id,omitempty"`
 }
 
 // IntegrationConfigMattermost defines model for IntegrationConfigMattermost.
 type IntegrationConfigMattermost struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
-	Url   *string `json:"url,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
+	Url   nullable.Nullable[string] `json:"url,omitempty"`
+}
+
+// IntegrationConfigMicrosoftTeams defines model for IntegrationConfigMicrosoftTeams.
+type IntegrationConfigMicrosoftTeams struct {
+	Label nullable.Nullable[string] `json:"label,omitempty"`
+
+	// Url Get a Webhook URL in Microsoft Teams under Apps → Search all → Honeybadger.
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
 
 // IntegrationConfigMicrosoftTeamsV2 defines model for IntegrationConfigMicrosoftTeamsV2.
 type IntegrationConfigMicrosoftTeamsV2 struct {
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// Url Get a Webhook URL in Microsoft Teams under Connectors → Incoming Webhook.
-	Url string `json:"url"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
+
+// IntegrationConfigOpsGenie defines model for IntegrationConfigOpsGenie.
+type IntegrationConfigOpsGenie struct {
+	// ApiKey The API key from your [Honeybadger integration](https://app.opsgenie.com/integration) in OpsGenie. Never returned. Leave it out of an update to keep it.
+	ApiKey   nullable.Nullable[string]                            `json:"api_key,omitempty"`
+	Endpoint nullable.Nullable[IntegrationConfigOpsGenieEndpoint] `json:"endpoint,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label nullable.Nullable[string] `json:"label,omitempty"`
+}
+
+// IntegrationConfigOpsGenieEndpoint defines model for IntegrationConfigOpsGenie.Endpoint.
+type IntegrationConfigOpsGenieEndpoint string
 
 // IntegrationConfigOpsGenieV2 defines model for IntegrationConfigOpsGenieV2.
 type IntegrationConfigOpsGenieV2 struct {
-	// ApiKey The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/) in OpsGenie. Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey   string                               `json:"api_key"`
-	Endpoint *IntegrationConfigOpsGenieV2Endpoint `json:"endpoint,omitempty"`
+	// ApiKey The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/) in OpsGenie. Never returned. Leave it out of an update to keep it.
+	ApiKey   nullable.Nullable[string]                              `json:"api_key,omitempty"`
+	Endpoint nullable.Nullable[IntegrationConfigOpsGenieV2Endpoint] `json:"endpoint,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 }
 
 // IntegrationConfigOpsGenieV2Endpoint defines model for IntegrationConfigOpsGenieV2.Endpoint.
 type IntegrationConfigOpsGenieV2Endpoint string
 
-// IntegrationConfigPagerDutyV2 defines model for IntegrationConfigPagerDutyV2.
-type IntegrationConfigPagerDutyV2 struct {
-	// IntegrationKey 32 character alphanumeric integration key. Select "Honeybadger" from the Integration Type menu when creating a service for Honeybadger in PagerDuty. Returned masked; sending the masked value back leaves it unchanged.
-	IntegrationKey string `json:"integration_key"`
+// IntegrationConfigPagerDuty defines model for IntegrationConfigPagerDuty.
+type IntegrationConfigPagerDuty struct {
+	// ApiKey 32 character alphanumeric service key. Select "Honeybadger" from the Integration Type menu when creating a service for Honeybadger in PagerDuty. Never returned. Leave it out of an update to keep it.
+	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
+}
+
+// IntegrationConfigPagerDutyV2 defines model for IntegrationConfigPagerDutyV2.
+type IntegrationConfigPagerDutyV2 struct {
+	// IntegrationKey 32 character alphanumeric integration key. Select "Honeybadger" from the Integration Type menu when creating a service for Honeybadger in PagerDuty. Never returned. Leave it out of an update to keep it.
+	IntegrationKey nullable.Nullable[string] `json:"integration_key,omitempty"`
+
+	// Label Optional label to show in the integrations list.
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// Severity The perceived severity of the events generated by this integration.
-	Severity *IntegrationConfigPagerDutyV2Severity `json:"severity,omitempty"`
+	Severity nullable.Nullable[IntegrationConfigPagerDutyV2Severity] `json:"severity,omitempty"`
 }
 
 // IntegrationConfigPagerDutyV2Severity The perceived severity of the events generated by this integration.
@@ -3272,118 +3439,156 @@ type IntegrationConfigPagerDutyV2Severity string
 // IntegrationConfigPagerTree defines model for IntegrationConfigPagerTree.
 type IntegrationConfigPagerTree struct {
 	// Url Please see [PagerTree documentation](https://pagertree.com/knowledge-base/integration-honeybadger/) for info on generating this.
-	Url string `json:"url"`
+	Url nullable.Nullable[string] `json:"url,omitempty"`
+}
+
+// IntegrationConfigPivotalTracker defines model for IntegrationConfigPivotalTracker.
+type IntegrationConfigPivotalTracker struct {
+	// ApiToken To create stories from the UI, each project member must also add their personal Pivotal Tracker API token on their project settings page. Never returned. Leave it out of an update to keep it.
+	ApiToken nullable.Nullable[string] `json:"api_token,omitempty"`
+
+	// DescriptionFormat Customize the Pivotal Tracker description. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
+
+	// Labels A comma-separated list of labels to add to new stories.
+	Labels nullable.Nullable[string] `json:"labels,omitempty"`
+
+	// NameFormat Customize the Pivotal Tracker story name, or leave blank for the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
+	NameFormat nullable.Nullable[string] `json:"name_format,omitempty"`
+
+	// PivotalProjectId e.g. pivotaltracker.com/projects/**1337**/overview.
+	PivotalProjectId nullable.Nullable[string] `json:"pivotal_project_id,omitempty"`
 }
 
 // IntegrationConfigRedmine defines model for IntegrationConfigRedmine.
 type IntegrationConfigRedmine struct {
-	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey string `json:"api_key"`
+	// ApiKey Never returned. Leave it out of an update to keep it.
+	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 
 	// ReopenTransition The ID of the status for unresolved issues.
-	ReopenTransition *string `json:"reopen_transition,omitempty"`
+	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
 
 	// ResolveTransition The ID of the status for resolved issues.
-	ResolveTransition *string `json:"resolve_transition,omitempty"`
+	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
 
 	// ServerUrl The full path to the project: http://redmine.yourserver.com/projects/project-name.
-	ServerUrl string `json:"server_url"`
+	ServerUrl nullable.Nullable[string] `json:"server_url,omitempty"`
 }
 
 // IntegrationConfigRootly defines model for IntegrationConfigRootly.
 type IntegrationConfigRootly struct {
 	// Label Optional label to show in the integrations list.
-	Label                  *string                                        `json:"label,omitempty"`
-	NotificationTargetId   *string                                        `json:"notification_target_id,omitempty"`
-	NotificationTargetType *IntegrationConfigRootlyNotificationTargetType `json:"notification_target_type,omitempty"`
+	Label                  nullable.Nullable[string]                                        `json:"label,omitempty"`
+	NotificationTargetId   nullable.Nullable[string]                                        `json:"notification_target_id,omitempty"`
+	NotificationTargetType nullable.Nullable[IntegrationConfigRootlyNotificationTargetType] `json:"notification_target_type,omitempty"`
 
-	// WebhookAuthorizationToken Returned masked; sending the masked value back leaves it unchanged.
-	WebhookAuthorizationToken string `json:"webhook_authorization_token"`
+	// WebhookAuthorizationToken Never returned. Leave it out of an update to keep it.
+	WebhookAuthorizationToken nullable.Nullable[string] `json:"webhook_authorization_token,omitempty"`
 }
 
 // IntegrationConfigRootlyNotificationTargetType defines model for IntegrationConfigRootly.NotificationTargetType.
 type IntegrationConfigRootlyNotificationTargetType string
 
-// IntegrationConfigShortcutV2 defines model for IntegrationConfigShortcutV2.
-type IntegrationConfigShortcutV2 struct {
-	// ApiKey Available from Settings > Your Account > API Tokens. Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey            string  `json:"api_key"`
-	CustomFields      *string `json:"custom_fields,omitempty"`
-	DescriptionFormat *string `json:"description_format,omitempty"`
+// IntegrationConfigShortcut defines model for IntegrationConfigShortcut.
+type IntegrationConfigShortcut struct {
+	// ApiKey Available from Settings > Your Account > API Tokens. Never returned. Leave it out of an update to keep it.
+	ApiKey            nullable.Nullable[string] `json:"api_key,omitempty"`
+	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
-	// InitialState The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	InitialState string `json:"initial_state"`
+	// ExternalProjectId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	ExternalProjectId nullable.Nullable[string] `json:"external_project_id,omitempty"`
 
 	// OrganizationName e.g. app.shortcut.com/**yourorg**/dashboard.
-	OrganizationName string `json:"organization_name"`
+	OrganizationName nullable.Nullable[string] `json:"organization_name,omitempty"`
 
 	// ReopenTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ReopenTransition string `json:"reopen_transition"`
+	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
 
 	// ResolveTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ResolveTransition string `json:"resolve_transition"`
+	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
+	TitleFormat       nullable.Nullable[string] `json:"title_format,omitempty"`
+}
+
+// IntegrationConfigShortcutV2 defines model for IntegrationConfigShortcutV2.
+type IntegrationConfigShortcutV2 struct {
+	// ApiKey Available from Settings > Your Account > API Tokens. Never returned. Leave it out of an update to keep it.
+	ApiKey            nullable.Nullable[string] `json:"api_key,omitempty"`
+	CustomFields      nullable.Nullable[string] `json:"custom_fields,omitempty"`
+	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
+
+	// InitialState The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	InitialState nullable.Nullable[string] `json:"initial_state,omitempty"`
+
+	// OrganizationName e.g. app.shortcut.com/**yourorg**/dashboard.
+	OrganizationName nullable.Nullable[string] `json:"organization_name,omitempty"`
+
+	// ReopenTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
+
+	// ResolveTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
 
 	// Team The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	Team        string  `json:"team"`
-	TitleFormat *string `json:"title_format,omitempty"`
+	Team        nullable.Nullable[string] `json:"team,omitempty"`
+	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 }
 
 // IntegrationConfigSlack defines model for IntegrationConfigSlack.
 type IntegrationConfigSlack struct {
 	// DisableBacktrace Remove backtrace from error event notifications.
-	DisableBacktrace *bool `json:"disable_backtrace,omitempty"`
+	DisableBacktrace nullable.Nullable[bool] `json:"disable_backtrace,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 }
 
 // IntegrationConfigSprintly defines model for IntegrationConfigSprintly.
 type IntegrationConfigSprintly struct {
-	AccountEmail string `json:"account_email"`
+	AccountEmail nullable.Nullable[string] `json:"account_email,omitempty"`
 
-	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey string `json:"api_key"`
+	// ApiKey Never returned. Leave it out of an update to keep it.
+	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 
 	// ProductId e.g. sprint.ly/product/**1337**/#!/.
-	ProductId string `json:"product_id"`
+	ProductId nullable.Nullable[string] `json:"product_id,omitempty"`
 
 	// Tags A comma-separated list of tags to add to new defects.
-	Tags *string `json:"tags,omitempty"`
+	Tags nullable.Nullable[string] `json:"tags,omitempty"`
 }
 
 // IntegrationConfigTrello defines model for IntegrationConfigTrello.
 type IntegrationConfigTrello struct {
 	// BoardId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	BoardId string `json:"board_id"`
+	BoardId nullable.Nullable[string] `json:"board_id,omitempty"`
 
 	// ListId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
-	ListId string `json:"list_id"`
+	ListId nullable.Nullable[string] `json:"list_id,omitempty"`
 
 	// TitleFormat You can customize the trello card title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
-	TitleFormat *string `json:"title_format,omitempty"`
+	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 }
 
 // IntegrationConfigVictorOps defines model for IntegrationConfigVictorOps.
 type IntegrationConfigVictorOps struct {
-	// ApiKey Your Splunk On-Call API key. Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey string `json:"api_key"`
+	// ApiKey Your Splunk On-Call API key. Never returned. Leave it out of an update to keep it.
+	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 
 	// RoutingKey Optional routing key for alert.
-	RoutingKey *string `json:"routing_key,omitempty"`
+	RoutingKey nullable.Nullable[string] `json:"routing_key,omitempty"`
 }
 
 // IntegrationConfigWebHook defines model for IntegrationConfigWebHook.
 type IntegrationConfigWebHook struct {
-	// BearerToken Optional. When set, requests are sent with `Authorization: Bearer <token>`, for endpoints that require it. Returned masked; sending the masked value back leaves it unchanged.
-	BearerToken *string `json:"bearer_token,omitempty"`
+	// BearerToken Optional. When set, requests are sent with `Authorization: Bearer <token>`, for endpoints that require it. Never returned. Leave it out of an update to keep it.
+	BearerToken nullable.Nullable[string] `json:"bearer_token,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label          *string                                 `json:"label,omitempty"`
-	PayloadVersion *IntegrationConfigWebHookPayloadVersion `json:"payload_version,omitempty"`
-	Url            string                                  `json:"url"`
+	Label          nullable.Nullable[string]                                 `json:"label,omitempty"`
+	PayloadVersion nullable.Nullable[IntegrationConfigWebHookPayloadVersion] `json:"payload_version,omitempty"`
+	Url            nullable.Nullable[string]                                 `json:"url,omitempty"`
 }
 
 // IntegrationConfigWebHookPayloadVersion defines model for IntegrationConfigWebHook.PayloadVersion.
@@ -3391,56 +3596,59 @@ type IntegrationConfigWebHookPayloadVersion string
 
 // IntegrationConfigZulip defines model for IntegrationConfigZulip.
 type IntegrationConfigZulip struct {
-	// ApiKey Returned masked; sending the masked value back leaves it unchanged.
-	ApiKey      string `json:"api_key"`
-	BotEmail    string `json:"bot_email"`
-	Channel     string `json:"channel"`
-	Topic       string `json:"topic"`
-	ZulipDomain string `json:"zulip_domain"`
+	// ApiKey Never returned. Leave it out of an update to keep it.
+	ApiKey      nullable.Nullable[string] `json:"api_key,omitempty"`
+	BotEmail    nullable.Nullable[string] `json:"bot_email,omitempty"`
+	Channel     nullable.Nullable[string] `json:"channel,omitempty"`
+	Topic       nullable.Nullable[string] `json:"topic,omitempty"`
+	ZulipDomain nullable.Nullable[string] `json:"zulip_domain,omitempty"`
 }
 
 // IntegrationCreateInput A new integration. `type` picks the integration, and `config` holds that type's settings. OAuth integrations (Slack, GitHub and the like) are created inactive and are connected in the web UI at `links.web`. Some required settings are IDs from the other service, such as a Linear team or a Trello board.
 type IntegrationCreateInput struct {
 	Active *bool `json:"active,omitempty"`
 
-	// AlarmAlertIds IDs of alarms whose alert events this integration receives.
-	AlarmAlertIds *[]string `json:"alarm_alert_ids,omitempty"`
+	// AlarmAlertIds IDs of alarms whose alert events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	AlarmAlertIds nullable.Nullable[[]string] `json:"alarm_alert_ids,omitempty"`
 
-	// AlarmOkIds IDs of alarms whose recovery events this integration receives.
-	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
+	// AlarmOkIds IDs of alarms whose recovery events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	AlarmOkIds nullable.Nullable[[]string] `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Check-ins whose events this integration receives. An empty list turns check-in notifications off. An ID that isn't one of this project's check-ins fails the request with 422.
-	CheckInIds *[]string `json:"check_in_ids,omitempty"`
+	// AllCheckIns Follow every check-in in the project, including ones added later. When true, check_in_ids must be empty or left out, and reads return []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids empty, the integration gets no check-in events.
+	AllCheckIns *bool `json:"all_check_ins,omitempty"`
+
+	// AllSites Follow every site in the project, including ones added later. When true, site_ids must be empty or left out, and reads return []. Sending a non-empty site_ids turns it off. With it off and site_ids empty, the integration gets no up or down events.
+	AllSites *bool `json:"all_sites,omitempty"`
+
+	// CheckInIds Specific check-ins whose events this integration receives. An empty list turns check-in notifications off unless all_check_ins is true; a non-empty list with all_check_ins: true is 422. An ID that isn't one of this project's check-ins fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids,omitempty"`
 
 	// Config The type's settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 	Config *map[string]interface{} `json:"config,omitempty"`
 
-	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422.
-	Events *[]IntegrationEvent `json:"events,omitempty"`
+	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422. Send null to reset to the type's defaults. A set; order is ignored and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding one on a plan without it is 403 feature_unavailable, and defaults leave them out on those plans.
+	Events nullable.Nullable[[]IntegrationEvent] `json:"events,omitempty"`
 
-	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
-	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports. Send null or [] to clear. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	ExcludedEnvironments nullable.Nullable[[]string] `json:"excluded_environments,omitempty"`
 
-	// FilterEvents Events to filter, paired by position with filter_queries. Replaces the stored filters; send [] to clear them.
-	FilterEvents *[]string `json:"filter_events,omitempty"`
+	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query. Replaces the stored filters; send [] or null to clear. Applies only on plans with integration filters; changing it on other plans is 403 feature_unavailable. Reads return what's stored.
+	Filters nullable.Nullable[[]IntegrationFilter] `json:"filters,omitempty"`
 
-	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only for errors that match it. Read only together with filter_events.
-	FilterQueries *[]string `json:"filter_queries,omitempty"`
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded. Send null or [] to clear. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	IncludedEnvironments nullable.Nullable[[]string] `json:"included_environments,omitempty"`
 
-	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded.
-	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
+	// NotificationLimit Maximum notifications in a 10-minute window before flood control. Send null to remove the limit.
+	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// NotificationLimit Maximum notifications in a 10-minute window before flood control
-	NotificationLimit *int `json:"notification_limit,omitempty"`
+	// Rate Rate threshold period (e.g. min, hour). Send null to reset to wday.
+	Rate nullable.Nullable[string] `json:"rate,omitempty"`
 
-	// Rate Rate threshold period (e.g. min, hour)
-	Rate *string `json:"rate,omitempty"`
+	// SiteIds Specific sites whose up and down events this integration receives. An empty list turns site notifications off unless all_sites is true; a non-empty list with all_sites: true is 422. An ID that isn't one of this project's sites fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
 
-	// SiteIds Sites whose up and down events this integration receives. An empty list turns site notifications off. An ID that isn't one of this project's sites fails the request with 422.
-	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
-
-	// Threshold Number of occurrences before rate_exceeded fires
-	Threshold *int `json:"threshold,omitempty"`
+	// Threshold Number of occurrences before rate_exceeded fires. Send null to reset to 100.
+	Threshold nullable.Nullable[int] `json:"threshold,omitempty"`
 
 	// Type Integration type. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/), and in its IntegrationConfig<Type> schema.
 	Type IntegrationCreateInputType `json:"type"`
@@ -3452,48 +3660,63 @@ type IntegrationCreateInputType string
 // IntegrationEvent An event an integration can notify on. Each type supports a subset, which IntegrationCreateInput lists per type.
 type IntegrationEvent string
 
-// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. The integration's type can't be changed, so a `type` in the body is ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
+// IntegrationFilter Only errors matching `query` notify for `event`.
+type IntegrationFilter struct {
+	// Event An event a filter applies to, or `all` for every event.
+	Event IntegrationFilterEvent `json:"event"`
+
+	// Query An error search query, as in the Errors search box.
+	Query string `json:"query"`
+}
+
+// IntegrationFilterEvent An event a filter applies to, or `all` for every event.
+type IntegrationFilterEvent string
+
+// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. `type` can be sent only with its current value; any other value is 422. A key this operation doesn't take is 422, except the read-only keys a GET returns (`id`, `links` and the like), which are ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 type IntegrationUpdateInput struct {
 	Active *bool `json:"active,omitempty"`
 
-	// AlarmAlertIds IDs of alarms whose alert events this integration receives.
-	AlarmAlertIds *[]string `json:"alarm_alert_ids,omitempty"`
+	// AlarmAlertIds IDs of alarms whose alert events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	AlarmAlertIds nullable.Nullable[[]string] `json:"alarm_alert_ids,omitempty"`
 
-	// AlarmOkIds IDs of alarms whose recovery events this integration receives.
-	AlarmOkIds *[]string `json:"alarm_ok_ids,omitempty"`
+	// AlarmOkIds IDs of alarms whose recovery events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	AlarmOkIds nullable.Nullable[[]string] `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Check-ins whose events this integration receives. An empty list turns check-in notifications off. An ID that isn't one of this project's check-ins fails the request with 422.
-	CheckInIds *[]string `json:"check_in_ids,omitempty"`
+	// AllCheckIns Follow every check-in in the project, including ones added later. When true, check_in_ids must be empty or left out, and reads return []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids empty, the integration gets no check-in events.
+	AllCheckIns *bool `json:"all_check_ins,omitempty"`
 
-	// Config Type-specific settings to change, the same keys a GET returns under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Secrets sent back masked, exactly as a GET returned them, are left unchanged. Hidden and OAuth-managed keys are ignored. Sending a setting outside `config` is refused with 422.
+	// AllSites Follow every site in the project, including ones added later. When true, site_ids must be empty or left out, and reads return []. Sending a non-empty site_ids turns it off. With it off and site_ids empty, the integration gets no up or down events.
+	AllSites *bool `json:"all_sites,omitempty"`
+
+	// CheckInIds Specific check-ins whose events this integration receives. An empty list turns check-in notifications off unless all_check_ins is true; a non-empty list with all_check_ins: true is 422. An ID that isn't one of this project's check-ins fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids,omitempty"`
+
+	// Config Type-specific settings, the same keys a GET returns under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Merged into the stored settings: a key left out keeps its value; a key sent as null is cleared, or reset to its default. Secrets are never returned; leave them out to keep them. A key the type doesn't have, or a value with leading or trailing whitespace on a setting that doesn't allow it, is 422. Sending a setting outside `config` is refused with 422.
 	Config *map[string]interface{} `json:"config,omitempty"`
 
-	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422.
-	Events *[]IntegrationEvent `json:"events,omitempty"`
+	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422. Send null to reset to the type's defaults. A set; order is ignored and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding one on a plan without it is 403 feature_unavailable, and defaults leave them out on those plans.
+	Events nullable.Nullable[[]IntegrationEvent] `json:"events,omitempty"`
 
-	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports.
-	ExcludedEnvironments *[]string `json:"excluded_environments,omitempty"`
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports. Send null or [] to clear. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	ExcludedEnvironments nullable.Nullable[[]string] `json:"excluded_environments,omitempty"`
 
-	// FilterEvents Events to filter, paired by position with filter_queries. Replaces the stored filters; send [] to clear them.
-	FilterEvents *[]string `json:"filter_events,omitempty"`
+	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query. Replaces the stored filters; send [] or null to clear. Applies only on plans with integration filters; changing it on other plans is 403 feature_unavailable. Reads return what's stored.
+	Filters nullable.Nullable[[]IntegrationFilter] `json:"filters,omitempty"`
 
-	// FilterQueries Search query for the event at the same position in filter_events. That event notifies only for errors that match it. Read only together with filter_events.
-	FilterQueries *[]string `json:"filter_queries,omitempty"`
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded. Send null or [] to clear. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	IncludedEnvironments nullable.Nullable[[]string] `json:"included_environments,omitempty"`
 
-	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded.
-	IncludedEnvironments *[]string `json:"included_environments,omitempty"`
+	// NotificationLimit Maximum notifications in a 10-minute window before flood control. Send null to remove the limit.
+	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// NotificationLimit Maximum notifications in a 10-minute window before flood control
-	NotificationLimit *int `json:"notification_limit,omitempty"`
+	// Rate Rate threshold period (e.g. min, hour). Send null to reset to wday.
+	Rate nullable.Nullable[string] `json:"rate,omitempty"`
 
-	// Rate Rate threshold period (e.g. min, hour)
-	Rate *string `json:"rate,omitempty"`
+	// SiteIds Specific sites whose up and down events this integration receives. An empty list turns site notifications off unless all_sites is true; a non-empty list with all_sites: true is 422. An ID that isn't one of this project's sites fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
 
-	// SiteIds Sites whose up and down events this integration receives. An empty list turns site notifications off. An ID that isn't one of this project's sites fails the request with 422.
-	SiteIds *[]openapi_types.UUID `json:"site_ids,omitempty"`
-
-	// Threshold Number of occurrences before rate_exceeded fires
-	Threshold *int `json:"threshold,omitempty"`
+	// Threshold Number of occurrences before rate_exceeded fires. Send null to reset to 100.
+	Threshold nullable.Nullable[int] `json:"threshold,omitempty"`
 }
 
 // Notice An individual error occurrence
@@ -3647,19 +3870,28 @@ type Outage struct {
 	DownAt time.Time `json:"down_at"`
 
 	// DurationSeconds Duration of the outage in seconds
-	DurationSeconds nullable.Nullable[int] `json:"duration_seconds,omitempty"`
+	DurationSeconds nullable.Nullable[int] `json:"duration_seconds"`
+
+	// Headers Response headers of the failing check
+	Headers map[string]string `json:"headers"`
 
 	// Id Unique identifier
 	Id openapi_types.UUID `json:"id"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
+
+	// Reason Why the check failed
+	Reason nullable.Nullable[string] `json:"reason"`
 
 	// SiteId Identifier of the site
 	SiteId openapi_types.UUID `json:"site_id"`
 
+	// Status HTTP status of the check that went down
+	Status nullable.Nullable[int] `json:"status"`
+
 	// UpAt When the site came back up, or null while it is still down
-	UpAt nullable.Nullable[time.Time] `json:"up_at,omitempty"`
+	UpAt nullable.Nullable[time.Time] `json:"up_at"`
 }
 
 // Pagination Offset-based pagination information
@@ -3671,7 +3903,7 @@ type Pagination struct {
 	PerPage int `json:"per_page"`
 }
 
-// PauseDuration How long to pause recording.
+// PauseDuration A duration of an hour, a day or a week.
 type PauseDuration string
 
 // Project A Honeybadger project
@@ -3682,136 +3914,135 @@ type Project struct {
 	// Active Whether the project is active
 	Active bool `json:"active"`
 
+	// AsanaWorkspaceId Asana workspace used by the project's Asana integration
+	AsanaWorkspaceId nullable.Nullable[string] `json:"asana_workspace_id"`
+
 	// CreatedAt When the project was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// CustomerThrottle Notices accepted per minute before throttling kicks in
-	CustomerThrottle nullable.Nullable[int] `json:"customer_throttle,omitempty"`
+	CustomerThrottle nullable.Nullable[int] `json:"customer_throttle"`
 
 	// DisablePublicLinks Whether public error links are disabled
-	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
+	DisablePublicLinks bool `json:"disable_public_links"`
 
 	// EarliestNoticeAt Earliest available notice (based on retention)
-	EarliestNoticeAt nullable.Nullable[time.Time] `json:"earliest_notice_at,omitempty"`
+	EarliestNoticeAt nullable.Nullable[time.Time] `json:"earliest_notice_at"`
 
 	// Environments List of environment names seen in this project
-	Environments *[]string `json:"environments,omitempty"`
+	Environments []string `json:"environments"`
 
 	// FaultCount Total number of faults (errors) in this project
-	FaultCount *int `json:"fault_count,omitempty"`
+	FaultCount int `json:"fault_count"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Language Primary programming language
-	Language nullable.Nullable[string] `json:"language,omitempty"`
+	Language nullable.Nullable[string] `json:"language"`
 
 	// LastNoticeAt When the last error was received
-	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
+	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// Name Project name
 	Name string `json:"name"`
 
 	// PurgeDays Data retention period in days
-	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
+	PurgeDays nullable.Nullable[int] `json:"purge_days"`
 
 	// ResolveErrorsOnDeploy Whether recording a deploy resolves every open fault
-	ResolveErrorsOnDeploy *bool `json:"resolve_errors_on_deploy,omitempty"`
+	ResolveErrorsOnDeploy bool `json:"resolve_errors_on_deploy"`
 
 	// SourceUrl Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
-	SourceUrl nullable.Nullable[string] `json:"source_url,omitempty"`
+	SourceUrl nullable.Nullable[string] `json:"source_url"`
 
 	// Token API key for error reporting: the newest of the project's keys. Null when the project has none, which deleting every project key produces.
-	Token nullable.Nullable[string] `json:"token,omitempty"`
+	Token nullable.Nullable[string] `json:"token"`
 
 	// UnresolvedFaultCount Number of unresolved faults
-	UnresolvedFaultCount *int `json:"unresolved_fault_count,omitempty"`
+	UnresolvedFaultCount int `json:"unresolved_fault_count"`
 
 	// UserSearchField Context key identifying the affected user, when it is not in the default `context.user_email` or `context.user_id`.
-	UserSearchField nullable.Nullable[string] `json:"user_search_field,omitempty"`
+	UserSearchField nullable.Nullable[string] `json:"user_search_field"`
 
 	// UserUrl Template linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted.
-	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
+	UserUrl nullable.Nullable[string] `json:"user_url"`
 }
 
 // ProjectCreateInput Attributes for creating a project.
 type ProjectCreateInput struct {
-	AsanaWorkspaceId *string `json:"asana_workspace_id,omitempty"`
+	// AsanaWorkspaceId Send null to clear.
+	AsanaWorkspaceId nullable.Nullable[string] `json:"asana_workspace_id,omitempty"`
 
-	// CustomerThrottle Notices accepted per minute before throttling kicks in
-	CustomerThrottle *int `json:"customer_throttle,omitempty"`
+	// CustomerThrottle Notices accepted per minute before throttling kicks in. Send null to clear.
+	CustomerThrottle nullable.Nullable[int] `json:"customer_throttle,omitempty"`
 
-	// DisableEmailNotifications Applied at creation: members added with the project get email notifications switched off. Not a stored setting, so reading a project never returns it.
+	// DisableEmailNotifications Create-only. Members added with the project get email notifications switched off. Not a stored setting, so reading a project never returns it.
 	DisableEmailNotifications *bool `json:"disable_email_notifications,omitempty"`
 
-	// DisablePublicLinks Disallow shareable public fault links
-	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
+	// DisablePublicLinks Disallow shareable public fault links. Send null to reset to false.
+	DisablePublicLinks nullable.Nullable[bool] `json:"disable_public_links,omitempty"`
 
-	// Language Primary language, used to format backtraces
-	Language *string `json:"language,omitempty"`
-	Name     string  `json:"name"`
+	// Language Primary language, used to format backtraces. Send null to clear.
+	Language nullable.Nullable[string] `json:"language,omitempty"`
+	Name     string                    `json:"name"`
 
-	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
-	PurgeDays *int `json:"purge_days,omitempty"`
+	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Send null to clear.
+	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
 
-	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded
-	ResolveErrorsOnDeploy *bool `json:"resolve_errors_on_deploy,omitempty"`
+	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded. Send null to reset to true.
+	ResolveErrorsOnDeploy nullable.Nullable[bool] `json:"resolve_errors_on_deploy,omitempty"`
 
-	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
-	SourceUrl *string `json:"source_url,omitempty"`
+	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Send null to clear.
+	SourceUrl nullable.Nullable[string] `json:"source_url,omitempty"`
 
-	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An ID that isn't a team on this account fails the request with 422.
+	// TeamId Puts the new project in this team. Create-only: afterwards the team's `project_ids` owns membership. Including it requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An ID that isn't a team on this account fails the request with 422.
 	TeamId *string `json:"team_id,omitempty"`
 
-	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
-	UserSearchField *string `json:"user_search_field,omitempty"`
+	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`. Send null to clear.
+	UserSearchField nullable.Nullable[string] `json:"user_search_field,omitempty"`
 
-	// UserUrl Template for linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted.
-	UserUrl *string `json:"user_url,omitempty"`
+	// UserUrl Template for linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted. Send null to clear.
+	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
-// ProjectInput Writable project attributes
+// ProjectInput Writable project attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take, including the create-only `team_id` and `disable_email_notifications`, is 422; the read-only keys a GET returns are ignored.
 type ProjectInput struct {
-	AsanaWorkspaceId *string `json:"asana_workspace_id,omitempty"`
+	// AsanaWorkspaceId Send null to clear.
+	AsanaWorkspaceId nullable.Nullable[string] `json:"asana_workspace_id,omitempty"`
 
-	// CustomerThrottle Notices accepted per minute before throttling kicks in
-	CustomerThrottle *int `json:"customer_throttle,omitempty"`
+	// CustomerThrottle Notices accepted per minute before throttling kicks in. Send null to clear.
+	CustomerThrottle nullable.Nullable[int] `json:"customer_throttle,omitempty"`
 
-	// DisableEmailNotifications Applied at creation: members added with the project get email notifications switched off. Not a stored setting, so reading a project never returns it.
-	DisableEmailNotifications *bool `json:"disable_email_notifications,omitempty"`
+	// DisablePublicLinks Disallow shareable public fault links. Send null to reset to false.
+	DisablePublicLinks nullable.Nullable[bool] `json:"disable_public_links,omitempty"`
 
-	// DisablePublicLinks Disallow shareable public fault links
-	DisablePublicLinks *bool `json:"disable_public_links,omitempty"`
+	// Language Primary language, used to format backtraces. Send null to clear.
+	Language nullable.Nullable[string] `json:"language,omitempty"`
+	Name     *string                   `json:"name,omitempty"`
 
-	// Language Primary language, used to format backtraces
-	Language *string `json:"language,omitempty"`
-	Name     *string `json:"name,omitempty"`
+	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Send null to clear.
+	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
 
-	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
-	PurgeDays *int `json:"purge_days,omitempty"`
+	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded. Send null to reset to true.
+	ResolveErrorsOnDeploy nullable.Nullable[bool] `json:"resolve_errors_on_deploy,omitempty"`
 
-	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded
-	ResolveErrorsOnDeploy *bool `json:"resolve_errors_on_deploy,omitempty"`
+	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Send null to clear.
+	SourceUrl nullable.Nullable[string] `json:"source_url,omitempty"`
 
-	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
-	SourceUrl *string `json:"source_url,omitempty"`
+	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`. Send null to clear.
+	UserSearchField nullable.Nullable[string] `json:"user_search_field,omitempty"`
 
-	// TeamId ID of a team on this account to grant project access. Including this field on create or update requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An ID that isn't a team on this account fails the request with 422.
-	TeamId *string `json:"team_id,omitempty"`
-
-	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`.
-	UserSearchField *string `json:"user_search_field,omitempty"`
-
-	// UserUrl Template for linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted.
-	UserUrl *string `json:"user_url,omitempty"`
+	// UserUrl Template for linking a fault's affected user into your own system. `[user_id]` and `[user_email]` are substituted. Send null to clear.
+	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
 // ProjectKey defines model for ProjectKey.
 type ProjectKey struct {
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id Identifier for this key. Use it in paths.
 	Id string `json:"id"`
@@ -3820,7 +4051,7 @@ type ProjectKey struct {
 	Key string `json:"key"`
 
 	// Label Optional human-readable name.
-	Label nullable.Nullable[string] `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label"`
 
 	// ProjectId Identifier of the project the key belongs to.
 	ProjectId string `json:"project_id"`
@@ -3829,7 +4060,7 @@ type ProjectKey struct {
 // ProjectKeyInput defines model for ProjectKeyInput.
 type ProjectKeyInput struct {
 	// Label Optional human-readable name.
-	Label *string `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 }
 
 // ResponseMeta defines model for ResponseMeta.
@@ -3840,160 +4071,158 @@ type ResponseMeta struct {
 
 // Site An uptime monitoring site
 type Site struct {
-	// Active Whether monitoring is active
+	// Active Whether monitoring is active. After 740 consecutive failed checks the server sets it to false.
 	Active bool `json:"active"`
 
 	// CreatedAt When the site was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
-	// Frequency Check frequency in minutes
-	Frequency *int `json:"frequency,omitempty"`
+	// Frequency Minutes between checks. A value below the plan's floor is refused.
+	Frequency SiteFrequency `json:"frequency"`
 
 	// Id Unique identifier
 	Id openapi_types.UUID `json:"id"`
 
 	// LastCheckedAt When the site was last checked
-	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
-	// Locations Monitoring locations
-	Locations nullable.Nullable[[]string] `json:"locations,omitempty"`
+	// Locations Locations checks run from. Unordered. [] means every location.
+	Locations []SiteLocation `json:"locations"`
 
 	// Match Value to match in the response
-	Match nullable.Nullable[string] `json:"match,omitempty"`
+	Match nullable.Nullable[string] `json:"match"`
 
-	// MatchType Type of response matching
-	MatchType *string `json:"match_type,omitempty"`
+	// MatchType How a response is judged. `success`: any 2xx; `match` must be left out. `exact`: the response status code equals `match`. `include` / `exclude`: the body does / doesn't contain `match`. `jmespath`: `match` is a JMESPath expression evaluated against the JSON body; numbers in it use backticks, not quotes.
+	MatchType SiteMatchType `json:"match_type"`
 
 	// Name Display name for the site
 	Name string `json:"name"`
 
 	// OutageThreshold Number of failed checks before declaring an outage
-	OutageThreshold nullable.Nullable[int] `json:"outage_threshold,omitempty"`
+	OutageThreshold nullable.Nullable[int] `json:"outage_threshold"`
 
 	// ProjectId ID of the project this site belongs to
 	ProjectId string `json:"project_id"`
 
 	// RequestBody Request body for POST/PUT checks
-	RequestBody nullable.Nullable[string] `json:"request_body,omitempty"`
+	RequestBody nullable.Nullable[string] `json:"request_body"`
 
 	// RequestHeaders Custom headers sent with check requests, as header name to value
-	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers,omitempty"`
+	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers"`
 
 	// RequestMethod HTTP method for checks
-	RequestMethod *string `json:"request_method,omitempty"`
+	RequestMethod nullable.Nullable[SiteRequestMethod] `json:"request_method"`
 
 	// State Current state of the site
-	State *SiteState `json:"state,omitempty"`
+	State SiteState `json:"state"`
 
-	// Timeout Request timeout in seconds
-	Timeout *int `json:"timeout,omitempty"`
+	// Timeout The stored request timeout in seconds; null means the default, 30. On a plan without custom timeouts the default applies whatever is stored.
+	Timeout nullable.Nullable[int] `json:"timeout"`
 
-	// Url URL to monitor
+	// Url URL to monitor. Includes the scheme.
 	Url string `json:"url"`
 
 	// ValidateSsl Whether to validate SSL certificates
-	ValidateSsl nullable.Nullable[bool] `json:"validate_ssl,omitempty"`
+	ValidateSsl nullable.Nullable[bool] `json:"validate_ssl"`
 }
 
 // SiteState Current state of the site
 type SiteState string
 
-// SiteCreateInput Attributes for creating a site.
+// SiteCreateInput Attributes for creating a site. `name` defaults to the URL.
 type SiteCreateInput struct {
-	Active *bool `json:"active,omitempty"`
+	// Active Send null to reset to true.
+	Active nullable.Nullable[bool] `json:"active,omitempty"`
 
-	// Frequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
-	Frequency *SiteCreateInputFrequency `json:"frequency,omitempty"`
+	// Frequency Minutes between checks. Defaults to 5; plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Send null to reset to 5.
+	Frequency nullable.Nullable[SiteFrequency] `json:"frequency,omitempty"`
 
-	// Locations Locations to check from, by name. Anything outside the known set is discarded, and if nothing recognisable remains the site checks from every location — so a typo silently widens rather than narrows.
-	Locations *[]SiteCreateInputLocations `json:"locations,omitempty"`
+	// Locations A set of location names to check from. [] or null means every location. An unknown name is 422. A set; order is ignored and duplicates are dropped.
+	Locations nullable.Nullable[[]SiteLocation] `json:"locations,omitempty"`
 
-	// Match Required unless `match_type` is `success`, where it is cleared
-	Match *string `json:"match,omitempty"`
+	// Match What `match_type` compares against (see SiteMatchType). Required unless `match_type` is `success`, and must be left out with `success`. Send null to clear.
+	Match nullable.Nullable[string] `json:"match,omitempty"`
 
-	// MatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
-	MatchType *SiteCreateInputMatchType `json:"match_type,omitempty"`
-	Name      string                    `json:"name"`
+	// MatchType Send null to reset to success.
+	MatchType nullable.Nullable[SiteMatchType] `json:"match_type,omitempty"`
+	Name      *string                          `json:"name,omitempty"`
 
-	// OutageThreshold Consecutive failures before an outage is declared
-	OutageThreshold *int `json:"outage_threshold,omitempty"`
+	// OutageThreshold Consecutive failures before an outage is declared. null means down once failures reach 50% of locations.
+	OutageThreshold nullable.Nullable[int] `json:"outage_threshold,omitempty"`
 
-	// RequestBody Body to send with the request
-	RequestBody *string `json:"request_body,omitempty"`
+	// RequestBody Body to send with the request, up to 32 KB. Send null to clear.
+	RequestBody nullable.Nullable[string] `json:"request_body,omitempty"`
 
-	// RequestHeaders Headers to send with the request, as header name to value. Replaces the stored headers; send `{}` to clear them.
-	RequestHeaders *map[string]string            `json:"request_headers,omitempty"`
-	RequestMethod  *SiteCreateInputRequestMethod `json:"request_method,omitempty"`
+	// RequestHeaders Headers to send with the request, as header name to value. Replaces the stored headers; send `{}` or null to clear them.
+	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers,omitempty"`
 
-	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
-	Timeout *int   `json:"timeout,omitempty"`
-	Url     string `json:"url"`
+	// RequestMethod Send null to reset to GET.
+	RequestMethod nullable.Nullable[SiteRequestMethod] `json:"request_method,omitempty"`
 
-	// ValidateSsl Fail the check when the TLS certificate does not validate
-	ValidateSsl *bool `json:"validate_ssl,omitempty"`
+	// Timeout Request timeout in seconds, 1 to 120, default 30, and less than the frequency in seconds. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Send null to reset to the default.
+	Timeout nullable.Nullable[int] `json:"timeout,omitempty"`
+
+	// Url Must start with http:// or https://, with no surrounding whitespace.
+	Url string `json:"url"`
+
+	// ValidateSsl Fail the check when the TLS certificate does not validate. Send null to reset to true.
+	ValidateSsl nullable.Nullable[bool] `json:"validate_ssl,omitempty"`
 }
 
-// SiteCreateInputFrequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
-type SiteCreateInputFrequency int
+// SiteFrequency Minutes between checks. A value below the plan's floor is refused.
+type SiteFrequency int
 
-// SiteCreateInputLocations defines model for SiteCreateInput.Locations.
-type SiteCreateInputLocations string
-
-// SiteCreateInputMatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
-type SiteCreateInputMatchType string
-
-// SiteCreateInputRequestMethod defines model for SiteCreateInput.RequestMethod.
-type SiteCreateInputRequestMethod string
-
-// SiteInput Writable uptime-check site attributes
+// SiteInput Writable uptime-check site attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
 type SiteInput struct {
-	Active *bool `json:"active,omitempty"`
+	// Active Send null to reset to true.
+	Active nullable.Nullable[bool] `json:"active,omitempty"`
 
-	// Frequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
-	Frequency *SiteInputFrequency `json:"frequency,omitempty"`
+	// Frequency Minutes between checks. Defaults to 5; plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Send null to reset to 5.
+	Frequency nullable.Nullable[SiteFrequency] `json:"frequency,omitempty"`
 
-	// Locations Locations to check from, by name. Anything outside the known set is discarded, and if nothing recognisable remains the site checks from every location — so a typo silently widens rather than narrows.
-	Locations *[]SiteInputLocations `json:"locations,omitempty"`
+	// Locations A set of location names to check from. [] or null means every location. An unknown name is 422. A set; order is ignored and duplicates are dropped.
+	Locations nullable.Nullable[[]SiteLocation] `json:"locations,omitempty"`
 
-	// Match Required unless `match_type` is `success`, where it is cleared
-	Match *string `json:"match,omitempty"`
+	// Match What `match_type` compares against (see SiteMatchType). Required unless `match_type` is `success`, and must be left out with `success`. Send null to clear.
+	Match nullable.Nullable[string] `json:"match,omitempty"`
 
-	// MatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
-	MatchType *SiteInputMatchType `json:"match_type,omitempty"`
-	Name      *string             `json:"name,omitempty"`
+	// MatchType Send null to reset to success.
+	MatchType nullable.Nullable[SiteMatchType] `json:"match_type,omitempty"`
+	Name      *string                          `json:"name,omitempty"`
 
-	// OutageThreshold Consecutive failures before an outage is declared
-	OutageThreshold *int `json:"outage_threshold,omitempty"`
+	// OutageThreshold Consecutive failures before an outage is declared. null means down once failures reach 50% of locations.
+	OutageThreshold nullable.Nullable[int] `json:"outage_threshold,omitempty"`
 
-	// RequestBody Body to send with the request
-	RequestBody *string `json:"request_body,omitempty"`
+	// RequestBody Body to send with the request, up to 32 KB. Send null to clear.
+	RequestBody nullable.Nullable[string] `json:"request_body,omitempty"`
 
-	// RequestHeaders Headers to send with the request, as header name to value. Replaces the stored headers; send `{}` to clear them.
-	RequestHeaders *map[string]string      `json:"request_headers,omitempty"`
-	RequestMethod  *SiteInputRequestMethod `json:"request_method,omitempty"`
+	// RequestHeaders Headers to send with the request, as header name to value. Replaces the stored headers; send `{}` or null to clear them.
+	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers,omitempty"`
 
-	// Timeout Request timeout. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`.
-	Timeout *int    `json:"timeout,omitempty"`
-	Url     *string `json:"url,omitempty"`
+	// RequestMethod Send null to reset to GET.
+	RequestMethod nullable.Nullable[SiteRequestMethod] `json:"request_method,omitempty"`
 
-	// ValidateSsl Fail the check when the TLS certificate does not validate
-	ValidateSsl *bool `json:"validate_ssl,omitempty"`
+	// Timeout Request timeout in seconds, 1 to 120, default 30, and less than the frequency in seconds. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Send null to reset to the default.
+	Timeout nullable.Nullable[int] `json:"timeout,omitempty"`
+
+	// Url Must start with http:// or https://, with no surrounding whitespace.
+	Url *string `json:"url,omitempty"`
+
+	// ValidateSsl Fail the check when the TLS certificate does not validate. Send null to reset to true.
+	ValidateSsl nullable.Nullable[bool] `json:"validate_ssl,omitempty"`
 }
 
-// SiteInputFrequency Minutes between checks. The plan sets a floor, so a value below it is rejected.
-type SiteInputFrequency int
+// SiteLocation A location uptime checks run from.
+type SiteLocation string
 
-// SiteInputLocations defines model for SiteInput.Locations.
-type SiteInputLocations string
+// SiteMatchType How a response is judged. `success`: any 2xx; `match` must be left out. `exact`: the response status code equals `match`. `include` / `exclude`: the body does / doesn't contain `match`. `jmespath`: `match` is a JMESPath expression evaluated against the JSON body; numbers in it use backticks, not quotes.
+type SiteMatchType string
 
-// SiteInputMatchType How a response is judged. `success` accepts any 2xx and ignores `match`; `jmespath` evaluates `match` against the JSON body.
-type SiteInputMatchType string
-
-// SiteInputRequestMethod defines model for SiteInput.RequestMethod.
-type SiteInputRequestMethod string
+// SiteRequestMethod defines model for SiteRequestMethod.
+type SiteRequestMethod string
 
 // SourceBlock defines model for SourceBlock.
 type SourceBlock struct {
@@ -4004,113 +4233,175 @@ type SourceBlock struct {
 	Lines []string `json:"lines"`
 }
 
-// StatusPage A public status page
+// StatusPage A public status page. Readable and deletable after the plan loses status pages; creating and editing need the feature.
 type StatusPage struct {
 	// AccountId ID of the account this status page belongs to
 	AccountId string `json:"account_id"`
 
-	// CheckIns Check-ins displayed on the status page
-	CheckIns *[]StatusPage_CheckIns `json:"check_ins,omitempty"`
+	// CheckIns Check-ins displayed on the status page. An ordered list; the order is the order on the page.
+	CheckIns []StatusPage_CheckIns `json:"check_ins"`
 
 	// CreatedAt When the status page was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Domain Custom domain for the status page
-	Domain nullable.Nullable[string] `json:"domain,omitempty"`
+	Domain nullable.Nullable[string] `json:"domain"`
 
 	// DomainVerifiedAt When the custom domain was verified
-	DomainVerifiedAt nullable.Nullable[time.Time] `json:"domain_verified_at,omitempty"`
+	DomainVerifiedAt nullable.Nullable[time.Time] `json:"domain_verified_at"`
+
+	// Features Presentation copy and styling. Replaced whole by an update.
+	Features StatusPage_Features `json:"features"`
+
+	// GoogleAnalyticsId The page's Google Analytics measurement ID
+	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id"`
+	HideBranding      bool                      `json:"hide_branding"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
+	// IncidentsEnabled Whether the page shows incidents
+	IncidentsEnabled bool `json:"incidents_enabled"`
+
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
+
+	// MessageBody The message banner's text
+	MessageBody nullable.Nullable[string] `json:"message_body"`
+
+	// MessageEnabled Whether the message banner shows
+	MessageEnabled bool `json:"message_enabled"`
+
+	// MessageTitle The message banner's title
+	MessageTitle nullable.Nullable[string] `json:"message_title"`
 
 	// Name Status page name
-	Name string `json:"name"`
+	Name              string `json:"name"`
+	PasswordProtected bool   `json:"password_protected"`
 
-	// Sites Uptime sites displayed on the status page
-	Sites *[]StatusPage_Sites `json:"sites,omitempty"`
+	// SearchEngineIndexingDisabled Whether search engines are asked not to index the page
+	SearchEngineIndexingDisabled bool `json:"search_engine_indexing_disabled"`
+
+	// Sites Uptime sites displayed on the status page. An ordered list; the order is the order on the page.
+	Sites []StatusPage_Sites `json:"sites"`
 
 	// Url URL of the status page
 	Url string `json:"url"`
+
+	// Username Basic-auth user when password protected. The password is never returned.
+	Username nullable.Nullable[string] `json:"username"`
 }
+
+// StatusPageCheckInsState Current state of the check-in
+type StatusPageCheckInsState string
 
 // StatusPage_CheckIns defines model for StatusPage.CheckIns.
 type StatusPage_CheckIns struct {
 	// CheckInId ID of the check-in
-	CheckInId *string `json:"check_in_id,omitempty"`
+	CheckInId string `json:"check_in_id"`
 
 	// Description Description shown on the status page
-	Description nullable.Nullable[string] `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description"`
 
 	// DisplayName Display name on the status page
-	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
+	DisplayName nullable.Nullable[string] `json:"display_name"`
 
 	// ReportedAt When the check-in last reported
-	ReportedAt nullable.Nullable[time.Time] `json:"reported_at,omitempty"`
+	ReportedAt nullable.Nullable[time.Time] `json:"reported_at"`
 
 	// State Current state of the check-in
-	State *string `json:"state,omitempty"`
+	State StatusPageCheckInsState `json:"state"`
 }
+
+// StatusPage_Features Presentation copy and styling. Replaced whole by an update.
+type StatusPage_Features struct {
+	CustomCss    *string `json:"custom_css,omitempty"`
+	DownCaption  *string `json:"down_caption,omitempty"`
+	HomeLink     *string `json:"home_link,omitempty"`
+	MixedCaption *string `json:"mixed_caption,omitempty"`
+	UpCaption    *string `json:"up_caption,omitempty"`
+}
+
+// StatusPageSitesState Current state of the site
+type StatusPageSitesState string
 
 // StatusPage_Sites defines model for StatusPage.Sites.
 type StatusPage_Sites struct {
 	// Description Description shown on the status page
-	Description nullable.Nullable[string] `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description"`
 
 	// DisplayName Display name on the status page
-	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
+	DisplayName nullable.Nullable[string] `json:"display_name"`
 
 	// LastCheckedAt When the site was last checked
-	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
 
 	// SiteId Identifier of the site
-	SiteId *openapi_types.UUID `json:"site_id,omitempty"`
+	SiteId openapi_types.UUID `json:"site_id"`
 
 	// State Current state of the site
-	State *string `json:"state,omitempty"`
+	State StatusPageSitesState `json:"state"`
 }
 
 // StatusPageCreateInput Attributes for creating a status-page.
 type StatusPageCreateInput struct {
-	// CheckIns Check-ins listed on the page, replacing the current set
-	CheckIns *[]StatusPageCreateInput_CheckIns `json:"check_ins,omitempty"`
+	// CheckIns Check-ins listed on the page, in page order, replacing the current list. null or [] removes every check-in.
+	CheckIns nullable.Nullable[[]StatusPageCreateInput_CheckIns] `json:"check_ins,omitempty"`
 
-	// Domain Custom domain the page is served on
-	Domain *string `json:"domain,omitempty"`
+	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Send null to clear.
+	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
-	Features *StatusPageCreateInput_Features `json:"features,omitempty"`
+	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
+	Features nullable.Nullable[StatusPageCreateInput_Features] `json:"features,omitempty"`
 
-	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
-	HideBranding *bool  `json:"hide_branding,omitempty"`
-	Name         string `json:"name"`
+	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Send null to clear.
+	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
 
-	// Password Basic-auth password when password protected. Requires advanced status pages and password protection on the plan
-	Password *string `json:"password,omitempty"`
+	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise. Send null to reset to false.
+	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
-	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise.
-	PasswordProtected *bool `json:"password_protected,omitempty"`
+	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to false.
+	IncidentsEnabled nullable.Nullable[bool] `json:"incidents_enabled,omitempty"`
 
-	// Sites Sites listed on the page, replacing the current set
-	Sites *[]StatusPageCreateInput_Sites `json:"sites,omitempty"`
+	// MessageBody The message banner's text. Send null to clear.
+	MessageBody nullable.Nullable[string] `json:"message_body,omitempty"`
 
-	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan
-	Username *string `json:"username,omitempty"`
+	// MessageEnabled Shows the message banner. Send null to reset to false.
+	MessageEnabled nullable.Nullable[bool] `json:"message_enabled,omitempty"`
+
+	// MessageTitle The message banner's title. Send null to clear.
+	MessageTitle nullable.Nullable[string] `json:"message_title,omitempty"`
+	Name         string                    `json:"name"`
+
+	// Password Basic-auth password when password protected. Never returned. Requires advanced status pages and password protection on the plan.
+	Password nullable.Nullable[string] `json:"password,omitempty"`
+
+	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise. Turning it on needs a username and password, sent or already stored, or it's 422. Send null to reset to false.
+	PasswordProtected nullable.Nullable[bool] `json:"password_protected,omitempty"`
+
+	// SearchEngineIndexingDisabled Asks search engines not to index the page. Send null to reset to false.
+	SearchEngineIndexingDisabled nullable.Nullable[bool] `json:"search_engine_indexing_disabled,omitempty"`
+
+	// Sites Sites listed on the page, in page order, replacing the current list. null or [] removes every site.
+	Sites nullable.Nullable[[]StatusPageCreateInput_Sites] `json:"sites,omitempty"`
+
+	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan.
+	Username nullable.Nullable[string] `json:"username,omitempty"`
 }
 
 // StatusPageCreateInput_CheckIns defines model for StatusPageCreateInput.CheckIns.
 type StatusPageCreateInput_CheckIns struct {
 	// CheckInId ID of a check-in on this account
-	CheckInId   string  `json:"check_in_id"`
-	Description *string `json:"description,omitempty"`
-	DisplayName *string `json:"display_name,omitempty"`
-	Position    *int    `json:"position,omitempty"`
+	CheckInId string `json:"check_in_id"`
+
+	// Description null shows no description; "" is refused.
+	Description nullable.Nullable[string] `json:"description,omitempty"`
+
+	// DisplayName null uses the monitor's own name; "" is refused.
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 }
 
-// StatusPageCreateInput_Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
+// StatusPageCreateInput_Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
 type StatusPageCreateInput_Features struct {
 	CustomCss    *string `json:"custom_css,omitempty"`
 	DownCaption  *string `json:"down_caption,omitempty"`
@@ -4121,9 +4412,11 @@ type StatusPageCreateInput_Features struct {
 
 // StatusPageCreateInput_Sites defines model for StatusPageCreateInput.Sites.
 type StatusPageCreateInput_Sites struct {
-	Description *string `json:"description,omitempty"`
-	DisplayName *string `json:"display_name,omitempty"`
-	Position    *int    `json:"position,omitempty"`
+	// Description null shows no description; "" is refused.
+	Description nullable.Nullable[string] `json:"description,omitempty"`
+
+	// DisplayName null uses the monitor's own name; "" is refused.
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 
 	// SiteId Identifier of a site on this account
 	SiteId openapi_types.UUID `json:"site_id"`
@@ -4150,7 +4443,13 @@ type StatusPageIncident struct {
 	Id string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
+
+	// RetroNotifyMessage The announcement sent when retro_should_notify is true
+	RetroNotifyMessage nullable.Nullable[string] `json:"retro_notify_message"`
+
+	// RetroShouldNotify For a retroactive incident, whether to announce it once on the status page's connected accounts
+	RetroShouldNotify bool `json:"retro_should_notify"`
 
 	// StartAt When the incident starts. Derived from the updates.
 	StartAt nullable.Nullable[time.Time] `json:"start_at,omitempty"`
@@ -4177,20 +4476,20 @@ type StatusPageIncidentCurrentSeverity string
 // StatusPageIncidentCurrentStatus Status of the update in effect now. Derived from the updates.
 type StatusPageIncidentCurrentStatus string
 
-// StatusPageIncidentCreateInput An incident and, optionally, the updates it opens with
+// StatusPageIncidentCreateInput An incident and the updates it opens with
 type StatusPageIncidentCreateInput struct {
 	// BuildType `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
 	BuildType *StatusPageIncidentCreateInputBuildType `json:"build_type,omitempty"`
 
 	// RetroNotifyMessage Message accompanying that announcement
-	RetroNotifyMessage *string `json:"retro_notify_message,omitempty"`
+	RetroNotifyMessage nullable.Nullable[string] `json:"retro_notify_message,omitempty"`
 
 	// RetroShouldNotify Announce a retroactive incident when it is created
 	RetroShouldNotify *bool  `json:"retro_should_notify,omitempty"`
 	Title             string `json:"title"`
 
-	// Updates Updates to create with the incident
-	Updates *[]IncidentUpdateInput `json:"updates,omitempty"`
+	// Updates Updates to create with the incident; at least one
+	Updates []IncidentUpdateInput `json:"updates"`
 }
 
 // StatusPageIncidentCreateInputBuildType `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
@@ -4198,49 +4497,70 @@ type StatusPageIncidentCreateInputBuildType string
 
 // StatusPageIncidentUpdateInput Writable incident attributes
 type StatusPageIncidentUpdateInput struct {
-	RetroNotifyMessage *string `json:"retro_notify_message,omitempty"`
-	RetroShouldNotify  *bool   `json:"retro_should_notify,omitempty"`
-	Title              *string `json:"title,omitempty"`
+	RetroNotifyMessage nullable.Nullable[string] `json:"retro_notify_message,omitempty"`
+	RetroShouldNotify  *bool                     `json:"retro_should_notify,omitempty"`
+	Title              *string                   `json:"title,omitempty"`
 }
 
-// StatusPageInput Writable status-page attributes
+// StatusPageInput Writable status-page attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take is 422; the read-only keys a GET returns (including each monitor's state) are ignored.
 type StatusPageInput struct {
-	// CheckIns Check-ins listed on the page, replacing the current set
-	CheckIns *[]StatusPageInput_CheckIns `json:"check_ins,omitempty"`
+	// CheckIns Check-ins listed on the page, in page order, replacing the current list. null or [] removes every check-in.
+	CheckIns nullable.Nullable[[]StatusPageInput_CheckIns] `json:"check_ins,omitempty"`
 
-	// Domain Custom domain the page is served on
-	Domain *string `json:"domain,omitempty"`
+	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Send null to clear.
+	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
-	Features *StatusPageInput_Features `json:"features,omitempty"`
+	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
+	Features nullable.Nullable[StatusPageInput_Features] `json:"features,omitempty"`
 
-	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
-	HideBranding *bool   `json:"hide_branding,omitempty"`
-	Name         *string `json:"name,omitempty"`
+	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Send null to clear.
+	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
 
-	// Password Basic-auth password when password protected. Requires advanced status pages and password protection on the plan
-	Password *string `json:"password,omitempty"`
+	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise. Send null to reset to false.
+	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
-	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise.
-	PasswordProtected *bool `json:"password_protected,omitempty"`
+	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to false.
+	IncidentsEnabled nullable.Nullable[bool] `json:"incidents_enabled,omitempty"`
 
-	// Sites Sites listed on the page, replacing the current set
-	Sites *[]StatusPageInput_Sites `json:"sites,omitempty"`
+	// MessageBody The message banner's text. Send null to clear.
+	MessageBody nullable.Nullable[string] `json:"message_body,omitempty"`
 
-	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan
-	Username *string `json:"username,omitempty"`
+	// MessageEnabled Shows the message banner. Send null to reset to false.
+	MessageEnabled nullable.Nullable[bool] `json:"message_enabled,omitempty"`
+
+	// MessageTitle The message banner's title. Send null to clear.
+	MessageTitle nullable.Nullable[string] `json:"message_title,omitempty"`
+	Name         *string                   `json:"name,omitempty"`
+
+	// Password Basic-auth password when password protected. Never returned. Requires advanced status pages and password protection on the plan.
+	Password nullable.Nullable[string] `json:"password,omitempty"`
+
+	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise. Turning it on needs a username and password, sent or already stored, or it's 422. Send null to reset to false.
+	PasswordProtected nullable.Nullable[bool] `json:"password_protected,omitempty"`
+
+	// SearchEngineIndexingDisabled Asks search engines not to index the page. Send null to reset to false.
+	SearchEngineIndexingDisabled nullable.Nullable[bool] `json:"search_engine_indexing_disabled,omitempty"`
+
+	// Sites Sites listed on the page, in page order, replacing the current list. null or [] removes every site.
+	Sites nullable.Nullable[[]StatusPageInput_Sites] `json:"sites,omitempty"`
+
+	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan.
+	Username nullable.Nullable[string] `json:"username,omitempty"`
 }
 
 // StatusPageInput_CheckIns defines model for StatusPageInput.CheckIns.
 type StatusPageInput_CheckIns struct {
 	// CheckInId ID of a check-in on this account
-	CheckInId   string  `json:"check_in_id"`
-	Description *string `json:"description,omitempty"`
-	DisplayName *string `json:"display_name,omitempty"`
-	Position    *int    `json:"position,omitempty"`
+	CheckInId string `json:"check_in_id"`
+
+	// Description null shows no description; "" is refused.
+	Description nullable.Nullable[string] `json:"description,omitempty"`
+
+	// DisplayName null uses the monitor's own name; "" is refused.
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 }
 
-// StatusPageInput_Features Presentation copy and styling. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise
+// StatusPageInput_Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
 type StatusPageInput_Features struct {
 	CustomCss    *string `json:"custom_css,omitempty"`
 	DownCaption  *string `json:"down_caption,omitempty"`
@@ -4251,9 +4571,11 @@ type StatusPageInput_Features struct {
 
 // StatusPageInput_Sites defines model for StatusPageInput.Sites.
 type StatusPageInput_Sites struct {
-	Description *string `json:"description,omitempty"`
-	DisplayName *string `json:"display_name,omitempty"`
-	Position    *int    `json:"position,omitempty"`
+	// Description null shows no description; "" is refused.
+	Description nullable.Nullable[string] `json:"description,omitempty"`
+
+	// DisplayName null uses the monitor's own name; "" is refused.
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 
 	// SiteId Identifier of a site on this account
 	SiteId openapi_types.UUID `json:"site_id"`
@@ -4288,38 +4610,38 @@ type Team struct {
 	AccountId string `json:"account_id"`
 
 	// CreatedAt When the team was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks `json:"links,omitempty"`
+	Links WebLinks `json:"links"`
 
 	// MemberCount Number of members in the team
-	MemberCount *int `json:"member_count,omitempty"`
+	MemberCount int `json:"member_count"`
 
 	// Name Team name
 	Name string `json:"name"`
 
 	// ProjectIds IDs of projects assigned to this team
-	ProjectIds *[]string `json:"project_ids,omitempty"`
+	ProjectIds []string `json:"project_ids"`
 }
 
 // TeamCreateInput Attributes for creating a team.
 type TeamCreateInput struct {
 	Name string `json:"name"`
 
-	// ProjectIds IDs of projects this team can access. An ID that isn't a project the caller can see fails the request with 422.
-	ProjectIds *[]string `json:"project_ids,omitempty"`
+	// ProjectIds IDs of projects this team can access: the whole membership. An ID that isn't a project the caller can see fails the request with 422. A project's create-time `team_id` only attaches it to one team. A set; order is ignored and duplicates are dropped.
+	ProjectIds nullable.Nullable[[]string] `json:"project_ids,omitempty"`
 }
 
 // TeamInput Writable team attributes
 type TeamInput struct {
 	Name *string `json:"name,omitempty"`
 
-	// ProjectIds IDs of projects this team can access. An ID that isn't a project the caller can see fails the request with 422.
-	ProjectIds *[]string `json:"project_ids,omitempty"`
+	// ProjectIds IDs of projects this team can access: the whole membership. An ID that isn't a project the caller can see fails the request with 422. A project's create-time `team_id` only attaches it to one team. A set; order is ignored and duplicates are dropped.
+	ProjectIds nullable.Nullable[[]string] `json:"project_ids,omitempty"`
 }
 
 // TeamInvitation An invitation to join a team
@@ -4382,7 +4704,7 @@ type TeamInvitationCreateInput struct {
 	Email openapi_types.Email `json:"email"`
 
 	// Message Note included in the invitation email
-	Message *string `json:"message,omitempty"`
+	Message nullable.Nullable[string] `json:"message,omitempty"`
 }
 
 // TeamInvitationInput Writable team-invitation attributes
@@ -4391,7 +4713,7 @@ type TeamInvitationInput struct {
 	Email *openapi_types.Email `json:"email,omitempty"`
 
 	// Message Note included in the invitation email
-	Message *string `json:"message,omitempty"`
+	Message nullable.Nullable[string] `json:"message,omitempty"`
 }
 
 // TeamMember A member of a team
@@ -4459,11 +4781,11 @@ type UptimeCheck struct {
 	// CreatedAt When the check was performed
 	CreatedAt time.Time `json:"created_at"`
 
-	// Duration Response time in milliseconds
-	Duration nullable.Nullable[float32] `json:"duration,omitempty"`
+	// Duration Response time in whole milliseconds
+	Duration nullable.Nullable[int] `json:"duration,omitempty"`
 
 	// Location Monitoring location that performed the check
-	Location nullable.Nullable[string] `json:"location,omitempty"`
+	Location nullable.Nullable[SiteLocation] `json:"location,omitempty"`
 
 	// Up Whether the site was up
 	Up nullable.Nullable[bool] `json:"up,omitempty"`
@@ -4526,6 +4848,9 @@ type OccurrencePeriod string
 // Page defines model for Page.
 type Page = int
 
+// PageCreatedAfter defines model for PageCreatedAfter.
+type PageCreatedAfter = float64
+
 // PerPage defines model for PerPage.
 type PerPage = int
 
@@ -4564,6 +4889,9 @@ type NotFound = Error
 
 // RateLimitExceeded API error response
 type RateLimitExceeded = Error
+
+// ServiceUnavailable API error response
+type ServiceUnavailable = Error
 
 // Unauthorized API error response
 type Unauthorized = Error
@@ -4789,21 +5117,21 @@ type ListAlarms200JSONResponseBody struct {
 
 // CreateAlarm201JSONResponseBody defines parameters for CreateAlarm.
 type CreateAlarm201JSONResponseBody struct {
-	// Data An Insights alarm
+	// Data An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
 	Data Alarm         `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetAlarm200JSONResponseBody defines parameters for GetAlarm.
 type GetAlarm200JSONResponseBody struct {
-	// Data An Insights alarm
+	// Data An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
 	Data Alarm         `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateAlarm200JSONResponseBody defines parameters for UpdateAlarm.
 type UpdateAlarm200JSONResponseBody struct {
-	// Data An Insights alarm
+	// Data An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
 	Data Alarm         `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
@@ -4857,13 +5185,16 @@ type CreateCheckIn201JSONResponseBody struct {
 // ReplaceCheckIns200JSONResponseBodyDataOperation defines parameters for ReplaceCheckIns.
 type ReplaceCheckIns200JSONResponseBodyDataOperation string
 
+// ReplaceCheckIns200JSONResponseBodyDataSuccess defines parameters for ReplaceCheckIns.
+type ReplaceCheckIns200JSONResponseBodyDataSuccess bool
+
 // ReplaceCheckIns200JSONResponseBody_Data defines parameters for ReplaceCheckIns.
 type ReplaceCheckIns200JSONResponseBody_Data struct {
-	// Errors Present when success is false.
-	Errors    *[]string                                       `json:"errors,omitempty"`
 	Operation ReplaceCheckIns200JSONResponseBodyDataOperation `json:"operation"`
 	Slug      string                                          `json:"slug"`
-	Success   bool                                            `json:"success"`
+
+	// Success Always true; any failure makes the whole request a 422 and changes nothing.
+	Success ReplaceCheckIns200JSONResponseBodyDataSuccess `json:"success"`
 }
 
 // ReplaceCheckIns200JSONResponseBody defines parameters for ReplaceCheckIns.
@@ -5025,7 +5356,7 @@ type BulkDeleteEnvironmentsJSONBody struct {
 // BulkDeleteEnvironments200JSONResponseBody_Data defines parameters for BulkDeleteEnvironments.
 type BulkDeleteEnvironments200JSONResponseBody_Data struct {
 	// Count Number of environments deleted
-	Count *int `json:"count,omitempty"`
+	Count int `json:"count"`
 }
 
 // BulkDeleteEnvironments200JSONResponseBody defines parameters for BulkDeleteEnvironments.
@@ -5046,7 +5377,7 @@ type BulkUpdateEnvironmentsJSONBody struct {
 // BulkUpdateEnvironments200JSONResponseBody_Data defines parameters for BulkUpdateEnvironments.
 type BulkUpdateEnvironments200JSONResponseBody_Data struct {
 	// Count Number of environments updated
-	Count *int `json:"count,omitempty"`
+	Count int `json:"count"`
 }
 
 // BulkUpdateEnvironments200JSONResponseBody defines parameters for BulkUpdateEnvironments.
@@ -5365,7 +5696,7 @@ type ListFaultOccurrences200JSONResponseBody struct {
 
 // PauseFaultRecordingJSONBody defines parameters for PauseFaultRecording.
 type PauseFaultRecordingJSONBody struct {
-	// Time How long to pause recording.
+	// Time A duration of an hour, a day or a week.
 	Time PauseDuration `json:"time"`
 }
 
@@ -5395,15 +5726,12 @@ type SnoozeFaultJSONBody struct {
 	// Count Snooze until this many additional occurrences have been received.
 	Count *SnoozeFaultJSONBodyCount `json:"count,omitempty"`
 
-	// Time Snooze for the given duration.
-	Time *SnoozeFaultJSONBodyTime `json:"time,omitempty"`
+	// Time A duration of an hour, a day or a week.
+	Time *PauseDuration `json:"time,omitempty"`
 }
 
 // SnoozeFaultJSONBodyCount defines parameters for SnoozeFault.
 type SnoozeFaultJSONBodyCount int
-
-// SnoozeFaultJSONBodyTime defines parameters for SnoozeFault.
-type SnoozeFaultJSONBodyTime string
 
 // SnoozeFault200JSONResponseBody defines parameters for SnoozeFault.
 type SnoozeFault200JSONResponseBody struct {
@@ -5433,7 +5761,7 @@ type RunInsightsQuery200JSONResponseBody struct {
 	Data map[string]interface{} `json:"data"`
 
 	// Links Links into the Honeybadger web UI
-	Links *WebLinks     `json:"links,omitempty"`
+	Links WebLinks      `json:"links"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 }
 
@@ -5591,10 +5919,10 @@ type ListUptimeChecksParams struct {
 	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedAfter Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
+	// CreatedAfter With created_before, a window. Alone, pages forward: the items just after it, newest first, with a newer link while more exist. `links.newer` uses it this way. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
 	//
 	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
-	CreatedAfter *CreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
+	CreatedAfter *PageCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
 	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
 	//
@@ -5619,10 +5947,10 @@ type ListOutagesParams struct {
 	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedAfter Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
+	// CreatedAfter With created_before, a window. Alone, pages forward: the items just after it, newest first, with a newer link while more exist. `links.newer` uses it this way. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
 	//
 	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
-	CreatedAfter *CreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
+	CreatedAfter *PageCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
 	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
 	//
@@ -5649,15 +5977,15 @@ type GetProjectStats200JSONResponseBody_Data struct {
 	// Id Project ID
 	Id string `json:"id"`
 
-	// NoticeCountMonth Notices in the last month; null when the count could not be computed
-	NoticeCountMonth nullable.Nullable[int] `json:"notice_count_month"`
+	// NoticeCountMonth Notices in the last month. Counted from the start of the window or the project's retention, whichever is later, so on short retention month can equal week. Search being unavailable answers 503.
+	NoticeCountMonth int `json:"notice_count_month"`
 
-	// NoticeCountToday Notices in the last 24 hours; null when the count could not be computed
-	NoticeCountToday nullable.Nullable[int] `json:"notice_count_today"`
+	// NoticeCountToday Notices in the last 24 hours. Counted from the start of the window or the project's retention, whichever is later, so on short retention month can equal week. Search being unavailable answers 503.
+	NoticeCountToday int `json:"notice_count_today"`
 
-	// NoticeCountWeek Notices in the last 7 days; null when the count could not be computed
-	NoticeCountWeek      nullable.Nullable[int] `json:"notice_count_week"`
-	UnresolvedFaultCount int                    `json:"unresolved_fault_count"`
+	// NoticeCountWeek Notices in the last 7 days. Counted from the start of the window or the project's retention, whichever is later, so on short retention month can equal week. Search being unavailable answers 503.
+	NoticeCountWeek      int `json:"notice_count_week"`
+	UnresolvedFaultCount int `json:"unresolved_fault_count"`
 }
 
 // GetProjectStats200JSONResponseBody defines parameters for GetProjectStats.
@@ -5710,21 +6038,21 @@ type ListStatusPages200JSONResponseBody struct {
 
 // CreateStatusPage201JSONResponseBody defines parameters for CreateStatusPage.
 type CreateStatusPage201JSONResponseBody struct {
-	// Data A public status page
+	// Data A public status page. Readable and deletable after the plan loses status pages; creating and editing need the feature.
 	Data StatusPage    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetStatusPage200JSONResponseBody defines parameters for GetStatusPage.
 type GetStatusPage200JSONResponseBody struct {
-	// Data A public status page
+	// Data A public status page. Readable and deletable after the plan loses status pages; creating and editing need the feature.
 	Data StatusPage    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateStatusPage200JSONResponseBody defines parameters for UpdateStatusPage.
 type UpdateStatusPage200JSONResponseBody struct {
-	// Data A public status page
+	// Data A public status page. Readable and deletable after the plan loses status pages; creating and editing need the feature.
 	Data StatusPage    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
@@ -6009,7 +6337,7 @@ type CreateDashboardJSONRequestBody = DashboardInput
 type UpdateDashboardJSONRequestBody = DashboardUpdateInput
 
 // CreateEnvironmentJSONRequestBody defines body for CreateEnvironment for application/json ContentType.
-type CreateEnvironmentJSONRequestBody = EnvironmentInput
+type CreateEnvironmentJSONRequestBody = EnvironmentCreateInput
 
 // BulkDeleteEnvironmentsJSONRequestBody defines body for BulkDeleteEnvironments for application/json ContentType.
 type BulkDeleteEnvironmentsJSONRequestBody BulkDeleteEnvironmentsJSONBody
@@ -6106,120 +6434,6 @@ type UpdateTeamInvitationJSONRequestBody = TeamInvitationInput
 
 // UpdateTeamMemberJSONRequestBody defines body for UpdateTeamMember for application/json ContentType.
 type UpdateTeamMemberJSONRequestBody = TeamMemberInput
-
-// AsIntegrationConfig1 returns the union data inside the Integration_Config as a IntegrationConfig1
-func (t Integration_Config) AsIntegrationConfig1() (IntegrationConfig1, error) {
-	var body IntegrationConfig1
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromIntegrationConfig1 overwrites any union data inside the Integration_Config as the provided IntegrationConfig1
-func (t *Integration_Config) FromIntegrationConfig1(v IntegrationConfig1) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergeIntegrationConfig1 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig1
-func (t *Integration_Config) MergeIntegrationConfig1(v IntegrationConfig1) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsIntegrationConfig2 returns the union data inside the Integration_Config as a IntegrationConfig2
-func (t Integration_Config) AsIntegrationConfig2() (IntegrationConfig2, error) {
-	var body IntegrationConfig2
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromIntegrationConfig2 overwrites any union data inside the Integration_Config as the provided IntegrationConfig2
-func (t *Integration_Config) FromIntegrationConfig2(v IntegrationConfig2) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergeIntegrationConfig2 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig2
-func (t *Integration_Config) MergeIntegrationConfig2(v IntegrationConfig2) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsIntegrationConfig3 returns the union data inside the Integration_Config as a IntegrationConfig3
-func (t Integration_Config) AsIntegrationConfig3() (IntegrationConfig3, error) {
-	var body IntegrationConfig3
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromIntegrationConfig3 overwrites any union data inside the Integration_Config as the provided IntegrationConfig3
-func (t *Integration_Config) FromIntegrationConfig3(v IntegrationConfig3) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergeIntegrationConfig3 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig3
-func (t *Integration_Config) MergeIntegrationConfig3(v IntegrationConfig3) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-// AsIntegrationConfig4 returns the union data inside the Integration_Config as a IntegrationConfig4
-func (t Integration_Config) AsIntegrationConfig4() (IntegrationConfig4, error) {
-	var body IntegrationConfig4
-	err := json.Unmarshal(t.union, &body)
-	return body, err
-}
-
-// FromIntegrationConfig4 overwrites any union data inside the Integration_Config as the provided IntegrationConfig4
-func (t *Integration_Config) FromIntegrationConfig4(v IntegrationConfig4) error {
-	b, err := json.Marshal(v)
-	t.union = b
-	return err
-}
-
-// MergeIntegrationConfig4 performs a merge with any union data inside the Integration_Config, using the provided IntegrationConfig4
-func (t *Integration_Config) MergeIntegrationConfig4(v IntegrationConfig4) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-
-	merged, err := runtime.JSONMerge(t.union, b)
-	t.union = merged
-	return err
-}
-
-func (t Integration_Config) MarshalJSON() ([]byte, error) {
-	b, err := t.union.MarshalJSON()
-	return b, err
-}
-
-func (t *Integration_Config) UnmarshalJSON(b []byte) error {
-	err := t.union.UnmarshalJSON(b)
-	return err
-}
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -6407,7 +6621,7 @@ type ClientInterface interface {
 
 	// GetNotice Get a notice
 	//
-	// Returns a single notice by its token UUID, without needing to know which project or fault it belongs to.
+	// Returns a single notice by its token UUID, without needing to know which project or fault it belongs to. Notice ids are lowercase v4 UUIDs.
 	//
 	// Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 	GetNotice(ctx context.Context, uuid openapi_types.UUID, params *GetNoticeParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6577,7 +6791,7 @@ type ClientInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6588,7 +6802,7 @@ type ClientInterface interface {
 	//
 	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
+	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6611,7 +6825,7 @@ type ClientInterface interface {
 
 	// UpdateCheckInWithBody Update a check-in
 	//
-	// Updates a check-in's settings.
+	// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6620,7 +6834,7 @@ type ClientInterface interface {
 
 	// UpdateCheckIn Update a check-in
 	//
-	// Updates a check-in's settings.
+	// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6629,7 +6843,7 @@ type ClientInterface interface {
 
 	// ListCheckInEvents List check-in events
 	//
-	// Returns a check-in's events, newest first.
+	// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
 	//
 	// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 	//
@@ -6745,7 +6959,7 @@ type ClientInterface interface {
 
 	// BulkDeleteEnvironmentsWithBody Bulk delete environments
 	//
-	// Deletes multiple environments at once.
+	// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6754,7 +6968,7 @@ type ClientInterface interface {
 
 	// BulkDeleteEnvironments Bulk delete environments
 	//
-	// Deletes multiple environments at once.
+	// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6763,7 +6977,7 @@ type ClientInterface interface {
 
 	// BulkUpdateEnvironmentsWithBody Bulk update environments
 	//
-	// Updates notification settings for multiple environments at once.
+	// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6772,7 +6986,7 @@ type ClientInterface interface {
 
 	// BulkUpdateEnvironments Bulk update environments
 	//
-	// Updates notification settings for multiple environments at once.
+	// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6781,7 +6995,7 @@ type ClientInterface interface {
 
 	// DeleteEnvironment Delete an environment
 	//
-	// Deletes an environment.
+	// Deletes an environment. Its faults and notices stay, and its name is removed from integrations' `excluded_environments`. The next notice or deploy under that name creates it again, with `notifications: true`.
 	//
 	// Corresponds with DELETE /projects/{project_id}/environments/{environment_id} (the `DeleteEnvironment` operationId).
 	DeleteEnvironment(ctx context.Context, projectId ProjectId, environmentId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6901,7 +7115,7 @@ type ClientInterface interface {
 
 	// DeleteFault Delete a fault
 	//
-	// Permanently deletes a fault and all its notices.
+	// Permanently deletes a fault. Synchronous. Its notices aren't purged; they stay retrievable by id until retention expires them.
 	//
 	// Corresponds with DELETE /projects/{project_id}/faults/{fault_id} (the `DeleteFault` operationId).
 	DeleteFault(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7022,7 +7236,9 @@ type ClientInterface interface {
 
 	// MergeFaultsWithBody Merge a fault into another
 	//
-	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
+	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+	//
+	// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7031,7 +7247,9 @@ type ClientInterface interface {
 
 	// MergeFaults Merge a fault into another
 	//
-	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
+	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+	//
+	// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7049,7 +7267,7 @@ type ClientInterface interface {
 	//
 	// Occurrence counts for a fault, bucketed over an explicit window.
 	//
-	// The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour, `occurred_before` alone to run to now, `occurred_after` alone to start at the retention boundary. Bucket resolution is derived from the window's length, not chosen by the caller.
+	// The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour; `occurred_before` alone gives the hour before it; `occurred_after` alone runs to now. The start is clamped to retention. Bucket resolution is derived from the window's length, not chosen by the caller.
 	//
 	// `meta.window` reports the window actually served, which is narrower than the one requested when retention clamped the start, and `meta.interval_seconds` gives the spacing between the timestamps in `data`. Buckets are zero-filled, so every interval in the window is present.
 	//
@@ -7058,7 +7276,7 @@ type ClientInterface interface {
 
 	// PauseFaultRecordingWithBody Pause fault recording
 	//
-	// Pauses recording of new notices for a fault for a given duration.
+	// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7067,7 +7285,7 @@ type ClientInterface interface {
 
 	// PauseFaultRecording Pause fault recording
 	//
-	// Pauses recording of new notices for a fault for a given duration.
+	// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7076,7 +7294,7 @@ type ClientInterface interface {
 
 	// ResumeFaultRecording Resume fault recording
 	//
-	// Resumes recording of new notices for a fault.
+	// Resumes recording of new notices for a fault. On a fault that isn't paused, it's a 200 with no change.
 	//
 	// Corresponds with POST /projects/{project_id}/faults/{fault_id}/resume_recording (the `ResumeFaultRecording` operationId).
 	ResumeFaultRecording(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7090,7 +7308,7 @@ type ClientInterface interface {
 
 	// SnoozeFaultWithBody Snooze a fault
 	//
-	// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences.
+	// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7099,7 +7317,7 @@ type ClientInterface interface {
 
 	// SnoozeFault Snooze a fault
 	//
-	// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences.
+	// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7264,7 +7482,7 @@ type ClientInterface interface {
 
 	// CreateSiteWithBody Create a site
 	//
-	// Creates a new uptime monitoring site.
+	// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7273,7 +7491,7 @@ type ClientInterface interface {
 
 	// CreateSite Create a site
 	//
-	// Creates a new uptime monitoring site.
+	// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7353,7 +7571,7 @@ type ClientInterface interface {
 
 	// CreateStatusPageWithBody Create a status page
 	//
-	// Creates a new status page.
+	// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7362,7 +7580,7 @@ type ClientInterface interface {
 
 	// CreateStatusPage Create a status page
 	//
-	// Creates a new status page.
+	// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7930,7 +8148,7 @@ func (c *Client) GetAccountUsage(ctx context.Context, reqEditors ...RequestEdito
 
 // GetNotice Get a notice
 //
-// Returns a single notice by its token UUID, without needing to know which project or fault it belongs to.
+// Returns a single notice by its token UUID, without needing to know which project or fault it belongs to. Notice ids are lowercase v4 UUIDs.
 //
 // Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 func (c *Client) GetNotice(ctx context.Context, uuid openapi_types.UUID, params *GetNoticeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8300,7 +8518,7 @@ func (c *Client) CreateCheckIn(ctx context.Context, projectId ProjectId, body Cr
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8321,7 +8539,7 @@ func (c *Client) ReplaceCheckInsWithBody(ctx context.Context, projectId ProjectI
 //
 // Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
+// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8374,7 +8592,7 @@ func (c *Client) GetCheckIn(ctx context.Context, projectId ProjectId, checkInId 
 
 // UpdateCheckInWithBody Update a check-in
 //
-// Updates a check-in's settings.
+// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8393,7 +8611,7 @@ func (c *Client) UpdateCheckInWithBody(ctx context.Context, projectId ProjectId,
 
 // UpdateCheckIn Update a check-in
 //
-// Updates a check-in's settings.
+// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8412,7 +8630,7 @@ func (c *Client) UpdateCheckIn(ctx context.Context, projectId ProjectId, checkIn
 
 // ListCheckInEvents List check-in events
 //
-// Returns a check-in's events, newest first.
+// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
 //
 // Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 //
@@ -8668,7 +8886,7 @@ func (c *Client) CreateEnvironment(ctx context.Context, projectId ProjectId, bod
 
 // BulkDeleteEnvironmentsWithBody Bulk delete environments
 //
-// Deletes multiple environments at once.
+// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8687,7 +8905,7 @@ func (c *Client) BulkDeleteEnvironmentsWithBody(ctx context.Context, projectId P
 
 // BulkDeleteEnvironments Bulk delete environments
 //
-// Deletes multiple environments at once.
+// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8706,7 +8924,7 @@ func (c *Client) BulkDeleteEnvironments(ctx context.Context, projectId ProjectId
 
 // BulkUpdateEnvironmentsWithBody Bulk update environments
 //
-// Updates notification settings for multiple environments at once.
+// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8725,7 +8943,7 @@ func (c *Client) BulkUpdateEnvironmentsWithBody(ctx context.Context, projectId P
 
 // BulkUpdateEnvironments Bulk update environments
 //
-// Updates notification settings for multiple environments at once.
+// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8744,7 +8962,7 @@ func (c *Client) BulkUpdateEnvironments(ctx context.Context, projectId ProjectId
 
 // DeleteEnvironment Delete an environment
 //
-// Deletes an environment.
+// Deletes an environment. Its faults and notices stay, and its name is removed from integrations' `excluded_environments`. The next notice or deploy under that name creates it again, with `notifications: true`.
 //
 // Corresponds with DELETE /projects/{project_id}/environments/{environment_id} (the `DeleteEnvironment` operationId).
 func (c *Client) DeleteEnvironment(ctx context.Context, projectId ProjectId, environmentId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9004,7 +9222,7 @@ func (c *Client) UnresolveFaults(ctx context.Context, projectId ProjectId, body 
 
 // DeleteFault Delete a fault
 //
-// Permanently deletes a fault and all its notices.
+// Permanently deletes a fault. Synchronous. Its notices aren't purged; they stay retrievable by id until retention expires them.
 //
 // Corresponds with DELETE /projects/{project_id}/faults/{fault_id} (the `DeleteFault` operationId).
 func (c *Client) DeleteFault(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9275,7 +9493,9 @@ func (c *Client) UpdateComment(ctx context.Context, projectId ProjectId, faultId
 
 // MergeFaultsWithBody Merge a fault into another
 //
-// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
+// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+//
+// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9294,7 +9514,9 @@ func (c *Client) MergeFaultsWithBody(ctx context.Context, projectId ProjectId, f
 
 // MergeFaults Merge a fault into another
 //
-// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 with a batch id rather than the merged fault.
+// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+//
+// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9332,7 +9554,7 @@ func (c *Client) ListNotices(ctx context.Context, projectId ProjectId, faultId F
 //
 // Occurrence counts for a fault, bucketed over an explicit window.
 //
-// The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour, `occurred_before` alone to run to now, `occurred_after` alone to start at the retention boundary. Bucket resolution is derived from the window's length, not chosen by the caller.
+// The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour; `occurred_before` alone gives the hour before it; `occurred_after` alone runs to now. The start is clamped to retention. Bucket resolution is derived from the window's length, not chosen by the caller.
 //
 // `meta.window` reports the window actually served, which is narrower than the one requested when retention clamped the start, and `meta.interval_seconds` gives the spacing between the timestamps in `data`. Buckets are zero-filled, so every interval in the window is present.
 //
@@ -9351,7 +9573,7 @@ func (c *Client) ListFaultOccurrences(ctx context.Context, projectId ProjectId, 
 
 // PauseFaultRecordingWithBody Pause fault recording
 //
-// Pauses recording of new notices for a fault for a given duration.
+// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9370,7 +9592,7 @@ func (c *Client) PauseFaultRecordingWithBody(ctx context.Context, projectId Proj
 
 // PauseFaultRecording Pause fault recording
 //
-// Pauses recording of new notices for a fault for a given duration.
+// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9389,7 +9611,7 @@ func (c *Client) PauseFaultRecording(ctx context.Context, projectId ProjectId, f
 
 // ResumeFaultRecording Resume fault recording
 //
-// Resumes recording of new notices for a fault.
+// Resumes recording of new notices for a fault. On a fault that isn't paused, it's a 200 with no change.
 //
 // Corresponds with POST /projects/{project_id}/faults/{fault_id}/resume_recording (the `ResumeFaultRecording` operationId).
 func (c *Client) ResumeFaultRecording(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9423,7 +9645,7 @@ func (c *Client) UnsnoozeFault(ctx context.Context, projectId ProjectId, faultId
 
 // SnoozeFaultWithBody Snooze a fault
 //
-// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences.
+// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9442,7 +9664,7 @@ func (c *Client) SnoozeFaultWithBody(ctx context.Context, projectId ProjectId, f
 
 // SnoozeFault Snooze a fault
 //
-// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences.
+// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9797,7 +10019,7 @@ func (c *Client) ListSites(ctx context.Context, projectId ProjectId, params *Lis
 
 // CreateSiteWithBody Create a site
 //
-// Creates a new uptime monitoring site.
+// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9816,7 +10038,7 @@ func (c *Client) CreateSiteWithBody(ctx context.Context, projectId ProjectId, co
 
 // CreateSite Create a site
 //
-// Creates a new uptime monitoring site.
+// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9996,7 +10218,7 @@ func (c *Client) ListStatusPages(ctx context.Context, params *ListStatusPagesPar
 
 // CreateStatusPageWithBody Create a status page
 //
-// Creates a new status page.
+// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10015,7 +10237,7 @@ func (c *Client) CreateStatusPageWithBody(ctx context.Context, contentType strin
 
 // CreateStatusPage Create a status page
 //
-// Creates a new status page.
+// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
 //
 // Takes a body of the `application/json` content type.
 //

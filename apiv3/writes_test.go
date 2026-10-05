@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/oapi-codegen/nullable"
 )
 
 // captureWrite records what a write actually put on the wire, which is the only
@@ -112,7 +114,7 @@ func TestCheckInUpdateOmitsUnsetFields(t *testing.T) {
 
 	grace := "5m"
 	if _, err := c.CheckIns.Update(context.Background(), "Xk9mZp", "c1",
-		CheckInUpdateParams{GracePeriod: &grace}); err != nil {
+		CheckInUpdateParams{GracePeriod: nullable.NewNullableWithValue(grace)}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 
@@ -134,7 +136,8 @@ func TestCheckInCreateSendsCronSchedule(t *testing.T) {
 	// A Rails zone name, not an IANA identifier — the API rejects the latter.
 	zone := "Central Time (US & Canada)"
 	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInCreateParams{
-		Name: "Nightly", ScheduleType: &schedule, CronSchedule: &cron, CronTimezone: &zone,
+		Name: nullable.NewNullableWithValue("Nightly"), ScheduleType: &schedule,
+		CronSchedule: nullable.NewNullableWithValue(cron), CronTimezone: nullable.NewNullableWithValue(zone),
 	})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -156,7 +159,8 @@ func TestCheckInCreateSendsSpecifiedFields(t *testing.T) {
 
 	schedule, period, grace := ScheduleSimple, "1d", "1h"
 	_, err := c.CheckIns.Create(context.Background(), "Xk9mZp", CheckInCreateParams{
-		Name: "Nightly", ScheduleType: &schedule, ReportPeriod: &period, GracePeriod: &grace,
+		Name: nullable.NewNullableWithValue("Nightly"), ScheduleType: &schedule,
+		ReportPeriod: nullable.NewNullableWithValue(period), GracePeriod: nullable.NewNullableWithValue(grace),
 	})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
@@ -228,9 +232,9 @@ func TestProjectsUpdateSendsFullSettings(t *testing.T) {
 	userURL := "http://example.com/users/[user_id]"
 
 	_, err := c.Projects.Update(context.Background(), "Xk9mZp", ProjectParams{
-		PurgeDays:          &purgeDays,
-		DisablePublicLinks: &disablePublicLinks,
-		UserUrl:            &userURL,
+		PurgeDays:          nullable.NewNullableWithValue(purgeDays),
+		DisablePublicLinks: nullable.NewNullableWithValue(disablePublicLinks),
+		UserUrl:            nullable.NewNullableWithValue(userURL),
 	})
 	if err != nil {
 		t.Fatalf("Update: %v", err)
@@ -263,10 +267,10 @@ func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
 	_, err := c.Alarms.Create(context.Background(), "Xk9mZp", AlarmCreateParams{
 		Name:             "Spike",
 		Query:            "count() > 100",
-		EvaluationPeriod: &period,
-		LookbackLag:      &lag,
+		EvaluationPeriod: period,
+		LookbackLag:      lag,
 		StreamIds:        &streams,
-		TriggerConfig: &AlarmTriggerConfig{Type: TriggerResultCount,
+		TriggerConfig: AlarmTriggerConfig{Type: TriggerResultCount,
 			Config: AlarmTriggerCondition{Operator: OperatorGt, Value: 100}},
 	})
 	if err != nil {
@@ -391,7 +395,7 @@ func TestAlarmsUpdateCanClearDescription(t *testing.T) {
 
 	empty := ""
 	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1",
-		AlarmUpdateParams{Description: &empty}); err != nil {
+		AlarmUpdateParams{Description: nullable.NewNullableWithValue(empty)}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 
@@ -517,7 +521,7 @@ func TestIntegrationsCreateNestsSettingsUnderConfig(t *testing.T) {
 	events := []IntegrationEvent{"occurred", "resolved"}
 	if _, err := c.Integrations.Create(context.Background(), "Xk9mZp", IntegrationCreateParams{
 		Type:   "WebHook",
-		Events: &events,
+		Events: nullable.NewNullableWithValue(events),
 		Config: &map[string]interface{}{"url": "https://example.com/hook", "label": "Deploys"},
 	}); err != nil {
 		t.Fatalf("Create: %v", err)
@@ -558,5 +562,41 @@ func TestAlarmsCreateDistinguishesNoStreamsFromEvery(t *testing.T) {
 	}
 	if ids, ok := got2.body["stream_ids"].([]any); !ok || len(ids) != 0 {
 		t.Errorf("stream_ids = %v, want []", got2.body["stream_ids"])
+	}
+}
+
+// An integration can follow every site, filter an event by query, and clear a
+// setting with an explicit null, which is how Terraform removes one.
+func TestIntegrationsUpdateFollowsAllSitesFiltersAndClears(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK,
+		`{"data":{"id":"i1","project_id":"Xk9mZp","type":"WebHook","active":true,"links":{"web":"https://app/x"}}}`)
+
+	all := true
+	filter := IntegrationFilter{Event: "occurred", Query: "environment:production"}
+	if _, err := c.Integrations.Update(context.Background(), "Xk9mZp", "i1", IntegrationUpdateParams{
+		AllSites: &all,
+		Filters:  nullable.NewNullableWithValue([]IntegrationFilter{filter}),
+		Rate:     nullable.NewNullNullable[string](),
+	}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	if got.body["all_sites"] != true {
+		t.Errorf("all_sites = %v, want true", got.body["all_sites"])
+	}
+	filters, ok := got.body["filters"].([]any)
+	if !ok || len(filters) != 1 {
+		t.Fatalf("filters = %v", got.body["filters"])
+	}
+	if f := filters[0].(map[string]any); f["event"] != "occurred" || f["query"] != "environment:production" {
+		t.Errorf("filter = %v", f)
+	}
+	if v, present := got.body["rate"]; !present || v != nil {
+		t.Errorf("rate = %v (present %v), want an explicit null", v, present)
+	}
+	for _, absent := range []string{"site_ids", "events", "threshold"} {
+		if _, present := got.body[absent]; present {
+			t.Errorf("%s was sent unset", absent)
+		}
 	}
 }

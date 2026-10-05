@@ -16,8 +16,10 @@ import (
 // alongside them. If an input ever needs a hand-written wrapper, that's a sign the
 // spec's shape wants fixing instead.
 //
-// Nil fields are omitted rather than sent empty, so an update touches only what it
-// was given.
+// Unset fields are omitted rather than sent empty, so an update touches only what
+// it was given. A pointer field is unset when nil. A field the API can clear is a
+// nullable.Nullable (github.com/oapi-codegen/nullable): its zero value is unset,
+// NewNullableWithValue sets it, and NewNullNullable sends null, which clears it.
 
 // ProjectCreateParams are the fields of a new project. Name is required.
 type ProjectCreateParams = gen.ProjectCreateInput
@@ -52,15 +54,16 @@ func (s *ProjectsService) Delete(ctx context.Context, projectID string) error {
 	})
 }
 
-// CheckInCreateParams are a new check-in's fields. Name is required, and so is
-// ReportPeriod for a simple schedule or CronSchedule for a cron one.
+// CheckInCreateParams are a new check-in's fields. ReportPeriod is required for a
+// simple schedule and CronSchedule for a cron one. Name is optional: an unnamed
+// check-in shows its ID.
 //
 // CronTimezone is a Rails/ActiveSupport zone name rather than an IANA identifier
 // — "Central Time (US & Canada)", not "America/Chicago", which the API rejects.
 type CheckInCreateParams = gen.CheckInCreateInput
 
-// CheckInUpdateParams are the fields a check-in update can change. Nil fields keep
-// their values.
+// CheckInUpdateParams are the fields a check-in update can change. Unset fields
+// keep their values, and a null clears one.
 type CheckInUpdateParams = gen.CheckInInput
 
 // CheckInScheduleType is how a check-in expects its reports.
@@ -120,14 +123,14 @@ const (
 	OperatorNeq AlarmTriggerOperator = gen.Neq
 )
 
-// AlarmCreateParams are a new alarm's fields. Name and Query are required; an
-// alarm with no TriggerConfig is created but never fires. Nil StreamIds runs the
-// query against every stream on the project, while an empty list means none.
+// AlarmCreateParams are a new alarm's fields. Name, Query, EvaluationPeriod,
+// LookbackLag and TriggerConfig are required. Nil StreamIds runs the query
+// against every stream on the project, while an empty list means none.
 type AlarmCreateParams = gen.AlarmCreateInput
 
-// AlarmUpdateParams are the fields an alarm update can change. Nil fields keep
-// their values: pointing Description at "" clears it, and StreamIds distinguishes
-// keeping the streams (nil) from none ([]).
+// AlarmUpdateParams are the fields an alarm update can change. Unset fields keep
+// their values: a null Description clears it, and StreamIds distinguishes keeping
+// the streams (nil) from none ([]).
 type AlarmUpdateParams = gen.AlarmUpdateInput
 
 // Create makes a new alarm.
@@ -156,8 +159,8 @@ func (s *AlarmsService) Delete(ctx context.Context, projectID, alarmID string) e
 // Widgets defaults to none.
 type DashboardCreateParams = gen.DashboardInput
 
-// DashboardUpdateParams are the fields a dashboard update can change. Nil fields
-// keep their values. A Widgets list replaces the dashboard's widgets: leave one
+// DashboardUpdateParams are the fields a dashboard update can change. Unset fields
+// keep their values, and a null DefaultTs clears it. A Widgets list replaces the dashboard's widgets: leave one
 // out to remove it, and keep each widget's Id to keep its identity.
 type DashboardUpdateParams = gen.DashboardUpdateInput
 

@@ -133,6 +133,47 @@ info:
       "meta": { "request_id": "..." }
     }
     ```
+
+    ## Errors
+
+    - 404: not visible to this credential. It doesn't exist, or it's outside a
+      project-restricted token's projects.
+    - 403 (`access_denied`, `insufficient_scope`, `project_restricted`,
+      `feature_unavailable`, `limit_reached`): the credential or the plan can't
+      do this.
+    - 422: a problem with the body; `details` names the field.
+    - 400: a problem with a query parameter.
+    - 503: a data store didn't answer. Retry.
+
+    ## Updates
+
+    PATCH merges: an omitted field is unchanged. `null` resets or clears a
+    field marked nullable and is 422 on any other. `[]` or `{}` empties a
+    collection. These objects are replaced whole: status page `features`, alarm
+    `trigger_config`, site `request_headers`. Integration `config` merges. An
+    unknown key is 422. A body read from a GET can be sent back as is; its
+    read-only keys are ignored.
+
+    ## Deletes
+
+    A delete has removed the resource by the time it answers 204. Deleting
+    something already gone is 404, which a client can treat as success. A
+    merged fault answers DELETE with 409.
+
+    ## Consistency
+
+    A GET right after a successful write returns the configuration written.
+    Runtime state and counters can change between reads.
+
+    ## Secrets
+
+    Secrets are never returned. Leave one out of an update to keep it. Site
+    `request_headers` are returned as stored.
+
+    ## IDs
+
+    IDs are strings everywhere, including UUID-formatted ones (sites, outages,
+    notices).
   version: 3.0.0
   contact:
     name: Honeybadger Support
@@ -938,27 +979,25 @@ paths:
                       unresolved_fault_count:
                         type: integer
                       notice_count_today:
-                        type:
-                        - integer
-                        - 'null'
-                        description: Notices in the last 24 hours; null when the count
-                          could not be computed
+                        type: integer
+                        description: Notices in the last 24 hours. Counted from the
+                          start of the window or the project's retention, whichever
+                          is later, so on short retention month can equal week. Search
+                          being unavailable answers 503.
                       notice_count_week:
-                        type:
-                        - integer
-                        - 'null'
-                        description: Notices in the last 7 days; null when the count
-                          could not be computed
+                        type: integer
+                        description: Notices in the last 7 days. Counted from the
+                          start of the window or the project's retention, whichever
+                          is later, so on short retention month can equal week. Search
+                          being unavailable answers 503.
                       notice_count_month:
-                        type:
-                        - integer
-                        - 'null'
-                        description: Notices in the last month; null when the count
-                          could not be computed
+                        type: integer
+                        description: Notices in the last month. Counted from the start
+                          of the window or the project's retention, whichever is later,
+                          so on short retention month can equal week. Search being
+                          unavailable answers 503.
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '400':
-          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -967,6 +1006,8 @@ paths:
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/ServiceUnavailable"
       security:
       - bearer_auth:
         - projects:read
@@ -1206,7 +1247,10 @@ paths:
     delete:
       operationId: deleteFault
       summary: Delete a fault
-      description: Permanently deletes a fault and all its notices.
+      description: 'Permanently deletes a fault. Synchronous. Its notices aren''t
+        purged; they stay retrievable by id until retention expires them.
+
+        '
       tags:
       - Faults
       parameters:
@@ -1513,8 +1557,13 @@ paths:
     post:
       operationId: snoozeFault
       summary: Snooze a fault
-      description: Snoozes notifications for a fault. Requires either a `time` duration
-        or a `count` of occurrences.
+      description: 'Snoozes notifications for a fault. Requires either a `time` duration
+        or a `count` of occurrences, and replaces any existing snooze. It suppresses
+        notifications for recurrences and rate escalation; a resolved fault that recurs
+        is still unresolved. With `count: N`, occurrence N+1 notifies. This is the
+        web UI''s "pause", and is unrelated to `pause_recording`.
+
+        '
       tags:
       - Faults
       parameters:
@@ -1527,14 +1576,10 @@ paths:
             schema:
               type: object
               description: Send one of `time` or `count`.
+              additionalProperties: false
               properties:
                 time:
-                  type: string
-                  enum:
-                  - hour
-                  - day
-                  - week
-                  description: Snooze for the given duration.
+                  "$ref": "#/components/schemas/PauseDuration"
                 count:
                   type: integer
                   enum:
@@ -1689,12 +1734,10 @@ paths:
     post:
       operationId: mergeFaults
       summary: Merge a fault into another
-      description: 'Merges the fault in the path into the one named by `target_fault_id`.
-        The path fault is the source: its notices move to the target and it is removed.
-        The merge runs in the background, so this answers 202 with a batch id rather
-        than the merged fault.
+      description: |
+        Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
 
-        '
+        The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
       tags:
       - Faults
       parameters:
@@ -1740,7 +1783,7 @@ paths:
       description: |
         Occurrence counts for a fault, bucketed over an explicit window.
 
-        The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour, `occurred_before` alone to run to now, `occurred_after` alone to start at the retention boundary. Bucket resolution is derived from the window's length, not chosen by the caller.
+        The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour; `occurred_before` alone gives the hour before it; `occurred_after` alone runs to now. The start is clamped to retention. Bucket resolution is derived from the window's length, not chosen by the caller.
 
         `meta.window` reports the window actually served, which is narrower than the one requested when retention clamped the start, and `meta.interval_seconds` gives the spacing between the timestamps in `data`. Buckets are zero-filled, so every interval in the window is present.
       tags:
@@ -1827,6 +1870,8 @@ paths:
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/ServiceUnavailable"
       security:
       - bearer_auth:
         - faults:read
@@ -1877,7 +1922,12 @@ paths:
     post:
       operationId: pauseFaultRecording
       summary: Pause fault recording
-      description: Pauses recording of new notices for a fault for a given duration.
+      description: 'Pauses recording of new notices for a fault for a given duration.
+        Notices during the pause are discarded. The first occurrence after it notifies,
+        subject to ignored, environment and integration settings. Pausing again replaces
+        the end time.
+
+        '
       tags:
       - Faults
       parameters:
@@ -1891,6 +1941,7 @@ paths:
               type: object
               required:
               - time
+              additionalProperties: false
               properties:
                 time:
                   "$ref": "#/components/schemas/PauseDuration"
@@ -1925,7 +1976,8 @@ paths:
     post:
       operationId: resumeFaultRecording
       summary: Resume fault recording
-      description: Resumes recording of new notices for a fault.
+      description: Resumes recording of new notices for a fault. On a fault that isn't
+        paused, it's a 200 with no change.
       tags:
       - Faults
       parameters:
@@ -1992,6 +2044,8 @@ paths:
                     "$ref": "#/components/schemas/TimeSeriesLinks"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
+        '301':
+          "$ref": "#/components/responses/MergedFault"
         '400':
           "$ref": "#/components/responses/BadRequest"
         '401':
@@ -2010,7 +2064,7 @@ paths:
       operationId: getNotice
       summary: Get a notice
       description: Returns a single notice by its token UUID, without needing to know
-        which project or fault it belongs to.
+        which project or fault it belongs to. Notice ids are lowercase v4 UUIDs.
       tags:
       - Notices
       parameters:
@@ -2045,6 +2099,8 @@ paths:
           "$ref": "#/components/responses/Forbidden"
         '404':
           "$ref": "#/components/responses/NotFound"
+        '422':
+          "$ref": "#/components/responses/AmbiguousAccount"
       security:
       - bearer_auth:
         - faults:read
@@ -2303,7 +2359,11 @@ paths:
     post:
       operationId: createSite
       summary: Create a site
-      description: Creates a new uptime monitoring site.
+      description: 'Creates a new uptime monitoring site. Refused with 403 `feature_unavailable`
+        on plans without uptime monitoring, and 403 `limit_reached` past the plan''s
+        site limit.
+
+        '
       tags:
       - Sites
       parameters:
@@ -2472,7 +2532,7 @@ paths:
           type: string
           format: uuid
       - "$ref": "#/components/parameters/Limit"
-      - "$ref": "#/components/parameters/CreatedAfter"
+      - "$ref": "#/components/parameters/PageCreatedAfter"
       - "$ref": "#/components/parameters/CreatedBefore"
       responses:
         '200':
@@ -2524,7 +2584,7 @@ paths:
           type: string
           format: uuid
       - "$ref": "#/components/parameters/Limit"
-      - "$ref": "#/components/parameters/CreatedAfter"
+      - "$ref": "#/components/parameters/PageCreatedAfter"
       - "$ref": "#/components/parameters/CreatedBefore"
       responses:
         '200':
@@ -2651,7 +2711,7 @@ paths:
       description: |
         Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
 
-        All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied.
+        All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
       tags:
       - Check-ins
       parameters:
@@ -2691,11 +2751,9 @@ paths:
                           type: string
                         success:
                           type: boolean
-                        errors:
-                          type: array
-                          items:
-                            type: string
-                          description: Present when success is false.
+                          const: true
+                          description: Always true; any failure makes the whole request
+                            a 422 and changes nothing.
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '400':
@@ -2756,7 +2814,10 @@ paths:
     patch:
       operationId: updateCheckIn
       summary: Update a check-in
-      description: Updates a check-in's settings.
+      description: 'Updates a check-in''s settings. Switching to a cron schedule on
+        a plan without cron is 403 `feature_unavailable`; nothing is changed.
+
+        '
       tags:
       - Check-ins
       parameters:
@@ -2835,7 +2896,7 @@ paths:
       operationId: listCheckInEvents
       summary: List check-in events
       description: |
-        Returns a check-in's events, newest first.
+        Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
 
         Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
       tags:
@@ -2880,6 +2941,8 @@ paths:
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/ServiceUnavailable"
       security:
       - bearer_auth:
         - checkins:read
@@ -2968,8 +3031,6 @@ paths:
                     "$ref": "#/components/schemas/Deploy"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
-        '400':
-          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -2998,8 +3059,6 @@ paths:
       responses:
         '204':
           description: Deploy deleted
-        '400':
-          "$ref": "#/components/responses/BadRequest"
         '401':
           "$ref": "#/components/responses/Unauthorized"
         '403':
@@ -3066,7 +3125,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/EnvironmentInput"
+              "$ref": "#/components/schemas/EnvironmentCreateInput"
       responses:
         '201':
           description: Environment created
@@ -3180,7 +3239,11 @@ paths:
     delete:
       operationId: deleteEnvironment
       summary: Delete an environment
-      description: Deletes an environment.
+      description: 'Deletes an environment. Its faults and notices stay, and its name
+        is removed from integrations'' `excluded_environments`. The next notice or
+        deploy under that name creates it again, with `notifications: true`.
+
+        '
       tags:
       - Environments
       parameters:
@@ -3209,7 +3272,12 @@ paths:
     patch:
       operationId: bulkUpdateEnvironments
       summary: Bulk update environments
-      description: Updates notification settings for multiple environments at once.
+      description: 'Updates notification settings for multiple environments at once.
+        An empty `environment_ids` changes nothing and answers with a count of 0;
+        an id that isn''t one of the project''s environments fails the whole request
+        with 422.
+
+        '
       tags:
       - Environments
       parameters:
@@ -3223,6 +3291,7 @@ paths:
               required:
               - environment_ids
               - notifications
+              additionalProperties: false
               properties:
                 environment_ids:
                   type: array
@@ -3244,6 +3313,8 @@ paths:
                 properties:
                   data:
                     type: object
+                    required:
+                    - count
                     properties:
                       count:
                         type: integer
@@ -3265,7 +3336,11 @@ paths:
     post:
       operationId: bulkDeleteEnvironments
       summary: Bulk delete environments
-      description: Deletes multiple environments at once.
+      description: 'Deletes multiple environments at once. An empty `environment_ids`
+        deletes nothing and answers with a count of 0; an id that isn''t one of the
+        project''s environments fails the whole request with 422.
+
+        '
       tags:
       - Environments
       parameters:
@@ -3278,6 +3353,7 @@ paths:
               type: object
               required:
               - environment_ids
+              additionalProperties: false
               properties:
                 environment_ids:
                   type: array
@@ -3296,6 +3372,8 @@ paths:
                 properties:
                   data:
                     type: object
+                    required:
+                    - count
                     properties:
                       count:
                         type: integer
@@ -4797,7 +4875,10 @@ paths:
     post:
       operationId: createStatusPage
       summary: Create a status page
-      description: Creates a new status page.
+      description: 'Creates a new status page. An account can have at most 10; past
+        that, and on plans without status pages, it''s 403.
+
+        '
       tags:
       - Status Pages
       requestBody:
@@ -5489,6 +5570,7 @@ paths:
               type: object
               required:
               - query
+              additionalProperties: false
               properties:
                 query:
                   type: string
@@ -5603,6 +5685,10 @@ components:
       - id
       - active
       - links
+      - name
+      - email
+      - parked
+      - created_at
       properties:
         id:
           type: string
@@ -5718,6 +5804,7 @@ components:
     AccountInvitationInput:
       type: object
       description: Writable account-invitation attributes
+      additionalProperties: false
       properties:
         email:
           type: string
@@ -5732,7 +5819,9 @@ components:
           type: boolean
           description: Create the member with email notifications off
         team_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'IDs of teams to add the invitee to. An ID that isn''t a team
             on this account fails the request with 422.
 
@@ -5806,6 +5895,7 @@ components:
       description: Writable account-member attributes
       required:
       - role
+      additionalProperties: false
       properties:
         role:
           type: string
@@ -5815,7 +5905,11 @@ components:
           - Member
     Alarm:
       type: object
-      description: An Insights alarm
+      description: 'An Insights alarm. Read from Honeybadger''s copy of the alarm,
+        written after each change; an edit made directly in the alarm service doesn''t
+        show here.
+
+        '
       required:
       - id
       - project_id
@@ -5824,10 +5918,12 @@ components:
       - links
       properties:
         id:
+          readOnly: true
           type: string
           description: Alarm identifier (opticon observer root ID)
           example: obs_abc123
         project_id:
+          readOnly: true
           type: string
           description: ID of the project this alarm belongs to
           example: Xk9mZp
@@ -5841,6 +5937,7 @@ components:
           - 'null'
           description: Alarm description
         state:
+          readOnly: true
           type: string
           description: Current alarm state
           enum:
@@ -5858,6 +5955,7 @@ components:
             '
           example: filter event_type::str == "notice" | stats count() as count
         stream_ids:
+          uniqueItems: true
           type:
           - array
           - 'null'
@@ -5885,32 +5983,40 @@ components:
           pattern: "^\\d+[smhdw]$"
           example: 1m
         trigger_config:
-          description: Trigger configuration for the alarm
-          oneOf:
+          description: 'What turns the alarm on; null if the stored alarm has none.
+            Updates replace the whole object.
+
+            '
+          anyOf:
           - "$ref": "#/components/schemas/AlarmTriggerConfig"
           - type: 'null'
         error:
+          readOnly: true
           type:
           - string
           - 'null'
           description: Error message if the alarm is in an error state
         last_checked_at:
+          readOnly: true
           type:
           - string
           - 'null'
           format: date-time
           description: When the alarm was last evaluated
         next_check_at:
+          readOnly: true
           type:
           - string
           - 'null'
           format: date-time
           description: When the alarm will next be evaluated
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the alarm was created
         updated_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the alarm was last updated
@@ -5922,28 +6028,36 @@ components:
       required:
       - name
       - query
+      - evaluation_period
+      - lookback_lag
+      - trigger_config
+      additionalProperties: false
       properties:
         name:
           type: string
           example: Error spike
         description:
-          type: string
+          type:
+          - string
+          - 'null'
         query:
           type: string
           description: BadgerQL evaluated on each check
           example: filter event_type::str == "notice" | stats count() as count
         stream_ids:
           type: array
-          description: 'Streams the query runs against. Defaults to every stream on
-            the project. An ID that isn''t one of the project''s streams fails the
-            request with 422.
+          description: 'Streams the query runs against. A set; can''t be empty. Left
+            out, every current stream in the project, which a read then lists. An
+            ID that isn''t one of the project''s streams fails the request with 422.
+            A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
         evaluation_period:
           type: string
-          description: Window each evaluation covers
+          description: Window each evaluation covers. At least 1m and less than a
+            week (`w` units are refused).
           example: 10m
         lookback_lag:
           type: string
@@ -5955,11 +6069,14 @@ components:
     AlarmUpdateInput:
       type: object
       description: Writable alarm attributes
+      additionalProperties: false
       properties:
         name:
           type: string
         description:
-          type: string
+          type:
+          - string
+          - 'null'
         query:
           type: string
           description: BadgerQL query evaluated on each check
@@ -5967,7 +6084,8 @@ components:
           type: array
           items:
             type: string
-          description: Stream identifiers to query
+          description: Stream identifiers to query. A set; order is ignored and duplicates
+            are dropped.
         evaluation_period:
           type: string
           description: Window each evaluation covers, as a compact duration
@@ -6047,6 +6165,21 @@ components:
           format: double
           description: The value the trigger compared against its threshold
           example: 42
+    IntegrationFilter:
+      type: object
+      description: Only errors matching `query` notify for `event`.
+      required:
+      - event
+      - query
+      properties:
+        event:
+          "$ref": "#/components/schemas/IntegrationFilterEvent"
+          description: An event name, or `all` for every event.
+        query:
+          type: string
+          minLength: 1
+          description: An error search query, as in the Errors search box.
+          example: environment:production
     Integration:
       type: object
       description: A notification integration
@@ -6055,13 +6188,30 @@ components:
       - project_id
       - type
       - active
+      - rate
+      - threshold
+      - notification_limit
+      - all_sites
+      - all_check_ins
+      - filters
       - links
+      - events
+      - site_ids
+      - check_in_ids
+      - excluded_environments
+      - included_environments
+      - alarm_alert_ids
+      - alarm_ok_ids
+      - created_at
+      - config
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: Ch9wLp
         project_id:
+          readOnly: true
           type: string
           description: ID of the project this channel belongs to
           example: Xk9mZp
@@ -6073,68 +6223,83 @@ components:
           type: boolean
           description: Whether the channel is active
         events:
+          uniqueItems: true
           type: array
           items:
             type: string
           description: Event types this channel listens for
+        all_sites:
+          type: boolean
+          description: 'Whether the integration follows every site in the project,
+            including ones added later. When true, site_ids is [].
+
+            '
+        all_check_ins:
+          type: boolean
+          description: 'Whether the integration follows every check-in in the project,
+            including ones added later. When true, check_in_ids is [].
+
+            '
         site_ids:
+          uniqueItems: true
           type: array
           items:
             type: string
             format: uuid
           description: Identifiers of sites this channel monitors
         check_in_ids:
+          uniqueItems: true
           type: array
           items:
             type: string
           description: IDs of check-ins this channel monitors
         excluded_environments:
+          uniqueItems: true
           type: array
           items:
             type: string
           description: Errors from these environments never notify through this integration.
             Takes precedence over included_environments.
         included_environments:
+          uniqueItems: true
           type: array
           items:
             type: string
           description: When non-empty, only errors from these environments notify
             through this integration.
-        filter_events:
+        filters:
           type: array
-          items:
-            type: string
-          description: Events that have a filter query, paired by position with filter_queries
-        filter_queries:
-          type: array
-          items:
-            type: string
-          description: 'Search query for the event at the same position in filter_events.
-            That event notifies only for errors that match it.
+          description: 'An ordered list. Each event that has a filter notifies only
+            for errors matching its query.
 
             '
+          items:
+            "$ref": "#/components/schemas/IntegrationFilter"
         alarm_alert_ids:
+          uniqueItems: true
           type: array
           items:
             type: string
           description: IDs of alarms whose alert events this integration receives
         alarm_ok_ids:
+          uniqueItems: true
           type: array
           items:
             type: string
           description: IDs of alarms whose recovery events this integration receives
         threshold:
           type: integer
-          description: Occurrence threshold for rate_exceeded events
+          description: Occurrence threshold before rate_exceeded fires
         rate:
           type: string
-          description: Rate period for rate_exceeded events (e.g. min, hour)
+          description: Rate period for rate_exceeded (e.g. min, hour)
         notification_limit:
           type:
           - integer
           - 'null'
           description: Maximum notifications in a 10-minute window before flood control
         connected:
+          readOnly: true
           type: boolean
           description: 'Present only on OAuth integrations (Slack, GitHub, GitLab,
             Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration
@@ -6148,139 +6313,803 @@ components:
             '
         config:
           type: object
-          description: 'Type-specific settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
-            Sensitive values (API keys, tokens) are masked. Unset values may be null.
-            Hidden internal fields are omitted.
+          additionalProperties: true
+          description: 'The type''s settings, one IntegrationConfig<Type> per `type`.
+            Unset settings are null. Secrets are never returned.
 
             '
-          additionalProperties:
-            oneOf:
-            - type: 'null'
-            - type: string
-            - type: boolean
-            - type: integer
-            - type: array
-              items:
-                type: string
-          example:
-            url: https://example.com/hook
-            label: Deploy listener
         error:
+          readOnly: true
           type: boolean
           description: Whether the channel is in an error state
         error_reason:
+          readOnly: true
           type: string
           description: Reason for the error state, if any
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the channel was created
         links:
           "$ref": "#/components/schemas/WebLinks"
+      allOf:
+      - if:
+          properties:
+            type:
+              const: Campfire
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigCampfire"
+              required:
+              - subdomain
+              - room_name
+      - if:
+          properties:
+            type:
+              const: CampfireV2
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigCampfireV2"
+              required:
+              - campfire_url
+      - if:
+          properties:
+            type:
+              const: CampfireV3
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigCampfireV3"
+              required:
+              - chatbot_url
+      - if:
+          properties:
+            type:
+              const: Datadog
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigDatadog"
+              required:
+              - endpoint
+              - label
+              - send_metrics
+      - if:
+          properties:
+            type:
+              const: DiscordWebhook
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigDiscordWebhook"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: Github
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigGithub"
+              required:
+              - repo
+              - labels
+              - issue_type
+              - title_format
+              - rich_body
+      - if:
+          properties:
+            type:
+              const: Gitlab
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigGitlab"
+              required:
+              - repo
+              - labels
+              - server_url
+              - title_format
+              - rich_body
+      - if:
+          properties:
+            type:
+              const: Bitbucket
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigBitbucket"
+              required:
+              - repo
+      - if:
+          properties:
+            type:
+              const: PivotalTracker
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigPivotalTracker"
+              required:
+              - pivotal_project_id
+              - labels
+              - name_format
+              - description_format
+      - if:
+          properties:
+            type:
+              const: Flowdock
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigFlowdock"
+              required:
+              - tags
+      - if:
+          properties:
+            type:
+              const: Asana
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigAsana"
+              required:
+              - asana_project_id
+      - if:
+          properties:
+            type:
+              const: HipChat
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigHipChat"
+              required:
+              - url
+              - room
+              - color
+              - alert
+      - if:
+          properties:
+            type:
+              const: Jira
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigJira"
+              required:
+              - username
+              - server_url
+              - project_key
+              - resolve_transition
+              - reopen_transition
+              - labels
+              - component_names
+              - issue_type
+              - summary_format
+              - rich_body
+      - if:
+          properties:
+            type:
+              const: JiraCloud
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigJiraCloud"
+              required:
+              - project_key
+              - resolve_transition
+              - reopen_transition
+              - labels
+              - component_names
+              - issue_type
+              - summary_format
+              - rich_body
+      - if:
+          properties:
+            type:
+              const: OpsGenie
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigOpsGenie"
+              required:
+              - endpoint
+              - label
+      - if:
+          properties:
+            type:
+              const: OpsGenieV2
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigOpsGenieV2"
+              required:
+              - endpoint
+              - label
+      - if:
+          properties:
+            type:
+              const: Redmine
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigRedmine"
+              required:
+              - server_url
+              - resolve_transition
+              - reopen_transition
+      - if:
+          properties:
+            type:
+              const: PagerDuty
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigPagerDuty"
+              required:
+              - label
+      - if:
+          properties:
+            type:
+              const: PagerDutyV2
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigPagerDutyV2"
+              required:
+              - severity
+              - label
+      - if:
+          properties:
+            type:
+              const: Sprintly
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigSprintly"
+              required:
+              - account_email
+              - product_id
+              - tags
+      - if:
+          properties:
+            type:
+              const: Trello
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigTrello"
+              required:
+              - board_id
+              - list_id
+              - title_format
+      - if:
+          properties:
+            type:
+              const: Linear
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigLinear"
+              required:
+              - team_id
+              - linear_project_id
+              - label_ids
+              - unresolved_state_id
+              - resolved_state_id
+              - label
+              - title_format
+              - description_format
+      - if:
+          properties:
+            type:
+              const: Slack
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigSlack"
+              required:
+              - label
+              - disable_backtrace
+      - if:
+          properties:
+            type:
+              const: Mattermost
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigMattermost"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: GoogleHangoutsChat
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigGoogleHangoutsChat"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: VictorOps
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigVictorOps"
+              required:
+              - routing_key
+              - label
+      - if:
+          properties:
+            type:
+              const: WebHook
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigWebHook"
+              required:
+              - url
+              - label
+              - payload_version
+      - if:
+          properties:
+            type:
+              const: Email
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigEmail"
+              required:
+              - email
+              - email_subject
+      - if:
+          properties:
+            type:
+              const: Intercom
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigIntercom"
+              required:
+              - context_field
+      - if:
+          properties:
+            type:
+              const: AlertOps
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigAlertOps"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: MicrosoftTeams
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeams"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: MicrosoftTeamsV2
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeamsV2"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: Shortcut
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigShortcut"
+              required:
+              - organization_name
+              - title_format
+              - description_format
+              - external_project_id
+              - resolve_transition
+              - reopen_transition
+      - if:
+          properties:
+            type:
+              const: ShortcutV2
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigShortcutV2"
+              required:
+              - organization_name
+              - title_format
+              - description_format
+              - custom_fields
+              - team
+              - initial_state
+              - resolve_transition
+              - reopen_transition
+      - if:
+          properties:
+            type:
+              const: PagerTree
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigPagerTree"
+              required:
+              - url
+      - if:
+          properties:
+            type:
+              const: Instatus
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigInstatus"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: ClickUp
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigClickUp"
+              required:
+              - workspace_id
+              - teamspace_id
+              - folder_id
+              - list_id
+              - initial_status_id
+              - resolve_status_id
+              - reopen_status_id
+              - tags
+              - title_format
+              - description_format
+      - if:
+          properties:
+            type:
+              const: ClickUpChat
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigClickUpChat"
+              required:
+              - workspace_id
+              - channel_id
+      - if:
+          properties:
+            type:
+              const: Ilert
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigIlert"
+              required:
+              - url
+              - label
+      - if:
+          properties:
+            type:
+              const: Zulip
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigZulip"
+              required:
+              - bot_email
+              - zulip_domain
+              - channel
+              - topic
+      - if:
+          properties:
+            type:
+              const: IncidentIo
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigIncidentIo"
+              required:
+              - alert_source_label
+      - if:
+          properties:
+            type:
+              const: Rootly
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigRootly"
+              required:
+              - notification_target_type
+              - notification_target_id
+              - label
+      - if:
+          properties:
+            type:
+              const: Backlog
+          required:
+          - type
+        then:
+          properties:
+            config:
+              "$ref": "#/components/schemas/IntegrationConfigBacklog"
+              required:
+              - space_url
+              - backlog_project_id
+              - issue_type_id
+              - priority_id
+              - resolve_status_id
+              - reopen_status_id
+              - label
+              - enable_webhook
+              - subject_format
+              - description_format
     IntegrationUpdateInput:
       type: object
       description: 'Fields to change on an integration. Omitted fields are left as
-        they are. The integration''s type can''t be changed, so a `type` in the body
-        is ignored. Type-specific settings go under `config`, in the shape a GET returns,
-        so a fetched integration can be edited and sent back. Each type''s settings
-        are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
+        they are. `type` can be sent only with its current value; any other value
+        is 422. A key this operation doesn''t take is 422, except the read-only keys
+        a GET returns (`id`, `links` and the like), which are ignored. Type-specific
+        settings go under `config`, in the shape a GET returns, so a fetched integration
+        can be edited and sent back. Each type''s settings are listed in [Integration
+        types](https://docs.honeybadger.io/api/v3/integrations/types/).
 
         '
       properties:
         active:
           type: boolean
         events:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'Events this integration notifies on. On create, defaults to
             the type''s default events. An event the type doesn''t support is refused
-            with 422.
+            with 422. Send null to reset to the type''s defaults. A set; order is
+            ignored and duplicates are dropped. `up` and `down` need uptime monitoring,
+            `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding
+            one on a plan without it is 403 feature_unavailable, and defaults leave
+            them out on those plans.
 
             '
           items:
             "$ref": "#/components/schemas/IntegrationEvent"
         rate:
-          type: string
-          description: Rate threshold period (e.g. min, hour)
+          type:
+          - string
+          - 'null'
+          default: wday
+          description: Rate threshold period (e.g. min, hour). Send null to reset
+            to wday.
         threshold:
-          type: integer
-          description: Number of occurrences before rate_exceeded fires
+          type:
+          - integer
+          - 'null'
+          default: 100
+          description: Number of occurrences before rate_exceeded fires. Send null
+            to reset to 100.
         notification_limit:
-          type: integer
-          description: Maximum notifications in a 10-minute window before flood control
+          type:
+          - integer
+          - 'null'
+          description: Maximum notifications in a 10-minute window before flood control.
+            Send null to remove the limit.
+        all_sites:
+          type: boolean
+          default: false
+          description: 'Follow every site in the project, including ones added later.
+            When true, site_ids must be empty or left out, and reads return []. Sending
+            a non-empty site_ids turns it off. With it off and site_ids empty, the
+            integration gets no up or down events.
+
+            '
+        all_check_ins:
+          type: boolean
+          default: false
+          description: 'Follow every check-in in the project, including ones added
+            later. When true, check_in_ids must be empty or left out, and reads return
+            []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids
+            empty, the integration gets no check-in events.
+
+            '
         site_ids:
-          type: array
-          description: 'Sites whose up and down events this integration receives.
-            An empty list turns site notifications off. An ID that isn''t one of this
-            project''s sites fails the request with 422.
+          type:
+          - array
+          - 'null'
+          description: 'Specific sites whose up and down events this integration receives.
+            An empty list turns site notifications off unless all_sites is true; a
+            non-empty list with all_sites: true is 422. An ID that isn''t one of this
+            project''s sites fails the request with 422. Send null or [] to clear.
+            A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
             format: uuid
         check_in_ids:
-          type: array
-          description: 'Check-ins whose events this integration receives. An empty
-            list turns check-in notifications off. An ID that isn''t one of this project''s
-            check-ins fails the request with 422.
+          type:
+          - array
+          - 'null'
+          description: 'Specific check-ins whose events this integration receives.
+            An empty list turns check-in notifications off unless all_check_ins is
+            true; a non-empty list with all_check_ins: true is 422. An ID that isn''t
+            one of this project''s check-ins fails the request with 422. Send null
+            or [] to clear. A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
         alarm_alert_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           description: IDs of alarms whose alert events this integration receives.
+            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
           items:
             type: string
         alarm_ok_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           description: IDs of alarms whose recovery events this integration receives.
+            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
           items:
             type: string
         excluded_environments:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'Errors from these environments never notify through this integration.
             Takes precedence over included_environments. Names are stored as given,
-            so an environment can be excluded before it first reports.
+            so an environment can be excluded before it first reports. Send null or
+            [] to clear. Applies only on plans with environment settings; changing
+            it on other plans is 403 feature_unavailable. Reads return what''s stored.
+            A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
         included_environments:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'When non-empty, only errors from these environments notify
             through this integration, including environments that haven''t reported
-            yet. Empty means every environment not excluded.
+            yet. Empty means every environment not excluded. Send null or [] to clear.
+            Applies only on plans with environment settings; changing it on other
+            plans is 403 feature_unavailable. Reads return what''s stored. A set;
+            order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
-        filter_events:
-          type: array
-          description: 'Events to filter, paired by position with filter_queries.
-            Replaces the stored filters; send [] to clear them.
+        filters:
+          type:
+          - array
+          - 'null'
+          description: 'An ordered list. Each event that has a filter notifies only
+            for errors matching its query. Replaces the stored filters; send [] or
+            null to clear. Applies only on plans with integration filters; changing
+            it on other plans is 403 feature_unavailable. Reads return what''s stored.
 
             '
           items:
-            type: string
-        filter_queries:
-          type: array
-          description: 'Search query for the event at the same position in filter_events.
-            That event notifies only for errors that match it. Read only together
-            with filter_events.
-
-            '
-          items:
-            type: string
+            "$ref": "#/components/schemas/IntegrationFilter"
         config:
           type: object
-          description: 'Type-specific settings to change, the same keys a GET returns
-            under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
-            Secrets sent back masked, exactly as a GET returned them, are left unchanged.
-            Hidden and OAuth-managed keys are ignored. Sending a setting outside `config`
-            is refused with 422.
+          additionalProperties: true
+          description: 'Type-specific settings, the same keys a GET returns under
+            `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
+            Merged into the stored settings: a key left out keeps its value; a key
+            sent as null is cleared, or reset to its default. Secrets are never returned;
+            leave them out to keep them. A key the type doesn''t have, or a value
+            with leading or trailing whitespace on a setting that doesn''t allow it,
+            is 422. Sending a setting outside `config` is refused with 422.
 
             '
-          additionalProperties: true
     IntegrationCreateInput:
       type: object
       description: 'A new integration. `type` picks the integration, and `config`
@@ -6296,87 +7125,141 @@ components:
         active:
           type: boolean
         events:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'Events this integration notifies on. On create, defaults to
             the type''s default events. An event the type doesn''t support is refused
-            with 422.
+            with 422. Send null to reset to the type''s defaults. A set; order is
+            ignored and duplicates are dropped. `up` and `down` need uptime monitoring,
+            `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding
+            one on a plan without it is 403 feature_unavailable, and defaults leave
+            them out on those plans.
 
             '
           items:
             "$ref": "#/components/schemas/IntegrationEvent"
         rate:
-          type: string
-          description: Rate threshold period (e.g. min, hour)
+          type:
+          - string
+          - 'null'
+          default: wday
+          description: Rate threshold period (e.g. min, hour). Send null to reset
+            to wday.
         threshold:
-          type: integer
-          description: Number of occurrences before rate_exceeded fires
+          type:
+          - integer
+          - 'null'
+          default: 100
+          description: Number of occurrences before rate_exceeded fires. Send null
+            to reset to 100.
         notification_limit:
-          type: integer
-          description: Maximum notifications in a 10-minute window before flood control
+          type:
+          - integer
+          - 'null'
+          description: Maximum notifications in a 10-minute window before flood control.
+            Send null to remove the limit.
+        all_sites:
+          type: boolean
+          default: false
+          description: 'Follow every site in the project, including ones added later.
+            When true, site_ids must be empty or left out, and reads return []. Sending
+            a non-empty site_ids turns it off. With it off and site_ids empty, the
+            integration gets no up or down events.
+
+            '
+        all_check_ins:
+          type: boolean
+          default: false
+          description: 'Follow every check-in in the project, including ones added
+            later. When true, check_in_ids must be empty or left out, and reads return
+            []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids
+            empty, the integration gets no check-in events.
+
+            '
         site_ids:
-          type: array
-          description: 'Sites whose up and down events this integration receives.
-            An empty list turns site notifications off. An ID that isn''t one of this
-            project''s sites fails the request with 422.
+          type:
+          - array
+          - 'null'
+          description: 'Specific sites whose up and down events this integration receives.
+            An empty list turns site notifications off unless all_sites is true; a
+            non-empty list with all_sites: true is 422. An ID that isn''t one of this
+            project''s sites fails the request with 422. Send null or [] to clear.
+            A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
             format: uuid
         check_in_ids:
-          type: array
-          description: 'Check-ins whose events this integration receives. An empty
-            list turns check-in notifications off. An ID that isn''t one of this project''s
-            check-ins fails the request with 422.
+          type:
+          - array
+          - 'null'
+          description: 'Specific check-ins whose events this integration receives.
+            An empty list turns check-in notifications off unless all_check_ins is
+            true; a non-empty list with all_check_ins: true is 422. An ID that isn''t
+            one of this project''s check-ins fails the request with 422. Send null
+            or [] to clear. A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
         alarm_alert_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           description: IDs of alarms whose alert events this integration receives.
+            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
           items:
             type: string
         alarm_ok_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           description: IDs of alarms whose recovery events this integration receives.
+            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
           items:
             type: string
         excluded_environments:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'Errors from these environments never notify through this integration.
             Takes precedence over included_environments. Names are stored as given,
-            so an environment can be excluded before it first reports.
+            so an environment can be excluded before it first reports. Send null or
+            [] to clear. Applies only on plans with environment settings; changing
+            it on other plans is 403 feature_unavailable. Reads return what''s stored.
+            A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
         included_environments:
-          type: array
+          type:
+          - array
+          - 'null'
           description: 'When non-empty, only errors from these environments notify
             through this integration, including environments that haven''t reported
-            yet. Empty means every environment not excluded.
+            yet. Empty means every environment not excluded. Send null or [] to clear.
+            Applies only on plans with environment settings; changing it on other
+            plans is 403 feature_unavailable. Reads return what''s stored. A set;
+            order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
-        filter_events:
-          type: array
-          description: 'Events to filter, paired by position with filter_queries.
-            Replaces the stored filters; send [] to clear them.
+        filters:
+          type:
+          - array
+          - 'null'
+          description: 'An ordered list. Each event that has a filter notifies only
+            for errors matching its query. Replaces the stored filters; send [] or
+            null to clear. Applies only on plans with integration filters; changing
+            it on other plans is 403 feature_unavailable. Reads return what''s stored.
 
             '
           items:
-            type: string
-        filter_queries:
-          type: array
-          description: 'Search query for the event at the same position in filter_events.
-            That event notifies only for errors that match it. Read only together
-            with filter_events.
-
-            '
-          items:
-            type: string
+            "$ref": "#/components/schemas/IntegrationFilter"
         type:
           type: string
           enum:
@@ -6436,6 +7319,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigCampfireV3"
+              required:
+              - chatbot_url
             events:
               items:
                 enum:
@@ -6469,6 +7354,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigDatadog"
+              required:
+              - api_key
             events:
               items:
                 enum:
@@ -6529,6 +7416,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigGithub"
+              required:
+              - repo
             events:
               items:
                 enum:
@@ -6555,6 +7444,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigGitlab"
+              required:
+              - repo
             events:
               items:
                 enum:
@@ -6581,6 +7472,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigBitbucket"
+              required:
+              - repo
             events:
               items:
                 enum:
@@ -6607,6 +7500,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigAsana"
+              required:
+              - asana_project_id
             events:
               items:
                 enum:
@@ -6632,6 +7527,11 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigJira"
+              required:
+              - username
+              - password
+              - server_url
+              - project_key
             events:
               items:
                 enum:
@@ -6654,6 +7554,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigJiraCloud"
+              required:
+              - project_key
             events:
               items:
                 enum:
@@ -6679,6 +7581,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigOpsGenieV2"
+              required:
+              - api_key
             events:
               items:
                 enum:
@@ -6711,6 +7615,9 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigRedmine"
+              required:
+              - server_url
+              - api_key
             events:
               items:
                 enum:
@@ -6732,6 +7639,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigPagerDutyV2"
+              required:
+              - integration_key
             events:
               items:
                 enum:
@@ -6761,6 +7670,10 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigSprintly"
+              required:
+              - account_email
+              - api_key
+              - product_id
             events:
               items:
                 enum:
@@ -6783,6 +7696,9 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigTrello"
+              required:
+              - board_id
+              - list_id
             events:
               items:
                 enum:
@@ -6809,6 +7725,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigLinear"
+              required:
+              - team_id
             events:
               items:
                 enum:
@@ -6901,6 +7819,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigGoogleHangoutsChat"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -6934,6 +7854,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigVictorOps"
+              required:
+              - api_key
             events:
               items:
                 enum:
@@ -6961,6 +7883,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigWebHook"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -6994,6 +7918,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigEmail"
+              required:
+              - email
             events:
               items:
                 enum:
@@ -7028,6 +7954,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigIntercom"
+              required:
+              - context_field
             events:
               items:
                 enum: []
@@ -7049,6 +7977,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigAlertOps"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -7081,6 +8011,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeamsV2"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -7114,6 +8046,13 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigShortcutV2"
+              required:
+              - organization_name
+              - api_key
+              - team
+              - initial_state
+              - resolve_transition
+              - reopen_transition
             events:
               items:
                 enum:
@@ -7135,6 +8074,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigPagerTree"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -7184,6 +8125,13 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigClickUp"
+              required:
+              - workspace_id
+              - teamspace_id
+              - list_id
+              - initial_status_id
+              - resolve_status_id
+              - reopen_status_id
             events:
               items:
                 enum:
@@ -7210,6 +8158,9 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigClickUpChat"
+              required:
+              - workspace_id
+              - channel_id
             events:
               items:
                 enum:
@@ -7247,6 +8198,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigIlert"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -7279,6 +8232,12 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigZulip"
+              required:
+              - bot_email
+              - api_key
+              - zulip_domain
+              - channel
+              - topic
             events:
               items:
                 enum:
@@ -7312,6 +8271,9 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigIncidentIo"
+              required:
+              - api_key
+              - alert_source_label
             events:
               items:
                 enum:
@@ -7341,6 +8303,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigRootly"
+              required:
+              - webhook_authorization_token
             events:
               items:
                 enum:
@@ -7374,6 +8338,14 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigBacklog"
+              required:
+              - space_url
+              - api_key
+              - backlog_project_id
+              - issue_type_id
+              - priority_id
+              - resolve_status_id
+              - reopen_status_id
             events:
               items:
                 enum:
@@ -7396,12 +8368,23 @@ components:
       - project_id
       - schedule_type
       - links
+      - name
+      - slug
+      - state
+      - reported_at
+      - expected_at
+      - missed_count
+      - grace_period
+      - report_url
+      - created_at
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: Ci5xWq
         project_id:
+          readOnly: true
           type: string
           description: ID of the project this check-in belongs to
           example: Xk9mZp
@@ -7420,6 +8403,7 @@ components:
         schedule_type:
           "$ref": "#/components/schemas/CheckInScheduleType"
         state:
+          readOnly: true
           type: string
           description: Current check-in state
           enum:
@@ -7428,34 +8412,40 @@ components:
           - missing
           - paused
         reported_at:
+          readOnly: true
           type:
           - string
           - 'null'
           format: date-time
           description: When the last report was received
         expected_at:
+          readOnly: true
           type:
           - string
           - 'null'
           format: date-time
           description: When the next report is expected
         missed_count:
+          readOnly: true
           type: integer
           description: Number of consecutive missed reports
         grace_period:
-          type:
-          - string
-          - 'null'
+          type: string
+          pattern: "^(\\d+ (second|minute|hour|day|week|month|year)s?)( \\d+ (second|minute|hour|day|week|month|year)s?)*$|^\\d\\d:\\d\\d:\\d\\d$"
           description: 'How long after the expected time before the check-in is missing.
-            A Postgres interval, rendered the way it is written: a count and a unit,
-            or HH:MM:SS.
+            A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads
+            return the canonical long form (`1 week` reads `7 days`); every form a
+            read returns can be written back. Compare periods by duration, not text.
+            Zero reads as `00:00:00`.
 
             '
           example: 10 minutes
         report_url:
+          readOnly: true
           type: string
           description: URL to ping when the task completes
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the check-in was created
@@ -7476,8 +8466,7 @@ components:
           - string
           - 'null'
           description: 'How often a report is expected, for `simple` schedules. Same
-            interval format as `grace_period`. Null for `cron` schedules, which use
-            `cron_schedule`.
+            format as `grace_period`. Null for `cron` schedules, which use `cron_schedule`.
 
             '
           example: 1 day
@@ -7548,6 +8537,7 @@ components:
       description: Names the fault to merge into
       required:
       - target_fault_id
+      additionalProperties: false
       properties:
         target_fault_id:
           type: string
@@ -7585,7 +8575,7 @@ components:
       - hour
       - day
       - week
-      description: How long to pause recording.
+      description: A duration of an hour, a day or a week.
     CheckInEvent:
       type: object
       description: A check-in event
@@ -7600,6 +8590,10 @@ components:
           example: Ci5xWq
         state:
           type: string
+          enum:
+          - reporting
+          - missing
+          - paused
           description: The state the check-in entered
           example: reporting
         created_at:
@@ -7616,49 +8610,75 @@ components:
       description: Attributes for creating a check-in.
       allOf:
       - "$ref": "#/components/schemas/CheckInInput"
-      - required:
-        - name
     CheckInInput:
       type: object
-      description: Writable check-in attributes
+      description: 'Writable check-in attributes. A key this operation doesn''t take
+        is 422; the read-only keys a GET returns are ignored.
+
+        '
       properties:
         name:
-          type: string
+          type:
+          - string
+          - 'null'
+          description: Send null to clear; an unnamed check-in shows its ID.
           example: Nightly billing job
         slug:
-          type: string
+          type:
+          - string
+          - 'null'
           description: 'Short identifier used in the check-in''s reporting URL. Generated
-            from the name when omitted.
+            from the name when omitted. Send null to clear. Renaming it breaks jobs
+            reporting to `…/check_in/<project key>/<slug>` and changes how `PUT /check_ins`
+            matches this check-in.
 
             '
           example: nightly-billing
         schedule_type:
-          "$ref": "#/components/schemas/CheckInScheduleType"
+          description: 'Switching to `simple` clears `cron_schedule` and resets `cron_timezone`
+            to `UTC`; switching to `cron` clears `report_period`.
+
+            '
+          allOf:
+          - "$ref": "#/components/schemas/CheckInScheduleType"
         report_period:
-          type: string
-          description: 'How often a report is expected, for `simple` schedules. A
-            count and a unit (`10 minutes`, `1 day`) or `HH:MM:SS`. Required unless
-            `schedule_type` is `cron`, and may not be zero.
+          type:
+          - string
+          - 'null'
+          pattern: "^(\\d+ (second|minute|hour|day|week|month|year)s?)( \\d+ (second|minute|hour|day|week|month|year)s?)*$|^\\d\\d:\\d\\d:\\d\\d$"
+          description: 'How often a report is expected, for `simple` schedules. Required
+            unless `schedule_type` is `cron`, and may not be zero. A duration such
+            as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical
+            long form (`1 week` reads `7 days`); every form a read returns can be
+            written back. Compare periods by duration, not text.
 
             '
           example: 1 day
         grace_period:
-          type: string
+          type:
+          - string
+          - 'null'
+          pattern: "^(\\d+ (second|minute|hour|day|week|month|year)s?)( \\d+ (second|minute|hour|day|week|month|year)s?)*$|^\\d\\d:\\d\\d:\\d\\d$"
           description: 'How long after the expected time before the check-in is considered
-            missing. Same format as `report_period`.
+            missing. Same format as `report_period`; zero is `00:00:00`. Send null
+            to reset to zero.
 
             '
           example: 10 minutes
         cron_schedule:
-          type: string
-          description: Cron expression, required when `schedule_type` is `cron`
+          type:
+          - string
+          - 'null'
+          description: Cron expression, required when `schedule_type` is `cron`.
           example: 0 3 * * *
         cron_timezone:
-          type: string
+          type:
+          - string
+          - 'null'
           description: 'Timezone the cron schedule is evaluated in. A Rails/ActiveSupport
             zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not
             `America/Chicago`, which is rejected. Required when `schedule_type` is
-            `cron`.
+            `cron`. Send null to reset to `UTC`.
 
             '
           example: Central Time (US & Canada)
@@ -7670,6 +8690,10 @@ components:
       - fault_id
       - created_at
       - links
+      - author
+      - body
+      - source
+      - event
       properties:
         id:
           type: string
@@ -7725,6 +8749,7 @@ components:
       description: Writable comment attributes
       required:
       - body
+      additionalProperties: false
       properties:
         body:
           type: string
@@ -7738,12 +8763,20 @@ components:
       - project_id
       - title
       - links
+      - default_ts
+      - widgets
+      - is_default
+      - shared
+      - created_at
+      - updated_at
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: Db4rKn
         project_id:
+          readOnly: true
           type: string
           description: ID of the project this dashboard belongs to
           example: Xk9mZp
@@ -7761,9 +8794,11 @@ components:
           items:
             "$ref": "#/components/schemas/DashboardWidget"
         is_default:
+          readOnly: true
           type: boolean
           description: Whether this is the default dashboard
         shared:
+          readOnly: true
           type: boolean
           description: Whether the dashboard is shared with all team members
         default_ts:
@@ -7773,10 +8808,12 @@ components:
           description: Default time range for the dashboard
           example: PT3H
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the dashboard was created
         updated_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the dashboard was last updated
@@ -7852,7 +8889,10 @@ components:
           type: string
           maxLength: 255
         default_ts:
-          type: string
+          type:
+          - string
+          - 'null'
+          description: Default time range. Send null to clear.
         widgets:
           type: array
           items:
@@ -7865,7 +8905,10 @@ components:
           type: string
           maxLength: 255
         default_ts:
-          type: string
+          type:
+          - string
+          - 'null'
+          description: Default time range. Send null to clear.
         widgets:
           type: array
           items:
@@ -7883,6 +8926,10 @@ components:
       - id
       - project_id
       - environment
+      - revision
+      - repository
+      - local_username
+      - created_at
       properties:
         id:
           type: string
@@ -7893,8 +8940,10 @@ components:
           description: ID of the project this deploy belongs to
           example: Xk9mZp
         environment:
-          type: string
-          description: Deploy environment
+          type:
+          - string
+          - 'null'
+          description: Deploy environment; null when the deploy named none
           example: production
         revision:
           type:
@@ -7925,12 +8974,16 @@ components:
       - id
       - project_id
       - name
+      - notifications
+      - created_at
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: En6tRm
         project_id:
+          readOnly: true
           type: string
           description: ID of the project this environment belongs to
           example: Xk9mZp
@@ -7942,21 +8995,51 @@ components:
           type: boolean
           description: Whether notifications fire for this environment.
         created_at:
-          type: string
+          readOnly: true
+          type:
+          - string
+          - 'null'
           format: date-time
           description: When the environment was created
-    EnvironmentInput:
+    EnvironmentCreateInput:
       type: object
-      description: Writable environment attributes
+      description: A new environment. Names are unique per project and case-sensitive.
       required:
       - name
       properties:
         name:
           type: string
+          minLength: 1
+          maxLength: 255
           example: production
         notifications:
-          type: boolean
-          description: Whether notifications are sent for faults in this environment
+          type:
+          - boolean
+          - 'null'
+          default: true
+          description: Whether errors in this environment notify. Send null for the
+            default.
+    EnvironmentInput:
+      type: object
+      description: 'Fields to change on an environment. Omitted fields are unchanged.
+        A key this operation doesn''t take is 422; the read-only keys a GET returns
+        are ignored.
+
+        '
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Can only be sent with its current value; an environment can't
+            be renamed.
+          example: production
+        notifications:
+          type:
+          - boolean
+          - 'null'
+          description: Whether errors in this environment notify. Send null to reset
+            to true.
     Error:
       type: object
       description: API error response
@@ -8006,9 +9089,10 @@ components:
           description: Human-readable explanation
           example: Access denied
         details:
-          description: 'A list of field errors for `validation_error`, an object naming
-            the missing permission for `insufficient_scope`, or the surviving fault
-            for `fault_merged`. Absent for every other code.
+          description: 'A list of field errors for `validation_error`, `invalid_parameter`,
+            `feature_unavailable`, and `limit_reached` from PUT /check_ins; an object
+            naming the missing permission for `insufficient_scope`, or the surviving
+            fault for `fault_merged`. Absent for every other code.
 
             '
           oneOf:
@@ -8146,6 +9230,16 @@ components:
           example:
           - critical
           - backend
+        assignee_id:
+          type:
+          - string
+          - 'null'
+          description: Same as `assignee.id`. Written by POST …/assign.
+        snoozed:
+          type: boolean
+          readOnly: true
+          description: Whether a snooze is in effect now. A new snooze replaces any
+            existing one.
         assignee:
           type:
           - object
@@ -8169,9 +9263,7 @@ components:
           - "$ref": "#/components/schemas/Deploy"
           - type: 'null'
         tickets:
-          type:
-          - array
-          - 'null'
+          type: array
           description: Issue tracker tickets linked to this fault
           items:
             type: object
@@ -8210,6 +9302,7 @@ components:
       description: Who to assign a fault to
       required:
       - assignee_id
+      additionalProperties: false
       properties:
         assignee_id:
           type: string
@@ -8222,6 +9315,7 @@ components:
     FaultSelectionInput:
       type: object
       description: Selects the faults a bulk operation applies to
+      additionalProperties: false
       properties:
         all:
           type: boolean
@@ -8316,6 +9410,7 @@ components:
     FaultInput:
       type: object
       description: Writable fault attributes
+      additionalProperties: false
       properties:
         resolved:
           type: boolean
@@ -8332,7 +9427,9 @@ components:
             '
           example: Xk9mZp
         tags:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             type: string
         resolve_on_deploy:
@@ -8416,6 +9513,7 @@ components:
       description: The writable fields of an incident update. status and severity
         default to investigating and problem_detected. If neither start_at nor start_now
         is given, the update starts now.
+      additionalProperties: false
       properties:
         message:
           type: string
@@ -8451,6 +9549,7 @@ components:
         should_notify:
           type: boolean
           description: Announce the update on the status page's connected accounts
+            and email the status page's subscribers
     Notice:
       type: object
       description: An individual error occurrence
@@ -8750,8 +9849,13 @@ components:
       - id
       - site_id
       - down_at
+      - status
+      - reason
+      - headers
       - created_at
       - links
+      - up_at
+      - duration_seconds
       properties:
         id:
           type: string
@@ -8773,6 +9877,21 @@ components:
           - 'null'
           format: date-time
           description: When the site came back up, or null while it is still down
+        status:
+          type:
+          - integer
+          - 'null'
+          description: HTTP status of the check that went down
+        reason:
+          type:
+          - string
+          - 'null'
+          description: Why the check failed
+        headers:
+          type: object
+          description: Response headers of the failing check
+          additionalProperties:
+            type: string
         duration_seconds:
           type:
           - integer
@@ -8809,14 +9928,32 @@ components:
       - id
       - account_id
       - name
+      - asana_workspace_id
       - active
       - links
+      - token
+      - disable_public_links
+      - environments
+      - language
+      - resolve_errors_on_deploy
+      - user_url
+      - source_url
+      - user_search_field
+      - customer_throttle
+      - fault_count
+      - unresolved_fault_count
+      - last_notice_at
+      - earliest_notice_at
+      - purge_days
+      - created_at
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: Xk9mZp
         account_id:
+          readOnly: true
           type: string
           description: ID of the account this project belongs to
           example: Ab3kL9
@@ -8825,6 +9962,7 @@ components:
           description: Project name
           example: My Rails App
         token:
+          readOnly: true
           type:
           - string
           - 'null'
@@ -8835,12 +9973,14 @@ components:
             '
           example: hbp_abc123...
         active:
+          readOnly: true
           type: boolean
           description: Whether the project is active
         disable_public_links:
           type: boolean
           description: Whether public error links are disabled
         environments:
+          readOnly: true
           type: array
           items:
             type: string
@@ -8879,6 +10019,11 @@ components:
 
             '
           example: context.account_id
+        asana_workspace_id:
+          type:
+          - string
+          - 'null'
+          description: Asana workspace used by the project's Asana integration
         customer_throttle:
           type:
           - integer
@@ -8891,18 +10036,22 @@ components:
           description: Primary programming language
           example: Ruby
         fault_count:
+          readOnly: true
           type: integer
           description: Total number of faults (errors) in this project
         unresolved_fault_count:
+          readOnly: true
           type: integer
           description: Number of unresolved faults
         last_notice_at:
+          readOnly: true
           type:
           - string
           - 'null'
           format: date-time
           description: When the last error was received
         earliest_notice_at:
+          readOnly: true
           type:
           - string
           - 'null'
@@ -8914,6 +10063,7 @@ components:
           - 'null'
           description: Data retention period in days
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the project was created
@@ -8923,74 +10073,105 @@ components:
       description: Attributes for creating a project.
       allOf:
       - "$ref": "#/components/schemas/ProjectInput"
-      - required:
+      - type: object
+        required:
         - name
+        properties:
+          disable_email_notifications:
+            type: boolean
+            writeOnly: true
+            description: 'Create-only. Members added with the project get email notifications
+              switched off. Not a stored setting, so reading a project never returns
+              it.
+
+              '
+          team_id:
+            type: string
+            description: 'Puts the new project in this team. Create-only: afterwards
+              the team''s `project_ids` owns membership. Including it requires team:write
+              in addition to the operation''s project scope, and the user must be
+              allowed to manage the team. Without team:write the entire request is
+              rejected with 403 insufficient_scope; no other fields are saved. An
+              ID that isn''t a team on this account fails the request with 422.
+
+              '
+            example: Ab3kL9
     ProjectInput:
       type: object
-      description: Writable project attributes
+      description: 'Writable project attributes. Omitted fields are unchanged; null
+        resets or clears the fields marked nullable. A key this operation doesn''t
+        take, including the create-only `team_id` and `disable_email_notifications`,
+        is 422; the read-only keys a GET returns are ignored.
+
+        '
       properties:
         name:
           type: string
           example: Billing API
         resolve_errors_on_deploy:
-          type: boolean
-          description: Resolve every open fault when a deploy is recorded
+          type:
+          - boolean
+          - 'null'
+          description: Resolve every open fault when a deploy is recorded. Send null
+            to reset to true.
         disable_public_links:
-          type: boolean
-          description: Disallow shareable public fault links
+          type:
+          - boolean
+          - 'null'
+          description: Disallow shareable public fault links. Send null to reset to
+            false.
         language:
-          type: string
-          description: Primary language, used to format backtraces
+          type:
+          - string
+          - 'null'
+          description: Primary language, used to format backtraces. Send null to clear.
           example: ruby
         user_url:
-          type: string
+          type:
+          - string
+          - 'null'
           description: 'Template for linking a fault''s affected user into your own
-            system. `[user_id]` and `[user_email]` are substituted.
+            system. `[user_id]` and `[user_email]` are substituted. Send null to clear.
 
             '
           example: https://admin.example.com/users/[user_id]
         source_url:
-          type: string
+          type:
+          - string
+          - 'null'
           description: 'Template for linking a backtrace line to your source host.
-            `[file]` and `[line]` are substituted.
+            `[file]` and `[line]` are substituted. Send null to clear.
 
             '
           example: https://github.com/acme/app/blob/main/[file]#L[line]
         user_search_field:
-          type: string
+          type:
+          - string
+          - 'null'
           description: 'Context key identifying the affected user, for when it is
-            not in the default `context.user_email` or `context.user_id`.
+            not in the default `context.user_email` or `context.user_id`. Send null
+            to clear.
 
             '
           example: context.account_id
-        disable_email_notifications:
-          type: boolean
-          description: 'Applied at creation: members added with the project get email
-            notifications switched off. Not a stored setting, so reading a project
-            never returns it.
-
-            '
         asana_workspace_id:
-          type: string
+          type:
+          - string
+          - 'null'
+          description: Send null to clear.
         customer_throttle:
-          type: integer
-          description: Notices accepted per minute before throttling kicks in
-        team_id:
-          type: string
-          description: 'ID of a team on this account to grant project access. Including
-            this field on create or update requires team:write in addition to the
-            operation''s project scope, and the user must be allowed to manage the
-            team. Without team:write the entire request is rejected with 403 insufficient_scope;
-            no other fields are saved. An ID that isn''t a team on this account fails
-            the request with 422.
-
-            '
-          example: Ab3kL9
+          type:
+          - integer
+          - 'null'
+          description: Notices accepted per minute before throttling kicks in. Send
+            null to clear.
         purge_days:
-          type: integer
+          type:
+          - integer
+          - 'null'
           description: 'Days to retain notices. Accepted only on accounts with custom
             retention; otherwise a value other than the current one (on create, the
-            default) is refused with 403 `feature_unavailable`.
+            default) is refused with 403 `feature_unavailable`. Send null to clear.
 
             '
     ProjectKey:
@@ -8999,16 +10180,21 @@ components:
       - id
       - project_id
       - key
+      - label
+      - created_at
       properties:
         id:
+          readOnly: true
           type: string
           description: Identifier for this key. Use it in paths.
           example: Kp7mZq2x
         project_id:
+          readOnly: true
           type: string
           description: Identifier of the project the key belongs to.
           example: Xk9mZp
         key:
+          readOnly: true
           type: string
           description: 'The ingestion key a notifier sends. Returned in full — unlike
             an API credential, this value is meant to be distributed with your application.
@@ -9022,13 +10208,17 @@ components:
           description: Optional human-readable name.
           example: CI
         created_at:
+          readOnly: true
           type: string
           format: date-time
     ProjectKeyInput:
       type: object
+      additionalProperties: false
       properties:
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Optional human-readable name.
           example: CI
     ResponseMeta:
@@ -9047,13 +10237,28 @@ components:
       - url
       - active
       - links
+      - state
+      - last_checked_at
+      - match_type
+      - match
+      - request_method
+      - frequency
+      - locations
+      - validate_ssl
+      - request_headers
+      - request_body
+      - outage_threshold
+      - timeout
+      - created_at
       properties:
         id:
+          readOnly: true
           type: string
           format: uuid
           description: Unique identifier
           example: 9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47
         project_id:
+          readOnly: true
           type: string
           description: ID of the project this site belongs to
           example: Xk9mZp
@@ -9063,12 +10268,14 @@ components:
           example: Production App
         url:
           type: string
-          description: URL to monitor
+          description: URL to monitor. Includes the scheme.
           example: https://app.example.com
         active:
           type: boolean
-          description: Whether monitoring is active
+          description: Whether monitoring is active. After 740 consecutive failed
+            checks the server sets it to false.
         state:
+          readOnly: true
           type: string
           description: Current state of the site
           enum:
@@ -9077,36 +10284,35 @@ components:
           - down
           example: up
         last_checked_at:
+          readOnly: true
           type:
           - string
           - 'null'
           format: date-time
           description: When the site was last checked
         match_type:
-          type: string
-          description: Type of response matching
+          "$ref": "#/components/schemas/SiteMatchType"
         match:
           type:
           - string
           - 'null'
           description: Value to match in the response
         request_method:
-          type: string
           description: HTTP method for checks
-          example: GET
+          anyOf:
+          - "$ref": "#/components/schemas/SiteRequestMethod"
+          - type: 'null'
         frequency:
-          type: integer
-          description: Check frequency in minutes
+          "$ref": "#/components/schemas/SiteFrequency"
         locations:
-          type:
-          - array
-          - 'null'
+          type: array
+          uniqueItems: true
           items:
-            type: string
-          description: Monitoring locations
+            "$ref": "#/components/schemas/SiteLocation"
+          description: Locations checks run from. Unordered. [] means every location.
           example:
-          - us-east-1
-          - eu-west-1
+          - Virginia
+          - London
         validate_ssl:
           type:
           - boolean
@@ -9131,24 +10337,74 @@ components:
           - 'null'
           description: Number of failed checks before declaring an outage
         timeout:
-          type: integer
-          description: Request timeout in seconds
+          type:
+          - integer
+          - 'null'
+          description: 'The stored request timeout in seconds; null means the default,
+            30. On a plan without custom timeouts the default applies whatever is
+            stored.
+
+            '
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the site was created
         links:
           "$ref": "#/components/schemas/WebLinks"
+    SiteMatchType:
+      type: string
+      enum:
+      - success
+      - exact
+      - include
+      - exclude
+      - jmespath
+      description: 'How a response is judged. `success`: any 2xx; `match` must be
+        left out. `exact`: the response status code equals `match`. `include` / `exclude`:
+        the body does / doesn''t contain `match`. `jmespath`: `match` is a JMESPath
+        expression evaluated against the JSON body; numbers in it use backticks, not
+        quotes.
+
+        '
+    SiteFrequency:
+      type: integer
+      enum:
+      - 1
+      - 2
+      - 5
+      - 15
+      description: Minutes between checks. A value below the plan's floor is refused.
+    SiteLocation:
+      type: string
+      enum:
+      - Virginia
+      - Frankfurt
+      - Singapore
+      - London
+      - Oregon
+      description: A location uptime checks run from.
+    SiteRequestMethod:
+      type: string
+      enum:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
     SiteCreateInput:
-      description: Attributes for creating a site.
+      description: Attributes for creating a site. `name` defaults to the URL.
       allOf:
       - "$ref": "#/components/schemas/SiteInput"
       - required:
-        - name
         - url
     SiteInput:
       type: object
-      description: Writable uptime-check site attributes
+      description: 'Writable uptime-check site attributes. Omitted fields are unchanged;
+        null resets or clears the fields marked nullable. A key this operation doesn''t
+        take is 422; the read-only keys a GET returns are ignored.
+
+        '
       properties:
         name:
           type: string
@@ -9156,39 +10412,48 @@ components:
         url:
           type: string
           format: uri
+          pattern: "^https?://\\S"
+          description: Must start with http:// or https://, with no surrounding whitespace.
           example: https://www.example.com/health
         match_type:
-          type: string
-          enum:
-          - success
-          - jmespath
-          description: 'How a response is judged. `success` accepts any 2xx and ignores
-            `match`; `jmespath` evaluates `match` against the JSON body.
+          description: Send null to reset to success.
+          anyOf:
+          - "$ref": "#/components/schemas/SiteMatchType"
+          - type: 'null'
+        match:
+          type:
+          - string
+          - 'null'
+          maxLength: 255
+          description: 'What `match_type` compares against (see SiteMatchType). Required
+            unless `match_type` is `success`, and must be left out with `success`.
+            Send null to clear.
 
             '
-        match:
-          type: string
-          maxLength: 255
-          description: Required unless `match_type` is `success`, where it is cleared
           example: status == 'ok'
         request_method:
-          type: string
-          enum:
-          - GET
-          - POST
-          - PUT
-          - PATCH
-          - DELETE
+          description: Send null to reset to GET.
+          anyOf:
+          - "$ref": "#/components/schemas/SiteRequestMethod"
+          - type: 'null'
         validate_ssl:
-          type: boolean
-          description: Fail the check when the TLS certificate does not validate
+          type:
+          - boolean
+          - 'null'
+          description: Fail the check when the TLS certificate does not validate.
+            Send null to reset to true.
         request_body:
-          type: string
-          description: Body to send with the request
+          type:
+          - string
+          - 'null'
+          maxLength: 32768
+          description: Body to send with the request, up to 32 KB. Send null to clear.
         request_headers:
-          type: object
+          type:
+          - object
+          - 'null'
           description: 'Headers to send with the request, as header name to value.
-            Replaces the stored headers; send `{}` to clear them.
+            Replaces the stored headers; send `{}` or null to clear them.
 
             '
           additionalProperties:
@@ -9196,58 +10461,85 @@ components:
           example:
             Authorization: Bearer abc123
         frequency:
-          type: integer
-          enum:
-          - 1
-          - 2
-          - 5
-          - 15
-          description: 'Minutes between checks. The plan sets a floor, so a value
-            below it is rejected.
+          description: 'Minutes between checks. Defaults to 5; plans set the most
+            frequent allowed, and a value under it is 403 `feature_unavailable`. Send
+            null to reset to 5.
 
             '
+          anyOf:
+          - "$ref": "#/components/schemas/SiteFrequency"
+          - type: 'null'
         locations:
-          type: array
-          description: 'Locations to check from, by name. Anything outside the known
-            set is discarded, and if nothing recognisable remains the site checks
-            from every location — so a typo silently widens rather than narrows.
+          type:
+          - array
+          - 'null'
+          description: 'A set of location names to check from. [] or null means every
+            location. An unknown name is 422. A set; order is ignored and duplicates
+            are dropped.
 
             '
           items:
-            type: string
-            enum:
-            - Virginia
-            - Oregon
-            - London
-            - Frankfurt
-            - Singapore
+            "$ref": "#/components/schemas/SiteLocation"
         outage_threshold:
-          type: integer
-          description: Consecutive failures before an outage is declared
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          description: 'Consecutive failures before an outage is declared. null means
+            down once failures reach 50% of locations.
+
+            '
         active:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
+          description: Send null to reset to true.
         timeout:
-          type: integer
-          description: 'Request timeout. Accepted only on accounts with the uptime-timeout
+          type:
+          - integer
+          - 'null'
+          description: 'Request timeout in seconds, 1 to 120, default 30, and less
+            than the frequency in seconds. Accepted only on accounts with the uptime-timeout
             feature; otherwise a value other than the current one (on create, the
-            default) is refused with 403 `feature_unavailable`.
+            default) is refused with 403 `feature_unavailable`. Send null to reset
+            to the default.
 
             '
     StatusPage:
       type: object
-      description: A public status page
+      description: 'A public status page. Readable and deletable after the plan loses
+        status pages; creating and editing need the feature.
+
+        '
       required:
       - id
       - account_id
       - name
       - url
+      - features
+      - hide_branding
+      - password_protected
+      - username
       - links
+      - domain
+      - created_at
+      - domain_verified_at
+      - sites
+      - check_ins
+      - incidents_enabled
+      - search_engine_indexing_disabled
+      - message_enabled
+      - message_title
+      - message_body
+      - google_analytics_id
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: Sp7bMq
         account_id:
+          readOnly: true
           type: string
           description: ID of the account this status page belongs to
           example: Ab3kL9
@@ -9261,15 +10553,67 @@ components:
           - 'null'
           description: Custom domain for the status page
           example: status.acme.com
+        features:
+          type: object
+          description: Presentation copy and styling. Replaced whole by an update.
+          additionalProperties: false
+          properties:
+            home_link:
+              type: string
+            up_caption:
+              type: string
+            down_caption:
+              type: string
+            mixed_caption:
+              type: string
+            custom_css:
+              type: string
+        hide_branding:
+          type: boolean
+        password_protected:
+          type: boolean
+        username:
+          type:
+          - string
+          - 'null'
+          description: Basic-auth user when password protected. The password is never
+            returned.
+        incidents_enabled:
+          type: boolean
+          description: Whether the page shows incidents
+        search_engine_indexing_disabled:
+          type: boolean
+          description: Whether search engines are asked not to index the page
+        message_enabled:
+          type: boolean
+          description: Whether the message banner shows
+        message_title:
+          type:
+          - string
+          - 'null'
+          description: The message banner's title
+        message_body:
+          type:
+          - string
+          - 'null'
+          description: The message banner's text
+        google_analytics_id:
+          type:
+          - string
+          - 'null'
+          description: The page's Google Analytics measurement ID
         url:
+          readOnly: true
           type: string
           description: URL of the status page
           example: https://acme.statuspage.honeybadger.io
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the status page was created
         domain_verified_at:
+          readOnly: true
           type:
           - string
           - 'null'
@@ -9277,9 +10621,16 @@ components:
           description: When the custom domain was verified
         sites:
           type: array
-          description: Uptime sites displayed on the status page
+          description: Uptime sites displayed on the status page. An ordered list;
+            the order is the order on the page.
           items:
             type: object
+            required:
+            - site_id
+            - display_name
+            - description
+            - state
+            - last_checked_at
             properties:
               site_id:
                 type: string
@@ -9297,18 +10648,31 @@ components:
                 description: Description shown on the status page
               state:
                 type: string
+                readOnly: true
+                enum:
+                - pending
+                - up
+                - down
                 description: Current state of the site
               last_checked_at:
                 type:
                 - string
                 - 'null'
+                readOnly: true
                 format: date-time
                 description: When the site was last checked
         check_ins:
           type: array
-          description: Check-ins displayed on the status page
+          description: Check-ins displayed on the status page. An ordered list; the
+            order is the order on the page.
           items:
             type: object
+            required:
+            - check_in_id
+            - display_name
+            - description
+            - state
+            - reported_at
             properties:
               check_in_id:
                 type: string
@@ -9325,11 +10689,18 @@ components:
                 description: Description shown on the status page
               state:
                 type: string
+                readOnly: true
+                enum:
+                - pending
+                - reporting
+                - missing
+                - paused
                 description: Current state of the check-in
               reported_at:
                 type:
                 - string
                 - 'null'
+                readOnly: true
                 format: date-time
                 description: When the check-in last reported
         links:
@@ -9344,6 +10715,8 @@ components:
       - status_page_id
       - title
       - build_type
+      - retro_should_notify
+      - retro_notify_message
       - updates
       - links
       properties:
@@ -9359,6 +10732,15 @@ components:
           type: string
           description: Incident title
           example: Database connectivity issues
+        retro_should_notify:
+          type: boolean
+          description: For a retroactive incident, whether to announce it once on
+            the status page's connected accounts
+        retro_notify_message:
+          type:
+          - string
+          - 'null'
+          description: The announcement sent when retro_should_notify is true
         build_type:
           type: string
           description: How the incident was opened
@@ -9421,9 +10803,11 @@ components:
           "$ref": "#/components/schemas/WebLinks"
     StatusPageIncidentCreateInput:
       type: object
-      description: An incident and, optionally, the updates it opens with
+      description: An incident and the updates it opens with
       required:
       - title
+      - updates
+      additionalProperties: false
       properties:
         title:
           type: string
@@ -9441,23 +10825,29 @@ components:
           type: boolean
           description: Announce a retroactive incident when it is created
         retro_notify_message:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Message accompanying that announcement
         updates:
           type: array
-          description: Updates to create with the incident
+          minItems: 1
+          description: Updates to create with the incident; at least one
           items:
             "$ref": "#/components/schemas/IncidentUpdateInput"
     StatusPageIncidentUpdateInput:
       type: object
       description: Writable incident attributes
+      additionalProperties: false
       properties:
         title:
           type: string
         retro_should_notify:
           type: boolean
         retro_notify_message:
-          type: string
+          type:
+          - string
+          - 'null'
     StatusPageCreateInput:
       description: Attributes for creating a status-page.
       allOf:
@@ -9466,37 +10856,102 @@ components:
         - name
     StatusPageInput:
       type: object
-      description: Writable status-page attributes
+      description: 'Writable status-page attributes. Omitted fields are unchanged;
+        null resets or clears the fields marked nullable. A key this operation doesn''t
+        take is 422; the read-only keys a GET returns (including each monitor''s state)
+        are ignored.
+
+        '
       properties:
         name:
           type: string
+          maxLength: 100
           example: Acme Status
         domain:
-          type: string
-          description: Custom domain the page is served on
+          type:
+          - string
+          - 'null'
+          description: 'Custom domain the page is served on. Unique across Honeybadger.
+            An account can set at most 30 domains a week; past that the change is
+            422. Send null to clear.
+
+            '
           example: status.example.com
+        incidents_enabled:
+          type:
+          - boolean
+          - 'null'
+          description: 'Whether the page shows incidents. Requires status page incidents
+            on the plan; changing it otherwise is 403 `feature_unavailable`. On create,
+            defaults to whether the plan has them. Send null to reset to false.
+
+            '
+        search_engine_indexing_disabled:
+          type:
+          - boolean
+          - 'null'
+          description: Asks search engines not to index the page. Send null to reset
+            to false.
+        message_enabled:
+          type:
+          - boolean
+          - 'null'
+          description: Shows the message banner. Send null to reset to false.
+        message_title:
+          type:
+          - string
+          - 'null'
+          description: The message banner's title. Send null to clear.
+        message_body:
+          type:
+          - string
+          - 'null'
+          description: The message banner's text. Send null to clear.
+        google_analytics_id:
+          type:
+          - string
+          - 'null'
+          description: A Google Analytics measurement ID for the page. Send null to
+            clear.
         hide_branding:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           description: Requires advanced status pages; refused with 403 `feature_unavailable`
-            otherwise
+            otherwise. Send null to reset to false.
         password_protected:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           description: 'Requires advanced status pages and password protection on
-            the plan; refused with 403 `feature_unavailable` otherwise.
+            the plan; refused with 403 `feature_unavailable` otherwise. Turning it
+            on needs a username and password, sent or already stored, or it''s 422.
+            Send null to reset to false.
 
             '
         username:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Basic-auth user when password protected. Requires advanced
-            status pages and password protection on the plan
+            status pages and password protection on the plan.
         password:
-          type: string
-          description: Basic-auth password when password protected. Requires advanced
-            status pages and password protection on the plan
+          type:
+          - string
+          - 'null'
+          writeOnly: true
+          description: Basic-auth password when password protected. Never returned.
+            Requires advanced status pages and password protection on the plan.
         features:
-          type: object
-          description: Presentation copy and styling. Requires advanced status pages;
-            refused with 403 `feature_unavailable` otherwise
+          type:
+          - object
+          - 'null'
+          description: 'Presentation copy and styling. Replaces the whole object;
+            null clears it. Requires advanced status pages; refused with 403 `feature_unavailable`
+            otherwise.
+
+            '
+          additionalProperties: false
           properties:
             home_link:
               type: string
@@ -9509,8 +10964,13 @@ components:
             custom_css:
               type: string
         sites:
-          type: array
-          description: Sites listed on the page, replacing the current set
+          type:
+          - array
+          - 'null'
+          description: 'Sites listed on the page, in page order, replacing the current
+            list. null or [] removes every site.
+
+            '
           items:
             type: object
             required:
@@ -9521,14 +10981,26 @@ components:
                 format: uuid
                 description: Identifier of a site on this account
               display_name:
-                type: string
+                type:
+                - string
+                - 'null'
+                minLength: 1
+                description: null uses the monitor's own name; "" is refused.
               description:
-                type: string
-              position:
-                type: integer
+                type:
+                - string
+                - 'null'
+                minLength: 1
+                maxLength: 80
+                description: null shows no description; "" is refused.
         check_ins:
-          type: array
-          description: Check-ins listed on the page, replacing the current set
+          type:
+          - array
+          - 'null'
+          description: 'Check-ins listed on the page, in page order, replacing the
+            current list. null or [] removes every check-in.
+
+            '
           items:
             type: object
             required:
@@ -9538,11 +11010,18 @@ components:
                 type: string
                 description: ID of a check-in on this account
               display_name:
-                type: string
+                type:
+                - string
+                - 'null'
+                minLength: 1
+                description: null uses the monitor's own name; "" is refused.
               description:
-                type: string
-              position:
-                type: integer
+                type:
+                - string
+                - 'null'
+                minLength: 1
+                maxLength: 80
+                description: null shows no description; "" is refused.
     Stream:
       type: object
       description: An Insights event stream
@@ -9589,12 +11068,17 @@ components:
       - account_id
       - name
       - links
+      - created_at
+      - member_count
+      - project_ids
       properties:
         id:
+          readOnly: true
           type: string
           description: Unique identifier
           example: Tm8qJv
         account_id:
+          readOnly: true
           type: string
           description: ID of the account this team belongs to
           example: Ab3kL9
@@ -9603,13 +11087,16 @@ components:
           description: Team name
           example: Backend Team
         created_at:
+          readOnly: true
           type: string
           format: date-time
           description: When the team was created
         member_count:
+          readOnly: true
           type: integer
           description: Number of members in the team
         project_ids:
+          uniqueItems: true
           type: array
           items:
             type: string
@@ -9625,14 +11112,19 @@ components:
     TeamInput:
       type: object
       description: Writable team attributes
+      additionalProperties: false
       properties:
         name:
           type: string
           example: Platform
         project_ids:
-          type: array
-          description: 'IDs of projects this team can access. An ID that isn''t a
-            project the caller can see fails the request with 422.
+          type:
+          - array
+          - 'null'
+          description: 'IDs of projects this team can access: the whole membership.
+            An ID that isn''t a project the caller can see fails the request with
+            422. A project''s create-time `team_id` only attaches it to one team.
+            A set; order is ignored and duplicates are dropped.
 
             '
           items:
@@ -9720,6 +11212,7 @@ components:
     TeamInvitationInput:
       type: object
       description: Writable team-invitation attributes
+      additionalProperties: false
       properties:
         email:
           type: string
@@ -9727,7 +11220,9 @@ components:
         admin:
           type: boolean
         message:
-          type: string
+          type:
+          - string
+          - 'null'
           description: Note included in the invitation email
     TeamMember:
       type: object
@@ -9773,6 +11268,7 @@ components:
       description: Writable team-member attributes
       required:
       - admin
+      additionalProperties: false
       properties:
         admin:
           type: boolean
@@ -9852,15 +11348,14 @@ components:
           description: When the check was performed
         duration:
           type:
-          - number
+          - integer
           - 'null'
-          description: Response time in milliseconds
+          description: Response time in whole milliseconds
         location:
-          type:
-          - string
-          - 'null'
           description: Monitoring location that performed the check
-          example: us-east-1
+          anyOf:
+          - "$ref": "#/components/schemas/SiteLocation"
+          - type: 'null'
         up:
           type:
           - boolean
@@ -9925,14 +11420,73 @@ components:
       - alarm_alert
       - alarm_ok
       - volume_spike
+    IntegrationFilterEvent:
+      type: string
+      description: An event a filter applies to, or `all` for every event.
+      enum:
+      - occurred
+      - rate_exceeded
+      - assigned
+      - resolved
+      - unresolved
+      - commented
+      - deployed
+      - up
+      - down
+      - cert_will_expire
+      - flooded
+      - check_in_missing
+      - check_in_reporting
+      - alarm_alert
+      - alarm_ok
+      - volume_spike
+      - all
+    IntegrationConfigCampfire:
+      type: object
+      title: Campfire settings
+      additionalProperties: false
+      properties:
+        subdomain:
+          type:
+          - string
+          - 'null'
+          title: Subdomain
+          example: "<Subdomain>"
+        room_name:
+          type:
+          - string
+          - 'null'
+          title: Room name
+          example: "<Room name>"
+        token:
+          type:
+          - string
+          - 'null'
+          title: Token
+          description: Never returned. Leave it out of an update to keep it.
+          example: "<Token>"
+          writeOnly: true
+    IntegrationConfigCampfireV2:
+      type: object
+      title: Campfire settings
+      additionalProperties: false
+      properties:
+        campfire_url:
+          type:
+          - string
+          - 'null'
+          title: Campfire url
+          description: 'Add the URL for your Campfire channel. ex: https://3.basecamp.com/3537905/buckets/7994437/chats/828327173.'
+          example: https://example.com
     IntegrationConfigCampfireV3:
       type: object
       title: Campfire settings
-      required:
-      - chatbot_url
+      additionalProperties: false
       properties:
         chatbot_url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Chatbot URL
           description: The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#create-a-chatbot-integration-in-basecamp)
             for your Campfire chatbot.
@@ -9940,17 +11494,21 @@ components:
     IntegrationConfigDatadog:
       type: object
       title: Datadog settings
-      required:
-      - api_key
+      additionalProperties: false
       properties:
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Api key
-          description: Your Datadog API key. Returned masked; sending the masked value
-            back leaves it unchanged.
+          description: Your Datadog API key. Never returned. Leave it out of an update
+            to keep it.
           example: "<Api key>"
+          writeOnly: true
         endpoint:
-          type: string
+          type:
+          - string
+          - 'null'
           enum:
           - US1
           - US3
@@ -9958,27 +11516,37 @@ components:
           - US1-FED
           - EU1
           - AP1
+          -
           title: Endpoint
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
         send_metrics:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Send metrics
     IntegrationConfigDiscordWebhook:
       type: object
       title: Discord settings
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Webhook URL
           description: Get a Webhook URL in Discord under Channel Settings → Webhooks.
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -9986,34 +11554,43 @@ components:
     IntegrationConfigGithub:
       type: object
       title: GitHub settings
-      required:
-      - repo
+      additionalProperties: false
       properties:
         repo:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Repository name
           description: e.g. honeybadger-io/crywolf.
           example: honeybadger-io/crywolf
         labels:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Labels
           description: A comma-delimited list of labels to add when creating issues.
           example: "<Labels>"
         issue_type:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Issue type
           description: The [issue type](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/managing-issue-types-in-an-organization)
             to use when creating issues (e.g., 'Bug').
           example: Bug
         title_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Title format
           description: You can customize the Github issue title, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
           example: "<Title format>"
         rich_body:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Send a detailed issue body
           description: When enabled, new issues are created with a detailed body that
             includes context, parameters, and the backtrace. When disabled, only a
@@ -10022,41 +11599,52 @@ components:
     IntegrationConfigGitlab:
       type: object
       title: GitLab settings
-      required:
-      - repo
+      additionalProperties: false
       properties:
         repo:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Repository name
           description: e.g. honeybadger-io/crywolf.
           example: honeybadger-io/crywolf
         labels:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Labels
           example: "<Labels>"
         server_url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Server URL
           description: You only need to change this if you are using a self-hosted
             installation of GitLab.
           example: https://gitlab.com
         personal_access_token:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Personal access token
           description: Leave this blank unless you are using a self-hosted installation
             of GitLab. An access token can be generated in Settings -> Access Tokens
-            in the GitLab UI. Returned masked; sending the masked value back leaves
-            it unchanged.
+            in the GitLab UI. Never returned. Leave it out of an update to keep it.
           example: "<Personal access token>"
+          writeOnly: true
         title_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Title format
           description: You can customize the GitLab issue title, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
           example: "<Title format>"
         rich_body:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Send a detailed issue body
           description: When enabled, new issues are created with a detailed body that
             includes context, parameters, and the backtrace. When disabled, only a
@@ -10065,89 +11653,224 @@ components:
     IntegrationConfigBitbucket:
       type: object
       title: Bitbucket settings
-      required:
-      - repo
+      additionalProperties: false
       properties:
         repo:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Repository name
           description: e.g. honeybadger-io/crywolf.
           example: honeybadger-io/crywolf
+    IntegrationConfigPivotalTracker:
+      type: object
+      title: Pivotal Tracker settings
+      additionalProperties: false
+      properties:
+        api_token:
+          type:
+          - string
+          - 'null'
+          title: API Token
+          description: To create stories from the UI, each project member must also
+            add their personal Pivotal Tracker API token on their project settings
+            page. Never returned. Leave it out of an update to keep it.
+          example: "<API Token>"
+          writeOnly: true
+        pivotal_project_id:
+          type:
+          - string
+          - 'null'
+          title: Project ID
+          description: e.g. pivotaltracker.com/projects/**1337**/overview.
+          example: '1337'
+        labels:
+          type:
+          - string
+          - 'null'
+          title: Labels
+          description: A comma-separated list of labels to add to new stories.
+          example: "<Labels>"
+        name_format:
+          type:
+          - string
+          - 'null'
+          title: Name format
+          description: Customize the Pivotal Tracker story name, or leave blank for
+            the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
+            for details.
+          example: "<Name format>"
+        description_format:
+          type:
+          - string
+          - 'null'
+          title: Description format
+          description: Customize the Pivotal Tracker description. Please see [our
+            documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
+            for details.
+          example: |-
+            ## Backtrace
+            [backtrace]
+
+            View full backtrace and more info at [url]
+    IntegrationConfigFlowdock:
+      type: object
+      title: Flowdock settings
+      additionalProperties: false
+      properties:
+        api_token:
+          type:
+          - string
+          - 'null'
+          title: Api token
+          description: Never returned. Leave it out of an update to keep it.
+          example: "<Api token>"
+          writeOnly: true
+        tags:
+          type:
+          - string
+          - 'null'
+          title: Tags
+          description: A comma-separated list of tags.
+          example: "<Tags>"
     IntegrationConfigAsana:
       type: object
       title: Asana settings
-      required:
-      - asana_project_id
+      additionalProperties: false
       properties:
         asana_project_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Project ID
           description: 'e.g. from a project view: app.asana.com/0/**3456789012345**/3456789012345.'
           example: '3456789012345'
+    IntegrationConfigHipChat:
+      type: object
+      title: HipChat settings
+      additionalProperties: false
+      properties:
+        url:
+          type:
+          - string
+          - 'null'
+          title: Server URL
+          example: https://api.hipchat.com
+        auth_token:
+          type:
+          - string
+          - 'null'
+          title: Auth token
+          description: Never returned. Leave it out of an update to keep it.
+          example: "<Auth token>"
+          writeOnly: true
+        room:
+          type:
+          - string
+          - 'null'
+          title: Room name
+          example: "<Room name>"
+        color:
+          type:
+          - string
+          - 'null'
+          enum:
+          - yellow
+          - red
+          - green
+          - purple
+          - gray
+          - random
+          -
+          title: Color
+        alert:
+          type:
+          - boolean
+          - 'null'
+          title: Alert
     IntegrationConfigJira:
       type: object
       title: Jira settings
-      required:
-      - username
-      - password
-      - server_url
-      - project_key
+      additionalProperties: false
       properties:
         username:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Username
           description: Your Jira email address.
           example: "<Username>"
         password:
-          type: string
+          type:
+          - string
+          - 'null'
           format: password
           title: API Token
           description: You can find or generate your API Token [here](https://id.atlassian.com/manage/api-tokens).
-            Returned masked; sending the masked value back leaves it unchanged.
+            Never returned. Leave it out of an update to keep it.
           example: "<API Token>"
+          writeOnly: true
         server_url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Server URL
           example: https://example.com
         project_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Project key
           example: "<Project key>"
         resolve_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Resolve transition
           description: The ID of the transition to be performed when resolved.
           example: "<Resolve transition>"
         reopen_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Reopen transition
           description: The ID of the transition to be performed when unresolved.
           example: "<Reopen transition>"
         labels:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Labels
           description: A comma-delimited list of labels to be added to the issues
             created by Honeybadger.
           example: "<Labels>"
         component_names:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Component names
           description: A comma-delimited list of components to be added to the issues
             created by Honeybadger.
           example: "<Component names>"
         issue_type:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Issue type
           example: Bug
         summary_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Summary format
           description: You can customize the JIRA issue summary, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
           example: "<Summary format>"
         rich_body:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Send a detailed issue description
           description: When enabled, new issues are created with a detailed description
             that includes context, parameters, and the backtrace. When disabled, only
@@ -10156,76 +11879,129 @@ components:
     IntegrationConfigJiraCloud:
       type: object
       title: Jira Cloud settings
-      required:
-      - project_key
+      additionalProperties: false
       properties:
         project_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Project key
           example: "<Project key>"
         resolve_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Resolve transition
           description: The ID of the transition to be performed when resolved.
           example: "<Resolve transition>"
         reopen_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Reopen transition
           description: The ID of the transition to be performed when unresolved.
           example: "<Reopen transition>"
         labels:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Labels
           description: A comma-delimited list of labels to be added to the issues
             created by Honeybadger.
           example: "<Labels>"
         component_names:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Component names
           description: 'A comma-delimited list of components to be added to the issues
             created by Honeybadger. **NOTE: Components are not avaliable for next-gen
             projects.**'
           example: "<Component names>"
         issue_type:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Issue type
           example: Bug
         summary_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Summary format
           description: You can customize the JIRA issue summary, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
           example: "<Summary format>"
         rich_body:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Send a detailed issue description
           description: When enabled, new issues are created with a detailed description
             that includes context, parameters, and the backtrace. When disabled, only
             a short backtrace excerpt and a link back to Honeybadger are sent. Note
             that enabling this sends more potentially sensitive data to JIRA.
-    IntegrationConfigOpsGenieV2:
+    IntegrationConfigOpsGenie:
       type: object
       title: OpsGenie settings
-      required:
-      - api_key
+      additionalProperties: false
       properties:
         api_key:
-          type: string
-          title: API Key
-          description: The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/)
-            in OpsGenie. Returned masked; sending the masked value back leaves it
-            unchanged.
-          example: "<API Key>"
+          type:
+          - string
+          - 'null'
+          title: Api key
+          description: The API key from your [Honeybadger integration](https://app.opsgenie.com/integration)
+            in OpsGenie. Never returned. Leave it out of an update to keep it.
+          example: "<Api key>"
+          writeOnly: true
         endpoint:
-          type: string
+          type:
+          - string
+          - 'null'
           enum:
           - US
           - EU
           - Sandbox
+          -
           title: Endpoint
         label:
-          type: string
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          title: Label
+          description: Optional label to show in the integrations list.
+          example: "<Label>"
+    IntegrationConfigOpsGenieV2:
+      type: object
+      title: OpsGenie settings
+      additionalProperties: false
+      properties:
+        api_key:
+          type:
+          - string
+          - 'null'
+          title: API Key
+          description: The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/)
+            in OpsGenie. Never returned. Leave it out of an update to keep it.
+          example: "<API Key>"
+          writeOnly: true
+        endpoint:
+          type:
+          - string
+          - 'null'
+          enum:
+          - US
+          - EU
+          - Sandbox
+          -
+          title: Endpoint
+        label:
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10233,55 +12009,91 @@ components:
     IntegrationConfigRedmine:
       type: object
       title: Redmine settings
-      required:
-      - server_url
-      - api_key
+      additionalProperties: false
       properties:
         server_url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Server URL
           description: 'The full path to the project: http://redmine.yourserver.com/projects/project-name.'
           example: https://example.com
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Api key
-          description: Returned masked; sending the masked value back leaves it unchanged.
+          description: Never returned. Leave it out of an update to keep it.
           example: "<Api key>"
+          writeOnly: true
         resolve_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Resolve transition
           description: The ID of the status for resolved issues.
           example: "<Resolve transition>"
         reopen_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Reopen transition
           description: The ID of the status for unresolved issues.
           example: "<Reopen transition>"
+    IntegrationConfigPagerDuty:
+      type: object
+      title: PagerDuty settings
+      additionalProperties: false
+      properties:
+        api_key:
+          type:
+          - string
+          - 'null'
+          title: Service API Key
+          description: 32 character alphanumeric service key. Select "Honeybadger"
+            from the Integration Type menu when creating a service for Honeybadger
+            in PagerDuty. Never returned. Leave it out of an update to keep it.
+          example: "<Service API Key>"
+          writeOnly: true
+        label:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          title: Label
+          description: Optional label to show in the integrations list.
+          example: "<Label>"
     IntegrationConfigPagerDutyV2:
       type: object
       title: PagerDuty settings
-      required:
-      - integration_key
+      additionalProperties: false
       properties:
         integration_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Integration Key
           description: 32 character alphanumeric integration key. Select "Honeybadger"
             from the Integration Type menu when creating a service for Honeybadger
-            in PagerDuty. Returned masked; sending the masked value back leaves it
-            unchanged.
+            in PagerDuty. Never returned. Leave it out of an update to keep it.
           example: "<Integration Key>"
+          writeOnly: true
         severity:
-          type: string
+          type:
+          - string
+          - 'null'
           enum:
           - critical
           - error
           - warning
           - info
+          -
           title: Severity
           description: The perceived severity of the events generated by this integration.
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10289,51 +12101,61 @@ components:
     IntegrationConfigSprintly:
       type: object
       title: Sprintly settings
-      required:
-      - account_email
-      - api_key
-      - product_id
+      additionalProperties: false
       properties:
         account_email:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Account email
           example: "<Account email>"
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Api key
-          description: Returned masked; sending the masked value back leaves it unchanged.
+          description: Never returned. Leave it out of an update to keep it.
           example: "<Api key>"
+          writeOnly: true
         product_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Product ID
           description: e.g. sprint.ly/product/**1337**/#!/.
           example: '1337'
         tags:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Tags
           description: A comma-separated list of tags to add to new defects.
           example: "<Tags>"
     IntegrationConfigTrello:
       type: object
       title: Trello settings
-      required:
-      - board_id
-      - list_id
+      additionalProperties: false
       properties:
         board_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Board
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Board>"
         list_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: List
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<List>"
         title_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Title format
           description: You can customize the trello card title, or you can leave this
             blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
@@ -10342,28 +12164,35 @@ components:
     IntegrationConfigLinear:
       type: object
       title: Linear settings
-      required:
-      - team_id
+      additionalProperties: false
       properties:
         team_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Team
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Team>"
         linear_project_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Project
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Project>"
         label_ids:
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             type: string
           title: Labels
         unresolved_state_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Unresolved state
           description: We will use this state for new issues and when an existing
             issue is reopened. The web UI loads the choices from the connected account.
@@ -10371,23 +12200,31 @@ components:
             it.
           example: "<Unresolved state>"
         resolved_state_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Resolved state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Resolved state>"
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
         title_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Title format
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Description format
           example: |
             [class]: [message]
@@ -10400,27 +12237,37 @@ components:
     IntegrationConfigSlack:
       type: object
       title: Slack settings
+      additionalProperties: false
       properties:
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
         disable_backtrace:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Disable backtrace
           description: Remove backtrace from error event notifications.
     IntegrationConfigMattermost:
       type: object
       title: Mattermost settings
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Webhook URL
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10428,17 +12275,20 @@ components:
     IntegrationConfigGoogleHangoutsChat:
       type: object
       title: Google Chat settings
-      required:
-      - url
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Webhook URL
           description: Please see [our documentation](https://docs.honeybadger.io/guides/integrations/google-chat/)
             for info on how to generate this.
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10446,22 +12296,28 @@ components:
     IntegrationConfigVictorOps:
       type: object
       title: Splunk On-Call settings
-      required:
-      - api_key
+      additionalProperties: false
       properties:
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Api key
-          description: Your Splunk On-Call API key. Returned masked; sending the masked
-            value back leaves it unchanged.
+          description: Your Splunk On-Call API key. Never returned. Leave it out of
+            an update to keep it.
           example: "<Api key>"
+          writeOnly: true
         routing_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Routing key
           description: Optional routing key for alert.
           example: "<Routing key>"
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10469,45 +12325,57 @@ components:
     IntegrationConfigWebHook:
       type: object
       title: Webhook settings
-      required:
-      - url
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: URL
           example: https://example.com/hook
         bearer_token:
-          type: string
+          type:
+          - string
+          - 'null'
           format: password
           title: Bearer token
           description: 'Optional. When set, requests are sent with `Authorization:
-            Bearer <token>`, for endpoints that require it. Returned masked; sending
-            the masked value back leaves it unchanged.'
+            Bearer <token>`, for endpoints that require it. Never returned. Leave
+            it out of an update to keep it.'
           example: "<Bearer token>"
+          writeOnly: true
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
         payload_version:
-          type: string
+          type:
+          - string
+          - 'null'
           enum:
           - v2
           - v3
+          -
           title: Payload version
     IntegrationConfigEmail:
       type: object
       title: Email settings
-      required:
-      - email
+      additionalProperties: false
       properties:
         email:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Email address
           example: alerts@example.com
         email_subject:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Email subject
           description: You can customize the subject line for emails related to errors
             (when they occur, are assigned, etc.), or you can leave this blank for
@@ -10517,11 +12385,12 @@ components:
     IntegrationConfigIntercom:
       type: object
       title: Intercom settings
-      required:
-      - context_field
+      additionalProperties: false
       properties:
         context_field:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Context field
           description: The field from the context hash that will be sent to Intercom
             as the user ID.
@@ -10529,67 +12398,160 @@ components:
     IntegrationConfigAlertOps:
       type: object
       title: AlertOps settings
-      required:
-      - url
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: URL
           description: The URL from your [Honeybadger integration](https://honeybadger.alertops.com/admin/MappingRulesList.aspx)
             in AlertOps.
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
+    IntegrationConfigMicrosoftTeams:
+      type: object
+      title: Microsoft Teams settings
+      additionalProperties: false
+      properties:
+        url:
+          type:
+          - string
+          - 'null'
+          title: Webhook URL
+          description: Get a Webhook URL in Microsoft Teams under Apps → Search all
+            → Honeybadger.
+          example: https://example.com/hook
+        label:
+          type:
+          - string
+          - 'null'
+          maxLength: 100
+          title: Label
+          example: "<Label>"
     IntegrationConfigMicrosoftTeamsV2:
       type: object
       title: Microsoft Teams settings
-      required:
-      - url
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Webhook URL
           description: Get a Webhook URL in Microsoft Teams under Connectors → Incoming
             Webhook.
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
-    IntegrationConfigShortcutV2:
+    IntegrationConfigShortcut:
       type: object
       title: Shortcut settings
-      required:
-      - organization_name
-      - api_key
-      - team
-      - initial_state
-      - resolve_transition
-      - reopen_transition
+      additionalProperties: false
       properties:
         organization_name:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Organization name
           description: e.g. app.shortcut.com/**yourorg**/dashboard.
           example: yourorg
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: API Token
-          description: Available from Settings > Your Account > API Tokens. Returned
-            masked; sending the masked value back leaves it unchanged.
+          description: Available from Settings > Your Account > API Tokens. Never
+            returned. Leave it out of an update to keep it.
           example: "<API Token>"
+          writeOnly: true
         title_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Story Title
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
-          type: string
+          type:
+          - string
+          - 'null'
+          title: Story Description
+          example: |
+            [class]: [message]
+
+            Backtrace:
+
+            [backtrace]
+
+            View full backtrace and more info at honeybadger.io: [url]
+        external_project_id:
+          type:
+          - string
+          - 'null'
+          title: Project ID
+          description: The web UI loads the choices from the connected account. Through
+            the API, send the value itself, as that service's API returns it.
+          example: "<Project ID>"
+        resolve_transition:
+          type:
+          - string
+          - 'null'
+          title: Resolved workflow state
+          description: The web UI loads the choices from the connected account. Through
+            the API, send the value itself, as that service's API returns it.
+          example: "<Resolved workflow state>"
+        reopen_transition:
+          type:
+          - string
+          - 'null'
+          title: Reopened workflow state
+          description: The web UI loads the choices from the connected account. Through
+            the API, send the value itself, as that service's API returns it.
+          example: "<Reopened workflow state>"
+    IntegrationConfigShortcutV2:
+      type: object
+      title: Shortcut settings
+      additionalProperties: false
+      properties:
+        organization_name:
+          type:
+          - string
+          - 'null'
+          title: Organization name
+          description: e.g. app.shortcut.com/**yourorg**/dashboard.
+          example: yourorg
+        api_key:
+          type:
+          - string
+          - 'null'
+          title: API Token
+          description: Available from Settings > Your Account > API Tokens. Never
+            returned. Leave it out of an update to keep it.
+          example: "<API Token>"
+          writeOnly: true
+        title_format:
+          type:
+          - string
+          - 'null'
+          title: Story Title
+          example: "[[project]] Occurred: [class] ([fault_id])"
+        description_format:
+          type:
+          - string
+          - 'null'
           title: Story Description
           example: |
             [class]: [message]
@@ -10600,29 +12562,39 @@ components:
 
             View full backtrace and more info at honeybadger.io: [url]
         custom_fields:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Custom Fields
           example: "<Custom Fields>"
         team:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Team
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Team>"
         initial_state:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Initial state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Initial state>"
         resolve_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Resolved workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Resolved workflow state>"
         reopen_transition:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Reopened workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
@@ -10630,11 +12602,12 @@ components:
     IntegrationConfigPagerTree:
       type: object
       title: PagerTree settings
-      required:
-      - url
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: URL
           description: Please see [PagerTree documentation](https://pagertree.com/knowledge-base/integration-honeybadger/)
             for info on generating this.
@@ -10642,13 +12615,18 @@ components:
     IntegrationConfigInstatus:
       type: object
       title: Instatus settings
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Webhook URL
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10656,74 +12634,88 @@ components:
     IntegrationConfigClickUp:
       type: object
       title: ClickUp settings
-      required:
-      - workspace_id
-      - teamspace_id
-      - list_id
-      - initial_status_id
-      - resolve_status_id
-      - reopen_status_id
+      additionalProperties: false
       properties:
         workspace_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Workspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Workspace>"
         teamspace_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Teamspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Teamspace>"
         folder_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Folder
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Folder>"
         list_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: List
           description: The ID of the list to create tasks for. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
           example: "<List>"
         initial_status_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Initial status
           description: The initial status when a task is created. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
           example: "<Initial status>"
         resolve_status_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Resolve status
           description: The task status when an error is resolved. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
           example: "<Resolve status>"
         reopen_status_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Reopen status
           description: The task status when an error is reopened. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
           example: "<Reopen status>"
         tags:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Tags
           description: Comma-separated list of tags.
           example: "<Tags>"
         title_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Title format
           description: You can customize the ClickUp task name, or you can leave this
             blank for the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Description format
           example: |
             [class]: [message]
@@ -10736,18 +12728,20 @@ components:
     IntegrationConfigClickUpChat:
       type: object
       title: ClickUp Chat settings
-      required:
-      - workspace_id
-      - channel_id
+      additionalProperties: false
       properties:
         workspace_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Workspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
           example: "<Workspace>"
         channel_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Channel
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
@@ -10755,17 +12749,20 @@ components:
     IntegrationConfigIlert:
       type: object
       title: ilert settings
-      required:
-      - url
+      additionalProperties: false
       properties:
         url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: URL
           description: The URL from your [Honeybadger integration](https://docs.ilert.com/inbound-integrations/honeybadger)
             in ilert.
           example: https://example.com/hook
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10773,74 +12770,92 @@ components:
     IntegrationConfigZulip:
       type: object
       title: Zulip settings
-      required:
-      - bot_email
-      - api_key
-      - zulip_domain
-      - channel
-      - topic
+      additionalProperties: false
       properties:
         bot_email:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Bot email
           example: "<Bot email>"
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Api key
-          description: Returned masked; sending the masked value back leaves it unchanged.
+          description: Never returned. Leave it out of an update to keep it.
           example: "<Api key>"
+          writeOnly: true
         zulip_domain:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Zulip domain
           example: "<Zulip domain>"
         channel:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Channel
           example: "<Channel>"
         topic:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Topic
           example: "<Topic>"
     IntegrationConfigIncidentIo:
       type: object
       title: incident.io settings
-      required:
-      - api_key
-      - alert_source_label
+      additionalProperties: false
       properties:
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: API Key
-          description: Returned masked; sending the masked value back leaves it unchanged.
+          description: Never returned. Leave it out of an update to keep it.
           example: "<API Key>"
+          writeOnly: true
         alert_source_label:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Alert source label
           example: "<Alert source label>"
     IntegrationConfigRootly:
       type: object
       title: Rootly settings
-      required:
-      - webhook_authorization_token
+      additionalProperties: false
       properties:
         webhook_authorization_token:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Webhook authorization token
-          description: Returned masked; sending the masked value back leaves it unchanged.
+          description: Never returned. Leave it out of an update to keep it.
           example: "<Webhook authorization token>"
+          writeOnly: true
         notification_target_type:
-          type: string
+          type:
+          - string
+          - 'null'
           enum:
           - service
           - team
           - escalationPolicy
+          -
           title: Notification target type
         notification_target_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Notification target ID
           example: "<Notification target ID>"
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
@@ -10848,79 +12863,95 @@ components:
     IntegrationConfigBacklog:
       type: object
       title: Backlog settings
-      required:
-      - space_url
-      - api_key
-      - backlog_project_id
-      - issue_type_id
-      - priority_id
-      - resolve_status_id
-      - reopen_status_id
+      additionalProperties: false
       properties:
         space_url:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Space URL
           description: Your Backlog space URL (e.g., https://example.backlog.com or
             https://example.backlog.jp).
           example: https://example.backlog.com
         api_key:
-          type: string
+          type:
+          - string
+          - 'null'
           title: API Key
           description: Your Backlog API key (generate one in Personal Settings > API).
-            Returned masked; sending the masked value back leaves it unchanged.
+            Never returned. Leave it out of an update to keep it.
           example: "<API Key>"
+          writeOnly: true
         backlog_project_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Project
           description: The Backlog project to create issues in. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
           example: "<Project>"
         issue_type_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Issue Type
           description: The type of issue to create. The web UI loads the choices from
             the connected account. Through the API, send the value itself, as that
             service's API returns it.
           example: "<Issue Type>"
         priority_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Priority
           description: The priority level for new issues. The web UI loads the choices
             from the connected account. Through the API, send the value itself, as
             that service's API returns it.
           example: "<Priority>"
         resolve_status_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Closed Status
           description: The status to use when resolving errors. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
           example: "<Closed Status>"
         reopen_status_id:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Open Status
           description: The status to use when unresolving errors. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
           example: "<Open Status>"
         label:
-          type: string
+          type:
+          - string
+          - 'null'
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
           example: "<Label>"
         enable_webhook:
-          type: boolean
+          type:
+          - boolean
+          - 'null'
           title: Sync status from Backlog
           description: When enabled Honeybadger will create a webhook in Backlog to
             sync issue status changes back to Honeybadger.
         subject_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Issue Subject
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
-          type: string
+          type:
+          - string
+          - 'null'
           title: Issue Description
           example: |
             [class]: [message]
@@ -11631,6 +13662,17 @@ components:
         type: number
         format: double
         example: 1704067200.123456
+    PageCreatedAfter:
+      name: created_after
+      in: query
+      description: |
+        With created_before, a window. Alone, pages forward: the items just after it, newest first, with a newer link while more exist. `links.newer` uses it this way. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
+
+        A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+      schema:
+        type: number
+        format: double
+        example: 1704067200.123456
     CreatedBefore:
       name: created_before
       in: query
@@ -11733,15 +13775,16 @@ components:
         type: string
   responses:
     MergedFault:
-      description: 'This fault was merged into another fault. Location identifies
-        the surviving fault''s resource URL, including when the request targeted a
-        subresource of the merged fault. Only reads redirect; writes get a 409 `fault_merged`.
+      description: 'This fault was merged into another fault. Location is the same
+        resource on the fault it was merged into: `…/faults/<survivor>` for the fault,
+        or the same subresource path and query for occurrences, affected users and
+        notices. Only reads redirect; writes get a 409 `fault_merged`.
 
         '
       headers:
         Location:
           required: true
-          description: Absolute URL of the surviving fault.
+          description: Absolute URL of the same resource on the surviving fault.
           schema:
             type: string
             format: uri
@@ -11763,6 +13806,21 @@ components:
               details:
                 merged_into: '12345'
                 location: https://app.honeybadger.io/v3/projects/Xk9mZp/faults/12345
+            meta:
+              request_id: abc123
+    ServiceUnavailable:
+      description: 'A data store this read depends on didn''t answer. Nothing is wrong
+        with the request; try again shortly.
+
+        '
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: service_unavailable
+              message: Occurrence counts are unavailable. Try again shortly.
             meta:
               request_id: abc123
     AlarmServiceUnavailable:
@@ -12009,7 +14067,16 @@ components:
                 meta:
                   request_id: abc123
     RateLimitExceeded:
-      description: Rate limit exceeded
+      description: 'Rate limit exceeded. The limit is per credential owner per hour:
+        a person''s tokens share one budget, and an account token uses the account''s.
+        Wait `Retry-After` seconds and retry.
+
+        '
+      headers:
+        Retry-After:
+          description: Seconds until the hourly window resets.
+          schema:
+            type: integer
       content:
         application/json:
           schema:

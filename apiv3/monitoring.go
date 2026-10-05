@@ -154,9 +154,21 @@ type IntegrationType = gen.IntegrationCreateInputType
 // IntegrationEvent names an event an integration can notify on.
 type IntegrationEvent = gen.IntegrationEvent
 
-// IntegrationUpdateParams are the fields an update can change. Nil fields are
-// left as they are; Config carries only the settings being changed.
+// IntegrationUpdateParams are the fields an update can change. Unset fields are
+// left as they are and a null clears one; Config carries only the settings
+// being changed.
 type IntegrationUpdateParams = gen.IntegrationUpdateInput
+
+// IntegrationFilter limits one event to the errors matching Query. Filters on an
+// integration are an ordered list, replaced whole on update.
+type IntegrationFilter = gen.IntegrationFilter
+
+// IntegrationFilterEvent names the event a filter applies to: any
+// IntegrationEvent value, or IntegrationFilterAll.
+type IntegrationFilterEvent = gen.IntegrationFilterEvent
+
+// IntegrationFilterAll applies a filter to every event.
+const IntegrationFilterAll IntegrationFilterEvent = gen.IntegrationFilterEventAll
 
 // Create makes a new integration.
 //
