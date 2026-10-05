@@ -10948,6 +10948,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           writeOnly: true
           description: Basic-auth password when password protected. Never returned.
             Requires advanced status pages and password protection on the plan.
@@ -11471,6 +11472,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Token
           description: Never returned. Leave it out of an update to keep it.
           example: "<Token>"
@@ -11509,6 +11511,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api key
           description: Your Datadog API key. Never returned. Leave it out of an update
             to keep it.
@@ -11549,6 +11552,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook URL
           description: Get a Webhook URL in Discord under Channel Settings → Webhooks.
           example: https://example.com/hook
@@ -11644,6 +11648,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Personal access token
           description: Leave this blank unless you are using a self-hosted installation
             of GitLab. An access token can be generated in Settings -> Access Tokens
@@ -11689,6 +11694,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: API Token
           description: To create stories from the UI, each project member must also
             add their personal Pivotal Tracker API token on their project settings
@@ -11740,6 +11746,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api token
           description: Never returned. Leave it out of an update to keep it.
           example: "<Api token>"
@@ -11778,6 +11785,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Auth token
           description: Never returned. Leave it out of an update to keep it.
           example: "<Auth token>"
@@ -11969,6 +11977,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api key
           description: The API key from your [Honeybadger integration](https://app.opsgenie.com/integration)
             in OpsGenie. Never returned. Leave it out of an update to keep it.
@@ -12001,6 +12010,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: API Key
           description: The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/)
             in OpsGenie. Never returned. Leave it out of an update to keep it.
@@ -12040,6 +12050,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
           example: "<Api key>"
@@ -12067,6 +12078,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Service API Key
           description: 32 character alphanumeric service key. Select "Honeybadger"
             from the Integration Type menu when creating a service for Honeybadger
@@ -12090,6 +12102,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Integration Key
           description: 32 character alphanumeric integration key. Select "Honeybadger"
             from the Integration Type menu when creating a service for Honeybadger
@@ -12131,6 +12144,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
           example: "<Api key>"
@@ -12280,6 +12294,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook URL
           example: https://example.com/hook
         label:
@@ -12299,6 +12314,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook URL
           description: Please see [our documentation](https://docs.honeybadger.io/guides/integrations/google-chat/)
             for info on how to generate this.
@@ -12320,6 +12336,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api key
           description: Your Splunk On-Call API key. Never returned. Leave it out of
             an update to keep it.
@@ -12349,6 +12366,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: URL
           example: https://example.com/hook
         bearer_token:
@@ -12422,6 +12440,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: URL
           description: The URL from your [Honeybadger integration](https://honeybadger.alertops.com/admin/MappingRulesList.aspx)
             in AlertOps.
@@ -12443,6 +12462,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook URL
           description: Get a Webhook URL in Microsoft Teams under Apps → Search all
             → Honeybadger.
@@ -12463,6 +12483,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook URL
           description: Get a Webhook URL in Microsoft Teams under Connectors → Incoming
             Webhook.
@@ -12491,6 +12512,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: API Token
           description: Available from Settings > Your Account > API Tokens. Never
             returned. Leave it out of an update to keep it.
@@ -12555,6 +12577,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: API Token
           description: Available from Settings > Your Account > API Tokens. Never
             returned. Leave it out of an update to keep it.
@@ -12626,6 +12649,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: URL
           description: Please see [PagerTree documentation](https://pagertree.com/knowledge-base/integration-honeybadger/)
             for info on generating this.
@@ -12639,6 +12663,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook URL
           example: https://example.com/hook
         label:
@@ -12773,6 +12798,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: URL
           description: The URL from your [Honeybadger integration](https://docs.ilert.com/inbound-integrations/honeybadger)
             in ilert.
@@ -12800,6 +12826,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
           example: "<Api key>"
@@ -12842,6 +12869,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: API Key
           description: Never returned. Leave it out of an update to keep it.
           example: "<API Key>"
@@ -12861,6 +12889,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Webhook authorization token
           description: Never returned. Leave it out of an update to keep it.
           example: "<Webhook authorization token>"
@@ -12906,6 +12935,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: API Key
           description: Your Backlog API key (generate one in Personal Settings > API).
             Never returned. Leave it out of an update to keep it.
