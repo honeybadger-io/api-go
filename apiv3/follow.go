@@ -23,7 +23,7 @@ func followTimeSeries[T any](ctx context.Context, c *Client, link string) (*List
 		return nil, err
 	}
 
-	return listTimeSeries[T](ctx, c, func() (*http.Response, error) {
+	return listTimeSeries[T](ctx, c, opFollowLink, func(ctx context.Context) (*http.Response, error) {
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
 		if err != nil {
 			return nil, err

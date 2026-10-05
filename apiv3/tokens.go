@@ -75,7 +75,7 @@ func (s *TokensService) Get(ctx context.Context) (*TokenInfo, error) {
 		ExpiresAt  *string  `json:"expires_at"`
 		LastUsedAt *string  `json:"last_used_at"`
 	}
-	data, err := getOne[payload](ctx, s.client, func() (*http.Response, error) {
+	data, err := getOne[payload](ctx, s.client, "getToken", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetToken(ctx)
 	})
 	if err != nil {

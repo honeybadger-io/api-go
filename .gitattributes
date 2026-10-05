@@ -3,4 +3,5 @@
 # sha256, and the Go code against what the bundle generates.
 internal/gen/gen.go linguist-generated=true
 apiv3/scopes_gen.go linguist-generated=true
+apiv3/operations_gen.go linguist-generated=true
 openapi/bundled.yaml linguist-generated=true

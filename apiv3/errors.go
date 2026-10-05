@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 // Code is a machine-readable v3 error code.
@@ -109,6 +110,17 @@ type Error struct {
 	// cause is the underlying failure when the error did not come from the API's
 	// own response, such as a body read cut off by cancellation.
 	cause error
+
+	// retryAfter is the response's Retry-After, when it sent one.
+	retryAfter    time.Duration
+	hasRetryAfter bool
+}
+
+// RetryAfter reports how long the response asked the caller to wait before
+// trying again, from its Retry-After header (seconds or an HTTP date). ok is
+// false when the response sent none.
+func (e *Error) RetryAfter() (wait time.Duration, ok bool) {
+	return e.retryAfter, e.hasRetryAfter
 }
 
 // Unwrap exposes the underlying failure, so errors.Is(err, context.Canceled)

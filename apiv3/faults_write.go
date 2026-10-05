@@ -196,7 +196,7 @@ func (s *FaultsService) Resolve(ctx context.Context, projectID string, sel Fault
 	if err != nil {
 		return nil, err
 	}
-	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, "resolveFaults", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ResolveFaults(ctx, projectID, *body)
 	})
 }
@@ -207,7 +207,7 @@ func (s *FaultsService) Unresolve(ctx context.Context, projectID string, sel Fau
 	if err != nil {
 		return nil, err
 	}
-	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, "unresolveFaults", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().UnresolveFaults(ctx, projectID,
 			gen.UnresolveFaultsJSONRequestBody(*body))
 	})
@@ -219,7 +219,7 @@ func (s *FaultsService) Ignore(ctx context.Context, projectID string, sel FaultS
 	if err != nil {
 		return nil, err
 	}
-	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, "ignoreFaults", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().IgnoreFaults(ctx, projectID,
 			gen.IgnoreFaultsJSONRequestBody(*body))
 	})
@@ -231,7 +231,7 @@ func (s *FaultsService) Unignore(ctx context.Context, projectID string, sel Faul
 	if err != nil {
 		return nil, err
 	}
-	return getOne[FaultBulkResult](ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultBulkResult](ctx, s.client, "unignoreFaults", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().UnignoreFaults(ctx, projectID,
 			gen.UnignoreFaultsJSONRequestBody(*body))
 	})
@@ -257,7 +257,7 @@ func (s *FaultsService) Merge(ctx context.Context, projectID string, sourceFault
 		return nil, ErrMergeIntoSelf
 	}
 	body := gen.MergeFaultsJSONRequestBody{TargetFaultId: targetFaultID}
-	return getOne[FaultMerge](ctx, s.client, func() (*http.Response, error) {
+	return getOne[FaultMerge](ctx, s.client, "mergeFaults", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().MergeFaults(ctx, projectID, sourceFaultID, body)
 	})
 }
@@ -278,7 +278,7 @@ func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, fa
 		return nil, fmt.Errorf("apiv3: invalid pause duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
 	}
 	body := gen.PauseFaultRecordingJSONRequestBody{Time: duration}
-	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, "pauseFaultRecording", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().PauseFaultRecording(ctx, projectID, faultID, body)
 	})
 }
@@ -286,14 +286,14 @@ func (s *FaultsService) PauseRecording(ctx context.Context, projectID string, fa
 // ResumeRecording starts recording notices for a fault again, and returns the
 // fault as it now stands.
 func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, faultID string) (*Fault, error) {
-	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, "resumeFaultRecording", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ResumeFaultRecording(ctx, projectID, faultID)
 	})
 }
 
 // Delete removes a fault and its notices.
 func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID string) error {
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return noContent(ctx, s.client, "deleteFault", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().DeleteFault(ctx, projectID, faultID)
 	})
 }
@@ -305,7 +305,7 @@ type Comment = gen.Comment
 // comment is attributed to the token's name.
 func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultID string, comment string) (*Comment, error) {
 	body := gen.CreateCommentJSONRequestBody{Body: comment}
-	return getOne[Comment](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Comment](ctx, s.client, "createComment", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().CreateComment(ctx, projectID, faultID, body)
 	})
 }
@@ -320,7 +320,7 @@ func (s *FaultsService) AddComment(ctx context.Context, projectID string, faultI
 // AssigneeId is nullable: an explicit null unassigns, while leaving it
 // unspecified changes nothing.
 func (s *FaultsService) Update(ctx context.Context, projectID string, faultID string, p FaultParams) (*Fault, error) {
-	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, "updateFault", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().UpdateFault(ctx, projectID, faultID, p)
 	})
 }
@@ -331,14 +331,14 @@ func (s *FaultsService) Update(ctx context.Context, projectID string, faultID st
 // with 422 rather than silently unassigning. Returns the fault as it now stands.
 func (s *FaultsService) Assign(ctx context.Context, projectID string, faultID string, assigneeID string) (*Fault, error) {
 	body := gen.AssignFaultJSONRequestBody{AssigneeId: assigneeID}
-	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, "assignFault", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().AssignFault(ctx, projectID, faultID, body)
 	})
 }
 
 // Unassign removes a fault's assignee and returns the fault as it now stands.
 func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID string) (*Fault, error) {
-	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, "unassignFault", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().UnassignFault(ctx, projectID, faultID)
 	})
 }
@@ -363,7 +363,7 @@ func (s *FaultsService) Summary(ctx context.Context, projectID string, opts ...O
 		params.OccurredBefore = &ro.occurredBefore
 	}
 
-	data, err := getOne[map[string]any](ctx, s.client, func() (*http.Response, error) {
+	data, err := getOne[map[string]any](ctx, s.client, "getFaultSummary", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetFaultSummary(ctx, projectID, params)
 	})
 	if err != nil {

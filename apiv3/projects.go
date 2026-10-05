@@ -36,14 +36,14 @@ func (s *ProjectsService) list(ctx context.Context, ro requestOptions) (*ListRes
 		params.Name = &ro.name
 	}
 
-	return listOffset[Project](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[Project](ctx, s.client, "listProjects", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListProjects(ctx, params)
 	})
 }
 
 // Get returns a single project by its opaque id.
 func (s *ProjectsService) Get(ctx context.Context, projectID string) (*Project, error) {
-	return getOne[Project](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Project](ctx, s.client, "getProject", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetProject(ctx, projectID)
 	})
 }

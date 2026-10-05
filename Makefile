@@ -36,10 +36,13 @@ generate: $(OAPI_CODEGEN)
 	awk -f openapi/scopes.awk openapi/bundled.yaml > apiv3/scopes_gen.go.tmp
 	gofmt -w apiv3/scopes_gen.go.tmp
 	mv apiv3/scopes_gen.go.tmp apiv3/scopes_gen.go
+	awk -f openapi/operations.awk openapi/bundled.yaml > apiv3/operations_gen.go.tmp
+	gofmt -w apiv3/operations_gen.go.tmp
+	mv apiv3/operations_gen.go.tmp apiv3/operations_gen.go
 
 # Fails when the committed generated code does not match the committed spec.
 verify-generated: generate
-	git diff --exit-code --stat internal/gen/gen.go apiv3/scopes_gen.go
+	git diff --exit-code --stat internal/gen/gen.go apiv3/scopes_gen.go apiv3/operations_gen.go
 
 # Fails when the vendored spec is not the one the provenance table describes.
 #

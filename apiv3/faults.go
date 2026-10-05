@@ -56,14 +56,14 @@ func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOp
 		params.OccurredBefore = &ro.occurredBefore
 	}
 
-	return listOffset[Fault](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[Fault](ctx, s.client, "listFaults", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListFaults(ctx, projectID, params)
 	})
 }
 
 // Get returns a single fault.
 func (s *FaultsService) Get(ctx context.Context, projectID string, faultID string) (*Fault, error) {
-	return getOne[Fault](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Fault](ctx, s.client, "getFault", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetFault(ctx, projectID, faultID)
 	})
 }
@@ -87,7 +87,7 @@ func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, fau
 		params.Q = &q
 	}
 
-	data, err := getOne[[]AffectedUser](ctx, s.client, func() (*http.Response, error) {
+	data, err := getOne[[]AffectedUser](ctx, s.client, "listFaultAffectedUsers", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListFaultAffectedUsers(ctx, projectID, faultID, params)
 	})
 	if err != nil {
@@ -121,7 +121,7 @@ func (s *FaultsService) listNotices(ctx context.Context, projectID string, fault
 	params := &gen.ListNoticesParams{}
 	ro.applyTimeSeries(&params.Limit, &params.Before, &params.After)
 
-	return listTimeSeries[Notice](ctx, s.client, func() (*http.Response, error) {
+	return listTimeSeries[Notice](ctx, s.client, "listNotices", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListNotices(ctx, projectID, faultID, params)
 	})
 }

@@ -24,14 +24,14 @@ type AlarmsService struct {
 // declares no page parameters and returns no pagination object, so one call is
 // the whole collection.
 func (s *AlarmsService) List(ctx context.Context, projectID string) (*ListResponse[Alarm], error) {
-	return listOffset[Alarm](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[Alarm](ctx, s.client, "listAlarms", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListAlarms(ctx, projectID)
 	})
 }
 
 // Get returns a single alarm.
 func (s *AlarmsService) Get(ctx context.Context, projectID, alarmID string) (*Alarm, error) {
-	return getOne[Alarm](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Alarm](ctx, s.client, "getAlarm", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetAlarm(ctx, projectID, alarmID)
 	})
 }
@@ -63,7 +63,7 @@ func (s *AlarmsService) listHistory(ctx context.Context, projectID, alarmID stri
 		page := gen.Page(ro.page)
 		params.Page = &page
 	}
-	return listOffset[AlarmHistoryEntry](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[AlarmHistoryEntry](ctx, s.client, "listAlarmHistory", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListAlarmHistory(ctx, projectID, alarmID, params)
 	})
 }
@@ -91,14 +91,14 @@ func (s *DashboardsService) list(ctx context.Context, projectID string, ro reque
 	params := &gen.ListDashboardsParams{}
 	ro.applyOffset(&params.Page, &params.PerPage)
 
-	return listOffset[Dashboard](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[Dashboard](ctx, s.client, "listDashboards", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListDashboards(ctx, projectID, params)
 	})
 }
 
 // Get returns a single dashboard.
 func (s *DashboardsService) Get(ctx context.Context, projectID, dashboardID string) (*Dashboard, error) {
-	return getOne[Dashboard](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Dashboard](ctx, s.client, "getDashboard", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetDashboard(ctx, projectID, dashboardID)
 	})
 }
@@ -130,14 +130,14 @@ func (s *IntegrationsService) list(ctx context.Context, projectID string, ro req
 	params := &gen.ListIntegrationsParams{}
 	ro.applyOffset(&params.Page, &params.PerPage)
 
-	return listOffset[Integration](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[Integration](ctx, s.client, "listIntegrations", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListIntegrations(ctx, projectID, params)
 	})
 }
 
 // Get returns a single integration by its public ID.
 func (s *IntegrationsService) Get(ctx context.Context, projectID, integrationID string) (*Integration, error) {
-	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Integration](ctx, s.client, "getIntegration", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetIntegration(ctx, projectID, integrationID)
 	})
 }
@@ -176,21 +176,21 @@ const IntegrationFilterAll IntegrationFilterEvent = gen.IntegrationFilterEventAl
 // connected: send the user to the integration's Links.Web to connect it, then
 // turn it on with an update setting Active.
 func (s *IntegrationsService) Create(ctx context.Context, projectID string, p IntegrationCreateParams) (*Integration, error) {
-	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Integration](ctx, s.client, "createIntegration", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().CreateIntegration(ctx, projectID, p)
 	})
 }
 
 // Update changes an integration's settings.
 func (s *IntegrationsService) Update(ctx context.Context, projectID, integrationID string, p IntegrationUpdateParams) (*Integration, error) {
-	return getOne[Integration](ctx, s.client, func() (*http.Response, error) {
+	return getOne[Integration](ctx, s.client, "updateIntegration", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().UpdateIntegration(ctx, projectID, integrationID, p)
 	})
 }
 
 // Delete removes an integration.
 func (s *IntegrationsService) Delete(ctx context.Context, projectID, integrationID string) error {
-	return noContent(ctx, s.client, func() (*http.Response, error) {
+	return noContent(ctx, s.client, "deleteIntegration", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().DeleteIntegration(ctx, projectID, integrationID)
 	})
 }

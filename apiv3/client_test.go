@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 )
 
 func TestNewClientDefaults(t *testing.T) {
@@ -15,8 +14,10 @@ func TestNewClientDefaults(t *testing.T) {
 	if c.baseURL != DefaultBaseURL {
 		t.Errorf("baseURL = %q, want %q", c.baseURL, DefaultBaseURL)
 	}
-	if c.httpClient.Timeout != 30*time.Second {
-		t.Errorf("timeout = %v, want 30s", c.httpClient.Timeout)
+	// Deadlines are set per attempt instead (see the retry tests): a client-wide
+	// timeout would cut off a delete that legitimately takes longer than 30s.
+	if c.httpClient.Timeout != 0 {
+		t.Errorf("timeout = %v, want none on the http.Client", c.httpClient.Timeout)
 	}
 }
 

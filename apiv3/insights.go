@@ -81,7 +81,7 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 		body.Timezone = &q.Timezone
 	}
 
-	status, raw, err := s.client.do(ctx, func() (*http.Response, error) {
+	status, raw, err := s.client.run(ctx, "runInsightsQuery", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().RunInsightsQuery(ctx, projectID, body)
 	})
 	if err != nil {
@@ -166,7 +166,7 @@ func (s *InsightsService) listStreams(ctx context.Context, projectID string, ro 
 	params := &gen.ListStreamsParams{}
 	ro.applyOffset(&params.Page, &params.PerPage)
 
-	return listOffset[Stream](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[Stream](ctx, s.client, "listStreams", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListStreams(ctx, projectID, params)
 	})
 }

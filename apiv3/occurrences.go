@@ -42,7 +42,7 @@ func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o O
 		params.Environment = &env
 	}
 
-	return getOne[OccurrenceSeries](ctx, s.client, func() (*http.Response, error) {
+	return getOne[OccurrenceSeries](ctx, s.client, "getProjectOccurrences", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetProjectOccurrences(ctx, projectID, params)
 	})
 }
@@ -75,7 +75,7 @@ func (s *ProjectsService) AccountOccurrences(ctx context.Context, o OccurrenceOp
 			params.Environment = &env
 		}
 
-		return listOffset[OccurrenceSeries](ctx, s.client, func() (*http.Response, error) {
+		return listOffset[OccurrenceSeries](ctx, s.client, "listAccountOccurrences", func(ctx context.Context) (*http.Response, error) {
 			return s.client.gen().ListAccountOccurrences(ctx, params)
 		})
 	})

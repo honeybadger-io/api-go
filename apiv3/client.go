@@ -79,6 +79,7 @@ type Client struct {
 	bearerToken string
 	httpClient  *http.Client
 	requestID   RequestIDHook
+	retry       RetryPolicy
 
 	// rateLimit is the only mutable state, and it is observational: it records
 	// the most recent response's headers for callers that want to check their
@@ -115,12 +116,14 @@ type Client struct {
 	ProjectKeys *ProjectKeysService
 }
 
-// NewClient returns a client pointing at the production API with a 30 second
-// timeout, resolving the account from the credential.
+// NewClient returns a client pointing at the production API, resolving the
+// account from the credential. Each request has 30 seconds, or five minutes for
+// a delete, within whatever deadline the caller's context sets. Retries are off;
+// see WithRetry.
 func NewClient() *Client {
 	return (&Client{
 		baseURL:    DefaultBaseURL,
-		httpClient: withoutRedirects(&http.Client{Timeout: 30 * time.Second}),
+		httpClient: withoutRedirects(&http.Client{}),
 	}).rebind()
 }
 
@@ -149,6 +152,7 @@ func (c *Client) clone() *Client {
 		bearerToken: c.bearerToken,
 		httpClient:  c.httpClient,
 		requestID:   c.requestID,
+		retry:       c.retry,
 	}
 	return copied.rebind()
 }
@@ -197,7 +201,9 @@ func (c *Client) WithBearerToken(token string) *Client {
 //
 // The client is copied and its CheckRedirect replaced so redirects are never
 // followed: a followed redirect turns a write to a merged fault into a silent
-// no-op. hc itself is not modified.
+// no-op. hc itself is not modified. A Timeout set on hc applies to every request
+// on top of the per-request deadlines NewClient describes, so a short one also
+// cuts off a slow delete.
 func (c *Client) WithHTTPClient(hc *http.Client) *Client {
 	if hc == nil {
 		return c
@@ -283,8 +289,8 @@ func (c *Client) authorize(ctx context.Context, req *http.Request) error {
 // losing the status, the body, the request id, and this package's typed errors.
 // Reading the response here keeps all of it, buffers the body exactly once, and
 // takes the rate-limit snapshot from the very response being reported on.
-func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int, []byte, error) {
-	resp, err := op()
+func (c *Client) do(ctx context.Context, op operation) (int, []byte, error) {
+	resp, err := op(ctx)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -323,6 +329,7 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int
 	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
 		apiErr := parseError(resp.StatusCode, body)
 		apiErr.RateLimit = rateLimit
+		apiErr.retryAfter, apiErr.hasRetryAfter = parseRetryAfter(resp.Header)
 		apiErr.Location = resp.Header.Get("Location")
 		apiErr.Message = "redirected to " + apiErr.Location
 		// The only redirect the API documents is a merged fault's 301. Anything
@@ -338,6 +345,7 @@ func (c *Client) do(ctx context.Context, op func() (*http.Response, error)) (int
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		apiErr := parseError(resp.StatusCode, body)
 		apiErr.RateLimit = rateLimit
+		apiErr.retryAfter, apiErr.hasRetryAfter = parseRetryAfter(resp.Header)
 		return resp.StatusCode, nil, apiErr
 	}
 	return resp.StatusCode, body, nil

@@ -36,14 +36,14 @@ func (s *CheckInsService) list(ctx context.Context, projectID string, ro request
 	params := &gen.ListCheckInsParams{}
 	ro.applyOffset(&params.Page, &params.PerPage)
 
-	return listOffset[CheckIn](ctx, s.client, func() (*http.Response, error) {
+	return listOffset[CheckIn](ctx, s.client, "listCheckIns", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListCheckIns(ctx, projectID, params)
 	})
 }
 
 // Get returns a single check-in.
 func (s *CheckInsService) Get(ctx context.Context, projectID, checkInID string) (*CheckIn, error) {
-	return getOne[CheckIn](ctx, s.client, func() (*http.Response, error) {
+	return getOne[CheckIn](ctx, s.client, "getCheckIn", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetCheckIn(ctx, projectID, checkInID)
 	})
 }
@@ -79,7 +79,7 @@ func (s *CheckInsService) listEvents(ctx context.Context, projectID, checkInID s
 		params.Limit = &limit
 	}
 
-	return listTimeSeries[CheckInEvent](ctx, s.client, func() (*http.Response, error) {
+	return listTimeSeries[CheckInEvent](ctx, s.client, "listCheckInEvents", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListCheckInEvents(ctx, projectID, checkInID, params)
 	})
 }
