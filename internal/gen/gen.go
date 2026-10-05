@@ -2081,7 +2081,7 @@ type CheckIn struct {
 	// CronSchedule Cron expression (for cron schedule type)
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone for cron schedule
+	// CronTimezone Timezone for cron schedule, as a Rails zone name
 	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// ExpectedAt When the next report is expected

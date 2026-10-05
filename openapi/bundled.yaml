@@ -8460,8 +8460,8 @@ components:
           type:
           - string
           - 'null'
-          description: Timezone for cron schedule
-          example: America/New_York
+          description: Timezone for cron schedule, as a Rails zone name
+          example: Eastern Time (US & Canada)
         report_period:
           type:
           - string
@@ -8659,6 +8659,7 @@ components:
           type:
           - string
           - 'null'
+          default: '00:00:00'
           pattern: "^(\\d+ (second|minute|hour|day|week|month|year)s?)( \\d+ (second|minute|hour|day|week|month|year)s?)*$|^\\d\\d:\\d\\d:\\d\\d$"
           description: 'How long after the expected time before the check-in is considered
             missing. Same format as `report_period`; zero is `00:00:00`. Send null
@@ -8676,6 +8677,7 @@ components:
           type:
           - string
           - 'null'
+          default: UTC
           description: 'Timezone the cron schedule is evaluated in. A Rails/ActiveSupport
             zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not
             `America/Chicago`, which is rejected. Required when `schedule_type` is
@@ -10117,12 +10119,14 @@ components:
           type:
           - boolean
           - 'null'
+          default: true
           description: Resolve every open fault when a deploy is recorded. Send null
             to reset to true.
         disable_public_links:
           type:
           - boolean
           - 'null'
+          default: false
           description: Disallow shareable public fault links. Send null to reset to
             false.
         language:
