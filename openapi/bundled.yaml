@@ -6412,6 +6412,7 @@ components:
               - repo
               - labels
               - issue_type
+              - issue_fields
               - title_format
               - rich_body
       - if:
@@ -6899,6 +6900,7 @@ components:
               required:
               - bot_email
               - zulip_domain
+              - server_url
               - channel
               - topic
       - if:
@@ -8235,7 +8237,6 @@ components:
               required:
               - bot_email
               - api_key
-              - zulip_domain
               - channel
               - topic
             events:
@@ -11578,6 +11579,15 @@ components:
           description: The [issue type](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/managing-issue-types-in-an-organization)
             to use when creating issues (e.g., 'Bug').
           example: Bug
+        issue_fields:
+          type:
+          - string
+          - 'null'
+          title: Issue fields
+          description: "[Issue fields](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-and-managing-issue-fields)
+            to set when creating issues, one per line (e.g., 'Priority: High'). Enter
+            dates as YYYY-MM-DD."
+          example: 'Priority: High'
         title_format:
           type:
           - string
@@ -12790,8 +12800,19 @@ components:
           type:
           - string
           - 'null'
-          title: Zulip domain
-          example: "<Zulip domain>"
+          title: Zulip Cloud subdomain
+          description: For Zulip Cloud, your organization's subdomain (`example` for
+            example.zulipchat.com). Leave blank if you run your own Zulip server.
+          example: "<Zulip Cloud subdomain>"
+        server_url:
+          type:
+          - string
+          - 'null'
+          title: Server URL
+          description: For a self-hosted Zulip server, its HTTPS address (for example,
+            https://chat.example.com). When set, it is used instead of the Zulip Cloud
+            subdomain.
+          example: https://example.com
         channel:
           type:
           - string

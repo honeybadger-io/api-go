@@ -3198,6 +3198,9 @@ type IntegrationConfigFlowdock struct {
 
 // IntegrationConfigGithub defines model for IntegrationConfigGithub.
 type IntegrationConfigGithub struct {
+	// IssueFields [Issue fields](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-and-managing-issue-fields) to set when creating issues, one per line (e.g., 'Priority: High'). Enter dates as YYYY-MM-DD.
+	IssueFields nullable.Nullable[string] `json:"issue_fields,omitempty"`
+
 	// IssueType The [issue type](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/managing-issue-types-in-an-organization) to use when creating issues (e.g., 'Bug').
 	IssueType nullable.Nullable[string] `json:"issue_type,omitempty"`
 
@@ -3597,10 +3600,15 @@ type IntegrationConfigWebHookPayloadVersion string
 // IntegrationConfigZulip defines model for IntegrationConfigZulip.
 type IntegrationConfigZulip struct {
 	// ApiKey Never returned. Leave it out of an update to keep it.
-	ApiKey      nullable.Nullable[string] `json:"api_key,omitempty"`
-	BotEmail    nullable.Nullable[string] `json:"bot_email,omitempty"`
-	Channel     nullable.Nullable[string] `json:"channel,omitempty"`
-	Topic       nullable.Nullable[string] `json:"topic,omitempty"`
+	ApiKey   nullable.Nullable[string] `json:"api_key,omitempty"`
+	BotEmail nullable.Nullable[string] `json:"bot_email,omitempty"`
+	Channel  nullable.Nullable[string] `json:"channel,omitempty"`
+
+	// ServerUrl For a self-hosted Zulip server, its HTTPS address (for example, https://chat.example.com). When set, it is used instead of the Zulip Cloud subdomain.
+	ServerUrl nullable.Nullable[string] `json:"server_url,omitempty"`
+	Topic     nullable.Nullable[string] `json:"topic,omitempty"`
+
+	// ZulipDomain For Zulip Cloud, your organization's subdomain (`example` for example.zulipchat.com). Leave blank if you run your own Zulip server.
 	ZulipDomain nullable.Nullable[string] `json:"zulip_domain,omitempty"`
 }
 
