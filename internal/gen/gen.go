@@ -1396,51 +1396,6 @@ func (e SiteRequestMethod) Valid() bool {
 	}
 }
 
-// Defines values for StatusPageCheckInsState.
-const (
-	StatusPageCheckInsStateMissing   StatusPageCheckInsState = "missing"
-	StatusPageCheckInsStatePaused    StatusPageCheckInsState = "paused"
-	StatusPageCheckInsStatePending   StatusPageCheckInsState = "pending"
-	StatusPageCheckInsStateReporting StatusPageCheckInsState = "reporting"
-)
-
-// Valid indicates whether the value is a known member of the StatusPageCheckInsState enum.
-func (e StatusPageCheckInsState) Valid() bool {
-	switch e {
-	case StatusPageCheckInsStateMissing:
-		return true
-	case StatusPageCheckInsStatePaused:
-		return true
-	case StatusPageCheckInsStatePending:
-		return true
-	case StatusPageCheckInsStateReporting:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for StatusPageSitesState.
-const (
-	StatusPageSitesStateDown    StatusPageSitesState = "down"
-	StatusPageSitesStatePending StatusPageSitesState = "pending"
-	StatusPageSitesStateUp      StatusPageSitesState = "up"
-)
-
-// Valid indicates whether the value is a known member of the StatusPageSitesState enum.
-func (e StatusPageSitesState) Valid() bool {
-	switch e {
-	case StatusPageSitesStateDown:
-		return true
-	case StatusPageSitesStatePending:
-		return true
-	case StatusPageSitesStateUp:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for StatusPageIncidentBuildType.
 const (
 	StatusPageIncidentBuildTypeCurrent              StatusPageIncidentBuildType = "current"
@@ -2773,9 +2728,6 @@ type Fault struct {
 	// CreatedAt When the fault was first reported
 	CreatedAt time.Time `json:"created_at"`
 
-	// Deploy Deploy associated with this fault
-	Deploy nullable.Nullable[Deploy] `json:"deploy,omitempty"`
-
 	// Environment Environment name
 	Environment nullable.Nullable[string] `json:"environment,omitempty"`
 
@@ -2790,6 +2742,9 @@ type Fault struct {
 
 	// LastNoticeAt When the last notice was received
 	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
+
+	// LastNoticeDeploy The deploy that was live when the error last occurred: the newest deploy in the fault's environment before `last_notice_at`. A guess from timing, not the deploy that introduced or resolved the error.
+	LastNoticeDeploy nullable.Nullable[Deploy] `json:"last_notice_deploy,omitempty"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
@@ -4318,9 +4273,6 @@ type StatusPage struct {
 	Username nullable.Nullable[string] `json:"username"`
 }
 
-// StatusPageCheckInsState Current state of the check-in
-type StatusPageCheckInsState string
-
 // StatusPage_CheckIns defines model for StatusPage.CheckIns.
 type StatusPage_CheckIns struct {
 	// CheckInId ID of the check-in
@@ -4331,12 +4283,6 @@ type StatusPage_CheckIns struct {
 
 	// DisplayName Display name on the status page
 	DisplayName nullable.Nullable[string] `json:"display_name"`
-
-	// ReportedAt When the check-in last reported
-	ReportedAt nullable.Nullable[time.Time] `json:"reported_at"`
-
-	// State Current state of the check-in
-	State StatusPageCheckInsState `json:"state"`
 }
 
 // StatusPage_Features Presentation copy and styling. Replaced whole by an update.
@@ -4348,9 +4294,6 @@ type StatusPage_Features struct {
 	UpCaption    *string `json:"up_caption,omitempty"`
 }
 
-// StatusPageSitesState Current state of the site
-type StatusPageSitesState string
-
 // StatusPage_Sites defines model for StatusPage.Sites.
 type StatusPage_Sites struct {
 	// Description Description shown on the status page
@@ -4359,14 +4302,8 @@ type StatusPage_Sites struct {
 	// DisplayName Display name on the status page
 	DisplayName nullable.Nullable[string] `json:"display_name"`
 
-	// LastCheckedAt When the site was last checked
-	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
-
 	// SiteId Identifier of the site
 	SiteId openapi_types.UUID `json:"site_id"`
-
-	// State Current state of the site
-	State StatusPageSitesState `json:"state"`
 }
 
 // StatusPageCreateInput Attributes for creating a status-page.

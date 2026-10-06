@@ -9442,8 +9442,12 @@ components:
             email:
               type: string
               description: Email of the assignee
-        deploy:
-          description: Deploy associated with this fault
+        last_notice_deploy:
+          description: 'The deploy that was live when the error last occurred: the
+            newest deploy in the fault''s environment before `last_notice_at`. A guess
+            from timing, not the deploy that introduced or resolved the error.
+
+            '
           oneOf:
           - "$ref": "#/components/schemas/Deploy"
           - type: 'null'
@@ -10816,8 +10820,6 @@ components:
             - site_id
             - display_name
             - description
-            - state
-            - last_checked_at
             properties:
               site_id:
                 type: string
@@ -10833,21 +10835,6 @@ components:
                 - string
                 - 'null'
                 description: Description shown on the status page
-              state:
-                type: string
-                readOnly: true
-                enum:
-                - pending
-                - up
-                - down
-                description: Current state of the site
-              last_checked_at:
-                type:
-                - string
-                - 'null'
-                readOnly: true
-                format: date-time
-                description: When the site was last checked
         check_ins:
           type: array
           description: Check-ins displayed on the status page. An ordered list; the
@@ -10858,8 +10845,6 @@ components:
             - check_in_id
             - display_name
             - description
-            - state
-            - reported_at
             properties:
               check_in_id:
                 type: string
@@ -10874,22 +10859,6 @@ components:
                 - string
                 - 'null'
                 description: Description shown on the status page
-              state:
-                type: string
-                readOnly: true
-                enum:
-                - pending
-                - reporting
-                - missing
-                - paused
-                description: Current state of the check-in
-              reported_at:
-                type:
-                - string
-                - 'null'
-                readOnly: true
-                format: date-time
-                description: When the check-in last reported
         links:
           "$ref": "#/components/schemas/WebLinks"
     StatusPageIncident:
