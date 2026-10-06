@@ -1936,52 +1936,52 @@ type AffectedUser struct {
 // Alarm An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
 type Alarm struct {
 	// CreatedAt When the alarm was created
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Description Alarm description
-	Description nullable.Nullable[string] `json:"description,omitempty"`
+	Description nullable.Nullable[string] `json:"description"`
 
 	// Error Error message if the alarm is in an error state
-	Error nullable.Nullable[string] `json:"error,omitempty"`
+	Error nullable.Nullable[string] `json:"error"`
 
 	// EvaluationPeriod Window each evaluation covers, as a compact duration. The API rejects a spelled-out interval like `5 minutes`.
-	EvaluationPeriod nullable.Nullable[string] `json:"evaluation_period,omitempty"`
+	EvaluationPeriod nullable.Nullable[string] `json:"evaluation_period"`
 
 	// Id Alarm identifier (opticon observer root ID)
 	Id string `json:"id"`
 
 	// LastCheckedAt When the alarm was last evaluated
-	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at,omitempty"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
 
 	// LookbackLag How far behind now the window ends, allowing for ingestion delay. Same compact duration format as evaluation_period.
-	LookbackLag nullable.Nullable[string] `json:"lookback_lag,omitempty"`
+	LookbackLag nullable.Nullable[string] `json:"lookback_lag"`
 
 	// Name Alarm name
 	Name string `json:"name"`
 
 	// NextCheckAt When the alarm will next be evaluated
-	NextCheckAt nullable.Nullable[time.Time] `json:"next_check_at,omitempty"`
+	NextCheckAt nullable.Nullable[time.Time] `json:"next_check_at"`
 
 	// ProjectId ID of the project this alarm belongs to
 	ProjectId string `json:"project_id"`
 
 	// Query BadgerQL evaluated on each check. A string, the same shape AlarmCreateInput accepts — the presenter renders the observer's stored query text, not a structured object.
-	Query nullable.Nullable[string] `json:"query,omitempty"`
+	Query nullable.Nullable[string] `json:"query"`
 
 	// State Current alarm state
 	State AlarmState `json:"state"`
 
 	// StreamIds Associated stream identifiers
-	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
+	StreamIds nullable.Nullable[[]string] `json:"stream_ids"`
 
 	// TriggerConfig What turns the alarm on; null if the stored alarm has none. Updates replace the whole object.
-	TriggerConfig nullable.Nullable[AlarmTriggerConfig] `json:"trigger_config,omitempty"`
+	TriggerConfig nullable.Nullable[AlarmTriggerConfig] `json:"trigger_config"`
 
 	// UpdatedAt When the alarm was last updated
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // AlarmState Current alarm state
@@ -1996,7 +1996,9 @@ type AlarmCreateInput struct {
 
 	// LookbackLag How far behind now the window ends, allowing for ingestion delay
 	LookbackLag string `json:"lookback_lag"`
-	Name        string `json:"name"`
+
+	// Name Alarm name
+	Name string `json:"name"`
 
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
@@ -2062,7 +2064,7 @@ type AlarmTriggerConfigType string
 type AlarmUpdateInput struct {
 	Description nullable.Nullable[string] `json:"description,omitempty"`
 
-	// EvaluationPeriod Window each evaluation covers, as a compact duration
+	// EvaluationPeriod Window each evaluation covers, as a compact duration. At least 1m and less than a week (`w` units are refused).
 	EvaluationPeriod *string `json:"evaluation_period,omitempty"`
 
 	// LookbackLag How far behind now the window ends

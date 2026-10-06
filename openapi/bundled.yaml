@@ -5918,7 +5918,18 @@ components:
       - id
       - project_id
       - name
+      - description
       - state
+      - query
+      - stream_ids
+      - evaluation_period
+      - lookback_lag
+      - trigger_config
+      - error
+      - last_checked_at
+      - next_check_at
+      - created_at
+      - updated_at
       - links
       properties:
         id:
@@ -6039,6 +6050,7 @@ components:
       properties:
         name:
           type: string
+          description: Alarm name
           example: Error spike
         description:
           type:
@@ -6061,11 +6073,13 @@ components:
             type: string
         evaluation_period:
           type: string
+          pattern: "^\\d+[smhd]$"
           description: Window each evaluation covers. At least 1m and less than a
             week (`w` units are refused).
           example: 10m
         lookback_lag:
           type: string
+          pattern: "^\\d+[smhdw]$"
           description: How far behind now the window ends, allowing for ingestion
             delay
           example: 1m
@@ -6099,8 +6113,9 @@ components:
             '
         evaluation_period:
           type: string
-          description: Window each evaluation covers, as a compact duration
-          pattern: "^\\d+[smhdw]$"
+          description: Window each evaluation covers, as a compact duration. At least
+            1m and less than a week (`w` units are refused).
+          pattern: "^\\d+[smhd]$"
           example: 10m
         lookback_lag:
           type: string
