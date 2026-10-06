@@ -3969,7 +3969,11 @@ paths:
     delete:
       operationId: deleteDashboard
       summary: Delete a dashboard
-      description: Deletes an Insights dashboard.
+      description: 'Deletes an Insights dashboard, the project''s default one (`is_default`)
+        included. A project has no default dashboard until someone first opens Insights
+        in the web UI, which creates one, and does again after it''s deleted.
+
+        '
       tags:
       - Dashboards
       parameters:
@@ -8967,9 +8971,9 @@ components:
           example: Performance Overview
         widgets:
           type: array
-          description: 'The dashboard''s widgets, in the same shape a write accepts
-            — the read and write forms are identical, including `config.streams` as
-            stream slugs (`stream_ids` exists only inside the model).
+          description: 'The dashboard''s widgets, in the order they were written and
+            in the same shape a write accepts, including `config.streams` as stream
+            slugs (`stream_ids` exists only inside the model).
 
             '
           items:
@@ -9002,15 +9006,20 @@ components:
           "$ref": "#/components/schemas/WebLinks"
     DashboardWidget:
       type: object
-      description: A widget on an Insights dashboard
+      description: 'A widget on an Insights dashboard. A read leaves out null, "",
+        [] and {} values (an object that is empty once those are gone too); false
+        and 0 are kept. A widget written without an `id` gets a generated one, and
+        its `grid` is merged into the default {x: 0, y: 0, w: 12, h: 3}.
+
+        '
       required:
       - type
       properties:
         id:
           type: string
-          description: 'Stable identifier for the widget. Regenerated when a write
-            omits it, so a read-edit-write round trip must echo this back to keep
-            widget identity.
+          description: 'Stable identifier for the widget: the id a write sent, kept
+            exactly, or one the server generated when a write left it out. A read-edit-write
+            round trip must echo it back to keep widget identity.
 
             '
         type:
@@ -9078,6 +9087,9 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/DashboardWidgetInput"
+          default: []
+          description: The dashboard's widgets, kept and read back in this order.
+            Sent on an update, the list replaces the stored one.
     DashboardUpdateInput:
       type: object
       additionalProperties: false
@@ -9094,6 +9106,9 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/DashboardWidgetInput"
+          default: []
+          description: The dashboard's widgets, kept and read back in this order.
+            Sent on an update, the list replaces the stored one.
       description: 'Fields to change on a dashboard. A field left out keeps its current
         value. `widgets` replaces the whole list: to remove a widget, send the list
         without it. A widget that keeps its `id` is updated in place, and one without
@@ -13620,7 +13635,8 @@ components:
             enum:
             - default
             - internal
-          description: Streams to query (defaults to ["default"])
+          description: Streams to query. Left out or empty, every stream in the project,
+            which a read then lists. An unknown name is dropped.
         query:
           type: string
           description: BadgerQL query producing the widget's data
@@ -13792,6 +13808,10 @@ components:
       properties:
         id:
           type: string
+          description: 'Kept exactly as sent. Unique within its dashboard; another
+            dashboard can use the same id. Left out, the server assigns one, so a
+            client that wants stable widgets sends its own. Stick to letters, digits,
+            `-` and `_`: the id appears in web UI links.'
         type:
           type: string
           enum:
@@ -13817,6 +13837,13 @@ components:
             h:
               type: integer
               minimum: 1
+          default:
+            x: 0
+            "y": 0
+            w: 12
+            h: 3
+          description: 'Merged into the default {x: 0, y: 0, w: 12, h: 3}: left out,
+            the widget gets the default, and a key left out takes the default''s value.'
         presentation:
           type: object
           additionalProperties: false
@@ -13881,6 +13908,8 @@ components:
           properties:
             config:
               "$ref": "#/components/schemas/DashboardWidgetConfigUptime"
+      description: A dashboard widget. A read leaves out null, "", [] and {} values
+        (an object that is empty once those are gone too); false and 0 are kept.
   parameters:
     ProjectId:
       name: project_id

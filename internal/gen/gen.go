@@ -2249,7 +2249,7 @@ type Dashboard struct {
 	// UpdatedAt When the dashboard was last updated
 	UpdatedAt time.Time `json:"updated_at"`
 
-	// Widgets The dashboard's widgets, in the same shape a write accepts — the read and write forms are identical, including `config.streams` as stream slugs (`stream_ids` exists only inside the model).
+	// Widgets The dashboard's widgets, in the order they were written and in the same shape a write accepts, including `config.streams` as stream slugs (`stream_ids` exists only inside the model).
 	Widgets []DashboardWidget `json:"widgets"`
 }
 
@@ -2465,7 +2465,9 @@ type DashboardInput struct {
 	// DefaultTs Default time range. Send null to clear.
 	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
 	Title     string                    `json:"title"`
-	Widgets   *[]DashboardWidgetInput   `json:"widgets,omitempty"`
+
+	// Widgets The dashboard's widgets, kept and read back in this order. Sent on an update, the list replaces the stored one.
+	Widgets *[]DashboardWidgetInput `json:"widgets,omitempty"`
 }
 
 // DashboardUpdateInput Fields to change on a dashboard. A field left out keeps its current value. `widgets` replaces the whole list: to remove a widget, send the list without it. A widget that keeps its `id` is updated in place, and one without an `id` is added.
@@ -2473,10 +2475,12 @@ type DashboardUpdateInput struct {
 	// DefaultTs Default time range. Send null to clear.
 	DefaultTs nullable.Nullable[string] `json:"default_ts,omitempty"`
 	Title     *string                   `json:"title,omitempty"`
-	Widgets   *[]DashboardWidgetInput   `json:"widgets,omitempty"`
+
+	// Widgets The dashboard's widgets, kept and read back in this order. Sent on an update, the list replaces the stored one.
+	Widgets *[]DashboardWidgetInput `json:"widgets,omitempty"`
 }
 
-// DashboardWidget A widget on an Insights dashboard
+// DashboardWidget A widget on an Insights dashboard. A read leaves out null, "", [] and {} values (an object that is empty once those are gone too); false and 0 are kept. A widget written without an `id` gets a generated one, and its `grid` is merged into the default {x: 0, y: 0, w: 12, h: 3}.
 type DashboardWidget struct {
 	// Config Type-specific configuration. Its accepted fields depend on `type` and are enforced on write by the dashboard validator; left open here because the conditional that selects them cannot be expressed as a single static type.
 	Config *map[string]interface{} `json:"config,omitempty"`
@@ -2484,7 +2488,7 @@ type DashboardWidget struct {
 	// Grid Position and size on the dashboard grid.
 	Grid *DashboardWidget_Grid `json:"grid,omitempty"`
 
-	// Id Stable identifier for the widget. Regenerated when a write omits it, so a read-edit-write round trip must echo this back to keep widget identity.
+	// Id Stable identifier for the widget: the id a write sent, kept exactly, or one the server generated when a write left it out. A read-edit-write round trip must echo it back to keep widget identity.
 	Id *string `json:"id,omitempty"`
 
 	// Presentation Display-only chrome.
@@ -2567,7 +2571,7 @@ type DashboardWidgetConfigInsightsVis struct {
 	// Query BadgerQL query producing the widget's data
 	Query *string `json:"query,omitempty"`
 
-	// Streams Streams to query (defaults to ["default"])
+	// Streams Streams to query. Left out or empty, every stream in the project, which a read then lists. An unknown name is dropped.
 	Streams *[]DashboardWidgetConfigInsightsVisStreams `json:"streams,omitempty"`
 
 	// Vis How to render the result: `{view, chart_config}`
@@ -2592,17 +2596,21 @@ type DashboardWidgetConfigUptime struct {
 	Limit *int `json:"limit,omitempty"`
 }
 
-// DashboardWidgetInput defines model for DashboardWidgetInput.
+// DashboardWidgetInput A dashboard widget. A read leaves out null, "", [] and {} values (an object that is empty once those are gone too); false and 0 are kept.
 type DashboardWidgetInput struct {
 	// Config The widget's settings, as described by DashboardWidgetConfig<Type> for its `type`.
-	Config       *map[string]interface{}            `json:"config,omitempty"`
-	Grid         *DashboardWidgetInput_Grid         `json:"grid,omitempty"`
+	Config *map[string]interface{} `json:"config,omitempty"`
+
+	// Grid Merged into the default {x: 0, y: 0, w: 12, h: 3}: left out, the widget gets the default, and a key left out takes the default's value.
+	Grid *DashboardWidgetInput_Grid `json:"grid,omitempty"`
+
+	// Id Kept exactly as sent. Unique within its dashboard; another dashboard can use the same id. Left out, the server assigns one, so a client that wants stable widgets sends its own. Stick to letters, digits, `-` and `_`: the id appears in web UI links.
 	Id           *string                            `json:"id,omitempty"`
 	Presentation *DashboardWidgetInput_Presentation `json:"presentation,omitempty"`
 	Type         DashboardWidgetInputType           `json:"type"`
 }
 
-// DashboardWidgetInput_Grid defines model for DashboardWidgetInput.Grid.
+// DashboardWidgetInput_Grid Merged into the default {x: 0, y: 0, w: 12, h: 3}: left out, the widget gets the default, and a key left out takes the default's value.
 type DashboardWidgetInput_Grid struct {
 	H *int `json:"h,omitempty"`
 	W *int `json:"w,omitempty"`
@@ -6811,7 +6819,7 @@ type ClientInterface interface {
 
 	// DeleteDashboard Delete a dashboard
 	//
-	// Deletes an Insights dashboard.
+	// Deletes an Insights dashboard, the project's default one (`is_default`) included. A project has no default dashboard until someone first opens Insights in the web UI, which creates one, and does again after it's deleted.
 	//
 	// Corresponds with DELETE /projects/{project_id}/dashboards/{dashboard_id} (the `DeleteDashboard` operationId).
 	DeleteDashboard(ctx context.Context, projectId ProjectId, dashboardId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -8638,7 +8646,7 @@ func (c *Client) CreateDashboard(ctx context.Context, projectId ProjectId, body 
 
 // DeleteDashboard Delete a dashboard
 //
-// Deletes an Insights dashboard.
+// Deletes an Insights dashboard, the project's default one (`is_default`) included. A project has no default dashboard until someone first opens Insights in the web UI, which creates one, and does again after it's deleted.
 //
 // Corresponds with DELETE /projects/{project_id}/dashboards/{dashboard_id} (the `DeleteDashboard` operationId).
 func (c *Client) DeleteDashboard(ctx context.Context, projectId ProjectId, dashboardId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
