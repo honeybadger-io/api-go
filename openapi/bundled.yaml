@@ -838,6 +838,8 @@ paths:
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
+        '429':
+          "$ref": "#/components/responses/ConcurrentCreate"
       security:
       - bearer_auth:
         - projects:create
@@ -9080,6 +9082,7 @@ components:
           - delete_failed
           - limit_reached
           - rate_limit_exceeded
+          - concurrent_request
           - maintenance_mode
           - invalid_parameter
           - forbidden_attributes
@@ -14143,6 +14146,27 @@ components:
             error:
               code: rate_limit_exceeded
               message: Rate limit exceeded
+            meta:
+              request_id: abc123
+    ConcurrentCreate:
+      description: 'Another project is being created in this account at the same moment
+        (`concurrent_request`), or the rate limit is exceeded (`rate_limit_exceeded`).
+        Nothing was created. Wait `Retry-After` seconds and retry.
+
+        '
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: concurrent_request
+              message: Another project is being created in this account; retry shortly
             meta:
               request_id: abc123
     BadRequest:

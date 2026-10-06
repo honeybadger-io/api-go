@@ -541,6 +541,7 @@ const (
 	ErrorBodyCodeAccountInactive       ErrorBodyCode = "account_inactive"
 	ErrorBodyCodeAccountParked         ErrorBodyCode = "account_parked"
 	ErrorBodyCodeAmbiguousAccount      ErrorBodyCode = "ambiguous_account"
+	ErrorBodyCodeConcurrentRequest     ErrorBodyCode = "concurrent_request"
 	ErrorBodyCodeCredentialInQuery     ErrorBodyCode = "credential_in_query"
 	ErrorBodyCodeDeleteFailed          ErrorBodyCode = "delete_failed"
 	ErrorBodyCodeFaultMerged           ErrorBodyCode = "fault_merged"
@@ -570,6 +571,8 @@ func (e ErrorBodyCode) Valid() bool {
 	case ErrorBodyCodeAccountParked:
 		return true
 	case ErrorBodyCodeAmbiguousAccount:
+		return true
+	case ErrorBodyCodeConcurrentRequest:
 		return true
 	case ErrorBodyCodeCredentialInQuery:
 		return true
@@ -4882,6 +4885,9 @@ type AmbiguousAccount = Error
 
 // BadRequest API error response
 type BadRequest = Error
+
+// ConcurrentCreate API error response
+type ConcurrentCreate = Error
 
 // FaultBulkRejected API error response
 type FaultBulkRejected = Error
