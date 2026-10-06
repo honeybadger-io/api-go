@@ -36,7 +36,9 @@ const (
 	CodeDeleteFailed          Code = "delete_failed"
 	CodeLimitReached          Code = "limit_reached"
 	CodeRateLimitExceeded     Code = "rate_limit_exceeded"
+	CodeConcurrentRequest     Code = "concurrent_request"
 	CodeMaintenanceMode       Code = "maintenance_mode"
+	CodeInvalidParameter      Code = "invalid_parameter"
 	CodeInvalidID             Code = "invalid_id"
 	CodeForbiddenAttributes   Code = "forbidden_attributes"
 	CodeServiceUnavailable    Code = "service_unavailable"
@@ -66,7 +68,9 @@ var (
 	ErrDeleteFailed          = &Error{Code: CodeDeleteFailed}
 	ErrLimitReached          = &Error{Code: CodeLimitReached}
 	ErrRateLimited           = &Error{Code: CodeRateLimitExceeded}
+	ErrConcurrentRequest     = &Error{Code: CodeConcurrentRequest}
 	ErrMaintenanceMode       = &Error{Code: CodeMaintenanceMode}
+	ErrInvalidParameter      = &Error{Code: CodeInvalidParameter}
 	ErrInvalidID             = &Error{Code: CodeInvalidID}
 	ErrForbiddenAttributes   = &Error{Code: CodeForbiddenAttributes}
 	ErrServiceUnavailable    = &Error{Code: CodeServiceUnavailable}
