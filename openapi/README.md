@@ -10,9 +10,9 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
 | Branch | `feat/terraform-3-v3-contract` (honeybadger#6730, draft, stacked on #6729) |
-| Commit | `cd12a844e9` (local to the honeybadger checkout; not pushed yet) |
+| Commit | `001d3a84e3` (local to the honeybadger checkout; not pushed yet) |
 | Vendored | 2026-10-05 |
-| sha256 | `89e7ba2d9bfb1f8e934a8c07280d9f6c708646b8ec75060a086c3100bb5382f2` |
+| sha256 | `1e91887fb75705dce39a80dff4ee6fc5a283f889d2ce3ac419f6d251ac3fb950` |
 
 Record the branch, commit, **and checksum** on every refresh. The bundle is
 **gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of

@@ -3560,12 +3560,16 @@ type IntegrationConfigWebHook struct {
 	BearerToken nullable.Nullable[string] `json:"bearer_token,omitempty"`
 
 	// Label Optional label to show in the integrations list.
-	Label          nullable.Nullable[string]                                 `json:"label,omitempty"`
+	Label nullable.Nullable[string] `json:"label,omitempty"`
+
+	// PayloadVersion The JSON payload format. v2 by default.
 	PayloadVersion nullable.Nullable[IntegrationConfigWebHookPayloadVersion] `json:"payload_version,omitempty"`
-	Url            nullable.Nullable[string]                                 `json:"url,omitempty"`
+
+	// Url The URL Honeybadger sends each notification to, as a JSON POST.
+	Url nullable.Nullable[string] `json:"url,omitempty"`
 }
 
-// IntegrationConfigWebHookPayloadVersion defines model for IntegrationConfigWebHook.PayloadVersion.
+// IntegrationConfigWebHookPayloadVersion The JSON payload format. v2 by default.
 type IntegrationConfigWebHookPayloadVersion string
 
 // IntegrationConfigZulip defines model for IntegrationConfigZulip.
@@ -3583,8 +3587,9 @@ type IntegrationConfigZulip struct {
 	ZulipDomain nullable.Nullable[string] `json:"zulip_domain,omitempty"`
 }
 
-// IntegrationCreateInput A new integration. `type` picks the integration, and `config` holds that type's settings. OAuth integrations (Slack, GitHub and the like) are created inactive and are connected in the web UI at `links.web`. Some required settings are IDs from the other service, such as a Linear team or a Trello board.
+// IntegrationCreateInput A new integration. `type` picks the integration, and `config` holds that type's settings. OAuth integrations (Slack, GitHub and the like) are created active by default and send nothing until someone connects them in the web UI at `links.web`. Some required settings are IDs from the other service, such as a Linear team or a Trello board.
 type IntegrationCreateInput struct {
+	// Active Whether to use the integration. An OAuth integration that's active sends nothing until someone connects it in the web UI at `links.web`.
 	Active *bool `json:"active,omitempty"`
 
 	// AlarmAlertIds IDs of alarms whose alert events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
@@ -3653,6 +3658,7 @@ type IntegrationFilterEvent string
 
 // IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. `type` can be sent only with its current value; any other value is 422. A key this operation doesn't take is 422, except the read-only keys a GET returns (`id`, `links` and the like), which are ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 type IntegrationUpdateInput struct {
+	// Active Whether to use the integration. An OAuth integration that's active sends nothing until someone connects it in the web UI at `links.web`.
 	Active *bool `json:"active,omitempty"`
 
 	// AlarmAlertIds IDs of alarms whose alert events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
