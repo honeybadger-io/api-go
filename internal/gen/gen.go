@@ -2081,8 +2081,8 @@ type CheckIn struct {
 	// CronSchedule Cron expression (for cron schedule type)
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone for cron schedule, as a Rails zone name
-	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
+	// CronTimezone Timezone for cron schedule, as a Rails zone name. `UTC` on a simple check-in.
+	CronTimezone nullable.Nullable[string] `json:"cron_timezone"`
 
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
@@ -2168,7 +2168,7 @@ type CheckInInput struct {
 	// ScheduleType Switching to `simple` clears `cron_schedule` and resets `cron_timezone` to `UTC`; switching to `cron` clears `report_period`.
 	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
 
-	// Slug Short identifier used in the check-in's reporting URL. Generated from the name when omitted. Send null to clear. Renaming it breaks jobs reporting to `…/check_in/<project key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
+	// Slug Short identifier used in the check-in's reporting URL. Send null to clear. Renaming it breaks jobs reporting to `…/check_in/<project key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
 	Slug nullable.Nullable[string] `json:"slug,omitempty"`
 }
 

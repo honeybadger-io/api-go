@@ -8377,6 +8377,7 @@ components:
       - missed_count
       - grace_period
       - report_url
+      - cron_timezone
       - created_at
       properties:
         id:
@@ -8460,7 +8461,8 @@ components:
           type:
           - string
           - 'null'
-          description: Timezone for cron schedule, as a Rails zone name
+          description: Timezone for cron schedule, as a Rails zone name. `UTC` on
+            a simple check-in.
           example: Eastern Time (US & Canada)
         report_period:
           type:
@@ -8628,10 +8630,9 @@ components:
           type:
           - string
           - 'null'
-          description: 'Short identifier used in the check-in''s reporting URL. Generated
-            from the name when omitted. Send null to clear. Renaming it breaks jobs
-            reporting to `…/check_in/<project key>/<slug>` and changes how `PUT /check_ins`
-            matches this check-in.
+          description: 'Short identifier used in the check-in''s reporting URL. Send
+            null to clear. Renaming it breaks jobs reporting to `…/check_in/<project
+            key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
 
             '
           example: nightly-billing
