@@ -420,7 +420,7 @@ func TestAlarmsUpdateChangesBehaviour(t *testing.T) {
 	query, period := "filter level::str == \"error\"", "15m"
 	streams := []string{"s1"}
 	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1", AlarmUpdateParams{
-		Query: &query, EvaluationPeriod: &period, StreamIds: &streams,
+		Query: &query, EvaluationPeriod: &period, StreamIds: nullable.NewNullableWithValue(streams),
 	}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
@@ -542,9 +542,9 @@ func TestIntegrationsCreateNestsSettingsUnderConfig(t *testing.T) {
 	}
 }
 
-// Nil StreamIds runs the query against every stream, while an empty list means
-// none; the two must reach the API differently.
-func TestAlarmsCreateDistinguishesNoStreamsFromEvery(t *testing.T) {
+// Nil StreamIds on create leaves the field out, which runs the query against
+// every current stream.
+func TestAlarmsCreateOmitsUnsetStreams(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
 	if _, err := c.Alarms.Create(context.Background(), "Xk9mZp",
 		AlarmCreateParams{Name: "Spike", Query: "q"}); err != nil {
@@ -553,15 +553,18 @@ func TestAlarmsCreateDistinguishesNoStreamsFromEvery(t *testing.T) {
 	if _, present := got.body["stream_ids"]; present {
 		t.Error("stream_ids was sent though it was nil")
 	}
+}
 
-	c2, got2 := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
-	none := []string{}
-	if _, err := c2.Alarms.Create(context.Background(), "Xk9mZp",
-		AlarmCreateParams{Name: "Spike", Query: "q", StreamIds: &none}); err != nil {
-		t.Fatalf("Create: %v", err)
+// On update, null resets an alarm to every current stream, so it must reach the
+// wire as null rather than being dropped.
+func TestAlarmsUpdateResetsStreamsWithNull(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"a1","name":"Spike"}}`)
+	if _, err := c.Alarms.Update(context.Background(), "Xk9mZp", "a1",
+		AlarmUpdateParams{StreamIds: nullable.NewNullNullable[[]string]()}); err != nil {
+		t.Fatalf("Update: %v", err)
 	}
-	if ids, ok := got2.body["stream_ids"].([]any); !ok || len(ids) != 0 {
-		t.Errorf("stream_ids = %v, want []", got2.body["stream_ids"])
+	if v, present := got.body["stream_ids"]; !present || v != nil {
+		t.Errorf("stream_ids = %v (present %v), want an explicit null", v, present)
 	}
 }
 

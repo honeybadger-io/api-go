@@ -2069,8 +2069,8 @@ type AlarmUpdateInput struct {
 	// Query BadgerQL query evaluated on each check
 	Query *string `json:"query,omitempty"`
 
-	// StreamIds Stream identifiers to query. A set; order is ignored and duplicates are dropped.
-	StreamIds *[]string `json:"stream_ids,omitempty"`
+	// StreamIds Stream identifiers to query. A set; can't be empty. Order is ignored and duplicates are dropped. Send null to reset to every current stream in the project.
+	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
 	TriggerConfig *AlarmTriggerConfig `json:"trigger_config,omitempty"`

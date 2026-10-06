@@ -6048,6 +6048,7 @@ components:
           example: filter event_type::str == "notice" | stats count() as count
         stream_ids:
           type: array
+          minItems: 1
           description: 'Streams the query runs against. A set; can''t be empty. Left
             out, every current stream in the project, which a read then lists. An
             ID that isn''t one of the project''s streams fails the request with 422.
@@ -6083,11 +6084,17 @@ components:
           type: string
           description: BadgerQL query evaluated on each check
         stream_ids:
-          type: array
+          type:
+          - array
+          - 'null'
+          minItems: 1
           items:
             type: string
-          description: Stream identifiers to query. A set; order is ignored and duplicates
-            are dropped.
+          description: 'Stream identifiers to query. A set; can''t be empty. Order
+            is ignored and duplicates are dropped. Send null to reset to every current
+            stream in the project.
+
+            '
         evaluation_period:
           type: string
           description: Window each evaluation covers, as a compact duration
