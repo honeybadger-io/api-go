@@ -3985,7 +3985,7 @@ type Project struct {
 
 // ProjectCreateInput Attributes for creating a project.
 type ProjectCreateInput struct {
-	// AsanaWorkspaceId Send null to clear.
+	// AsanaWorkspaceId Asana workspace used by the project's Asana integration. Send null to clear.
 	AsanaWorkspaceId nullable.Nullable[string] `json:"asana_workspace_id,omitempty"`
 
 	// CustomerThrottle Notices accepted per minute before throttling kicks in. Send null to clear.
@@ -3999,7 +3999,9 @@ type ProjectCreateInput struct {
 
 	// Language Primary language, used to format backtraces. Send null to clear.
 	Language nullable.Nullable[string] `json:"language,omitempty"`
-	Name     string                    `json:"name"`
+
+	// Name Project name
+	Name string `json:"name"`
 
 	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Send null to clear.
 	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
@@ -4022,7 +4024,7 @@ type ProjectCreateInput struct {
 
 // ProjectInput Writable project attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take, including the create-only `team_id` and `disable_email_notifications`, is 422; the read-only keys a GET returns are ignored.
 type ProjectInput struct {
-	// AsanaWorkspaceId Send null to clear.
+	// AsanaWorkspaceId Asana workspace used by the project's Asana integration. Send null to clear.
 	AsanaWorkspaceId nullable.Nullable[string] `json:"asana_workspace_id,omitempty"`
 
 	// CustomerThrottle Notices accepted per minute before throttling kicks in. Send null to clear.
@@ -4033,7 +4035,9 @@ type ProjectInput struct {
 
 	// Language Primary language, used to format backtraces. Send null to clear.
 	Language nullable.Nullable[string] `json:"language,omitempty"`
-	Name     *string                   `json:"name,omitempty"`
+
+	// Name Project name
+	Name *string `json:"name,omitempty"`
 
 	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Send null to clear.
 	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
@@ -4051,8 +4055,9 @@ type ProjectInput struct {
 	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
-// ProjectKey defines model for ProjectKey.
+// ProjectKey A project's ingestion key, the API key a notifier sends error reports with
 type ProjectKey struct {
+	// CreatedAt When the key was created
 	CreatedAt time.Time `json:"created_at"`
 
 	// Id Identifier for this key. Use it in paths.
@@ -5850,18 +5855,21 @@ type ListProjectKeys200JSONResponseBody struct {
 
 // CreateProjectKey201JSONResponseBody defines parameters for CreateProjectKey.
 type CreateProjectKey201JSONResponseBody struct {
+	// Data A project's ingestion key, the API key a notifier sends error reports with
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetProjectKey200JSONResponseBody defines parameters for GetProjectKey.
 type GetProjectKey200JSONResponseBody struct {
+	// Data A project's ingestion key, the API key a notifier sends error reports with
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateProjectKey200JSONResponseBody defines parameters for UpdateProjectKey.
 type UpdateProjectKey200JSONResponseBody struct {
+	// Data A project's ingestion key, the API key a notifier sends error reports with
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }

@@ -7344,6 +7344,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7374,6 +7379,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7383,9 +7393,13 @@ components:
         then:
           title: Discord
           description: Create a Discord integration.
+          required:
+          - config
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigDiscordWebhook"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -7405,6 +7419,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7429,6 +7448,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7457,6 +7479,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7485,6 +7510,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7513,6 +7541,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7543,6 +7574,11 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7567,6 +7603,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7605,6 +7644,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7629,6 +7673,11 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7660,6 +7709,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7685,6 +7739,11 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7710,6 +7769,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7738,6 +7800,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7774,6 +7839,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7787,9 +7855,13 @@ components:
         then:
           title: Mattermost
           description: Create a Mattermost integration.
+          required:
+          - config
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigMattermost"
+              required:
+              - url
             events:
               items:
                 enum:
@@ -7809,6 +7881,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7844,6 +7921,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7873,6 +7955,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7908,6 +7995,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7943,6 +8035,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -7963,6 +8060,9 @@ components:
             events:
               items:
                 enum: []
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -8001,6 +8101,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8036,6 +8141,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8064,6 +8174,11 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8097,6 +8212,11 @@ components:
                 - check_in_missing
                 - check_in_reporting
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8106,14 +8226,23 @@ components:
         then:
           title: Instatus
           description: Create an Instatus integration.
+          required:
+          - config
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigInstatus"
+              required:
+              - url
             events:
               items:
                 enum:
                 - up
                 - down
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8143,6 +8272,9 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -8184,6 +8316,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -8222,6 +8357,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8260,6 +8400,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8292,6 +8437,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8327,6 +8477,11 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
+              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
+                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       - if:
           properties:
             type:
@@ -8356,6 +8511,10 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
+              description: 'Left out or null: `occurred`, `resolved`, and `unresolved`,
+                less any the plan doesn''t include.'
+            active:
+              default: true
       example:
         type: WebHook
         events:
@@ -10116,6 +10275,7 @@ components:
       properties:
         name:
           type: string
+          description: Project name
           example: Billing API
         resolve_errors_on_deploy:
           type:
@@ -10169,7 +10329,8 @@ components:
           type:
           - string
           - 'null'
-          description: Send null to clear.
+          description: Asana workspace used by the project's Asana integration. Send
+            null to clear.
         customer_throttle:
           type:
           - integer
@@ -10187,6 +10348,8 @@ components:
             '
     ProjectKey:
       type: object
+      description: A project's ingestion key, the API key a notifier sends error reports
+        with
       required:
       - id
       - project_id
@@ -10222,6 +10385,7 @@ components:
           readOnly: true
           type: string
           format: date-time
+          description: When the key was created
     ProjectKeyInput:
       type: object
       additionalProperties: false
