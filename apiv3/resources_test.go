@@ -109,3 +109,46 @@ func TestSitesRequests(t *testing.T) {
 		t.Errorf("Delete sent %s %s", got.method, got.path)
 	}
 }
+
+// Create and update share the nested input types, so one site list serves both.
+func TestStatusPagesRequests(t *testing.T) {
+	siteID := uuid.MustParse("9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47")
+	page := `{"data":{"id":"sp1","account_id":"Ab3kL9","name":"Status","url":"https://status.example.com","sites":[],"check_ins":[],"features":{},"hide_branding":false,"incidents_enabled":true,"message_enabled":false,"password_protected":false,"search_engine_indexing_disabled":false,"created_at":"2026-10-06T00:00:00Z","links":{"web":"https://app/x"}}}`
+	sites := []StatusPageSiteInput{{SiteId: siteID, DisplayName: nullable.NewNullableWithValue("Home")}}
+	ctx := context.Background()
+
+	c, got := captureWrite(t, http.StatusCreated, page)
+	if _, err := c.StatusPages.Create(ctx, StatusPageCreateParams{Name: "Status",
+		Sites: nullable.NewNullableWithValue(sites)}); err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if got.method != http.MethodPost || got.path != "/v3/status_pages" || got.body["name"] != "Status" {
+		t.Errorf("Create sent %s %s %v", got.method, got.path, got.body)
+	}
+	entries, ok := got.body["sites"].([]any)
+	if !ok || len(entries) != 1 || entries[0].(map[string]any)["site_id"] != siteID.String() {
+		t.Errorf("sites = %v", got.body["sites"])
+	}
+
+	c, got = captureWrite(t, http.StatusOK, page)
+	if _, err := c.StatusPages.Update(ctx, "sp1", StatusPageUpdateParams{
+		Sites:    nullable.NewNullableWithValue(sites),
+		Features: nullable.NewNullNullable[StatusPageFeatures](),
+	}); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if got.method != http.MethodPatch || got.path != "/v3/status_pages/sp1" {
+		t.Errorf("Update sent %s %s", got.method, got.path)
+	}
+	if v, present := got.body["features"]; !present || v != nil {
+		t.Errorf("features = %v (present %v), want an explicit null", v, present)
+	}
+
+	c, got = captureWrite(t, http.StatusNoContent, "")
+	if err := c.StatusPages.Delete(ctx, "sp1"); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if got.method != http.MethodDelete || got.path != "/v3/status_pages/sp1" {
+		t.Errorf("Delete sent %s %s", got.method, got.path)
+	}
+}

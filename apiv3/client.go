@@ -129,6 +129,9 @@ type Client struct {
 
 	// Teams handles the account's teams.
 	Teams *TeamsService
+
+	// StatusPages handles the account's status pages.
+	StatusPages *StatusPagesService
 }
 
 // NewClient returns a client pointing at the production API, resolving the
@@ -187,6 +190,7 @@ func (c *Client) rebind() *Client {
 	c.Environments = &EnvironmentsService{client: c}
 	c.Sites = &SitesService{client: c}
 	c.Teams = &TeamsService{client: c}
+	c.StatusPages = &StatusPagesService{client: c}
 	return c
 }
 
