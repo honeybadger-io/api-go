@@ -3974,9 +3974,6 @@ type Project struct {
 	// Name Project name
 	Name string `json:"name"`
 
-	// ProjectKey The Project Key an app sends errors and events with: the newest of the project's keys. Null when the project has none, which deleting every project key produces.
-	ProjectKey nullable.Nullable[string] `json:"project_key"`
-
 	// PurgeDays Data retention period in days
 	PurgeDays nullable.Nullable[int] `json:"purge_days"`
 

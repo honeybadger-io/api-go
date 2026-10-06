@@ -7,7 +7,8 @@ import (
 	"github.com/honeybadger-io/api-go/internal/gen"
 )
 
-// Project is a Honeybadger project.
+// Project is a Honeybadger project. It carries no Project Key, since a project
+// can have several; list them with ProjectKeys.List.
 type Project = gen.Project
 
 // ProjectsService handles the projects resource.

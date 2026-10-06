@@ -10120,7 +10120,6 @@ components:
       - asana_workspace_id
       - active
       - links
-      - project_key
       - disable_public_links
       - environments
       - language
@@ -10150,17 +10149,6 @@ components:
           type: string
           description: Project name
           example: My Rails App
-        project_key:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-          description: 'The Project Key an app sends errors and events with: the newest
-            of the project''s keys. Null when the project has none, which deleting
-            every project key produces.
-
-            '
-          example: hbp_abc123...
         active:
           readOnly: true
           type: boolean
