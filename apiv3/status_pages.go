@@ -11,6 +11,14 @@ import (
 // check-ins.
 type StatusPage = gen.StatusPage
 
+// StatusPageSite is a site as a status page shows it: its id, display name and
+// description. Read the site's live state from the Sites service.
+type StatusPageSite = gen.StatusPageSite
+
+// StatusPageCheckIn is a check-in as a status page shows it: its id, display name
+// and description. Read the check-in's live state from the CheckIns service.
+type StatusPageCheckIn = gen.StatusPageCheckIn
+
 // StatusPageCreateParams are a new status page's fields. Name is required.
 type StatusPageCreateParams = gen.StatusPageCreateInput
 

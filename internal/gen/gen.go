@@ -4224,7 +4224,7 @@ type StatusPage struct {
 	AccountId string `json:"account_id"`
 
 	// CheckIns Check-ins displayed on the status page. An ordered list; the order is the order on the page.
-	CheckIns []StatusPage_CheckIns `json:"check_ins"`
+	CheckIns []StatusPageCheckIn `json:"check_ins"`
 
 	// CreatedAt When the status page was created
 	CreatedAt time.Time `json:"created_at"`
@@ -4268,7 +4268,7 @@ type StatusPage struct {
 	SearchEngineIndexingDisabled bool `json:"search_engine_indexing_disabled"`
 
 	// Sites Uptime sites displayed on the status page. An ordered list; the order is the order on the page.
-	Sites []StatusPage_Sites `json:"sites"`
+	Sites []StatusPageSite `json:"sites"`
 
 	// Url URL of the status page
 	Url string `json:"url"`
@@ -4277,8 +4277,8 @@ type StatusPage struct {
 	Username nullable.Nullable[string] `json:"username"`
 }
 
-// StatusPage_CheckIns defines model for StatusPage.CheckIns.
-type StatusPage_CheckIns struct {
+// StatusPageCheckIn A check-in listed on a status page.
+type StatusPageCheckIn struct {
 	// CheckInId ID of the check-in
 	CheckInId string `json:"check_in_id"`
 
@@ -4287,18 +4287,6 @@ type StatusPage_CheckIns struct {
 
 	// DisplayName Display name on the status page
 	DisplayName nullable.Nullable[string] `json:"display_name"`
-}
-
-// StatusPage_Sites defines model for StatusPage.Sites.
-type StatusPage_Sites struct {
-	// Description Description shown on the status page
-	Description nullable.Nullable[string] `json:"description"`
-
-	// DisplayName Display name on the status page
-	DisplayName nullable.Nullable[string] `json:"display_name"`
-
-	// SiteId Identifier of the site
-	SiteId openapi_types.UUID `json:"site_id"`
 }
 
 // StatusPageCheckInInput A check-in listed on a status page.
@@ -4492,6 +4480,18 @@ type StatusPageInput struct {
 
 	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan.
 	Username nullable.Nullable[string] `json:"username,omitempty"`
+}
+
+// StatusPageSite A site listed on a status page.
+type StatusPageSite struct {
+	// Description Description shown on the status page
+	Description nullable.Nullable[string] `json:"description"`
+
+	// DisplayName Display name on the status page
+	DisplayName nullable.Nullable[string] `json:"display_name"`
+
+	// SiteId Identifier of the site
+	SiteId openapi_types.UUID `json:"site_id"`
 }
 
 // StatusPageSiteInput A site listed on a status page.

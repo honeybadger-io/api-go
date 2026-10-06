@@ -10806,50 +10806,13 @@ components:
           description: Uptime sites displayed on the status page. An ordered list;
             the order is the order on the page.
           items:
-            type: object
-            required:
-            - site_id
-            - display_name
-            - description
-            properties:
-              site_id:
-                type: string
-                format: uuid
-                description: Identifier of the site
-              display_name:
-                type:
-                - string
-                - 'null'
-                description: Display name on the status page
-              description:
-                type:
-                - string
-                - 'null'
-                description: Description shown on the status page
+            "$ref": "#/components/schemas/StatusPageSite"
         check_ins:
           type: array
           description: Check-ins displayed on the status page. An ordered list; the
             order is the order on the page.
           items:
-            type: object
-            required:
-            - check_in_id
-            - display_name
-            - description
-            properties:
-              check_in_id:
-                type: string
-                description: ID of the check-in
-              display_name:
-                type:
-                - string
-                - 'null'
-                description: Display name on the status page
-              description:
-                type:
-                - string
-                - 'null'
-                description: Description shown on the status page
+            "$ref": "#/components/schemas/StatusPageCheckIn"
         links:
           "$ref": "#/components/schemas/WebLinks"
     StatusPageIncident:
@@ -11126,6 +11089,49 @@ components:
             '
           items:
             "$ref": "#/components/schemas/StatusPageCheckInInput"
+    StatusPageSite:
+      type: object
+      description: A site listed on a status page.
+      required:
+      - site_id
+      - display_name
+      - description
+      properties:
+        site_id:
+          type: string
+          format: uuid
+          description: Identifier of the site
+        display_name:
+          type:
+          - string
+          - 'null'
+          description: Display name on the status page
+        description:
+          type:
+          - string
+          - 'null'
+          description: Description shown on the status page
+    StatusPageCheckIn:
+      type: object
+      description: A check-in listed on a status page.
+      required:
+      - check_in_id
+      - display_name
+      - description
+      properties:
+        check_in_id:
+          type: string
+          description: ID of the check-in
+        display_name:
+          type:
+          - string
+          - 'null'
+          description: Display name on the status page
+        description:
+          type:
+          - string
+          - 'null'
+          description: Description shown on the status page
     StatusPageFeatures:
       type: object
       description: 'Presentation copy and styling. Replaced whole by an update. A
