@@ -5664,6 +5664,7 @@ components:
       description: |
         Either credential v3 accepts, as a Bearer token: a scoped API token (prefixed `hbt_` for a personal one, `hba_` for an account one), or an OAuth access token issued to an application acting on a user's behalf.
         Both are authorized the same way. An API token carries granular permissions directly, and each is checked on its own: a `:write` permission does not imply the matching `:read`, so a token holding `faults:write` alone cannot list or fetch faults.
+        An account API token can't hold `account:write`, and its `team:write` manages teams only: creating, changing or removing account and team members and invitations takes a personal API token.
 
         An OAuth grant carries `read` or `write`, which expand to a fixed list of permissions that never grows, so a grant never gains a capability added to the API afterwards:
 

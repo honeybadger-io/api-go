@@ -18,7 +18,9 @@ type TeamCreateParams = gen.TeamCreateInput
 type TeamUpdateParams = gen.TeamInput
 
 // TeamsService handles the account's teams. Teams belong to the account the
-// credential resolves to, not to a project.
+// credential resolves to, not to a project. Writes need team:write, which an
+// account-scoped API Token can hold for teams themselves; adding members or
+// sending invitations still takes a user-scoped one.
 type TeamsService struct {
 	client *Client
 }
