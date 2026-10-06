@@ -11007,7 +11007,8 @@ components:
           - 'null'
           description: 'Whether the page shows incidents. Requires status page incidents
             on the plan; changing it otherwise is 403 `feature_unavailable`. On create,
-            defaults to whether the plan has them. Send null to reset to false.
+            defaults to whether the plan has them. Send null to reset to that same
+            create default.
 
             '
         search_engine_indexing_disabled:
@@ -13635,8 +13636,10 @@ components:
             enum:
             - default
             - internal
-          description: Streams to query. Left out or empty, every stream in the project,
-            which a read then lists. An unknown name is dropped.
+          description: 'Streams to query, by slug: `default` (the project''s own stream)
+            or `internal`. Anything else is refused (422). Left out or empty, every
+            stream in the project, which a read then lists. A slug whose stream the
+            project doesn''t have yet, right after it''s created, is dropped.'
         query:
           type: string
           description: BadgerQL query producing the widget's data

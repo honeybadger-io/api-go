@@ -2571,7 +2571,7 @@ type DashboardWidgetConfigInsightsVis struct {
 	// Query BadgerQL query producing the widget's data
 	Query *string `json:"query,omitempty"`
 
-	// Streams Streams to query. Left out or empty, every stream in the project, which a read then lists. An unknown name is dropped.
+	// Streams Streams to query, by slug: `default` (the project's own stream) or `internal`. Anything else is refused (422). Left out or empty, every stream in the project, which a read then lists. A slug whose stream the project doesn't have yet, right after it's created, is dropped.
 	Streams *[]DashboardWidgetConfigInsightsVisStreams `json:"streams,omitempty"`
 
 	// Vis How to render the result: `{view, chart_config}`
@@ -4326,7 +4326,7 @@ type StatusPageCreateInput struct {
 	// HideBranding Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Send null to reset to false.
 	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
-	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to false.
+	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to that same create default.
 	IncidentsEnabled nullable.Nullable[bool] `json:"incidents_enabled,omitempty"`
 
 	// MessageBody The message banner's text. Send null to clear.
@@ -4461,7 +4461,7 @@ type StatusPageInput struct {
 	// HideBranding Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Send null to reset to false.
 	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
-	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to false.
+	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to that same create default.
 	IncidentsEnabled nullable.Nullable[bool] `json:"incidents_enabled,omitempty"`
 
 	// MessageBody The message banner's text. Send null to clear.
