@@ -31,27 +31,24 @@ func TestProjectIDIsOpaqueString(t *testing.T) {
 // plain pointers, and those conflate an explicit null with an absent key.
 //
 // Only properties declared `type: [T, "null"]` get nullable.Nullable[T] — see
-// TestNullableTypeDistinguishesNullFromAbsent. Project.token is optional with a
-// plain `type: string`, so it lands here. Stage 3 must not assume every
+// TestNullableTypeDistinguishesNullFromAbsent. Integration.connected is optional
+// with a plain `type: boolean`, so it lands here. Stage 3 must not assume every
 // optional field carries three states; it depends on how the spec declares it.
 func TestOptionalNonNullableFieldsConflateNullAndAbsent(t *testing.T) {
-	var explicitNull Project
-	if err := json.Unmarshal([]byte(`{"token":null}`), &explicitNull); err != nil {
+	var explicitNull Integration
+	if err := json.Unmarshal([]byte(`{"connected":null}`), &explicitNull); err != nil {
 		t.Fatalf("decoding explicit null: %v", err)
 	}
 
-	var absent Project
+	var absent Integration
 	if err := json.Unmarshal([]byte(`{}`), &absent); err != nil {
 		t.Fatalf("decoding absent field: %v", err)
 	}
 
-	if !explicitNull.Token.IsNull() {
-		t.Errorf("explicit null should be null; generator behavior changed")
-	}
-	if absent.Token.IsSpecified() {
-		t.Errorf("absent should not be specified")
-	}
 	// Both nil: indistinguishable for this class of field.
+	if explicitNull.Connected != nil || absent.Connected != nil {
+		t.Errorf("explicit null = %v, absent = %v; want both nil", explicitNull.Connected, absent.Connected)
+	}
 }
 
 // The error envelope carries a machine-readable code. Stage 3's typed

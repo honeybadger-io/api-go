@@ -6065,10 +6065,10 @@ components:
         stream_ids:
           type: array
           minItems: 1
-          description: 'Streams the query runs against. A set; can''t be empty. Left
-            out, every current stream in the project, which a read then lists. An
-            ID that isn''t one of the project''s streams fails the request with 422.
-            A set; order is ignored and duplicates are dropped.
+          description: 'Streams the query runs against. A set: order is ignored, duplicates
+            are dropped, and it can''t be empty. Left out, every current stream in
+            the project, which a read then lists. An ID that isn''t one of the project''s
+            streams fails the request with 422.
 
             '
           items:
@@ -8738,6 +8738,11 @@ components:
           - lte
           - eq
           - neq
+          description: 'How the query''s result is compared with `value`: greater
+            than, greater than or equal, less than, less than or equal, equal, or
+            not equal.
+
+            '
           example: gt
         value:
           type: number
@@ -9257,6 +9262,7 @@ components:
           - rate_limit_exceeded
           - concurrent_request
           - streams_provisioning
+          - project_key_not_accepted
           - maintenance_mode
           - invalid_parameter
           - forbidden_attributes
@@ -10114,7 +10120,7 @@ components:
       - asana_workspace_id
       - active
       - links
-      - token
+      - project_key
       - disable_public_links
       - environments
       - language
@@ -10144,14 +10150,14 @@ components:
           type: string
           description: Project name
           example: My Rails App
-        token:
+        project_key:
           readOnly: true
           type:
           - string
           - 'null'
-          description: 'API key for error reporting: the newest of the project''s
-            keys. Null when the project has none, which deleting every project key
-            produces.
+          description: 'The Project Key an app sends errors and events with: the newest
+            of the project''s keys. Null when the project has none, which deleting
+            every project key produces.
 
             '
           example: hbp_abc123...
@@ -10363,8 +10369,11 @@ components:
             '
     ProjectKey:
       type: object
-      description: A project's ingestion key, the API key a notifier sends error reports
-        with
+      description: 'A Project Key: what an app sends errors and events with, set as
+        `api_key` in a notifier''s config. It only sends data; reading or managing
+        anything through the API takes an API Token.
+
+        '
       required:
       - id
       - project_id
@@ -10385,8 +10394,8 @@ components:
         key:
           readOnly: true
           type: string
-          description: 'The ingestion key a notifier sends. Returned in full — unlike
-            an API credential, this value is meant to be distributed with your application.
+          description: 'The Project Key value a notifier sends. Returned in full:
+            unlike an API Token, it''s meant to ship with your application.
 
             '
           example: hbp_aBcDeFgHiJkLmNoPqRsTuVwXyZ012345aB12Cd

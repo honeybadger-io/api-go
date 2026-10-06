@@ -552,6 +552,7 @@ const (
 	ErrorBodyCodeLimitReached          ErrorBodyCode = "limit_reached"
 	ErrorBodyCodeMaintenanceMode       ErrorBodyCode = "maintenance_mode"
 	ErrorBodyCodeNotFound              ErrorBodyCode = "not_found"
+	ErrorBodyCodeProjectKeyNotAccepted ErrorBodyCode = "project_key_not_accepted"
 	ErrorBodyCodeProjectRestricted     ErrorBodyCode = "project_restricted"
 	ErrorBodyCodeRateLimitExceeded     ErrorBodyCode = "rate_limit_exceeded"
 	ErrorBodyCodeRequiresUserToken     ErrorBodyCode = "requires_user_token"
@@ -594,6 +595,8 @@ func (e ErrorBodyCode) Valid() bool {
 	case ErrorBodyCodeMaintenanceMode:
 		return true
 	case ErrorBodyCodeNotFound:
+		return true
+	case ErrorBodyCodeProjectKeyNotAccepted:
 		return true
 	case ErrorBodyCodeProjectRestricted:
 		return true
@@ -2004,7 +2007,7 @@ type AlarmCreateInput struct {
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
 
-	// StreamIds Streams the query runs against. A set; can't be empty. Left out, every current stream in the project, which a read then lists. An ID that isn't one of the project's streams fails the request with 422. A set; order is ignored and duplicates are dropped.
+	// StreamIds Streams the query runs against. A set: order is ignored, duplicates are dropped, and it can't be empty. Left out, every current stream in the project, which a read then lists. An ID that isn't one of the project's streams fails the request with 422.
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
@@ -2040,13 +2043,14 @@ type AlarmHistoryEntryStatus string
 
 // AlarmTriggerCondition The comparison against the query's result that fires the trigger
 type AlarmTriggerCondition struct {
+	// Operator How the query's result is compared with `value`: greater than, greater than or equal, less than, less than or equal, equal, or not equal.
 	Operator AlarmTriggerConditionOperator `json:"operator"`
 
 	// Value Threshold to compare against. `alert_result_count` takes a whole number >= 0.
 	Value float64 `json:"value"`
 }
 
-// AlarmTriggerConditionOperator defines model for AlarmTriggerCondition.Operator.
+// AlarmTriggerConditionOperator How the query's result is compared with `value`: greater than, greater than or equal, less than, less than or equal, equal, or not equal.
 type AlarmTriggerConditionOperator string
 
 // AlarmTriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
@@ -3970,6 +3974,9 @@ type Project struct {
 	// Name Project name
 	Name string `json:"name"`
 
+	// ProjectKey The Project Key an app sends errors and events with: the newest of the project's keys. Null when the project has none, which deleting every project key produces.
+	ProjectKey nullable.Nullable[string] `json:"project_key"`
+
 	// PurgeDays Data retention period in days
 	PurgeDays nullable.Nullable[int] `json:"purge_days"`
 
@@ -3978,9 +3985,6 @@ type Project struct {
 
 	// SourceUrl Template linking a backtrace line to your source host. `[file]` and `[line]` are substituted.
 	SourceUrl nullable.Nullable[string] `json:"source_url"`
-
-	// Token API key for error reporting: the newest of the project's keys. Null when the project has none, which deleting every project key produces.
-	Token nullable.Nullable[string] `json:"token"`
 
 	// UnresolvedFaultCount Number of unresolved faults
 	UnresolvedFaultCount int `json:"unresolved_fault_count"`
@@ -4064,7 +4068,7 @@ type ProjectInput struct {
 	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
-// ProjectKey A project's ingestion key, the API key a notifier sends error reports with
+// ProjectKey A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
 type ProjectKey struct {
 	// CreatedAt When the key was created
 	CreatedAt time.Time `json:"created_at"`
@@ -4072,7 +4076,7 @@ type ProjectKey struct {
 	// Id Identifier for this key. Use it in paths.
 	Id string `json:"id"`
 
-	// Key The ingestion key a notifier sends. Returned in full — unlike an API credential, this value is meant to be distributed with your application.
+	// Key The Project Key value a notifier sends. Returned in full: unlike an API Token, it's meant to ship with your application.
 	Key string `json:"key"`
 
 	// Label Optional human-readable name.
@@ -5867,21 +5871,21 @@ type ListProjectKeys200JSONResponseBody struct {
 
 // CreateProjectKey201JSONResponseBody defines parameters for CreateProjectKey.
 type CreateProjectKey201JSONResponseBody struct {
-	// Data A project's ingestion key, the API key a notifier sends error reports with
+	// Data A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetProjectKey200JSONResponseBody defines parameters for GetProjectKey.
 type GetProjectKey200JSONResponseBody struct {
-	// Data A project's ingestion key, the API key a notifier sends error reports with
+	// Data A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateProjectKey200JSONResponseBody defines parameters for UpdateProjectKey.
 type UpdateProjectKey200JSONResponseBody struct {
-	// Data A project's ingestion key, the API key a notifier sends error reports with
+	// Data A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
 	Data ProjectKey    `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }

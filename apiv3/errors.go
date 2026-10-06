@@ -24,6 +24,7 @@ const (
 	CodeUnauthorized          Code = "unauthorized"
 	CodeUnsupportedAuthScheme Code = "unsupported_auth_scheme"
 	CodeCredentialInQuery     Code = "credential_in_query"
+	CodeProjectKeyNotAccepted Code = "project_key_not_accepted"
 	CodeAccessDenied          Code = "access_denied"
 	CodeInsufficientScope     Code = "insufficient_scope"
 	CodeRequiresUserToken     Code = "requires_user_token"
@@ -57,6 +58,7 @@ var (
 	ErrUnauthorized          = &Error{Code: CodeUnauthorized}
 	ErrUnsupportedAuthScheme = &Error{Code: CodeUnsupportedAuthScheme}
 	ErrCredentialInQuery     = &Error{Code: CodeCredentialInQuery}
+	ErrProjectKeyNotAccepted = &Error{Code: CodeProjectKeyNotAccepted}
 	ErrAccessDenied          = &Error{Code: CodeAccessDenied}
 	ErrInsufficientScope     = &Error{Code: CodeInsufficientScope}
 	ErrRequiresUserToken     = &Error{Code: CodeRequiresUserToken}
