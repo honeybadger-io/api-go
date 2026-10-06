@@ -1989,6 +1989,7 @@ type AlarmState string
 
 // AlarmCreateInput An alarm and the observer that evaluates it
 type AlarmCreateInput struct {
+	// Description What the alarm watches for, shown with it in Honeybadger. Send null to clear.
 	Description nullable.Nullable[string] `json:"description,omitempty"`
 
 	// EvaluationPeriod Window each evaluation covers. At least 1m and less than a week (`w` units are refused).
@@ -2062,6 +2063,7 @@ type AlarmTriggerConfigType string
 
 // AlarmUpdateInput Writable alarm attributes
 type AlarmUpdateInput struct {
+	// Description What the alarm watches for, shown with it in Honeybadger. Send null to clear.
 	Description nullable.Nullable[string] `json:"description,omitempty"`
 
 	// EvaluationPeriod Window each evaluation covers, as a compact duration. At least 1m and less than a week (`w` units are refused).
@@ -2069,7 +2071,9 @@ type AlarmUpdateInput struct {
 
 	// LookbackLag How far behind now the window ends
 	LookbackLag *string `json:"lookback_lag,omitempty"`
-	Name        *string `json:"name,omitempty"`
+
+	// Name Alarm name
+	Name *string `json:"name,omitempty"`
 
 	// Query BadgerQL query evaluated on each check
 	Query *string `json:"query,omitempty"`
