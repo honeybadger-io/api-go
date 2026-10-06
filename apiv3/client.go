@@ -120,6 +120,15 @@ type Client struct {
 	// ProjectKeys handles a project's Project Keys, the credentials an app sends
 	// errors and events with.
 	ProjectKeys *ProjectKeysService
+
+	// Environments handles a project's environments.
+	Environments *EnvironmentsService
+
+	// Sites handles a project's uptime sites.
+	Sites *SitesService
+
+	// Teams handles the account's teams.
+	Teams *TeamsService
 }
 
 // NewClient returns a client pointing at the production API, resolving the
@@ -175,6 +184,9 @@ func (c *Client) rebind() *Client {
 	c.Dashboards = &DashboardsService{client: c}
 	c.Integrations = &IntegrationsService{client: c}
 	c.ProjectKeys = &ProjectKeysService{client: c}
+	c.Environments = &EnvironmentsService{client: c}
+	c.Sites = &SitesService{client: c}
+	c.Teams = &TeamsService{client: c}
 	return c
 }
 

@@ -183,7 +183,7 @@ type nameOption struct{ name string }
 func (o nameOption) apply(ro *requestOptions) { ro.name = o.name }
 func (o nameOption) listAll()                 {}
 
-// Named filters a project listing to the project with exactly this name.
+// Named filters a project or team listing to the one with exactly this name.
 func Named(name string) ListAllOption {
 	return nameOption{name: name}
 }

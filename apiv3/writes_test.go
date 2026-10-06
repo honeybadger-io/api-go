@@ -20,6 +20,7 @@ import (
 type captured struct {
 	method string
 	path   string
+	query  url.Values
 	body   map[string]any
 }
 
@@ -27,7 +28,7 @@ func captureWrite(t *testing.T, status int, response string) (*Client, *captured
 	t.Helper()
 	got := &captured{}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		got.method, got.path = r.Method, r.URL.Path
+		got.method, got.path, got.query = r.Method, r.URL.Path, r.URL.Query()
 		raw, _ := io.ReadAll(r.Body)
 		if len(raw) > 0 {
 			_ = json.Unmarshal(raw, &got.body)
