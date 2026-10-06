@@ -2942,7 +2942,7 @@ type IncidentUpdateInputStatus string
 
 // Integration A notification integration
 type Integration struct {
-	// Active Whether the channel is active
+	// Active Whether to use the integration. An OAuth integration that isn't `connected` sends nothing until it is.
 	Active bool `json:"active"`
 
 	// AlarmAlertIds IDs of alarms whose alert events this integration receives
@@ -2963,7 +2963,7 @@ type Integration struct {
 	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Secrets are never returned.
 	Config map[string]interface{} `json:"config"`
 
-	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration has its credentials. One created through the API starts inactive and unconnected, and is connected in the web UI at `links.web`. GitHub works through the GitHub App instead: the app is installed on the repo from `links.web`, and activating the integration attaches the installation, so it reports `connected: false` until then. The exception is a creator who signed in to Honeybadger with GitHub, whose token is attached on create.
+	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration is authenticated, which someone does in the web UI at `links.web`. Separate from `active`: an active integration that isn't connected sends nothing until it is, and connecting doesn't change `active`. GitHub authenticates through the GitHub App: the app is installed on the repo, and the installation is attached when someone with access to it saves the integration. A creator who signed in to Honeybadger with GitHub is connected on create.
 	Connected *bool `json:"connected,omitempty"`
 
 	// CreatedAt When the channel was created

@@ -6252,7 +6252,10 @@ components:
           example: Slack
         active:
           type: boolean
-          description: Whether the channel is active
+          description: 'Whether to use the integration. An OAuth integration that
+            isn''t `connected` sends nothing until it is.
+
+            '
         events:
           uniqueItems: true
           type: array
@@ -6334,12 +6337,12 @@ components:
           type: boolean
           description: 'Present only on OAuth integrations (Slack, GitHub, GitLab,
             Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration
-            has its credentials. One created through the API starts inactive and unconnected,
-            and is connected in the web UI at `links.web`. GitHub works through the
-            GitHub App instead: the app is installed on the repo from `links.web`,
-            and activating the integration attaches the installation, so it reports
-            `connected: false` until then. The exception is a creator who signed in
-            to Honeybadger with GitHub, whose token is attached on create.
+            is authenticated, which someone does in the web UI at `links.web`. Separate
+            from `active`: an active integration that isn''t connected sends nothing
+            until it is, and connecting doesn''t change `active`. GitHub authenticates
+            through the GitHub App: the app is installed on the repo, and the installation
+            is attached when someone with access to it saves the integration. A creator
+            who signed in to Honeybadger with GitHub is connected on create.
 
             '
         config:
@@ -7461,8 +7464,8 @@ components:
           - type
         then:
           title: GitHub
-          description: Create a GitHub integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a GitHub integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7480,9 +7483,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7491,8 +7492,8 @@ components:
           - type
         then:
           title: GitLab
-          description: Create a GitLab integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a GitLab integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7510,9 +7511,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7521,8 +7520,8 @@ components:
           - type
         then:
           title: Bitbucket
-          description: Create a Bitbucket integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a Bitbucket integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7540,9 +7539,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7551,8 +7548,8 @@ components:
           - type
         then:
           title: Asana
-          description: Create an Asana integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create an Asana integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7570,9 +7567,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7611,8 +7606,8 @@ components:
           - type
         then:
           title: Jira Cloud
-          description: Create a Jira Cloud integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a Jira Cloud integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7630,9 +7625,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7773,8 +7766,8 @@ components:
           - type
         then:
           title: Trello
-          description: Create a Trello integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a Trello integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7793,9 +7786,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7804,8 +7795,8 @@ components:
           - type
         then:
           title: Linear
-          description: Create a Linear integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a Linear integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -7823,9 +7814,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -7834,8 +7823,8 @@ components:
           - type
         then:
           title: Slack
-          description: Create a Slack integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a Slack integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           properties:
             config:
               "$ref": "#/components/schemas/IntegrationConfigSlack"
@@ -7862,9 +7851,7 @@ components:
                 `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
                 less any the plan doesn''t include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -8067,8 +8054,8 @@ components:
           - type
         then:
           title: Intercom
-          description: Create an Intercom integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create an Intercom integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -8081,9 +8068,7 @@ components:
                 enum: []
               description: 'Left out or null: none, less any the plan doesn''t include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -8266,8 +8251,8 @@ components:
           - type
         then:
           title: ClickUp
-          description: Create a ClickUp integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a ClickUp integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -8290,9 +8275,7 @@ components:
               description: 'Left out or null: `occurred`, less any the plan doesn''t
                 include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:
@@ -8301,8 +8284,8 @@ components:
           - type
         then:
           title: ClickUp Chat
-          description: Create a ClickUp Chat integration. It starts inactive, is connected
-            in the web UI at `links.web`, and can be activated once connected.
+          description: Create a ClickUp Chat integration. It sends nothing until someone
+            connects it in the web UI at `links.web`.
           required:
           - config
           properties:
@@ -8334,9 +8317,7 @@ components:
                 `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
                 less any the plan doesn''t include.'
             active:
-              const: false
-              description: False or left out on create. The integration can be activated
-                once it's connected.
+              default: true
       - if:
           properties:
             type:

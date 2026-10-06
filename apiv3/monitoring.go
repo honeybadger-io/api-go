@@ -172,9 +172,9 @@ const IntegrationFilterAll IntegrationFilterEvent = gen.IntegrationFilterEventAl
 
 // Create makes a new integration.
 //
-// OAuth types (Slack, GitHub and the like) are created turned off and not
-// connected: send the user to the integration's Links.Web to connect it, then
-// turn it on with an update setting Active.
+// OAuth types (Slack, GitHub and the like) are created unconnected: a person
+// connects one at the integration's Links.Web. Active can be true from the start;
+// the integration sends nothing until it's connected, then starts on its own.
 func (s *IntegrationsService) Create(ctx context.Context, projectID string, p IntegrationCreateParams) (*Integration, error) {
 	return getOne[Integration](ctx, s.client, "createIntegration", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().CreateIntegration(ctx, projectID, p)
