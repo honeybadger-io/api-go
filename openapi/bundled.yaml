@@ -8458,9 +8458,7 @@ components:
           description: Cron expression (for cron schedule type)
           example: 0 2 * * *
         cron_timezone:
-          type:
-          - string
-          - 'null'
+          type: string
           description: Timezone for cron schedule, as a Rails zone name. `UTC` on
             a simple check-in.
           example: Eastern Time (US & Canada)

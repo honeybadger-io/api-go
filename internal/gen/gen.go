@@ -2082,7 +2082,7 @@ type CheckIn struct {
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
 	// CronTimezone Timezone for cron schedule, as a Rails zone name. `UTC` on a simple check-in.
-	CronTimezone nullable.Nullable[string] `json:"cron_timezone"`
+	CronTimezone string `json:"cron_timezone"`
 
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
