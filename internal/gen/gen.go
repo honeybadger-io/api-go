@@ -2960,7 +2960,7 @@ type Integration struct {
 	// CheckInIds IDs of check-ins this channel monitors
 	CheckInIds []string `json:"check_in_ids"`
 
-	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Secrets are never returned.
+	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Write-only secrets are never returned; everything else, webhook URLs included, comes back as stored.
 	Config map[string]interface{} `json:"config"`
 
 	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration is authenticated, which someone does in the web UI at `links.web`. Separate from `active`: an active integration that isn't connected sends nothing until it is, and connecting doesn't change `active`. GitHub authenticates through the GitHub App: the app is installed on the repo, and the installation is attached when someone with access to it saves the integration. A creator who signed in to Honeybadger with GitHub is connected on create.
