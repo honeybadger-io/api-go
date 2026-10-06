@@ -12413,7 +12413,7 @@ components:
           type:
           - string
           - 'null'
-          default: |
+          default: |-
             [class]: [message]
 
             Backtrace:
@@ -12694,7 +12694,7 @@ components:
           type:
           - string
           - 'null'
-          default: |
+          default: |-
             [class]: [message]
 
             Backtrace:
@@ -12768,7 +12768,7 @@ components:
           type:
           - string
           - 'null'
-          default: |
+          default: |-
             [class]: [message]
 
             Backtrace:
@@ -12943,7 +12943,7 @@ components:
           type:
           - string
           - 'null'
-          default: |
+          default: |-
             [class]: [message]
 
             Backtrace:
