@@ -10,7 +10,7 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
 | Branch | `feat/terraform-3-v3-contract` (honeybadger#6730, draft, stacked on #6729) |
-| Commit | `1057307510`, plus uncommitted work (`format: password` on secrets) |
+| Commit | `8126a6fd3b` (local to the honeybadger checkout; not pushed yet) |
 | Vendored | 2026-10-05 |
 | sha256 | `cfe849548c703f3dc2a19006b9d0e05da1f47c0c35b314884c8909c6c0f6c410` |
 
