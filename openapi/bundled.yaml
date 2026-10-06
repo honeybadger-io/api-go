@@ -7386,9 +7386,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -7455,9 +7455,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7486,9 +7485,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7517,9 +7515,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7548,9 +7545,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7581,9 +7577,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -7610,9 +7605,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7680,9 +7674,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -7716,9 +7709,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -7746,9 +7739,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -7776,9 +7768,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7807,9 +7798,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -7962,9 +7952,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -8067,9 +8057,7 @@ components:
             events:
               items:
                 enum: []
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: none, less any the plan doesn''t include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -8181,9 +8169,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -8245,9 +8232,8 @@ components:
                 enum:
                 - up
                 - down
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `up` and `down`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
@@ -8279,9 +8265,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, less any the plan doesn''t
+                include.'
             active:
               const: false
               description: False or left out on create. The integration can be activated
@@ -8444,9 +8429,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
+                include.'
             active:
               default: true
       - if:
