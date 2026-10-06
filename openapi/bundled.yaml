@@ -9218,6 +9218,7 @@ components:
           type:
           - boolean
           - 'null'
+          default: true
           description: Whether errors in this environment notify. Send null to reset
             to true.
     Error:
@@ -10487,10 +10488,7 @@ components:
           - 'null'
           description: Value to match in the response
         request_method:
-          description: HTTP method for checks
-          anyOf:
-          - "$ref": "#/components/schemas/SiteRequestMethod"
-          - type: 'null'
+          "$ref": "#/components/schemas/SiteRequestMethod"
         frequency:
           "$ref": "#/components/schemas/SiteFrequency"
         locations:
@@ -10503,9 +10501,7 @@ components:
           - Virginia
           - London
         validate_ssl:
-          type:
-          - boolean
-          - 'null'
+          type: boolean
           description: Whether to validate SSL certificates
         request_headers:
           type:
@@ -10515,6 +10511,7 @@ components:
             value
           additionalProperties:
             type: string
+            format: password
         request_body:
           type:
           - string
@@ -10605,6 +10602,7 @@ components:
           description: Must start with http:// or https://, with no surrounding whitespace.
           example: https://www.example.com/health
         match_type:
+          default: success
           description: Send null to reset to success.
           anyOf:
           - "$ref": "#/components/schemas/SiteMatchType"
@@ -10621,6 +10619,7 @@ components:
             '
           example: status == 'ok'
         request_method:
+          default: GET
           description: Send null to reset to GET.
           anyOf:
           - "$ref": "#/components/schemas/SiteRequestMethod"
@@ -10629,6 +10628,7 @@ components:
           type:
           - boolean
           - 'null'
+          default: true
           description: Fail the check when the TLS certificate does not validate.
             Send null to reset to true.
         request_body:
@@ -10641,15 +10641,18 @@ components:
           type:
           - object
           - 'null'
+          default: {}
           description: 'Headers to send with the request, as header name to value.
             Replaces the stored headers; send `{}` or null to clear them.
 
             '
           additionalProperties:
             type: string
+            format: password
           example:
             Authorization: Bearer abc123
         frequency:
+          default: 5
           description: 'Minutes between checks. Defaults to 5; plans set the most
             frequent allowed, and a value under it is 403 `feature_unavailable`. Send
             null to reset to 5.
@@ -10662,6 +10665,8 @@ components:
           type:
           - array
           - 'null'
+          uniqueItems: true
+          default: []
           description: 'A set of location names to check from. [] or null means every
             location. An unknown name is 422. A set; order is ignored and duplicates
             are dropped.
@@ -10682,6 +10687,7 @@ components:
           type:
           - boolean
           - 'null'
+          default: true
           description: Send null to reset to true.
         timeout:
           type:
@@ -10743,20 +10749,7 @@ components:
           description: Custom domain for the status page
           example: status.acme.com
         features:
-          type: object
-          description: Presentation copy and styling. Replaced whole by an update.
-          additionalProperties: false
-          properties:
-            home_link:
-              type: string
-            up_caption:
-              type: string
-            down_caption:
-              type: string
-            mixed_caption:
-              type: string
-            custom_css:
-              type: string
+          "$ref": "#/components/schemas/StatusPageFeatures"
         hide_branding:
           type: boolean
         password_protected:
@@ -11044,12 +11037,14 @@ components:
           type:
           - boolean
           - 'null'
+          default: false
           description: Asks search engines not to index the page. Send null to reset
             to false.
         message_enabled:
           type:
           - boolean
           - 'null'
+          default: false
           description: Shows the message banner. Send null to reset to false.
         message_title:
           type:
@@ -11071,12 +11066,14 @@ components:
           type:
           - boolean
           - 'null'
+          default: false
           description: Requires advanced status pages; refused with 403 `feature_unavailable`
             otherwise. Send null to reset to false.
         password_protected:
           type:
           - boolean
           - 'null'
+          default: false
           description: 'Requires advanced status pages and password protection on
             the plan; refused with 403 `feature_unavailable` otherwise. Turning it
             on needs a username and password, sent or already stored, or it''s 422.
@@ -11098,85 +11095,111 @@ components:
           description: Basic-auth password when password protected. Never returned.
             Requires advanced status pages and password protection on the plan.
         features:
-          type:
-          - object
-          - 'null'
+          default: {}
           description: 'Presentation copy and styling. Replaces the whole object;
             null clears it. Requires advanced status pages; refused with 403 `feature_unavailable`
             otherwise.
 
             '
-          additionalProperties: false
-          properties:
-            home_link:
-              type: string
-            up_caption:
-              type: string
-            down_caption:
-              type: string
-            mixed_caption:
-              type: string
-            custom_css:
-              type: string
+          anyOf:
+          - "$ref": "#/components/schemas/StatusPageFeatures"
+          - type: 'null'
         sites:
           type:
           - array
           - 'null'
+          default: []
           description: 'Sites listed on the page, in page order, replacing the current
             list. null or [] removes every site.
 
             '
           items:
-            type: object
-            required:
-            - site_id
-            properties:
-              site_id:
-                type: string
-                format: uuid
-                description: Identifier of a site on this account
-              display_name:
-                type:
-                - string
-                - 'null'
-                minLength: 1
-                description: null uses the monitor's own name; "" is refused.
-              description:
-                type:
-                - string
-                - 'null'
-                minLength: 1
-                maxLength: 80
-                description: null shows no description; "" is refused.
+            "$ref": "#/components/schemas/StatusPageSiteInput"
         check_ins:
           type:
           - array
           - 'null'
+          default: []
           description: 'Check-ins listed on the page, in page order, replacing the
             current list. null or [] removes every check-in.
 
             '
           items:
-            type: object
-            required:
-            - check_in_id
-            properties:
-              check_in_id:
-                type: string
-                description: ID of a check-in on this account
-              display_name:
-                type:
-                - string
-                - 'null'
-                minLength: 1
-                description: null uses the monitor's own name; "" is refused.
-              description:
-                type:
-                - string
-                - 'null'
-                minLength: 1
-                maxLength: 80
-                description: null shows no description; "" is refused.
+            "$ref": "#/components/schemas/StatusPageCheckInInput"
+    StatusPageFeatures:
+      type: object
+      description: 'Presentation copy and styling. Replaced whole by an update. A
+        key that was never set is absent from a read; one sent as null reads back
+        as null.
+
+        '
+      additionalProperties: false
+      properties:
+        home_link:
+          type:
+          - string
+          - 'null'
+        up_caption:
+          type:
+          - string
+          - 'null'
+        down_caption:
+          type:
+          - string
+          - 'null'
+        mixed_caption:
+          type:
+          - string
+          - 'null'
+        custom_css:
+          type:
+          - string
+          - 'null'
+    StatusPageSiteInput:
+      type: object
+      description: A site listed on a status page.
+      required:
+      - site_id
+      properties:
+        site_id:
+          type: string
+          format: uuid
+          description: Identifier of a site on this account
+        display_name:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          description: null uses the monitor's own name; "" is refused.
+        description:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 80
+          description: null shows no description; "" is refused.
+    StatusPageCheckInInput:
+      type: object
+      description: A check-in listed on a status page.
+      required:
+      - check_in_id
+      properties:
+        check_in_id:
+          type: string
+          description: ID of a check-in on this account
+        display_name:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          description: null uses the monitor's own name; "" is refused.
+        description:
+          type:
+          - string
+          - 'null'
+          minLength: 1
+          maxLength: 80
+          description: null shows no description; "" is refused.
     Stream:
       type: object
       description: An Insights event stream
@@ -11276,6 +11299,8 @@ components:
           type:
           - array
           - 'null'
+          uniqueItems: true
+          default: []
           description: 'IDs of projects this team can access: the whole membership.
             An ID that isn''t a project the caller can see fails the request with
             422. A project''s create-time `team_id` only attaches it to one team.

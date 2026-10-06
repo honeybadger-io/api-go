@@ -4099,9 +4099,7 @@ type Site struct {
 
 	// RequestHeaders Custom headers sent with check requests, as header name to value
 	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers"`
-
-	// RequestMethod HTTP method for checks
-	RequestMethod nullable.Nullable[SiteRequestMethod] `json:"request_method"`
+	RequestMethod  SiteRequestMethod                    `json:"request_method"`
 
 	// State Current state of the site
 	State SiteState `json:"state"`
@@ -4113,7 +4111,7 @@ type Site struct {
 	Url string `json:"url"`
 
 	// ValidateSsl Whether to validate SSL certificates
-	ValidateSsl nullable.Nullable[bool] `json:"validate_ssl"`
+	ValidateSsl bool `json:"validate_ssl"`
 }
 
 // SiteState Current state of the site
@@ -4237,8 +4235,8 @@ type StatusPage struct {
 	// DomainVerifiedAt When the custom domain was verified
 	DomainVerifiedAt nullable.Nullable[time.Time] `json:"domain_verified_at"`
 
-	// Features Presentation copy and styling. Replaced whole by an update.
-	Features StatusPage_Features `json:"features"`
+	// Features Presentation copy and styling. Replaced whole by an update. A key that was never set is absent from a read; one sent as null reads back as null.
+	Features StatusPageFeatures `json:"features"`
 
 	// GoogleAnalyticsId The page's Google Analytics measurement ID
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id"`
@@ -4291,15 +4289,6 @@ type StatusPage_CheckIns struct {
 	DisplayName nullable.Nullable[string] `json:"display_name"`
 }
 
-// StatusPage_Features Presentation copy and styling. Replaced whole by an update.
-type StatusPage_Features struct {
-	CustomCss    *string `json:"custom_css,omitempty"`
-	DownCaption  *string `json:"down_caption,omitempty"`
-	HomeLink     *string `json:"home_link,omitempty"`
-	MixedCaption *string `json:"mixed_caption,omitempty"`
-	UpCaption    *string `json:"up_caption,omitempty"`
-}
-
 // StatusPage_Sites defines model for StatusPage.Sites.
 type StatusPage_Sites struct {
 	// Description Description shown on the status page
@@ -4312,16 +4301,28 @@ type StatusPage_Sites struct {
 	SiteId openapi_types.UUID `json:"site_id"`
 }
 
+// StatusPageCheckInInput A check-in listed on a status page.
+type StatusPageCheckInInput struct {
+	// CheckInId ID of a check-in on this account
+	CheckInId string `json:"check_in_id"`
+
+	// Description null shows no description; "" is refused.
+	Description nullable.Nullable[string] `json:"description,omitempty"`
+
+	// DisplayName null uses the monitor's own name; "" is refused.
+	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
+}
+
 // StatusPageCreateInput Attributes for creating a status-page.
 type StatusPageCreateInput struct {
 	// CheckIns Check-ins listed on the page, in page order, replacing the current list. null or [] removes every check-in.
-	CheckIns nullable.Nullable[[]StatusPageCreateInput_CheckIns] `json:"check_ins,omitempty"`
+	CheckIns nullable.Nullable[[]StatusPageCheckInInput] `json:"check_ins,omitempty"`
 
 	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Send null to clear.
 	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
 	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
-	Features nullable.Nullable[StatusPageCreateInput_Features] `json:"features,omitempty"`
+	Features nullable.Nullable[StatusPageFeatures] `json:"features,omitempty"`
 
 	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Send null to clear.
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
@@ -4352,43 +4353,19 @@ type StatusPageCreateInput struct {
 	SearchEngineIndexingDisabled nullable.Nullable[bool] `json:"search_engine_indexing_disabled,omitempty"`
 
 	// Sites Sites listed on the page, in page order, replacing the current list. null or [] removes every site.
-	Sites nullable.Nullable[[]StatusPageCreateInput_Sites] `json:"sites,omitempty"`
+	Sites nullable.Nullable[[]StatusPageSiteInput] `json:"sites,omitempty"`
 
 	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan.
 	Username nullable.Nullable[string] `json:"username,omitempty"`
 }
 
-// StatusPageCreateInput_CheckIns defines model for StatusPageCreateInput.CheckIns.
-type StatusPageCreateInput_CheckIns struct {
-	// CheckInId ID of a check-in on this account
-	CheckInId string `json:"check_in_id"`
-
-	// Description null shows no description; "" is refused.
-	Description nullable.Nullable[string] `json:"description,omitempty"`
-
-	// DisplayName null uses the monitor's own name; "" is refused.
-	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
-}
-
-// StatusPageCreateInput_Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
-type StatusPageCreateInput_Features struct {
-	CustomCss    *string `json:"custom_css,omitempty"`
-	DownCaption  *string `json:"down_caption,omitempty"`
-	HomeLink     *string `json:"home_link,omitempty"`
-	MixedCaption *string `json:"mixed_caption,omitempty"`
-	UpCaption    *string `json:"up_caption,omitempty"`
-}
-
-// StatusPageCreateInput_Sites defines model for StatusPageCreateInput.Sites.
-type StatusPageCreateInput_Sites struct {
-	// Description null shows no description; "" is refused.
-	Description nullable.Nullable[string] `json:"description,omitempty"`
-
-	// DisplayName null uses the monitor's own name; "" is refused.
-	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
-
-	// SiteId Identifier of a site on this account
-	SiteId openapi_types.UUID `json:"site_id"`
+// StatusPageFeatures Presentation copy and styling. Replaced whole by an update. A key that was never set is absent from a read; one sent as null reads back as null.
+type StatusPageFeatures struct {
+	CustomCss    nullable.Nullable[string] `json:"custom_css,omitempty"`
+	DownCaption  nullable.Nullable[string] `json:"down_caption,omitempty"`
+	HomeLink     nullable.Nullable[string] `json:"home_link,omitempty"`
+	MixedCaption nullable.Nullable[string] `json:"mixed_caption,omitempty"`
+	UpCaption    nullable.Nullable[string] `json:"up_caption,omitempty"`
 }
 
 // StatusPageIncident An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
@@ -4474,13 +4451,13 @@ type StatusPageIncidentUpdateInput struct {
 // StatusPageInput Writable status-page attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take is 422; the read-only keys a GET returns (including each monitor's state) are ignored.
 type StatusPageInput struct {
 	// CheckIns Check-ins listed on the page, in page order, replacing the current list. null or [] removes every check-in.
-	CheckIns nullable.Nullable[[]StatusPageInput_CheckIns] `json:"check_ins,omitempty"`
+	CheckIns nullable.Nullable[[]StatusPageCheckInInput] `json:"check_ins,omitempty"`
 
 	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Send null to clear.
 	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
 	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
-	Features nullable.Nullable[StatusPageInput_Features] `json:"features,omitempty"`
+	Features nullable.Nullable[StatusPageFeatures] `json:"features,omitempty"`
 
 	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Send null to clear.
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
@@ -4511,35 +4488,14 @@ type StatusPageInput struct {
 	SearchEngineIndexingDisabled nullable.Nullable[bool] `json:"search_engine_indexing_disabled,omitempty"`
 
 	// Sites Sites listed on the page, in page order, replacing the current list. null or [] removes every site.
-	Sites nullable.Nullable[[]StatusPageInput_Sites] `json:"sites,omitempty"`
+	Sites nullable.Nullable[[]StatusPageSiteInput] `json:"sites,omitempty"`
 
 	// Username Basic-auth user when password protected. Requires advanced status pages and password protection on the plan.
 	Username nullable.Nullable[string] `json:"username,omitempty"`
 }
 
-// StatusPageInput_CheckIns defines model for StatusPageInput.CheckIns.
-type StatusPageInput_CheckIns struct {
-	// CheckInId ID of a check-in on this account
-	CheckInId string `json:"check_in_id"`
-
-	// Description null shows no description; "" is refused.
-	Description nullable.Nullable[string] `json:"description,omitempty"`
-
-	// DisplayName null uses the monitor's own name; "" is refused.
-	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
-}
-
-// StatusPageInput_Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
-type StatusPageInput_Features struct {
-	CustomCss    *string `json:"custom_css,omitempty"`
-	DownCaption  *string `json:"down_caption,omitempty"`
-	HomeLink     *string `json:"home_link,omitempty"`
-	MixedCaption *string `json:"mixed_caption,omitempty"`
-	UpCaption    *string `json:"up_caption,omitempty"`
-}
-
-// StatusPageInput_Sites defines model for StatusPageInput.Sites.
-type StatusPageInput_Sites struct {
+// StatusPageSiteInput A site listed on a status page.
+type StatusPageSiteInput struct {
 	// Description null shows no description; "" is refused.
 	Description nullable.Nullable[string] `json:"description,omitempty"`
 
