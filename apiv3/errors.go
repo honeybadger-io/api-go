@@ -37,6 +37,7 @@ const (
 	CodeLimitReached          Code = "limit_reached"
 	CodeRateLimitExceeded     Code = "rate_limit_exceeded"
 	CodeConcurrentRequest     Code = "concurrent_request"
+	CodeStreamsProvisioning   Code = "streams_provisioning"
 	CodeMaintenanceMode       Code = "maintenance_mode"
 	CodeInvalidParameter      Code = "invalid_parameter"
 	CodeInvalidID             Code = "invalid_id"
@@ -69,6 +70,7 @@ var (
 	ErrLimitReached          = &Error{Code: CodeLimitReached}
 	ErrRateLimited           = &Error{Code: CodeRateLimitExceeded}
 	ErrConcurrentRequest     = &Error{Code: CodeConcurrentRequest}
+	ErrStreamsProvisioning   = &Error{Code: CodeStreamsProvisioning}
 	ErrMaintenanceMode       = &Error{Code: CodeMaintenanceMode}
 	ErrInvalidParameter      = &Error{Code: CodeInvalidParameter}
 	ErrInvalidID             = &Error{Code: CodeInvalidID}

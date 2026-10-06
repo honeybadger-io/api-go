@@ -556,6 +556,7 @@ const (
 	ErrorBodyCodeRateLimitExceeded     ErrorBodyCode = "rate_limit_exceeded"
 	ErrorBodyCodeRequiresUserToken     ErrorBodyCode = "requires_user_token"
 	ErrorBodyCodeServiceUnavailable    ErrorBodyCode = "service_unavailable"
+	ErrorBodyCodeStreamsProvisioning   ErrorBodyCode = "streams_provisioning"
 	ErrorBodyCodeUnauthorized          ErrorBodyCode = "unauthorized"
 	ErrorBodyCodeUnsupportedAuthScheme ErrorBodyCode = "unsupported_auth_scheme"
 	ErrorBodyCodeValidationError       ErrorBodyCode = "validation_error"
@@ -601,6 +602,8 @@ func (e ErrorBodyCode) Valid() bool {
 	case ErrorBodyCodeRequiresUserToken:
 		return true
 	case ErrorBodyCodeServiceUnavailable:
+		return true
+	case ErrorBodyCodeStreamsProvisioning:
 		return true
 	case ErrorBodyCodeUnauthorized:
 		return true
@@ -4911,6 +4914,9 @@ type RateLimitExceeded = Error
 
 // ServiceUnavailable API error response
 type ServiceUnavailable = Error
+
+// StreamsProvisioning API error response
+type StreamsProvisioning = Error
 
 // Unauthorized API error response
 type Unauthorized = Error

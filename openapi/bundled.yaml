@@ -4071,6 +4071,8 @@ paths:
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/ValidationError"
+        '429':
+          "$ref": "#/components/responses/StreamsProvisioning"
         '503':
           "$ref": "#/components/responses/AlarmServiceUnavailable"
       security:
@@ -9234,6 +9236,7 @@ components:
           - limit_reached
           - rate_limit_exceeded
           - concurrent_request
+          - streams_provisioning
           - maintenance_mode
           - invalid_parameter
           - forbidden_attributes
@@ -14323,6 +14326,26 @@ components:
             error:
               code: concurrent_request
               message: Another project is being created in this account; retry shortly
+            meta:
+              request_id: abc123
+    StreamsProvisioning:
+      description: "`stream_ids` was left out (or null) and the project's streams
+        are still being set up, which a new project's are for a short time after it's
+        created (`streams_provisioning`); or the rate limit is exceeded (`rate_limit_exceeded`).
+        Nothing was created. Wait `Retry-After` seconds and retry.\n"
+      headers:
+        Retry-After:
+          description: Seconds to wait before retrying.
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Error"
+          example:
+            error:
+              code: streams_provisioning
+              message: The project's streams are still being set up; retry shortly
             meta:
               request_id: abc123
     BadRequest:
