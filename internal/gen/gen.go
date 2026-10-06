@@ -4097,9 +4097,9 @@ type Site struct {
 	// RequestBody Request body for POST/PUT checks
 	RequestBody nullable.Nullable[string] `json:"request_body"`
 
-	// RequestHeaders Custom headers sent with check requests, as header name to value
-	RequestHeaders nullable.Nullable[map[string]string] `json:"request_headers"`
-	RequestMethod  SiteRequestMethod                    `json:"request_method"`
+	// RequestHeaders Custom headers sent with check requests, as header name to value; {} when there are none
+	RequestHeaders map[string]string `json:"request_headers"`
+	RequestMethod  SiteRequestMethod `json:"request_method"`
 
 	// State Current state of the site
 	State SiteState `json:"state"`
@@ -4309,13 +4309,13 @@ type StatusPageCreateInput struct {
 	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Send null to clear.
 	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
+	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default ({}) or the stored value is accepted on any plan.
 	Features nullable.Nullable[StatusPageFeatures] `json:"features,omitempty"`
 
 	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Send null to clear.
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
 
-	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise. Send null to reset to false.
+	// HideBranding Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Send null to reset to false.
 	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
 	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to false.
@@ -4334,7 +4334,7 @@ type StatusPageCreateInput struct {
 	// Password Basic-auth password when password protected. Never returned. Requires advanced status pages and password protection on the plan.
 	Password nullable.Nullable[string] `json:"password,omitempty"`
 
-	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise. Turning it on needs a username and password, sent or already stored, or it's 422. Send null to reset to false.
+	// PasswordProtected Requires advanced status pages and password protection on the plan to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Turning it on needs a username and password, sent or already stored, or it's 422. Send null to reset to false.
 	PasswordProtected nullable.Nullable[bool] `json:"password_protected,omitempty"`
 
 	// SearchEngineIndexingDisabled Asks search engines not to index the page. Send null to reset to false.
@@ -4444,13 +4444,13 @@ type StatusPageInput struct {
 	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Send null to clear.
 	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages; refused with 403 `feature_unavailable` otherwise.
+	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default ({}) or the stored value is accepted on any plan.
 	Features nullable.Nullable[StatusPageFeatures] `json:"features,omitempty"`
 
 	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Send null to clear.
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
 
-	// HideBranding Requires advanced status pages; refused with 403 `feature_unavailable` otherwise. Send null to reset to false.
+	// HideBranding Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Send null to reset to false.
 	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
 	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Send null to reset to false.
@@ -4469,7 +4469,7 @@ type StatusPageInput struct {
 	// Password Basic-auth password when password protected. Never returned. Requires advanced status pages and password protection on the plan.
 	Password nullable.Nullable[string] `json:"password,omitempty"`
 
-	// PasswordProtected Requires advanced status pages and password protection on the plan; refused with 403 `feature_unavailable` otherwise. Turning it on needs a username and password, sent or already stored, or it's 422. Send null to reset to false.
+	// PasswordProtected Requires advanced status pages and password protection on the plan to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Turning it on needs a username and password, sent or already stored, or it's 422. Send null to reset to false.
 	PasswordProtected nullable.Nullable[bool] `json:"password_protected,omitempty"`
 
 	// SearchEngineIndexingDisabled Asks search engines not to index the page. Send null to reset to false.

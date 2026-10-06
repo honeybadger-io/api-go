@@ -10504,11 +10504,9 @@ components:
           type: boolean
           description: Whether to validate SSL certificates
         request_headers:
-          type:
-          - object
-          - 'null'
+          type: object
           description: Custom headers sent with check requests, as header name to
-            value
+            value; {} when there are none
           additionalProperties:
             type: string
             format: password
@@ -11030,17 +11028,21 @@ components:
           - boolean
           - 'null'
           default: false
-          description: Requires advanced status pages; refused with 403 `feature_unavailable`
-            otherwise. Send null to reset to false.
+          description: 'Requires advanced status pages to change; refused with 403
+            `feature_unavailable` otherwise. The default (false) or the stored value
+            is accepted on any plan. Send null to reset to false.
+
+            '
         password_protected:
           type:
           - boolean
           - 'null'
           default: false
           description: 'Requires advanced status pages and password protection on
-            the plan; refused with 403 `feature_unavailable` otherwise. Turning it
-            on needs a username and password, sent or already stored, or it''s 422.
-            Send null to reset to false.
+            the plan to change; refused with 403 `feature_unavailable` otherwise.
+            The default (false) or the stored value is accepted on any plan. Turning
+            it on needs a username and password, sent or already stored, or it''s
+            422. Send null to reset to false.
 
             '
         username:
@@ -11060,8 +11062,9 @@ components:
         features:
           default: {}
           description: 'Presentation copy and styling. Replaces the whole object;
-            null clears it. Requires advanced status pages; refused with 403 `feature_unavailable`
-            otherwise.
+            null clears it. Requires advanced status pages to change; refused with
+            403 `feature_unavailable` otherwise. The default ({}) or the stored value
+            is accepted on any plan.
 
             '
           anyOf:
