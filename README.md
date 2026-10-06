@@ -7,8 +7,9 @@ Go clients for the Honeybadger API. There are two, one per API version:
 | `github.com/honeybadger-io/api-go/apiv3` | v3 — where new work belongs |
 | `github.com/honeybadger-io/api-go/apiv2` | v2 — the Data API |
 
-Which you need depends on the credential you hold. v3 takes scoped API tokens
-(`hbt_` personal, `hba_` account) and OAuth access tokens, always as Bearer; it
+Which you need depends on the credential you hold. v3 takes API Tokens,
+user-scoped (`hbt_`) or account-scoped (`hba_`), and OAuth access tokens, always
+as Bearer; a Project Key (`hbp_`) is only for sending errors. v3
 rejects v2's older personal auth tokens outright. So moving to v3 means a new
 credential, not only new code.
 

@@ -30,7 +30,7 @@ for something that didn't happen.
 - **Merged faults.** A write to a merged fault answers 409 `fault_merged` with the
   survivor in `details.merged_into`, and a read answers 301; `Error.MergedInto`
   reads either. Covered by unit tests, but the seed data has no merged fault.
-- **Credential variations.** Write-only, scoped and OAuth tokens, and HTTP-mode
+- **Credential variations.** Write-only and scoped API Tokens, OAuth tokens, and HTTP-mode
   confirmation secrets, need credentials the local pass didn't have.
 
 ## Decided: not changing

@@ -15,9 +15,9 @@ type TokensService struct {
 type TokenKind string
 
 const (
-	// TokenKindUser is a scoped API token belonging to a person (`hbt_`).
+	// TokenKindUser is a user-scoped API Token (`hbt_`).
 	TokenKindUser TokenKind = "user"
-	// TokenKindAccount is a scoped API token belonging to an account (`hba_`).
+	// TokenKindAccount is an account-scoped API Token (`hba_`).
 	TokenKindAccount TokenKind = "account"
 	// TokenKindOAuth is an access token issued to an application acting for a
 	// user.

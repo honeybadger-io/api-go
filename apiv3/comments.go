@@ -10,9 +10,10 @@ import (
 // Comments live under a fault in v3's paths, so they are FaultsService methods
 // alongside AddComment rather than a service of their own.
 //
-// An account token can write comments too, with limits. A comment it creates
-// is attributed to the token's name. It can't update a comment, since only a
-// comment's author can edit it and an account token has no user, so updates
+// An account-scoped API Token can write comments too, with limits. A comment it
+// creates is attributed to the token's name. It can't update a comment, since
+// only a comment's author can edit it and an account-scoped token has no user,
+// so updates
 // fail with ErrAccessDenied. It can delete a comment only when it can manage
 // the project.
 

@@ -7,13 +7,14 @@ import (
 	"github.com/honeybadger-io/api-go/internal/gen"
 )
 
-// ProjectKey is an ingestion key for a project.
+// ProjectKey is a Project Key (`hbp_`): the credential an app sends errors and
+// events with. It can't call the API; that takes an API Token.
 type ProjectKey = gen.ProjectKey
 
 // ProjectKeyParams are the writable fields of a project key.
 type ProjectKeyParams = gen.ProjectKeyInput
 
-// ProjectKeysService handles project ingestion keys.
+// ProjectKeysService handles a project's Project Keys.
 type ProjectKeysService struct {
 	client *Client
 }

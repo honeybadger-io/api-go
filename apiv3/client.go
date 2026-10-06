@@ -4,8 +4,8 @@
 // pagination, and typed errors.
 //
 // v3 rejects Honeybadger's older personal auth tokens. The accepted credentials
-// are scoped API tokens (`hbt_` personal, `hba_` account) and OAuth access
-// tokens, all presented as Bearer. There is no Basic-auth option here by
+// are API Tokens, user-scoped (`hbt_`) or account-scoped (`hba_`), and OAuth
+// access tokens, all presented as Bearer. There is no Basic-auth option here by
 // design; see WithBearerToken.
 //
 // For the v2 API, use package apiv2.
@@ -117,7 +117,8 @@ type Client struct {
 	// Integrations handles notification integrations (webhooks, email, PagerDuty, etc.).
 	Integrations *IntegrationsService
 
-	// ProjectKeys handles project ingestion keys.
+	// ProjectKeys handles a project's Project Keys, the credentials an app sends
+	// errors and events with.
 	ProjectKeys *ProjectKeysService
 }
 
@@ -190,8 +191,10 @@ func (c *Client) WithBaseURL(baseURL string) *Client {
 // WithBearerToken returns a client using the given credential, sent as
 // `Authorization: Bearer <token>`.
 //
-// Accepts a scoped API token (`hbt_` or `hba_`) or an OAuth access token. There
-// is deliberately no Basic-auth equivalent: v3's documented challenge is
+// Accepts an API Token, user-scoped (`hbt_`) or account-scoped (`hba_`), or an
+// OAuth access token. A Project Key (`hbp_`) is for sending errors, not for
+// calling the API, and is refused with ErrProjectKeyNotAccepted. There is
+// deliberately no Basic-auth equivalent: v3's documented challenge is
 // `WWW-Authenticate: Bearer`, and a single credential path keeps authorization
 // decisions in one place.
 func (c *Client) WithBearerToken(token string) *Client {
