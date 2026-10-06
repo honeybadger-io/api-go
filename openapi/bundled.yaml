@@ -7228,6 +7228,7 @@ components:
           items:
             type: string
             format: uuid
+          default: []
         check_in_ids:
           type:
           - array
@@ -7241,6 +7242,7 @@ components:
             '
           items:
             type: string
+          default: []
         alarm_alert_ids:
           type:
           - array
@@ -7249,6 +7251,7 @@ components:
             Send null or [] to clear. A set; order is ignored and duplicates are dropped.
           items:
             type: string
+          default: []
         alarm_ok_ids:
           type:
           - array
@@ -7257,6 +7260,7 @@ components:
             Send null or [] to clear. A set; order is ignored and duplicates are dropped.
           items:
             type: string
+          default: []
         excluded_environments:
           type:
           - array
@@ -7271,6 +7275,7 @@ components:
             '
           items:
             type: string
+          default: []
         included_environments:
           type:
           - array
@@ -7285,6 +7290,7 @@ components:
             '
           items:
             type: string
+          default: []
         filters:
           type:
           - array
@@ -7297,6 +7303,7 @@ components:
             '
           items:
             "$ref": "#/components/schemas/IntegrationFilter"
+          default: []
         type:
           type: string
           enum:
