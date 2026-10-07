@@ -156,7 +156,7 @@ func TestStatusPagesRequests(t *testing.T) {
 // Deploys page by cursor and filter by environment and who deployed.
 func TestDeploysRequests(t *testing.T) {
 	ctx := context.Background()
-	c, got := captureWrite(t, http.StatusOK, `{"data":[],"time_series":{"has_older":false}}`)
+	c, got := captureWrite(t, http.StatusOK, `{"data":[],"pagination":{"has_older":false}}`)
 	if _, err := c.Deploys.List(ctx, "Xk9mZp", Limit(5), Before("cur1"),
 		InEnvironment("production"), DeployedBy("ci")); err != nil {
 		t.Fatalf("List: %v", err)
@@ -182,7 +182,7 @@ func TestDeploysRequests(t *testing.T) {
 func TestSiteOutagesAndChecksRequests(t *testing.T) {
 	id := uuid.MustParse("9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47")
 	ctx := context.Background()
-	empty := `{"data":[],"time_series":{"has_older":false}}`
+	empty := `{"data":[],"pagination":{"has_older":false}}`
 
 	c, got := captureWrite(t, http.StatusOK, empty)
 	// links.older's created_before has significant fractional seconds; it must go
