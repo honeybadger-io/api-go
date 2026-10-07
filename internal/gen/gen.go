@@ -46,84 +46,21 @@ func (e AccountInvitationRole) Valid() bool {
 	}
 }
 
-// Defines values for AccountInvitationCreateInputRole.
+// Defines values for AccountRole.
 const (
-	AccountInvitationCreateInputRoleAdmin  AccountInvitationCreateInputRole = "Admin"
-	AccountInvitationCreateInputRoleMember AccountInvitationCreateInputRole = "Member"
-	AccountInvitationCreateInputRoleOwner  AccountInvitationCreateInputRole = "Owner"
+	AccountRoleAdmin  AccountRole = "Admin"
+	AccountRoleMember AccountRole = "Member"
+	AccountRoleOwner  AccountRole = "Owner"
 )
 
-// Valid indicates whether the value is a known member of the AccountInvitationCreateInputRole enum.
-func (e AccountInvitationCreateInputRole) Valid() bool {
+// Valid indicates whether the value is a known member of the AccountRole enum.
+func (e AccountRole) Valid() bool {
 	switch e {
-	case AccountInvitationCreateInputRoleAdmin:
+	case AccountRoleAdmin:
 		return true
-	case AccountInvitationCreateInputRoleMember:
+	case AccountRoleMember:
 		return true
-	case AccountInvitationCreateInputRoleOwner:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for AccountInvitationInputRole.
-const (
-	AccountInvitationInputRoleAdmin  AccountInvitationInputRole = "Admin"
-	AccountInvitationInputRoleMember AccountInvitationInputRole = "Member"
-	AccountInvitationInputRoleOwner  AccountInvitationInputRole = "Owner"
-)
-
-// Valid indicates whether the value is a known member of the AccountInvitationInputRole enum.
-func (e AccountInvitationInputRole) Valid() bool {
-	switch e {
-	case AccountInvitationInputRoleAdmin:
-		return true
-	case AccountInvitationInputRoleMember:
-		return true
-	case AccountInvitationInputRoleOwner:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for AccountMemberRole.
-const (
-	AccountMemberRoleAdmin  AccountMemberRole = "Admin"
-	AccountMemberRoleMember AccountMemberRole = "Member"
-	AccountMemberRoleOwner  AccountMemberRole = "Owner"
-)
-
-// Valid indicates whether the value is a known member of the AccountMemberRole enum.
-func (e AccountMemberRole) Valid() bool {
-	switch e {
-	case AccountMemberRoleAdmin:
-		return true
-	case AccountMemberRoleMember:
-		return true
-	case AccountMemberRoleOwner:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for AccountMemberInputRole.
-const (
-	AccountMemberInputRoleAdmin  AccountMemberInputRole = "Admin"
-	AccountMemberInputRoleMember AccountMemberInputRole = "Member"
-	AccountMemberInputRoleOwner  AccountMemberInputRole = "Owner"
-)
-
-// Valid indicates whether the value is a known member of the AccountMemberInputRole enum.
-func (e AccountMemberInputRole) Valid() bool {
-	switch e {
-	case AccountMemberInputRoleAdmin:
-		return true
-	case AccountMemberInputRoleMember:
-		return true
-	case AccountMemberInputRoleOwner:
+	case AccountRoleOwner:
 		return true
 	default:
 		return false
@@ -352,36 +289,6 @@ func (e DashboardChartConfigLineGroupType) Valid() bool {
 	}
 }
 
-// Defines values for DashboardWidgetType.
-const (
-	DashboardWidgetTypeAlarms      DashboardWidgetType = "alarms"
-	DashboardWidgetTypeCheckins    DashboardWidgetType = "checkins"
-	DashboardWidgetTypeDeployments DashboardWidgetType = "deployments"
-	DashboardWidgetTypeErrors      DashboardWidgetType = "errors"
-	DashboardWidgetTypeInsightsVis DashboardWidgetType = "insights_vis"
-	DashboardWidgetTypeUptime      DashboardWidgetType = "uptime"
-)
-
-// Valid indicates whether the value is a known member of the DashboardWidgetType enum.
-func (e DashboardWidgetType) Valid() bool {
-	switch e {
-	case DashboardWidgetTypeAlarms:
-		return true
-	case DashboardWidgetTypeCheckins:
-		return true
-	case DashboardWidgetTypeDeployments:
-		return true
-	case DashboardWidgetTypeErrors:
-		return true
-	case DashboardWidgetTypeInsightsVis:
-		return true
-	case DashboardWidgetTypeUptime:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for DashboardWidgetConfigAlarmsFilterState.
 const (
 	DashboardWidgetConfigAlarmsFilterStateAll       DashboardWidgetConfigAlarmsFilterState = "all"
@@ -505,30 +412,30 @@ func (e DashboardWidgetConfigInsightsVisVisView) Valid() bool {
 	}
 }
 
-// Defines values for DashboardWidgetInputType.
+// Defines values for DashboardWidgetType.
 const (
-	DashboardWidgetInputTypeAlarms      DashboardWidgetInputType = "alarms"
-	DashboardWidgetInputTypeCheckins    DashboardWidgetInputType = "checkins"
-	DashboardWidgetInputTypeDeployments DashboardWidgetInputType = "deployments"
-	DashboardWidgetInputTypeErrors      DashboardWidgetInputType = "errors"
-	DashboardWidgetInputTypeInsightsVis DashboardWidgetInputType = "insights_vis"
-	DashboardWidgetInputTypeUptime      DashboardWidgetInputType = "uptime"
+	Alarms      DashboardWidgetType = "alarms"
+	Checkins    DashboardWidgetType = "checkins"
+	Deployments DashboardWidgetType = "deployments"
+	Errors      DashboardWidgetType = "errors"
+	InsightsVis DashboardWidgetType = "insights_vis"
+	Uptime      DashboardWidgetType = "uptime"
 )
 
-// Valid indicates whether the value is a known member of the DashboardWidgetInputType enum.
-func (e DashboardWidgetInputType) Valid() bool {
+// Valid indicates whether the value is a known member of the DashboardWidgetType enum.
+func (e DashboardWidgetType) Valid() bool {
 	switch e {
-	case DashboardWidgetInputTypeAlarms:
+	case Alarms:
 		return true
-	case DashboardWidgetInputTypeCheckins:
+	case Checkins:
 		return true
-	case DashboardWidgetInputTypeDeployments:
+	case Deployments:
 		return true
-	case DashboardWidgetInputTypeErrors:
+	case Errors:
 		return true
-	case DashboardWidgetInputTypeInsightsVis:
+	case InsightsVis:
 		return true
-	case DashboardWidgetInputTypeUptime:
+	case Uptime:
 		return true
 	default:
 		return false
@@ -619,126 +526,84 @@ func (e ErrorBodyCode) Valid() bool {
 	}
 }
 
-// Defines values for IncidentUpdateSeverity.
+// Defines values for IncidentBuildType.
 const (
-	IncidentUpdateSeverityDegradedPerformance IncidentUpdateSeverity = "degraded_performance"
-	IncidentUpdateSeverityOperational         IncidentUpdateSeverity = "operational"
-	IncidentUpdateSeverityOutage              IncidentUpdateSeverity = "outage"
-	IncidentUpdateSeverityPartialOutage       IncidentUpdateSeverity = "partial_outage"
-	IncidentUpdateSeverityProblemDetected     IncidentUpdateSeverity = "problem_detected"
+	Current              IncidentBuildType = "current"
+	Retroactive          IncidentBuildType = "retroactive"
+	ScheduledMaintenance IncidentBuildType = "scheduled_maintenance"
 )
 
-// Valid indicates whether the value is a known member of the IncidentUpdateSeverity enum.
-func (e IncidentUpdateSeverity) Valid() bool {
+// Valid indicates whether the value is a known member of the IncidentBuildType enum.
+func (e IncidentBuildType) Valid() bool {
 	switch e {
-	case IncidentUpdateSeverityDegradedPerformance:
+	case Current:
 		return true
-	case IncidentUpdateSeverityOperational:
+	case Retroactive:
 		return true
-	case IncidentUpdateSeverityOutage:
-		return true
-	case IncidentUpdateSeverityPartialOutage:
-		return true
-	case IncidentUpdateSeverityProblemDetected:
+	case ScheduledMaintenance:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for IncidentUpdateStatus.
+// Defines values for IncidentSeverity.
 const (
-	IncidentUpdateStatusIdentified           IncidentUpdateStatus = "identified"
-	IncidentUpdateStatusInMaintenance        IncidentUpdateStatus = "in_maintenance"
-	IncidentUpdateStatusInvestigating        IncidentUpdateStatus = "investigating"
-	IncidentUpdateStatusMaintenanceComplete  IncidentUpdateStatus = "maintenance_complete"
-	IncidentUpdateStatusMaintenanceScheduled IncidentUpdateStatus = "maintenance_scheduled"
-	IncidentUpdateStatusMonitoring           IncidentUpdateStatus = "monitoring"
-	IncidentUpdateStatusResolved             IncidentUpdateStatus = "resolved"
-	IncidentUpdateStatusResolving            IncidentUpdateStatus = "resolving"
+	IncidentSeverityDegradedPerformance IncidentSeverity = "degraded_performance"
+	IncidentSeverityOperational         IncidentSeverity = "operational"
+	IncidentSeverityOutage              IncidentSeverity = "outage"
+	IncidentSeverityPartialOutage       IncidentSeverity = "partial_outage"
+	IncidentSeverityProblemDetected     IncidentSeverity = "problem_detected"
 )
 
-// Valid indicates whether the value is a known member of the IncidentUpdateStatus enum.
-func (e IncidentUpdateStatus) Valid() bool {
+// Valid indicates whether the value is a known member of the IncidentSeverity enum.
+func (e IncidentSeverity) Valid() bool {
 	switch e {
-	case IncidentUpdateStatusIdentified:
+	case IncidentSeverityDegradedPerformance:
 		return true
-	case IncidentUpdateStatusInMaintenance:
+	case IncidentSeverityOperational:
 		return true
-	case IncidentUpdateStatusInvestigating:
+	case IncidentSeverityOutage:
 		return true
-	case IncidentUpdateStatusMaintenanceComplete:
+	case IncidentSeverityPartialOutage:
 		return true
-	case IncidentUpdateStatusMaintenanceScheduled:
-		return true
-	case IncidentUpdateStatusMonitoring:
-		return true
-	case IncidentUpdateStatusResolved:
-		return true
-	case IncidentUpdateStatusResolving:
+	case IncidentSeverityProblemDetected:
 		return true
 	default:
 		return false
 	}
 }
 
-// Defines values for IncidentUpdateInputSeverity.
+// Defines values for IncidentStatus.
 const (
-	IncidentUpdateInputSeverityDegradedPerformance IncidentUpdateInputSeverity = "degraded_performance"
-	IncidentUpdateInputSeverityOperational         IncidentUpdateInputSeverity = "operational"
-	IncidentUpdateInputSeverityOutage              IncidentUpdateInputSeverity = "outage"
-	IncidentUpdateInputSeverityPartialOutage       IncidentUpdateInputSeverity = "partial_outage"
-	IncidentUpdateInputSeverityProblemDetected     IncidentUpdateInputSeverity = "problem_detected"
+	IncidentStatusIdentified           IncidentStatus = "identified"
+	IncidentStatusInMaintenance        IncidentStatus = "in_maintenance"
+	IncidentStatusInvestigating        IncidentStatus = "investigating"
+	IncidentStatusMaintenanceComplete  IncidentStatus = "maintenance_complete"
+	IncidentStatusMaintenanceScheduled IncidentStatus = "maintenance_scheduled"
+	IncidentStatusMonitoring           IncidentStatus = "monitoring"
+	IncidentStatusResolved             IncidentStatus = "resolved"
+	IncidentStatusResolving            IncidentStatus = "resolving"
 )
 
-// Valid indicates whether the value is a known member of the IncidentUpdateInputSeverity enum.
-func (e IncidentUpdateInputSeverity) Valid() bool {
+// Valid indicates whether the value is a known member of the IncidentStatus enum.
+func (e IncidentStatus) Valid() bool {
 	switch e {
-	case IncidentUpdateInputSeverityDegradedPerformance:
+	case IncidentStatusIdentified:
 		return true
-	case IncidentUpdateInputSeverityOperational:
+	case IncidentStatusInMaintenance:
 		return true
-	case IncidentUpdateInputSeverityOutage:
+	case IncidentStatusInvestigating:
 		return true
-	case IncidentUpdateInputSeverityPartialOutage:
+	case IncidentStatusMaintenanceComplete:
 		return true
-	case IncidentUpdateInputSeverityProblemDetected:
+	case IncidentStatusMaintenanceScheduled:
 		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for IncidentUpdateInputStatus.
-const (
-	IncidentUpdateInputStatusIdentified           IncidentUpdateInputStatus = "identified"
-	IncidentUpdateInputStatusInMaintenance        IncidentUpdateInputStatus = "in_maintenance"
-	IncidentUpdateInputStatusInvestigating        IncidentUpdateInputStatus = "investigating"
-	IncidentUpdateInputStatusMaintenanceComplete  IncidentUpdateInputStatus = "maintenance_complete"
-	IncidentUpdateInputStatusMaintenanceScheduled IncidentUpdateInputStatus = "maintenance_scheduled"
-	IncidentUpdateInputStatusMonitoring           IncidentUpdateInputStatus = "monitoring"
-	IncidentUpdateInputStatusResolved             IncidentUpdateInputStatus = "resolved"
-	IncidentUpdateInputStatusResolving            IncidentUpdateInputStatus = "resolving"
-)
-
-// Valid indicates whether the value is a known member of the IncidentUpdateInputStatus enum.
-func (e IncidentUpdateInputStatus) Valid() bool {
-	switch e {
-	case IncidentUpdateInputStatusIdentified:
+	case IncidentStatusMonitoring:
 		return true
-	case IncidentUpdateInputStatusInMaintenance:
+	case IncidentStatusResolved:
 		return true
-	case IncidentUpdateInputStatusInvestigating:
-		return true
-	case IncidentUpdateInputStatusMaintenanceComplete:
-		return true
-	case IncidentUpdateInputStatusMaintenanceScheduled:
-		return true
-	case IncidentUpdateInputStatusMonitoring:
-		return true
-	case IncidentUpdateInputStatusResolved:
-		return true
-	case IncidentUpdateInputStatusResolving:
+	case IncidentStatusResolving:
 		return true
 	default:
 		return false
@@ -1168,6 +1033,30 @@ func (e IntegrationFilterEvent) Valid() bool {
 	}
 }
 
+// Defines values for IntegrationRate.
+const (
+	IntegrationRateHour IntegrationRate = "hour"
+	IntegrationRateMin  IntegrationRate = "min"
+	IntegrationRateWday IntegrationRate = "wday"
+	IntegrationRateWeek IntegrationRate = "week"
+)
+
+// Valid indicates whether the value is a known member of the IntegrationRate enum.
+func (e IntegrationRate) Valid() bool {
+	switch e {
+	case IntegrationRateHour:
+		return true
+	case IntegrationRateMin:
+		return true
+	case IntegrationRateWday:
+		return true
+	case IntegrationRateWeek:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for NoticeBacktraceMode.
 const (
 	NoticeBacktraceModeReported     NoticeBacktraceMode = "reported"
@@ -1390,111 +1279,6 @@ func (e SiteRequestMethod) Valid() bool {
 	case POST:
 		return true
 	case PUT:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for StatusPageIncidentBuildType.
-const (
-	StatusPageIncidentBuildTypeCurrent              StatusPageIncidentBuildType = "current"
-	StatusPageIncidentBuildTypeRetroactive          StatusPageIncidentBuildType = "retroactive"
-	StatusPageIncidentBuildTypeScheduledMaintenance StatusPageIncidentBuildType = "scheduled_maintenance"
-)
-
-// Valid indicates whether the value is a known member of the StatusPageIncidentBuildType enum.
-func (e StatusPageIncidentBuildType) Valid() bool {
-	switch e {
-	case StatusPageIncidentBuildTypeCurrent:
-		return true
-	case StatusPageIncidentBuildTypeRetroactive:
-		return true
-	case StatusPageIncidentBuildTypeScheduledMaintenance:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for StatusPageIncidentCurrentSeverity.
-const (
-	StatusPageIncidentCurrentSeverityDegradedPerformance StatusPageIncidentCurrentSeverity = "degraded_performance"
-	StatusPageIncidentCurrentSeverityOperational         StatusPageIncidentCurrentSeverity = "operational"
-	StatusPageIncidentCurrentSeverityOutage              StatusPageIncidentCurrentSeverity = "outage"
-	StatusPageIncidentCurrentSeverityPartialOutage       StatusPageIncidentCurrentSeverity = "partial_outage"
-	StatusPageIncidentCurrentSeverityProblemDetected     StatusPageIncidentCurrentSeverity = "problem_detected"
-)
-
-// Valid indicates whether the value is a known member of the StatusPageIncidentCurrentSeverity enum.
-func (e StatusPageIncidentCurrentSeverity) Valid() bool {
-	switch e {
-	case StatusPageIncidentCurrentSeverityDegradedPerformance:
-		return true
-	case StatusPageIncidentCurrentSeverityOperational:
-		return true
-	case StatusPageIncidentCurrentSeverityOutage:
-		return true
-	case StatusPageIncidentCurrentSeverityPartialOutage:
-		return true
-	case StatusPageIncidentCurrentSeverityProblemDetected:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for StatusPageIncidentCurrentStatus.
-const (
-	StatusPageIncidentCurrentStatusIdentified           StatusPageIncidentCurrentStatus = "identified"
-	StatusPageIncidentCurrentStatusInMaintenance        StatusPageIncidentCurrentStatus = "in_maintenance"
-	StatusPageIncidentCurrentStatusInvestigating        StatusPageIncidentCurrentStatus = "investigating"
-	StatusPageIncidentCurrentStatusMaintenanceComplete  StatusPageIncidentCurrentStatus = "maintenance_complete"
-	StatusPageIncidentCurrentStatusMaintenanceScheduled StatusPageIncidentCurrentStatus = "maintenance_scheduled"
-	StatusPageIncidentCurrentStatusMonitoring           StatusPageIncidentCurrentStatus = "monitoring"
-	StatusPageIncidentCurrentStatusResolved             StatusPageIncidentCurrentStatus = "resolved"
-	StatusPageIncidentCurrentStatusResolving            StatusPageIncidentCurrentStatus = "resolving"
-)
-
-// Valid indicates whether the value is a known member of the StatusPageIncidentCurrentStatus enum.
-func (e StatusPageIncidentCurrentStatus) Valid() bool {
-	switch e {
-	case StatusPageIncidentCurrentStatusIdentified:
-		return true
-	case StatusPageIncidentCurrentStatusInMaintenance:
-		return true
-	case StatusPageIncidentCurrentStatusInvestigating:
-		return true
-	case StatusPageIncidentCurrentStatusMaintenanceComplete:
-		return true
-	case StatusPageIncidentCurrentStatusMaintenanceScheduled:
-		return true
-	case StatusPageIncidentCurrentStatusMonitoring:
-		return true
-	case StatusPageIncidentCurrentStatusResolved:
-		return true
-	case StatusPageIncidentCurrentStatusResolving:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for StatusPageIncidentCreateInputBuildType.
-const (
-	StatusPageIncidentCreateInputBuildTypeCurrent              StatusPageIncidentCreateInputBuildType = "current"
-	StatusPageIncidentCreateInputBuildTypeRetroactive          StatusPageIncidentCreateInputBuildType = "retroactive"
-	StatusPageIncidentCreateInputBuildTypeScheduledMaintenance StatusPageIncidentCreateInputBuildType = "scheduled_maintenance"
-)
-
-// Valid indicates whether the value is a known member of the StatusPageIncidentCreateInputBuildType enum.
-func (e StatusPageIncidentCreateInputBuildType) Valid() bool {
-	switch e {
-	case StatusPageIncidentCreateInputBuildTypeCurrent:
-		return true
-	case StatusPageIncidentCreateInputBuildTypeRetroactive:
-		return true
-	case StatusPageIncidentCreateInputBuildTypeScheduledMaintenance:
 		return true
 	default:
 		return false
@@ -1822,30 +1606,28 @@ type AccountInvitationRole string
 // AccountInvitationCreateInput Attributes for creating a account-invitation.
 type AccountInvitationCreateInput struct {
 	// DisableEmailNotifications Create the member with email notifications off
-	DisableEmailNotifications *bool                             `json:"disable_email_notifications,omitempty"`
-	Email                     openapi_types.Email               `json:"email"`
-	Role                      *AccountInvitationCreateInputRole `json:"role,omitempty"`
+	DisableEmailNotifications *bool               `json:"disable_email_notifications,omitempty"`
+	Email                     openapi_types.Email `json:"email"`
+
+	// Role A member's role in the account.
+	Role *AccountRole `json:"role,omitempty"`
 
 	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
 	TeamIds nullable.Nullable[[]string] `json:"team_ids,omitempty"`
 }
-
-// AccountInvitationCreateInputRole defines model for AccountInvitationCreateInput.Role.
-type AccountInvitationCreateInputRole string
 
 // AccountInvitationInput Writable account-invitation attributes
 type AccountInvitationInput struct {
 	// DisableEmailNotifications Create the member with email notifications off
-	DisableEmailNotifications *bool                       `json:"disable_email_notifications,omitempty"`
-	Email                     *openapi_types.Email        `json:"email,omitempty"`
-	Role                      *AccountInvitationInputRole `json:"role,omitempty"`
+	DisableEmailNotifications *bool                `json:"disable_email_notifications,omitempty"`
+	Email                     *openapi_types.Email `json:"email,omitempty"`
+
+	// Role A member's role in the account.
+	Role *AccountRole `json:"role,omitempty"`
 
 	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
 	TeamIds nullable.Nullable[[]string] `json:"team_ids,omitempty"`
 }
-
-// AccountInvitationInputRole defines model for AccountInvitationInput.Role.
-type AccountInvitationInputRole string
 
 // AccountMember A member of an account
 type AccountMember struct {
@@ -1864,23 +1646,21 @@ type AccountMember struct {
 	// Name Member display name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// Role Member role in the account
-	Role AccountMemberRole `json:"role"`
+	// Role A member's role in the account.
+	Role AccountRole `json:"role"`
 
 	// UserId ID of the user
 	UserId string `json:"user_id"`
 }
 
-// AccountMemberRole Member role in the account
-type AccountMemberRole string
-
 // AccountMemberInput Writable account-member attributes
 type AccountMemberInput struct {
-	Role AccountMemberInputRole `json:"role"`
+	// Role A member's role in the account.
+	Role AccountRole `json:"role"`
 }
 
-// AccountMemberInputRole defines model for AccountMemberInput.Role.
-type AccountMemberInputRole string
+// AccountRole A member's role in the account.
+type AccountRole string
 
 // AffectedUser A user affected by a fault, and how many times
 type AffectedUser struct {
@@ -2512,9 +2292,6 @@ type DashboardWidget_Presentation struct {
 	Title    *string `json:"title,omitempty"`
 }
 
-// DashboardWidgetType Which kind of widget, and therefore which config shape applies.
-type DashboardWidgetType string
-
 // DashboardWidgetConfigAlarms defines model for DashboardWidgetConfigAlarms.
 type DashboardWidgetConfigAlarms struct {
 	// FilterState Show all alarms or only those in one state
@@ -2607,7 +2384,9 @@ type DashboardWidgetInput struct {
 	// Id Kept exactly as sent. Unique within its dashboard; another dashboard can use the same id. Left out, the server assigns one, so a client that wants stable widgets sends its own. Stick to letters, digits, `-` and `_`: the id appears in web UI links.
 	Id           *string                            `json:"id,omitempty"`
 	Presentation *DashboardWidgetInput_Presentation `json:"presentation,omitempty"`
-	Type         DashboardWidgetInputType           `json:"type"`
+
+	// Type Which kind of widget, and therefore which config shape applies.
+	Type DashboardWidgetType `json:"type"`
 }
 
 // DashboardWidgetInput_Grid Merged into the default {x: 0, y: 0, w: 12, h: 3}: left out, the widget gets the default, and a key left out takes the default's value.
@@ -2624,8 +2403,8 @@ type DashboardWidgetInput_Presentation struct {
 	Title    *string `json:"title,omitempty"`
 }
 
-// DashboardWidgetInputType defines model for DashboardWidgetInput.Type.
-type DashboardWidgetInputType string
+// DashboardWidgetType Which kind of widget, and therefore which config shape applies.
+type DashboardWidgetType string
 
 // Deploy A deploy event
 type Deploy struct {
@@ -2886,6 +2665,15 @@ type FaultSelectionInput struct {
 	Q *string `json:"q,omitempty"`
 }
 
+// IncidentBuildType How the incident was opened. `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
+type IncidentBuildType string
+
+// IncidentSeverity An incident's severity.
+type IncidentSeverity string
+
+// IncidentStatus An incident's status.
+type IncidentStatus string
+
 // IncidentUpdate An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
 type IncidentUpdate struct {
 	// CreatedAt When the update was posted
@@ -2903,8 +2691,8 @@ type IncidentUpdate struct {
 	// NotifiedAt When the announcement was sent
 	NotifiedAt nullable.Nullable[time.Time] `json:"notified_at,omitempty"`
 
-	// Severity Severity at the time of the update
-	Severity IncidentUpdateSeverity `json:"severity"`
+	// Severity An incident's severity.
+	Severity IncidentSeverity `json:"severity"`
 
 	// ShouldNotify Whether the update is announced on the status page's connected accounts
 	ShouldNotify nullable.Nullable[bool] `json:"should_notify,omitempty"`
@@ -2912,24 +2700,20 @@ type IncidentUpdate struct {
 	// StartAt When the update takes effect. A future time schedules it.
 	StartAt *time.Time `json:"start_at,omitempty"`
 
-	// Status Status at the time of the update
-	Status IncidentUpdateStatus `json:"status"`
+	// Status An incident's status.
+	Status IncidentStatus `json:"status"`
 
 	// UpdatedAt When the update was last changed
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
-// IncidentUpdateSeverity Severity at the time of the update
-type IncidentUpdateSeverity string
-
-// IncidentUpdateStatus Status at the time of the update
-type IncidentUpdateStatus string
-
 // IncidentUpdateInput The writable fields of an incident update. status and severity default to investigating and problem_detected. If neither start_at nor start_now is given, the update starts now.
 type IncidentUpdateInput struct {
 	// Message The update's prose
-	Message  *string                      `json:"message,omitempty"`
-	Severity *IncidentUpdateInputSeverity `json:"severity,omitempty"`
+	Message *string `json:"message,omitempty"`
+
+	// Severity An incident's severity.
+	Severity *IncidentSeverity `json:"severity,omitempty"`
 
 	// ShouldNotify Announce the update on the status page's connected accounts and email the status page's subscribers
 	ShouldNotify *bool `json:"should_notify,omitempty"`
@@ -2938,15 +2722,11 @@ type IncidentUpdateInput struct {
 	StartAt *time.Time `json:"start_at,omitempty"`
 
 	// StartNow Start the update immediately, ignoring start_at. An update that has already started is left as it is, so sending it again changes nothing.
-	StartNow *bool                      `json:"start_now,omitempty"`
-	Status   *IncidentUpdateInputStatus `json:"status,omitempty"`
+	StartNow *bool `json:"start_now,omitempty"`
+
+	// Status An incident's status.
+	Status *IncidentStatus `json:"status,omitempty"`
 }
-
-// IncidentUpdateInputSeverity defines model for IncidentUpdateInput.Severity.
-type IncidentUpdateInputSeverity string
-
-// IncidentUpdateInputStatus defines model for IncidentUpdateInput.Status.
-type IncidentUpdateInputStatus string
 
 // Integration A notification integration
 type Integration struct {
@@ -3001,8 +2781,8 @@ type Integration struct {
 	// ProjectId ID of the project this channel belongs to
 	ProjectId string `json:"project_id"`
 
-	// Rate Rate period for rate_exceeded (e.g. min, hour)
-	Rate string `json:"rate"`
+	// Rate Period the rate_exceeded threshold counts over.
+	Rate IntegrationRate `json:"rate"`
 
 	// SiteIds Sites whose up and down events this integration receives. null means every site in the project, including ones added later.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids"`
@@ -3621,8 +3401,8 @@ type IntegrationCreateInput struct {
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control. Send null to remove the limit.
 	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// Rate Rate threshold period (e.g. min, hour). Send null to reset to wday.
-	Rate nullable.Nullable[string] `json:"rate,omitempty"`
+	// Rate Period the rate_exceeded threshold counts over. Send null to reset to wday.
+	Rate nullable.Nullable[IntegrationRate] `json:"rate,omitempty"`
 
 	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. An ID that isn't one of this project's sites fails the request with 422. A set; order is ignored and duplicates are dropped.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
@@ -3651,6 +3431,9 @@ type IntegrationFilter struct {
 
 // IntegrationFilterEvent An event a filter applies to, or `all` for every event.
 type IntegrationFilterEvent string
+
+// IntegrationRate Period the rate_exceeded threshold counts over.
+type IntegrationRate string
 
 // IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. `type` can be sent only with its current value; any other value is 422. A key this operation doesn't take is 422, except the read-only keys a GET returns (`id`, `links` and the like), which are ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 type IntegrationUpdateInput struct {
@@ -3684,8 +3467,8 @@ type IntegrationUpdateInput struct {
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control. Send null to remove the limit.
 	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// Rate Rate threshold period (e.g. min, hour). Send null to reset to wday.
-	Rate nullable.Nullable[string] `json:"rate,omitempty"`
+	// Rate Period the rate_exceeded threshold counts over. Send null to reset to wday.
+	Rate nullable.Nullable[IntegrationRate] `json:"rate,omitempty"`
 
 	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. An ID that isn't one of this project's sites fails the request with 422. A set; order is ignored and duplicates are dropped.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
@@ -4348,8 +4131,8 @@ type StatusPageFeatures struct {
 
 // StatusPageIncident An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
 type StatusPageIncident struct {
-	// BuildType How the incident was opened
-	BuildType StatusPageIncidentBuildType `json:"build_type"`
+	// BuildType How the incident was opened. `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
+	BuildType IncidentBuildType `json:"build_type"`
 
 	// ClosedAt When the incident closed, or null while it is open. Derived from the updates: it is set once an update reaches resolved or maintenance_complete.
 	ClosedAt nullable.Nullable[time.Time] `json:"closed_at,omitempty"`
@@ -4358,10 +4141,10 @@ type StatusPageIncident struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// CurrentSeverity Severity of the update in effect now. Derived from the updates.
-	CurrentSeverity nullable.Nullable[StatusPageIncidentCurrentSeverity] `json:"current_severity,omitempty"`
+	CurrentSeverity nullable.Nullable[IncidentSeverity] `json:"current_severity,omitempty"`
 
 	// CurrentStatus Status of the update in effect now. Derived from the updates.
-	CurrentStatus nullable.Nullable[StatusPageIncidentCurrentStatus] `json:"current_status,omitempty"`
+	CurrentStatus nullable.Nullable[IncidentStatus] `json:"current_status,omitempty"`
 
 	// Id Unique identifier
 	Id string `json:"id"`
@@ -4391,19 +4174,10 @@ type StatusPageIncident struct {
 	Updates []IncidentUpdate `json:"updates"`
 }
 
-// StatusPageIncidentBuildType How the incident was opened
-type StatusPageIncidentBuildType string
-
-// StatusPageIncidentCurrentSeverity Severity of the update in effect now. Derived from the updates.
-type StatusPageIncidentCurrentSeverity string
-
-// StatusPageIncidentCurrentStatus Status of the update in effect now. Derived from the updates.
-type StatusPageIncidentCurrentStatus string
-
 // StatusPageIncidentCreateInput An incident and the updates it opens with
 type StatusPageIncidentCreateInput struct {
-	// BuildType `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
-	BuildType *StatusPageIncidentCreateInputBuildType `json:"build_type,omitempty"`
+	// BuildType How the incident was opened. `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
+	BuildType *IncidentBuildType `json:"build_type,omitempty"`
 
 	// RetroNotifyMessage Message accompanying that announcement
 	RetroNotifyMessage nullable.Nullable[string] `json:"retro_notify_message,omitempty"`
@@ -4415,9 +4189,6 @@ type StatusPageIncidentCreateInput struct {
 	// Updates Updates to create with the incident; at least one
 	Updates []IncidentUpdateInput `json:"updates"`
 }
-
-// StatusPageIncidentCreateInputBuildType `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
-type StatusPageIncidentCreateInputBuildType string
 
 // StatusPageIncidentUpdateInput Writable incident attributes
 type StatusPageIncidentUpdateInput struct {

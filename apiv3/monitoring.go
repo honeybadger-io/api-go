@@ -167,6 +167,17 @@ type IntegrationEvent = gen.IntegrationEvent
 // the stored value. A read returns null for "every".
 type IntegrationUpdateParams = gen.IntegrationUpdateInput
 
+// IntegrationRate is the period for an integration's rate_exceeded event.
+type IntegrationRate = gen.IntegrationRate
+
+// The rate periods, named after their wire values.
+const (
+	RateMin  = gen.IntegrationRateMin
+	RateHour = gen.IntegrationRateHour
+	RateWday = gen.IntegrationRateWday
+	RateWeek = gen.IntegrationRateWeek
+)
+
 // IntegrationFilter limits one event to the errors matching Query. Filters on an
 // integration are an ordered list, replaced whole on update.
 type IntegrationFilter = gen.IntegrationFilter

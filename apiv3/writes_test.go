@@ -581,7 +581,7 @@ func TestIntegrationsUpdateFollowsAllSitesFiltersAndClears(t *testing.T) {
 		SiteIds:    nullable.NewNullNullable[[]SiteID](),
 		CheckInIds: nullable.NewNullableWithValue([]string{}),
 		Filters:    nullable.NewNullableWithValue([]IntegrationFilter{filter}),
-		Rate:       nullable.NewNullNullable[string](),
+		Rate:       nullable.NewNullNullable[IntegrationRate](),
 	}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}

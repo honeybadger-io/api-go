@@ -5819,11 +5819,7 @@ components:
           type: string
           format: email
         role:
-          type: string
-          enum:
-          - Owner
-          - Admin
-          - Member
+          "$ref": "#/components/schemas/AccountRole"
         disable_email_notifications:
           type: boolean
           description: Create the member with email notifications off
@@ -5878,13 +5874,7 @@ components:
           description: ID of the user
           example: Uz4wKm
         role:
-          type: string
-          description: Member role in the account
-          enum:
-          - Owner
-          - Admin
-          - Member
-          example: Admin
+          "$ref": "#/components/schemas/AccountRole"
         email:
           type: string
           description: Member email address
@@ -5907,11 +5897,7 @@ components:
       additionalProperties: false
       properties:
         role:
-          type: string
-          enum:
-          - Owner
-          - Admin
-          - Member
+          "$ref": "#/components/schemas/AccountRole"
     Alarm:
       type: object
       description: 'An Insights alarm. Read from Honeybadger''s copy of the alarm,
@@ -6326,8 +6312,7 @@ components:
           type: integer
           description: Occurrence threshold before rate_exceeded fires
         rate:
-          type: string
-          description: Rate period for rate_exceeded (e.g. min, hour)
+          "$ref": "#/components/schemas/IntegrationRate"
         notification_limit:
           type:
           - integer
@@ -6379,10 +6364,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigCampfire"
-              required:
-              - subdomain
-              - room_name
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigCampfire"
+              - required:
+                - subdomain
+                - room_name
       - if:
           properties:
             type:
@@ -6392,9 +6378,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigCampfireV2"
-              required:
-              - campfire_url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigCampfireV2"
+              - required:
+                - campfire_url
       - if:
           properties:
             type:
@@ -6404,9 +6391,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigCampfireV3"
-              required:
-              - chatbot_url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigCampfireV3"
+              - required:
+                - chatbot_url
       - if:
           properties:
             type:
@@ -6416,11 +6404,12 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigDatadog"
-              required:
-              - endpoint
-              - label
-              - send_metrics
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigDatadog"
+              - required:
+                - endpoint
+                - label
+                - send_metrics
       - if:
           properties:
             type:
@@ -6430,10 +6419,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigDiscordWebhook"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigDiscordWebhook"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6443,14 +6433,15 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigGithub"
-              required:
-              - repo
-              - labels
-              - issue_type
-              - issue_fields
-              - title_format
-              - rich_body
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigGithub"
+              - required:
+                - repo
+                - labels
+                - issue_type
+                - issue_fields
+                - title_format
+                - rich_body
       - if:
           properties:
             type:
@@ -6460,13 +6451,14 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigGitlab"
-              required:
-              - repo
-              - labels
-              - server_url
-              - title_format
-              - rich_body
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigGitlab"
+              - required:
+                - repo
+                - labels
+                - server_url
+                - title_format
+                - rich_body
       - if:
           properties:
             type:
@@ -6476,9 +6468,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigBitbucket"
-              required:
-              - repo
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigBitbucket"
+              - required:
+                - repo
       - if:
           properties:
             type:
@@ -6488,12 +6481,13 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigPivotalTracker"
-              required:
-              - pivotal_project_id
-              - labels
-              - name_format
-              - description_format
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigPivotalTracker"
+              - required:
+                - pivotal_project_id
+                - labels
+                - name_format
+                - description_format
       - if:
           properties:
             type:
@@ -6503,9 +6497,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigFlowdock"
-              required:
-              - tags
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigFlowdock"
+              - required:
+                - tags
       - if:
           properties:
             type:
@@ -6515,9 +6510,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigAsana"
-              required:
-              - asana_project_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigAsana"
+              - required:
+                - asana_project_id
       - if:
           properties:
             type:
@@ -6527,12 +6523,13 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigHipChat"
-              required:
-              - url
-              - room
-              - color
-              - alert
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigHipChat"
+              - required:
+                - url
+                - room
+                - color
+                - alert
       - if:
           properties:
             type:
@@ -6542,18 +6539,19 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigJira"
-              required:
-              - username
-              - server_url
-              - project_key
-              - resolve_transition
-              - reopen_transition
-              - labels
-              - component_names
-              - issue_type
-              - summary_format
-              - rich_body
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigJira"
+              - required:
+                - username
+                - server_url
+                - project_key
+                - resolve_transition
+                - reopen_transition
+                - labels
+                - component_names
+                - issue_type
+                - summary_format
+                - rich_body
       - if:
           properties:
             type:
@@ -6563,16 +6561,17 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigJiraCloud"
-              required:
-              - project_key
-              - resolve_transition
-              - reopen_transition
-              - labels
-              - component_names
-              - issue_type
-              - summary_format
-              - rich_body
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigJiraCloud"
+              - required:
+                - project_key
+                - resolve_transition
+                - reopen_transition
+                - labels
+                - component_names
+                - issue_type
+                - summary_format
+                - rich_body
       - if:
           properties:
             type:
@@ -6582,10 +6581,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigOpsGenie"
-              required:
-              - endpoint
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigOpsGenie"
+              - required:
+                - endpoint
+                - label
       - if:
           properties:
             type:
@@ -6595,10 +6595,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigOpsGenieV2"
-              required:
-              - endpoint
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigOpsGenieV2"
+              - required:
+                - endpoint
+                - label
       - if:
           properties:
             type:
@@ -6608,11 +6609,12 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigRedmine"
-              required:
-              - server_url
-              - resolve_transition
-              - reopen_transition
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigRedmine"
+              - required:
+                - server_url
+                - resolve_transition
+                - reopen_transition
       - if:
           properties:
             type:
@@ -6622,9 +6624,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigPagerDuty"
-              required:
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigPagerDuty"
+              - required:
+                - label
       - if:
           properties:
             type:
@@ -6634,10 +6637,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigPagerDutyV2"
-              required:
-              - severity
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigPagerDutyV2"
+              - required:
+                - severity
+                - label
       - if:
           properties:
             type:
@@ -6647,11 +6651,12 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigSprintly"
-              required:
-              - account_email
-              - product_id
-              - tags
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigSprintly"
+              - required:
+                - account_email
+                - product_id
+                - tags
       - if:
           properties:
             type:
@@ -6661,11 +6666,12 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigTrello"
-              required:
-              - board_id
-              - list_id
-              - title_format
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigTrello"
+              - required:
+                - board_id
+                - list_id
+                - title_format
       - if:
           properties:
             type:
@@ -6675,16 +6681,17 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigLinear"
-              required:
-              - team_id
-              - linear_project_id
-              - label_ids
-              - unresolved_state_id
-              - resolved_state_id
-              - label
-              - title_format
-              - description_format
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigLinear"
+              - required:
+                - team_id
+                - linear_project_id
+                - label_ids
+                - unresolved_state_id
+                - resolved_state_id
+                - label
+                - title_format
+                - description_format
       - if:
           properties:
             type:
@@ -6694,10 +6701,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigSlack"
-              required:
-              - label
-              - disable_backtrace
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigSlack"
+              - required:
+                - label
+                - disable_backtrace
       - if:
           properties:
             type:
@@ -6707,10 +6715,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigMattermost"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigMattermost"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6720,10 +6729,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigGoogleHangoutsChat"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigGoogleHangoutsChat"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6733,10 +6743,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigVictorOps"
-              required:
-              - routing_key
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigVictorOps"
+              - required:
+                - routing_key
+                - label
       - if:
           properties:
             type:
@@ -6746,11 +6757,12 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigWebHook"
-              required:
-              - url
-              - label
-              - payload_version
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigWebHook"
+              - required:
+                - url
+                - label
+                - payload_version
       - if:
           properties:
             type:
@@ -6760,10 +6772,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigEmail"
-              required:
-              - email
-              - email_subject
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigEmail"
+              - required:
+                - email
+                - email_subject
       - if:
           properties:
             type:
@@ -6773,9 +6786,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigIntercom"
-              required:
-              - context_field
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigIntercom"
+              - required:
+                - context_field
       - if:
           properties:
             type:
@@ -6785,10 +6799,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigAlertOps"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigAlertOps"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6798,10 +6813,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeams"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeams"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6811,10 +6827,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeamsV2"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeamsV2"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6824,14 +6841,15 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigShortcut"
-              required:
-              - organization_name
-              - title_format
-              - description_format
-              - external_project_id
-              - resolve_transition
-              - reopen_transition
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigShortcut"
+              - required:
+                - organization_name
+                - title_format
+                - description_format
+                - external_project_id
+                - resolve_transition
+                - reopen_transition
       - if:
           properties:
             type:
@@ -6841,16 +6859,17 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigShortcutV2"
-              required:
-              - organization_name
-              - title_format
-              - description_format
-              - custom_fields
-              - team
-              - initial_state
-              - resolve_transition
-              - reopen_transition
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigShortcutV2"
+              - required:
+                - organization_name
+                - title_format
+                - description_format
+                - custom_fields
+                - team
+                - initial_state
+                - resolve_transition
+                - reopen_transition
       - if:
           properties:
             type:
@@ -6860,9 +6879,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigPagerTree"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigPagerTree"
+              - required:
+                - url
       - if:
           properties:
             type:
@@ -6872,10 +6892,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigInstatus"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigInstatus"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6885,18 +6906,19 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigClickUp"
-              required:
-              - workspace_id
-              - teamspace_id
-              - folder_id
-              - list_id
-              - initial_status_id
-              - resolve_status_id
-              - reopen_status_id
-              - tags
-              - title_format
-              - description_format
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigClickUp"
+              - required:
+                - workspace_id
+                - teamspace_id
+                - folder_id
+                - list_id
+                - initial_status_id
+                - resolve_status_id
+                - reopen_status_id
+                - tags
+                - title_format
+                - description_format
       - if:
           properties:
             type:
@@ -6906,10 +6928,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigClickUpChat"
-              required:
-              - workspace_id
-              - channel_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigClickUpChat"
+              - required:
+                - workspace_id
+                - channel_id
       - if:
           properties:
             type:
@@ -6919,10 +6942,11 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigIlert"
-              required:
-              - url
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigIlert"
+              - required:
+                - url
+                - label
       - if:
           properties:
             type:
@@ -6932,13 +6956,14 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigZulip"
-              required:
-              - bot_email
-              - zulip_domain
-              - server_url
-              - channel
-              - topic
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigZulip"
+              - required:
+                - bot_email
+                - zulip_domain
+                - server_url
+                - channel
+                - topic
       - if:
           properties:
             type:
@@ -6948,9 +6973,10 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigIncidentIo"
-              required:
-              - alert_source_label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigIncidentIo"
+              - required:
+                - alert_source_label
       - if:
           properties:
             type:
@@ -6960,11 +6986,12 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigRootly"
-              required:
-              - notification_target_type
-              - notification_target_id
-              - label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigRootly"
+              - required:
+                - notification_target_type
+                - notification_target_id
+                - label
       - if:
           properties:
             type:
@@ -6974,18 +7001,19 @@ components:
         then:
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigBacklog"
-              required:
-              - space_url
-              - backlog_project_id
-              - issue_type_id
-              - priority_id
-              - resolve_status_id
-              - reopen_status_id
-              - label
-              - enable_webhook
-              - subject_format
-              - description_format
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigBacklog"
+              - required:
+                - space_url
+                - backlog_project_id
+                - issue_type_id
+                - priority_id
+                - resolve_status_id
+                - reopen_status_id
+                - label
+                - enable_webhook
+                - subject_format
+                - description_format
     IntegrationUpdateInput:
       type: object
       description: 'Fields to change on an integration. Omitted fields are left as
@@ -7020,12 +7048,12 @@ components:
           items:
             "$ref": "#/components/schemas/IntegrationEvent"
         rate:
-          type:
-          - string
-          - 'null'
           default: wday
-          description: Rate threshold period (e.g. min, hour). Send null to reset
-            to wday.
+          description: Period the rate_exceeded threshold counts over. Send null to
+            reset to wday.
+          anyOf:
+          - "$ref": "#/components/schemas/IntegrationRate"
+          - type: 'null'
         threshold:
           type:
           - integer
@@ -7168,12 +7196,12 @@ components:
           items:
             "$ref": "#/components/schemas/IntegrationEvent"
         rate:
-          type:
-          - string
-          - 'null'
           default: wday
-          description: Rate threshold period (e.g. min, hour). Send null to reset
-            to wday.
+          description: Period the rate_exceeded threshold counts over. Send null to
+            reset to wday.
+          anyOf:
+          - "$ref": "#/components/schemas/IntegrationRate"
+          - type: 'null'
         threshold:
           type:
           - integer
@@ -7333,9 +7361,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigCampfireV3"
-              required:
-              - chatbot_url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigCampfireV3"
+              - required:
+                - chatbot_url
             events:
               items:
                 enum:
@@ -7373,9 +7402,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigDatadog"
-              required:
-              - api_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigDatadog"
+              - required:
+                - api_key
             events:
               items:
                 enum:
@@ -7408,9 +7438,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigDiscordWebhook"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigDiscordWebhook"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -7449,9 +7480,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigGithub"
-              required:
-              - repo
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigGithub"
+              - required:
+                - repo
             events:
               items:
                 enum:
@@ -7477,9 +7509,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigGitlab"
-              required:
-              - repo
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigGitlab"
+              - required:
+                - repo
             events:
               items:
                 enum:
@@ -7505,9 +7538,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigBitbucket"
-              required:
-              - repo
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigBitbucket"
+              - required:
+                - repo
             events:
               items:
                 enum:
@@ -7533,9 +7567,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigAsana"
-              required:
-              - asana_project_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigAsana"
+              - required:
+                - asana_project_id
             events:
               items:
                 enum:
@@ -7561,12 +7596,13 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigJira"
-              required:
-              - username
-              - password
-              - server_url
-              - project_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigJira"
+              - required:
+                - username
+                - password
+                - server_url
+                - project_key
             events:
               items:
                 enum:
@@ -7593,9 +7629,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigJiraCloud"
-              required:
-              - project_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigJiraCloud"
+              - required:
+                - project_key
             events:
               items:
                 enum:
@@ -7620,9 +7657,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigOpsGenieV2"
-              required:
-              - api_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigOpsGenieV2"
+              - required:
+                - api_key
             events:
               items:
                 enum:
@@ -7659,10 +7697,11 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigRedmine"
-              required:
-              - server_url
-              - api_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigRedmine"
+              - required:
+                - server_url
+                - api_key
             events:
               items:
                 enum:
@@ -7687,9 +7726,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigPagerDutyV2"
-              required:
-              - integration_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigPagerDutyV2"
+              - required:
+                - integration_key
             events:
               items:
                 enum:
@@ -7723,11 +7763,12 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigSprintly"
-              required:
-              - account_email
-              - api_key
-              - product_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigSprintly"
+              - required:
+                - account_email
+                - api_key
+                - product_id
             events:
               items:
                 enum:
@@ -7753,10 +7794,11 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigTrello"
-              required:
-              - board_id
-              - list_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigTrello"
+              - required:
+                - board_id
+                - list_id
             events:
               items:
                 enum:
@@ -7782,9 +7824,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigLinear"
-              required:
-              - team_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigLinear"
+              - required:
+                - team_id
             events:
               items:
                 enum:
@@ -7846,9 +7889,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigMattermost"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigMattermost"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -7886,9 +7930,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigGoogleHangoutsChat"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigGoogleHangoutsChat"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -7926,9 +7971,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigVictorOps"
-              required:
-              - api_key
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigVictorOps"
+              - required:
+                - api_key
             events:
               items:
                 enum:
@@ -7960,9 +8006,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigWebHook"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigWebHook"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -8000,9 +8047,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigEmail"
-              required:
-              - email
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigEmail"
+              - required:
+                - email
             events:
               items:
                 enum:
@@ -8041,9 +8089,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigIntercom"
-              required:
-              - context_field
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigIntercom"
+              - required:
+                - context_field
             events:
               maxItems: 0
               description: This type takes no events.
@@ -8062,9 +8111,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigAlertOps"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigAlertOps"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -8101,9 +8151,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeamsV2"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigMicrosoftTeamsV2"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -8141,14 +8192,15 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigShortcutV2"
-              required:
-              - organization_name
-              - api_key
-              - team
-              - initial_state
-              - resolve_transition
-              - reopen_transition
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigShortcutV2"
+              - required:
+                - organization_name
+                - api_key
+                - team
+                - initial_state
+                - resolve_transition
+                - reopen_transition
             events:
               items:
                 enum:
@@ -8173,9 +8225,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigPagerTree"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigPagerTree"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -8211,9 +8264,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigInstatus"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigInstatus"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -8237,14 +8291,15 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigClickUp"
-              required:
-              - workspace_id
-              - teamspace_id
-              - list_id
-              - initial_status_id
-              - resolve_status_id
-              - reopen_status_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigClickUp"
+              - required:
+                - workspace_id
+                - teamspace_id
+                - list_id
+                - initial_status_id
+                - resolve_status_id
+                - reopen_status_id
             events:
               items:
                 enum:
@@ -8270,10 +8325,11 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigClickUpChat"
-              required:
-              - workspace_id
-              - channel_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigClickUpChat"
+              - required:
+                - workspace_id
+                - channel_id
             events:
               items:
                 enum:
@@ -8311,9 +8367,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigIlert"
-              required:
-              - url
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigIlert"
+              - required:
+                - url
             events:
               items:
                 enum:
@@ -8350,12 +8407,13 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigZulip"
-              required:
-              - bot_email
-              - api_key
-              - channel
-              - topic
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigZulip"
+              - required:
+                - bot_email
+                - api_key
+                - channel
+                - topic
             events:
               items:
                 enum:
@@ -8393,10 +8451,11 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigIncidentIo"
-              required:
-              - api_key
-              - alert_source_label
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigIncidentIo"
+              - required:
+                - api_key
+                - alert_source_label
             events:
               items:
                 enum:
@@ -8430,9 +8489,10 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigRootly"
-              required:
-              - webhook_authorization_token
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigRootly"
+              - required:
+                - webhook_authorization_token
             events:
               items:
                 enum:
@@ -8470,15 +8530,16 @@ components:
           - config
           properties:
             config:
-              "$ref": "#/components/schemas/IntegrationConfigBacklog"
-              required:
-              - space_url
-              - api_key
-              - backlog_project_id
-              - issue_type_id
-              - priority_id
-              - resolve_status_id
-              - reopen_status_id
+              allOf:
+              - "$ref": "#/components/schemas/IntegrationConfigBacklog"
+              - required:
+                - space_url
+                - api_key
+                - backlog_project_id
+                - issue_type_id
+                - priority_id
+                - resolve_status_id
+                - reopen_status_id
             events:
               items:
                 enum:
@@ -8981,15 +9042,7 @@ components:
 
             '
         type:
-          type: string
-          description: Which kind of widget, and therefore which config shape applies.
-          enum:
-          - insights_vis
-          - alarms
-          - deployments
-          - checkins
-          - uptime
-          - errors
+          "$ref": "#/components/schemas/DashboardWidgetType"
         grid:
           type: object
           description: Position and size on the dashboard grid.
@@ -9626,26 +9679,9 @@ components:
           description: The update's prose
           example: We have identified the cause and are rolling back.
         status:
-          type: string
-          description: Status at the time of the update
-          enum:
-          - maintenance_scheduled
-          - in_maintenance
-          - maintenance_complete
-          - investigating
-          - identified
-          - resolving
-          - monitoring
-          - resolved
+          "$ref": "#/components/schemas/IncidentStatus"
         severity:
-          type: string
-          description: Severity at the time of the update
-          enum:
-          - problem_detected
-          - degraded_performance
-          - partial_outage
-          - outage
-          - operational
+          "$ref": "#/components/schemas/IncidentSeverity"
         start_at:
           type: string
           format: date-time
@@ -9682,24 +9718,9 @@ components:
           description: The update's prose
           example: We have identified the cause and are rolling back.
         status:
-          type: string
-          enum:
-          - maintenance_scheduled
-          - in_maintenance
-          - maintenance_complete
-          - investigating
-          - identified
-          - resolving
-          - monitoring
-          - resolved
+          "$ref": "#/components/schemas/IncidentStatus"
         severity:
-          type: string
-          enum:
-          - problem_detected
-          - degraded_performance
-          - partial_outage
-          - outage
-          - operational
+          "$ref": "#/components/schemas/IncidentSeverity"
         start_at:
           type: string
           format: date-time
@@ -10828,37 +10849,17 @@ components:
           - 'null'
           description: The announcement sent when retro_should_notify is true
         build_type:
-          type: string
-          description: How the incident was opened
-          enum:
-          - current
-          - retroactive
-          - scheduled_maintenance
+          "$ref": "#/components/schemas/IncidentBuildType"
         current_status:
-          type:
-          - string
-          - 'null'
           description: Status of the update in effect now. Derived from the updates.
-          enum:
-          - maintenance_scheduled
-          - in_maintenance
-          - maintenance_complete
-          - investigating
-          - identified
-          - resolving
-          - monitoring
-          - resolved
+          anyOf:
+          - "$ref": "#/components/schemas/IncidentStatus"
+          - type: 'null'
         current_severity:
-          type:
-          - string
-          - 'null'
           description: Severity of the update in effect now. Derived from the updates.
-          enum:
-          - problem_detected
-          - degraded_performance
-          - partial_outage
-          - outage
-          - operational
+          anyOf:
+          - "$ref": "#/components/schemas/IncidentSeverity"
+          - type: 'null'
         start_at:
           type:
           - string
@@ -10899,14 +10900,7 @@ components:
           type: string
           example: Elevated error rates
         build_type:
-          type: string
-          enum:
-          - current
-          - retroactive
-          - scheduled_maintenance
-          description: "`current` is happening now, `retroactive` records something
-            already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance
-            incident may have updates starting in the future.\n"
+          "$ref": "#/components/schemas/IncidentBuildType"
         retro_should_notify:
           type: boolean
           description: Announce a retroactive incident when it is created
@@ -11567,6 +11561,63 @@ components:
             sign-on, on Heroku''s host.
 
             '
+    AccountRole:
+      type: string
+      description: A member's role in the account.
+      enum:
+      - Owner
+      - Admin
+      - Member
+    IncidentStatus:
+      type: string
+      description: An incident's status.
+      enum:
+      - maintenance_scheduled
+      - in_maintenance
+      - maintenance_complete
+      - investigating
+      - identified
+      - resolving
+      - monitoring
+      - resolved
+    IncidentSeverity:
+      type: string
+      description: An incident's severity.
+      enum:
+      - problem_detected
+      - degraded_performance
+      - partial_outage
+      - outage
+      - operational
+    IncidentBuildType:
+      type: string
+      description: 'How the incident was opened. `current` is happening now, `retroactive`
+        records something already over, `scheduled_maintenance` is planned. Only a
+        scheduled_maintenance incident may have updates starting in the future.
+
+        '
+      enum:
+      - current
+      - retroactive
+      - scheduled_maintenance
+    DashboardWidgetType:
+      type: string
+      description: Which kind of widget, and therefore which config shape applies.
+      enum:
+      - insights_vis
+      - alarms
+      - deployments
+      - checkins
+      - uptime
+      - errors
+    IntegrationRate:
+      type: string
+      enum:
+      - min
+      - hour
+      - wday
+      - week
+      description: Period the rate_exceeded threshold counts over.
     IntegrationEvent:
       type: string
       description: An event an integration can notify on. Each type supports a subset,
@@ -11619,13 +11670,11 @@ components:
           - string
           - 'null'
           title: Subdomain
-          example: "<Subdomain>"
         room_name:
           type:
           - string
           - 'null'
           title: Room name
-          example: "<Room name>"
         token:
           type:
           - string
@@ -11633,7 +11682,6 @@ components:
           format: password
           title: Token
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Token>"
           writeOnly: true
     IntegrationConfigCampfireV2:
       type: object
@@ -11673,7 +11721,6 @@ components:
           title: Api key
           description: Your Datadog API key. Never returned. Leave it out of an update
             to keep it.
-          example: "<Api key>"
           writeOnly: true
         endpoint:
           type:
@@ -11696,7 +11743,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
         send_metrics:
           type:
           - boolean
@@ -11722,7 +11768,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigGithub:
       type: object
       title: GitHub settings
@@ -11741,7 +11786,6 @@ components:
           - 'null'
           title: Labels
           description: A comma-delimited list of labels to add when creating issues.
-          example: "<Labels>"
         issue_type:
           type:
           - string
@@ -11767,7 +11811,6 @@ components:
           description: You can customize the Github issue title, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Title format>"
         rich_body:
           type:
           - boolean
@@ -11794,7 +11837,6 @@ components:
           - string
           - 'null'
           title: Labels
-          example: "<Labels>"
         server_url:
           type:
           - string
@@ -11813,7 +11855,6 @@ components:
           description: Leave this blank unless you are using a self-hosted installation
             of GitLab. An access token can be generated in Settings -> Access Tokens
             in the GitLab UI. Never returned. Leave it out of an update to keep it.
-          example: "<Personal access token>"
           writeOnly: true
         title_format:
           type:
@@ -11823,7 +11864,6 @@ components:
           description: You can customize the GitLab issue title, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Title format>"
         rich_body:
           type:
           - boolean
@@ -11859,7 +11899,6 @@ components:
           description: To create stories from the UI, each project member must also
             add their personal Pivotal Tracker API token on their project settings
             page. Never returned. Leave it out of an update to keep it.
-          example: "<API Token>"
           writeOnly: true
         pivotal_project_id:
           type:
@@ -11874,7 +11913,6 @@ components:
           - 'null'
           title: Labels
           description: A comma-separated list of labels to add to new stories.
-          example: "<Labels>"
         name_format:
           type:
           - string
@@ -11883,7 +11921,6 @@ components:
           description: Customize the Pivotal Tracker story name, or leave blank for
             the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Name format>"
         description_format:
           type:
           - string
@@ -11914,7 +11951,6 @@ components:
           format: password
           title: Api token
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Api token>"
           writeOnly: true
         tags:
           type:
@@ -11922,7 +11958,6 @@ components:
           - 'null'
           title: Tags
           description: A comma-separated list of tags.
-          example: "<Tags>"
     IntegrationConfigAsana:
       type: object
       title: Asana settings
@@ -11954,14 +11989,12 @@ components:
           format: password
           title: Auth token
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Auth token>"
           writeOnly: true
         room:
           type:
           - string
           - 'null'
           title: Room name
-          example: "<Room name>"
         color:
           type:
           - string
@@ -11992,7 +12025,6 @@ components:
           - 'null'
           title: Username
           description: Your Jira email address.
-          example: "<Username>"
         password:
           type:
           - string
@@ -12001,7 +12033,6 @@ components:
           title: API Token
           description: You can find or generate your API Token [here](https://id.atlassian.com/manage/api-tokens).
             Never returned. Leave it out of an update to keep it.
-          example: "<API Token>"
           writeOnly: true
         server_url:
           type:
@@ -12014,7 +12045,6 @@ components:
           - string
           - 'null'
           title: Project key
-          example: "<Project key>"
         resolve_transition:
           type:
           - string
@@ -12022,7 +12052,6 @@ components:
           default: '5'
           title: Resolve transition
           description: The ID of the transition to be performed when resolved.
-          example: "<Resolve transition>"
         reopen_transition:
           type:
           - string
@@ -12030,7 +12059,6 @@ components:
           default: '3'
           title: Reopen transition
           description: The ID of the transition to be performed when unresolved.
-          example: "<Reopen transition>"
         labels:
           type:
           - string
@@ -12038,7 +12066,6 @@ components:
           title: Labels
           description: A comma-delimited list of labels to be added to the issues
             created by Honeybadger.
-          example: "<Labels>"
         component_names:
           type:
           - string
@@ -12046,7 +12073,6 @@ components:
           title: Component names
           description: A comma-delimited list of components to be added to the issues
             created by Honeybadger.
-          example: "<Component names>"
         issue_type:
           type:
           - string
@@ -12062,7 +12088,6 @@ components:
           description: You can customize the JIRA issue summary, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Summary format>"
         rich_body:
           type:
           - boolean
@@ -12082,7 +12107,6 @@ components:
           - string
           - 'null'
           title: Project key
-          example: "<Project key>"
         resolve_transition:
           type:
           - string
@@ -12090,7 +12114,6 @@ components:
           default: '5'
           title: Resolve transition
           description: The ID of the transition to be performed when resolved.
-          example: "<Resolve transition>"
         reopen_transition:
           type:
           - string
@@ -12098,7 +12121,6 @@ components:
           default: '3'
           title: Reopen transition
           description: The ID of the transition to be performed when unresolved.
-          example: "<Reopen transition>"
         labels:
           type:
           - string
@@ -12106,7 +12128,6 @@ components:
           title: Labels
           description: A comma-delimited list of labels to be added to the issues
             created by Honeybadger.
-          example: "<Labels>"
         component_names:
           type:
           - string
@@ -12115,7 +12136,6 @@ components:
           description: 'A comma-delimited list of components to be added to the issues
             created by Honeybadger. **NOTE: Components are not avaliable for next-gen
             projects.**'
-          example: "<Component names>"
         issue_type:
           type:
           - string
@@ -12131,7 +12151,6 @@ components:
           description: You can customize the JIRA issue summary, or you can leave
             this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Summary format>"
         rich_body:
           type:
           - boolean
@@ -12154,7 +12173,6 @@ components:
           title: Api key
           description: The API key from your [Honeybadger integration](https://app.opsgenie.com/integration)
             in OpsGenie. Never returned. Leave it out of an update to keep it.
-          example: "<Api key>"
           writeOnly: true
         endpoint:
           type:
@@ -12174,7 +12192,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigOpsGenieV2:
       type: object
       title: OpsGenie settings
@@ -12188,7 +12205,6 @@ components:
           title: API Key
           description: The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/)
             in OpsGenie. Never returned. Leave it out of an update to keep it.
-          example: "<API Key>"
           writeOnly: true
         endpoint:
           type:
@@ -12208,7 +12224,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigRedmine:
       type: object
       title: Redmine settings
@@ -12228,7 +12243,6 @@ components:
           format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Api key>"
           writeOnly: true
         resolve_transition:
           type:
@@ -12237,7 +12251,6 @@ components:
           default: '3'
           title: Resolve transition
           description: The ID of the status for resolved issues.
-          example: "<Resolve transition>"
         reopen_transition:
           type:
           - string
@@ -12245,7 +12258,6 @@ components:
           default: '4'
           title: Reopen transition
           description: The ID of the status for unresolved issues.
-          example: "<Reopen transition>"
     IntegrationConfigPagerDuty:
       type: object
       title: PagerDuty settings
@@ -12260,7 +12272,6 @@ components:
           description: 32 character alphanumeric service key. Select "Honeybadger"
             from the Integration Type menu when creating a service for Honeybadger
             in PagerDuty. Never returned. Leave it out of an update to keep it.
-          example: "<Service API Key>"
           writeOnly: true
         label:
           type:
@@ -12269,7 +12280,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigPagerDutyV2:
       type: object
       title: PagerDuty settings
@@ -12284,7 +12294,6 @@ components:
           description: 32 character alphanumeric integration key. Select "Honeybadger"
             from the Integration Type menu when creating a service for Honeybadger
             in PagerDuty. Never returned. Leave it out of an update to keep it.
-          example: "<Integration Key>"
           writeOnly: true
         severity:
           type:
@@ -12306,7 +12315,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigSprintly:
       type: object
       title: Sprintly settings
@@ -12317,7 +12325,6 @@ components:
           - string
           - 'null'
           title: Account email
-          example: "<Account email>"
         api_key:
           type:
           - string
@@ -12325,7 +12332,6 @@ components:
           format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Api key>"
           writeOnly: true
         product_id:
           type:
@@ -12340,7 +12346,6 @@ components:
           - 'null'
           title: Tags
           description: A comma-separated list of tags to add to new defects.
-          example: "<Tags>"
     IntegrationConfigTrello:
       type: object
       title: Trello settings
@@ -12353,7 +12358,6 @@ components:
           title: Board
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Board>"
         list_id:
           type:
           - string
@@ -12361,7 +12365,6 @@ components:
           title: List
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<List>"
         title_format:
           type:
           - string
@@ -12370,7 +12373,6 @@ components:
           description: You can customize the trello card title, or you can leave this
             blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Title format>"
     IntegrationConfigLinear:
       type: object
       title: Linear settings
@@ -12383,7 +12385,6 @@ components:
           title: Team
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Team>"
         linear_project_id:
           type:
           - string
@@ -12391,7 +12392,6 @@ components:
           title: Project
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Project>"
         label_ids:
           type:
           - array
@@ -12408,7 +12408,6 @@ components:
             issue is reopened. The web UI loads the choices from the connected account.
             Through the API, send the value itself, as that service's API returns
             it.
-          example: "<Unresolved state>"
         resolved_state_id:
           type:
           - string
@@ -12416,7 +12415,6 @@ components:
           title: Resolved state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Resolved state>"
         label:
           type:
           - string
@@ -12424,7 +12422,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
         title_format:
           type:
           - string
@@ -12465,7 +12462,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
         disable_backtrace:
           type:
           - boolean
@@ -12491,7 +12487,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigGoogleHangoutsChat:
       type: object
       title: Google Chat settings
@@ -12513,7 +12508,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigVictorOps:
       type: object
       title: Splunk On-Call settings
@@ -12527,7 +12521,6 @@ components:
           title: Api key
           description: Your Splunk On-Call API key. Never returned. Leave it out of
             an update to keep it.
-          example: "<Api key>"
           writeOnly: true
         routing_key:
           type:
@@ -12535,7 +12528,6 @@ components:
           - 'null'
           title: Routing key
           description: Optional routing key for alert.
-          example: "<Routing key>"
         label:
           type:
           - string
@@ -12543,7 +12535,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigWebHook:
       type: object
       title: Webhook settings
@@ -12566,7 +12557,6 @@ components:
           description: 'Optional. When set, requests are sent with `Authorization:
             Bearer <token>`, for endpoints that require it. Never returned. Leave
             it out of an update to keep it.'
-          example: "<Bearer token>"
           writeOnly: true
         label:
           type:
@@ -12575,7 +12565,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
         payload_version:
           type:
           - string
@@ -12607,7 +12596,6 @@ components:
             (when they occur, are assigned, etc.), or you can leave this blank for
             the default subject. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters)
             for details.
-          example: "<Email subject>"
     IntegrationConfigIntercom:
       type: object
       title: Intercom settings
@@ -12620,7 +12608,6 @@ components:
           title: Context field
           description: The field from the context hash that will be sent to Intercom
             as the user ID.
-          example: "<Context field>"
     IntegrationConfigAlertOps:
       type: object
       title: AlertOps settings
@@ -12642,7 +12629,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigMicrosoftTeams:
       type: object
       title: Microsoft Teams settings
@@ -12663,7 +12649,6 @@ components:
           - 'null'
           maxLength: 100
           title: Label
-          example: "<Label>"
     IntegrationConfigMicrosoftTeamsV2:
       type: object
       title: Microsoft Teams settings
@@ -12685,7 +12670,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigShortcut:
       type: object
       title: Shortcut settings
@@ -12706,7 +12690,6 @@ components:
           title: API Token
           description: Available from Settings > Your Account > API Tokens. Never
             returned. Leave it out of an update to keep it.
-          example: "<API Token>"
           writeOnly: true
         title_format:
           type:
@@ -12743,7 +12726,6 @@ components:
           title: Project ID
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Project ID>"
         resolve_transition:
           type:
           - string
@@ -12751,7 +12733,6 @@ components:
           title: Resolved workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Resolved workflow state>"
         reopen_transition:
           type:
           - string
@@ -12759,7 +12740,6 @@ components:
           title: Reopened workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Reopened workflow state>"
     IntegrationConfigShortcutV2:
       type: object
       title: Shortcut settings
@@ -12780,7 +12760,6 @@ components:
           title: API Token
           description: Available from Settings > Your Account > API Tokens. Never
             returned. Leave it out of an update to keep it.
-          example: "<API Token>"
           writeOnly: true
         title_format:
           type:
@@ -12815,7 +12794,6 @@ components:
           - string
           - 'null'
           title: Custom Fields
-          example: "<Custom Fields>"
         team:
           type:
           - string
@@ -12823,7 +12801,6 @@ components:
           title: Team
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Team>"
         initial_state:
           type:
           - string
@@ -12831,7 +12808,6 @@ components:
           title: Initial state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Initial state>"
         resolve_transition:
           type:
           - string
@@ -12839,7 +12815,6 @@ components:
           title: Resolved workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Resolved workflow state>"
         reopen_transition:
           type:
           - string
@@ -12847,7 +12822,6 @@ components:
           title: Reopened workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Reopened workflow state>"
     IntegrationConfigPagerTree:
       type: object
       title: PagerTree settings
@@ -12881,7 +12855,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigClickUp:
       type: object
       title: ClickUp settings
@@ -12894,7 +12867,6 @@ components:
           title: Workspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Workspace>"
         teamspace_id:
           type:
           - string
@@ -12902,7 +12874,6 @@ components:
           title: Teamspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Teamspace>"
         folder_id:
           type:
           - string
@@ -12910,7 +12881,6 @@ components:
           title: Folder
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Folder>"
         list_id:
           type:
           - string
@@ -12919,7 +12889,6 @@ components:
           description: The ID of the list to create tasks for. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
-          example: "<List>"
         initial_status_id:
           type:
           - string
@@ -12928,7 +12897,6 @@ components:
           description: The initial status when a task is created. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
-          example: "<Initial status>"
         resolve_status_id:
           type:
           - string
@@ -12937,7 +12905,6 @@ components:
           description: The task status when an error is resolved. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
-          example: "<Resolve status>"
         reopen_status_id:
           type:
           - string
@@ -12946,14 +12913,12 @@ components:
           description: The task status when an error is reopened. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
-          example: "<Reopen status>"
         tags:
           type:
           - string
           - 'null'
           title: Tags
           description: Comma-separated list of tags.
-          example: "<Tags>"
         title_format:
           type:
           - string
@@ -12997,7 +12962,6 @@ components:
           title: Workspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Workspace>"
         channel_id:
           type:
           - string
@@ -13005,7 +12969,6 @@ components:
           title: Channel
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
-          example: "<Channel>"
     IntegrationConfigIlert:
       type: object
       title: ilert settings
@@ -13027,7 +12990,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigZulip:
       type: object
       title: Zulip settings
@@ -13038,7 +13000,6 @@ components:
           - string
           - 'null'
           title: Bot email
-          example: "<Bot email>"
         api_key:
           type:
           - string
@@ -13046,7 +13007,6 @@ components:
           format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Api key>"
           writeOnly: true
         zulip_domain:
           type:
@@ -13055,7 +13015,6 @@ components:
           title: Zulip Cloud subdomain
           description: For Zulip Cloud, your organization's subdomain (`example` for
             example.zulipchat.com). Leave blank if you run your own Zulip server.
-          example: "<Zulip Cloud subdomain>"
         server_url:
           type:
           - string
@@ -13070,13 +13029,11 @@ components:
           - string
           - 'null'
           title: Channel
-          example: "<Channel>"
         topic:
           type:
           - string
           - 'null'
           title: Topic
-          example: "<Topic>"
     IntegrationConfigIncidentIo:
       type: object
       title: incident.io settings
@@ -13089,14 +13046,12 @@ components:
           format: password
           title: API Key
           description: Never returned. Leave it out of an update to keep it.
-          example: "<API Key>"
           writeOnly: true
         alert_source_label:
           type:
           - string
           - 'null'
           title: Alert source label
-          example: "<Alert source label>"
     IntegrationConfigRootly:
       type: object
       title: Rootly settings
@@ -13109,7 +13064,6 @@ components:
           format: password
           title: Webhook authorization token
           description: Never returned. Leave it out of an update to keep it.
-          example: "<Webhook authorization token>"
           writeOnly: true
         notification_target_type:
           type:
@@ -13126,7 +13080,6 @@ components:
           - string
           - 'null'
           title: Notification target ID
-          example: "<Notification target ID>"
         label:
           type:
           - string
@@ -13134,7 +13087,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
     IntegrationConfigBacklog:
       type: object
       title: Backlog settings
@@ -13156,7 +13108,6 @@ components:
           title: API Key
           description: Your Backlog API key (generate one in Personal Settings > API).
             Never returned. Leave it out of an update to keep it.
-          example: "<API Key>"
           writeOnly: true
         backlog_project_id:
           type:
@@ -13166,7 +13117,6 @@ components:
           description: The Backlog project to create issues in. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
-          example: "<Project>"
         issue_type_id:
           type:
           - string
@@ -13175,7 +13125,6 @@ components:
           description: The type of issue to create. The web UI loads the choices from
             the connected account. Through the API, send the value itself, as that
             service's API returns it.
-          example: "<Issue Type>"
         priority_id:
           type:
           - string
@@ -13184,7 +13133,6 @@ components:
           description: The priority level for new issues. The web UI loads the choices
             from the connected account. Through the API, send the value itself, as
             that service's API returns it.
-          example: "<Priority>"
         resolve_status_id:
           type:
           - string
@@ -13193,7 +13141,6 @@ components:
           description: The status to use when resolving errors. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
-          example: "<Closed Status>"
         reopen_status_id:
           type:
           - string
@@ -13202,7 +13149,6 @@ components:
           description: The status to use when unresolving errors. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
-          example: "<Open Status>"
         label:
           type:
           - string
@@ -13210,7 +13156,6 @@ components:
           maxLength: 100
           title: Label
           description: Optional label to show in the integrations list.
-          example: "<Label>"
         enable_webhook:
           type:
           - boolean
@@ -13778,14 +13723,7 @@ components:
             client that wants stable widgets sends its own. Stick to letters, digits,
             `-` and `_`: the id appears in web UI links.'
         type:
-          type: string
-          enum:
-          - insights_vis
-          - alarms
-          - deployments
-          - checkins
-          - uptime
-          - errors
+          "$ref": "#/components/schemas/DashboardWidgetType"
         grid:
           type: object
           additionalProperties: false

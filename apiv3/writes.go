@@ -171,7 +171,7 @@ type DashboardUpdateParams = gen.DashboardUpdateInput
 type DashboardWidget = gen.DashboardWidgetInput
 
 // DashboardWidgetType names a widget kind: insights_vis, alarms, errors, and so on.
-type DashboardWidgetType = gen.DashboardWidgetInputType
+type DashboardWidgetType = gen.DashboardWidgetType
 
 // Create makes a new dashboard.
 func (s *DashboardsService) Create(ctx context.Context, projectID string, p DashboardCreateParams) (*Dashboard, error) {
