@@ -132,6 +132,9 @@ type Client struct {
 
 	// StatusPages handles the account's status pages.
 	StatusPages *StatusPagesService
+
+	// Deploys handles a project's deploys.
+	Deploys *DeploysService
 }
 
 // NewClient returns a client pointing at the production API, resolving the
@@ -191,6 +194,7 @@ func (c *Client) rebind() *Client {
 	c.Sites = &SitesService{client: c}
 	c.Teams = &TeamsService{client: c}
 	c.StatusPages = &StatusPagesService{client: c}
+	c.Deploys = &DeploysService{client: c}
 	return c
 }
 

@@ -152,3 +152,51 @@ func TestStatusPagesRequests(t *testing.T) {
 		t.Errorf("Delete sent %s %s", got.method, got.path)
 	}
 }
+
+// Deploys page by cursor and filter by environment and who deployed.
+func TestDeploysRequests(t *testing.T) {
+	ctx := context.Background()
+	c, got := captureWrite(t, http.StatusOK, `{"data":[],"time_series":{"has_older":false}}`)
+	if _, err := c.Deploys.List(ctx, "Xk9mZp", Limit(5), Before("cur1"),
+		InEnvironment("production"), DeployedBy("ci")); err != nil {
+		t.Fatalf("List: %v", err)
+	}
+	if got.path != "/v3/projects/Xk9mZp/deploys" {
+		t.Errorf("path = %s", got.path)
+	}
+	for key, want := range map[string]string{"limit": "5", "before": "cur1", "environment": "production", "local_username": "ci"} {
+		if got.query.Get(key) != want {
+			t.Errorf("%s = %q, want %q (query %s)", key, got.query.Get(key), want, got.query.Encode())
+		}
+	}
+
+	c, got = captureWrite(t, http.StatusOK, `{"data":{"id":"d1","project_id":"Xk9mZp","environment":"production","created_at":"2026-10-06T00:00:00Z"}}`)
+	if _, err := c.Deploys.Get(ctx, "Xk9mZp", "d1"); err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if got.path != "/v3/projects/Xk9mZp/deploys/d1" {
+		t.Errorf("path = %s", got.path)
+	}
+}
+
+func TestSiteOutagesAndChecksRequests(t *testing.T) {
+	id := uuid.MustParse("9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47")
+	ctx := context.Background()
+	empty := `{"data":[],"time_series":{"has_older":false}}`
+
+	c, got := captureWrite(t, http.StatusOK, empty)
+	if _, err := c.Sites.ListOutages(ctx, "Xk9mZp", id, Limit(10)); err != nil {
+		t.Fatalf("ListOutages: %v", err)
+	}
+	if got.path != "/v3/projects/Xk9mZp/sites/"+id.String()+"/outages" || got.query.Get("limit") != "10" {
+		t.Errorf("ListOutages sent %s?%s", got.path, got.query.Encode())
+	}
+
+	c, got = captureWrite(t, http.StatusOK, empty)
+	if _, err := c.Sites.ListUptimeChecks(ctx, "Xk9mZp", id); err != nil {
+		t.Fatalf("ListUptimeChecks: %v", err)
+	}
+	if got.path != "/v3/projects/Xk9mZp/sites/"+id.String()+"/checks" {
+		t.Errorf("ListUptimeChecks sent %s", got.path)
+	}
+}

@@ -42,6 +42,10 @@ type requestOptions struct {
 	order   string
 	name    string
 
+	// Deploy filters.
+	environment   string
+	localUsername string
+
 	// Time filters, as Unix seconds. Zero means unset — these endpoints have no
 	// meaningful use for the epoch.
 	createdAfter   float64
@@ -186,6 +190,29 @@ func (o nameOption) listAll()                 {}
 // Named filters a project or team listing to the one with exactly this name.
 func Named(name string) ListAllOption {
 	return nameOption{name: name}
+}
+
+// environmentOption filters a deploy listing by environment.
+type environmentOption struct{ name string }
+
+func (o environmentOption) apply(ro *requestOptions) { ro.environment = o.name }
+func (o environmentOption) listAll()                 {}
+
+// InEnvironment filters a deploy listing to one environment, e.g. "production".
+func InEnvironment(name string) ListAllOption {
+	return environmentOption{name: name}
+}
+
+// deployedByOption filters a deploy listing by who recorded the deploy.
+type deployedByOption struct{ username string }
+
+func (o deployedByOption) apply(ro *requestOptions) { ro.localUsername = o.username }
+func (o deployedByOption) listAll()                 {}
+
+// DeployedBy filters a deploy listing to the deploys recorded under one
+// local_username.
+func DeployedBy(username string) ListAllOption {
+	return deployedByOption{username: username}
 }
 
 // orderOption sorts a fault listing.

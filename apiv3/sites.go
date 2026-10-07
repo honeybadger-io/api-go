@@ -88,3 +88,68 @@ func (s *SitesService) Delete(ctx context.Context, projectID string, siteID Site
 		return s.client.gen().DeleteSite(ctx, projectID, siteID)
 	})
 }
+
+// Outage is one period a site was down, with the status and reason from the
+// check that found it.
+type Outage = gen.Outage
+
+// UptimeCheck is one check of a site from one location.
+type UptimeCheck = gen.UptimeCheck
+
+// ListOutages returns one page of a site's outages, newest first. Limit sizes
+// the page; follow the response's older link, or use ListAllOutages, for more.
+func (s *SitesService) ListOutages(ctx context.Context, projectID string, siteID SiteID, opts ...Option) (*ListResponse[Outage], error) {
+	return s.listOutages(ctx, projectID, siteID, resolve(opts))
+}
+
+// ListAllOutages returns every outage for a site, walking from newest to oldest.
+func (s *SitesService) ListAllOutages(ctx context.Context, projectID string, siteID SiteID, opts ...ListAllOption) ([]Outage, error) {
+	ro := resolveListAll(opts)
+	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[Outage], error) {
+		if link != "" {
+			return followTimeSeries[Outage](ctx, s.client, link)
+		}
+		return s.listOutages(ctx, projectID, siteID, ro)
+	})
+}
+
+func (s *SitesService) listOutages(ctx context.Context, projectID string, siteID SiteID, ro requestOptions) (*ListResponse[Outage], error) {
+	params := &gen.ListOutagesParams{}
+	if ro.limit > 0 {
+		limit := gen.Limit(ro.limit)
+		params.Limit = &limit
+	}
+	return listTimeSeries[Outage](ctx, s.client, "listOutages", func(ctx context.Context) (*http.Response, error) {
+		return s.client.gen().ListOutages(ctx, projectID, siteID, params)
+	})
+}
+
+// ListUptimeChecks returns one page of a site's checks, newest first. Limit
+// sizes the page; follow the response's older link, or use
+// ListAllUptimeChecks, for more.
+func (s *SitesService) ListUptimeChecks(ctx context.Context, projectID string, siteID SiteID, opts ...Option) (*ListResponse[UptimeCheck], error) {
+	return s.listUptimeChecks(ctx, projectID, siteID, resolve(opts))
+}
+
+// ListAllUptimeChecks returns every check for a site, walking from newest to
+// oldest. A busy site has many; bound the walk with Limit.
+func (s *SitesService) ListAllUptimeChecks(ctx context.Context, projectID string, siteID SiteID, opts ...ListAllOption) ([]UptimeCheck, error) {
+	ro := resolveListAll(opts)
+	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[UptimeCheck], error) {
+		if link != "" {
+			return followTimeSeries[UptimeCheck](ctx, s.client, link)
+		}
+		return s.listUptimeChecks(ctx, projectID, siteID, ro)
+	})
+}
+
+func (s *SitesService) listUptimeChecks(ctx context.Context, projectID string, siteID SiteID, ro requestOptions) (*ListResponse[UptimeCheck], error) {
+	params := &gen.ListUptimeChecksParams{}
+	if ro.limit > 0 {
+		limit := gen.Limit(ro.limit)
+		params.Limit = &limit
+	}
+	return listTimeSeries[UptimeCheck](ctx, s.client, "listUptimeChecks", func(ctx context.Context) (*http.Response, error) {
+		return s.client.gen().ListUptimeChecks(ctx, projectID, siteID, params)
+	})
+}
