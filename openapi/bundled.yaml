@@ -6227,8 +6227,6 @@ components:
       - rate
       - threshold
       - notification_limit
-      - all_sites
-      - all_check_ins
       - filters
       - links
       - events
@@ -6267,31 +6265,29 @@ components:
           items:
             type: string
           description: Event types this channel listens for
-        all_sites:
-          type: boolean
-          description: 'Whether the integration follows every site in the project,
-            including ones added later. When true, site_ids is [].
-
-            '
-        all_check_ins:
-          type: boolean
-          description: 'Whether the integration follows every check-in in the project,
-            including ones added later. When true, check_in_ids is [].
-
-            '
         site_ids:
           uniqueItems: true
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             type: string
             format: uuid
-          description: Identifiers of sites this channel monitors
+          description: 'Sites whose up and down events this integration receives.
+            null means every site in the project, including ones added later.
+
+            '
         check_in_ids:
           uniqueItems: true
-          type: array
+          type:
+          - array
+          - 'null'
           items:
             type: string
-          description: IDs of check-ins this channel monitors
+          description: 'Check-ins whose events this integration receives. null means
+            every check-in in the project, including ones added later.
+
+            '
         excluded_environments:
           uniqueItems: true
           type: array
@@ -7043,33 +7039,15 @@ components:
           - 'null'
           description: Maximum notifications in a 10-minute window before flood control.
             Send null to remove the limit.
-        all_sites:
-          type: boolean
-          default: false
-          description: 'Follow every site in the project, including ones added later.
-            When true, site_ids must be empty or left out, and reads return []. Sending
-            a non-empty site_ids turns it off. With it off and site_ids empty, the
-            integration gets no up or down events.
-
-            '
-        all_check_ins:
-          type: boolean
-          default: false
-          description: 'Follow every check-in in the project, including ones added
-            later. When true, check_in_ids must be empty or left out, and reads return
-            []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids
-            empty, the integration gets no check-in events.
-
-            '
         site_ids:
           type:
           - array
           - 'null'
-          description: 'Specific sites whose up and down events this integration receives.
-            An empty list turns site notifications off unless all_sites is true; a
-            non-empty list with all_sites: true is 422. An ID that isn''t one of this
-            project''s sites fails the request with 422. Send null or [] to clear.
-            A set; order is ignored and duplicates are dropped.
+          description: 'Sites whose up and down events this integration receives.
+            null follows every site in the project, including ones added later; a
+            create that leaves it out does the same. [] follows none, and a list follows
+            just those sites. An ID that isn''t one of this project''s sites fails
+            the request with 422. A set; order is ignored and duplicates are dropped.
 
             '
           items:
@@ -7079,11 +7057,11 @@ components:
           type:
           - array
           - 'null'
-          description: 'Specific check-ins whose events this integration receives.
-            An empty list turns check-in notifications off unless all_check_ins is
-            true; a non-empty list with all_check_ins: true is 422. An ID that isn''t
-            one of this project''s check-ins fails the request with 422. Send null
-            or [] to clear. A set; order is ignored and duplicates are dropped.
+          description: 'Check-ins whose events this integration receives. null follows
+            every check-in in the project, including ones added later; a create that
+            leaves it out does the same. [] follows none, and a list follows just
+            those check-ins. An ID that isn''t one of this project''s check-ins fails
+            the request with 422. A set; order is ignored and duplicates are dropped.
 
             '
           items:
@@ -7209,53 +7187,33 @@ components:
           - 'null'
           description: Maximum notifications in a 10-minute window before flood control.
             Send null to remove the limit.
-        all_sites:
-          type: boolean
-          default: false
-          description: 'Follow every site in the project, including ones added later.
-            When true, site_ids must be empty or left out, and reads return []. Sending
-            a non-empty site_ids turns it off. With it off and site_ids empty, the
-            integration gets no up or down events.
-
-            '
-        all_check_ins:
-          type: boolean
-          default: false
-          description: 'Follow every check-in in the project, including ones added
-            later. When true, check_in_ids must be empty or left out, and reads return
-            []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids
-            empty, the integration gets no check-in events.
-
-            '
         site_ids:
           type:
           - array
           - 'null'
-          description: 'Specific sites whose up and down events this integration receives.
-            An empty list turns site notifications off unless all_sites is true; a
-            non-empty list with all_sites: true is 422. An ID that isn''t one of this
-            project''s sites fails the request with 422. Send null or [] to clear.
-            A set; order is ignored and duplicates are dropped.
+          description: 'Sites whose up and down events this integration receives.
+            null follows every site in the project, including ones added later; a
+            create that leaves it out does the same. [] follows none, and a list follows
+            just those sites. An ID that isn''t one of this project''s sites fails
+            the request with 422. A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
             format: uuid
-          default: []
         check_in_ids:
           type:
           - array
           - 'null'
-          description: 'Specific check-ins whose events this integration receives.
-            An empty list turns check-in notifications off unless all_check_ins is
-            true; a non-empty list with all_check_ins: true is 422. An ID that isn''t
-            one of this project''s check-ins fails the request with 422. Send null
-            or [] to clear. A set; order is ignored and duplicates are dropped.
+          description: 'Check-ins whose events this integration receives. null follows
+            every check-in in the project, including ones added later; a create that
+            leaves it out does the same. [] follows none, and a list follows just
+            those check-ins. An ID that isn''t one of this project''s check-ins fails
+            the request with 422. A set; order is ignored and duplicates are dropped.
 
             '
           items:
             type: string
-          default: []
         alarm_alert_ids:
           type:
           - array

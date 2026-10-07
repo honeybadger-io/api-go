@@ -569,24 +569,29 @@ func TestAlarmsUpdateResetsStreamsWithNull(t *testing.T) {
 	}
 }
 
-// An integration can follow every site, filter an event by query, and clear a
-// setting with an explicit null, which is how Terraform removes one.
+// An integration can follow every site (site_ids null), follow no check-ins
+// (check_in_ids []), filter an event by query, and clear a setting with an
+// explicit null, which is how Terraform removes one.
 func TestIntegrationsUpdateFollowsAllSitesFiltersAndClears(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK,
 		`{"data":{"id":"i1","project_id":"Xk9mZp","type":"WebHook","active":true,"links":{"web":"https://app/x"}}}`)
 
-	all := true
 	filter := IntegrationFilter{Event: "occurred", Query: "environment:production"}
 	if _, err := c.Integrations.Update(context.Background(), "Xk9mZp", "i1", IntegrationUpdateParams{
-		AllSites: &all,
-		Filters:  nullable.NewNullableWithValue([]IntegrationFilter{filter}),
-		Rate:     nullable.NewNullNullable[string](),
+		SiteIds:    nullable.NewNullNullable[[]SiteID](),
+		CheckInIds: nullable.NewNullableWithValue([]string{}),
+		Filters:    nullable.NewNullableWithValue([]IntegrationFilter{filter}),
+		Rate:       nullable.NewNullNullable[string](),
 	}); err != nil {
 		t.Fatalf("Update: %v", err)
 	}
 
-	if got.body["all_sites"] != true {
-		t.Errorf("all_sites = %v, want true", got.body["all_sites"])
+	// null and [] mean different things here, so both must reach the wire as sent.
+	if v, present := got.body["site_ids"]; !present || v != nil {
+		t.Errorf("site_ids = %v (present %v), want an explicit null for every site", v, present)
+	}
+	if v, ok := got.body["check_in_ids"].([]any); !ok || len(v) != 0 {
+		t.Errorf("check_in_ids = %v, want [] for none", got.body["check_in_ids"])
 	}
 	filters, ok := got.body["filters"].([]any)
 	if !ok || len(filters) != 1 {
@@ -598,7 +603,7 @@ func TestIntegrationsUpdateFollowsAllSitesFiltersAndClears(t *testing.T) {
 	if v, present := got.body["rate"]; !present || v != nil {
 		t.Errorf("rate = %v (present %v), want an explicit null", v, present)
 	}
-	for _, absent := range []string{"site_ids", "events", "threshold"} {
+	for _, absent := range []string{"events", "threshold"} {
 		if _, present := got.body[absent]; present {
 			t.Errorf("%s was sent unset", absent)
 		}

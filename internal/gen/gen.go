@@ -2959,14 +2959,8 @@ type Integration struct {
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives
 	AlarmOkIds []string `json:"alarm_ok_ids"`
 
-	// AllCheckIns Whether the integration follows every check-in in the project, including ones added later. When true, check_in_ids is [].
-	AllCheckIns bool `json:"all_check_ins"`
-
-	// AllSites Whether the integration follows every site in the project, including ones added later. When true, site_ids is [].
-	AllSites bool `json:"all_sites"`
-
-	// CheckInIds IDs of check-ins this channel monitors
-	CheckInIds []string `json:"check_in_ids"`
+	// CheckInIds Check-ins whose events this integration receives. null means every check-in in the project, including ones added later.
+	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids"`
 
 	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Write-only secrets are never returned; everything else, webhook URLs included, comes back as stored.
 	Config map[string]interface{} `json:"config"`
@@ -3010,8 +3004,8 @@ type Integration struct {
 	// Rate Rate period for rate_exceeded (e.g. min, hour)
 	Rate string `json:"rate"`
 
-	// SiteIds Identifiers of sites this channel monitors
-	SiteIds []openapi_types.UUID `json:"site_ids"`
+	// SiteIds Sites whose up and down events this integration receives. null means every site in the project, including ones added later.
+	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids"`
 
 	// Threshold Occurrence threshold before rate_exceeded fires
 	Threshold int `json:"threshold"`
@@ -3606,13 +3600,7 @@ type IntegrationCreateInput struct {
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
 	AlarmOkIds nullable.Nullable[[]string] `json:"alarm_ok_ids,omitempty"`
 
-	// AllCheckIns Follow every check-in in the project, including ones added later. When true, check_in_ids must be empty or left out, and reads return []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids empty, the integration gets no check-in events.
-	AllCheckIns *bool `json:"all_check_ins,omitempty"`
-
-	// AllSites Follow every site in the project, including ones added later. When true, site_ids must be empty or left out, and reads return []. Sending a non-empty site_ids turns it off. With it off and site_ids empty, the integration gets no up or down events.
-	AllSites *bool `json:"all_sites,omitempty"`
-
-	// CheckInIds Specific check-ins whose events this integration receives. An empty list turns check-in notifications off unless all_check_ins is true; a non-empty list with all_check_ins: true is 422. An ID that isn't one of this project's check-ins fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	// CheckInIds Check-ins whose events this integration receives. null follows every check-in in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those check-ins. An ID that isn't one of this project's check-ins fails the request with 422. A set; order is ignored and duplicates are dropped.
 	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids,omitempty"`
 
 	// Config The type's settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
@@ -3636,7 +3624,7 @@ type IntegrationCreateInput struct {
 	// Rate Rate threshold period (e.g. min, hour). Send null to reset to wday.
 	Rate nullable.Nullable[string] `json:"rate,omitempty"`
 
-	// SiteIds Specific sites whose up and down events this integration receives. An empty list turns site notifications off unless all_sites is true; a non-empty list with all_sites: true is 422. An ID that isn't one of this project's sites fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. An ID that isn't one of this project's sites fails the request with 422. A set; order is ignored and duplicates are dropped.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
 
 	// Threshold Number of occurrences before rate_exceeded fires. Send null to reset to 100.
@@ -3675,13 +3663,7 @@ type IntegrationUpdateInput struct {
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
 	AlarmOkIds nullable.Nullable[[]string] `json:"alarm_ok_ids,omitempty"`
 
-	// AllCheckIns Follow every check-in in the project, including ones added later. When true, check_in_ids must be empty or left out, and reads return []. Sending a non-empty check_in_ids turns it off. With it off and check_in_ids empty, the integration gets no check-in events.
-	AllCheckIns *bool `json:"all_check_ins,omitempty"`
-
-	// AllSites Follow every site in the project, including ones added later. When true, site_ids must be empty or left out, and reads return []. Sending a non-empty site_ids turns it off. With it off and site_ids empty, the integration gets no up or down events.
-	AllSites *bool `json:"all_sites,omitempty"`
-
-	// CheckInIds Specific check-ins whose events this integration receives. An empty list turns check-in notifications off unless all_check_ins is true; a non-empty list with all_check_ins: true is 422. An ID that isn't one of this project's check-ins fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	// CheckInIds Check-ins whose events this integration receives. null follows every check-in in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those check-ins. An ID that isn't one of this project's check-ins fails the request with 422. A set; order is ignored and duplicates are dropped.
 	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids,omitempty"`
 
 	// Config Type-specific settings, the same keys a GET returns under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Merged into the stored settings: a key left out keeps its value; a key sent as null is cleared, or reset to its default. Secrets are never returned; leave them out to keep them. A key the type doesn't have, or a value with leading or trailing whitespace on a setting that doesn't allow it, is 422. Sending a setting outside `config` is refused with 422.
@@ -3705,7 +3687,7 @@ type IntegrationUpdateInput struct {
 	// Rate Rate threshold period (e.g. min, hour). Send null to reset to wday.
 	Rate nullable.Nullable[string] `json:"rate,omitempty"`
 
-	// SiteIds Specific sites whose up and down events this integration receives. An empty list turns site notifications off unless all_sites is true; a non-empty list with all_sites: true is 422. An ID that isn't one of this project's sites fails the request with 422. Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. An ID that isn't one of this project's sites fails the request with 422. A set; order is ignored and duplicates are dropped.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
 
 	// Threshold Number of occurrences before rate_exceeded fires. Send null to reset to 100.

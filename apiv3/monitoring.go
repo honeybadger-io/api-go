@@ -157,6 +157,11 @@ type IntegrationEvent = gen.IntegrationEvent
 // IntegrationUpdateParams are the fields an update can change. Unset fields are
 // left as they are and a null clears one; Config carries only the settings
 // being changed.
+//
+// SiteIds and CheckInIds are the exception: null follows every site or
+// check-in, including ones added later, and [] follows none. Leaving them out
+// on create follows every one, as the UI does; on update it keeps the stored
+// value. A read returns null for "every".
 type IntegrationUpdateParams = gen.IntegrationUpdateInput
 
 // IntegrationFilter limits one event to the errors matching Query. Filters on an
