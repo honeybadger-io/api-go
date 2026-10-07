@@ -2058,7 +2058,7 @@ type CheckIn struct {
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
 
-	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text. Zero reads as `00:00:00`.
+	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`), and zero reads `00:00:00`; every form a read returns can be written back. Compare periods by duration, not text. Zero reads as `00:00:00`.
 	GracePeriod string `json:"grace_period"`
 
 	// Id Unique identifier
@@ -3901,7 +3901,7 @@ type Project struct {
 	// DisablePublicLinks Whether public error links are disabled
 	DisablePublicLinks bool `json:"disable_public_links"`
 
-	// EarliestNoticeAt Earliest available notice (based on retention)
+	// EarliestNoticeAt The start of the retention window: now minus the project's purge_days (or the account's retention when unset), at most 180 days. Computed on each read, so it moves forward with the clock.
 	EarliestNoticeAt nullable.Nullable[time.Time] `json:"earliest_notice_at"`
 
 	// Environments List of environment names seen in this project
