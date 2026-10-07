@@ -24,7 +24,7 @@ type SiteUpdateParams = gen.SiteInput
 
 // The site settings that take one of a fixed set of values. Use the spec's
 // values directly: SiteFrequency is minutes between checks (1, 2, 5 or 15), and
-// the rest are strings such as SiteLocation("us-east").
+// the rest are strings such as SiteLocation("Virginia").
 type (
 	SiteFrequency     = gen.SiteFrequency
 	SiteLocation      = gen.SiteLocation

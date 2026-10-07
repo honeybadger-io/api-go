@@ -48,14 +48,8 @@ func (s *CheckInsService) Get(ctx context.Context, projectID, checkInID string) 
 	})
 }
 
-// ListEvents returns one page of a check-in's events, newest first.
-//
-// Only Limit applies here. The endpoint's other parameter, created_before, is
-// deliberately not exposed: the spec types it as `number`, which generates a
-// float32, and a float32 cannot represent an epoch second — at current
-// timestamps its precision is coarser than two minutes, so paging by it would
-// silently skip or repeat events. Walk with ListAllEvents instead, which follows
-// links and never has to name a timestamp.
+// ListEvents returns one page of a check-in's events, newest first. Limit sizes
+// the page and OlderThan pages back; ListAllEvents walks them all.
 func (s *CheckInsService) ListEvents(ctx context.Context, projectID, checkInID string, opts ...Option) (*ListResponse[CheckInEvent], error) {
 	return s.listEvents(ctx, projectID, checkInID, resolve(opts))
 }

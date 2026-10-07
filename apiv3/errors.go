@@ -41,7 +41,6 @@ const (
 	CodeStreamsProvisioning   Code = "streams_provisioning"
 	CodeMaintenanceMode       Code = "maintenance_mode"
 	CodeInvalidParameter      Code = "invalid_parameter"
-	CodeInvalidID             Code = "invalid_id"
 	CodeForbiddenAttributes   Code = "forbidden_attributes"
 	CodeServiceUnavailable    Code = "service_unavailable"
 	CodeAmbiguousAccount      Code = "ambiguous_account"
@@ -75,7 +74,6 @@ var (
 	ErrStreamsProvisioning   = &Error{Code: CodeStreamsProvisioning}
 	ErrMaintenanceMode       = &Error{Code: CodeMaintenanceMode}
 	ErrInvalidParameter      = &Error{Code: CodeInvalidParameter}
-	ErrInvalidID             = &Error{Code: CodeInvalidID}
 	ErrForbiddenAttributes   = &Error{Code: CodeForbiddenAttributes}
 	ErrServiceUnavailable    = &Error{Code: CodeServiceUnavailable}
 	ErrAmbiguousAccount      = &Error{Code: CodeAmbiguousAccount}

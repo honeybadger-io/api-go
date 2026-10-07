@@ -9,8 +9,8 @@ import (
 	"testing"
 )
 
-// Every error code the spec declares has a Code constant, so a new one can't
-// slip in unnoticed. Code stays an open string; this only keeps the named set
+// The Code constants and the spec's error codes match both ways, so a new code
+// can't slip in unnoticed and a dropped one doesn't linger. Code stays an open string; this only keeps the named set
 // complete.
 func TestCodesCoverTheSpecsErrorCodes(t *testing.T) {
 	declared := stringConstants(t, "errors.go", "Code")
@@ -20,6 +20,7 @@ func TestCodesCoverTheSpecsErrorCodes(t *testing.T) {
 		t.Fatal(err)
 	}
 	found := 0
+	inSpec := map[string]bool{}
 	for _, decl := range file.Decls {
 		gd, ok := decl.(*ast.GenDecl)
 		if !ok || gd.Tok != token.CONST {
@@ -33,6 +34,7 @@ func TestCodesCoverTheSpecsErrorCodes(t *testing.T) {
 			for _, v := range vs.Values {
 				code := strings.Trim(v.(*ast.BasicLit).Value, `"`)
 				found++
+				inSpec[code] = true
 				if !declared[code] {
 					t.Errorf("the spec declares error code %q but apiv3 has no Code constant for it", code)
 				}
@@ -41,6 +43,14 @@ func TestCodesCoverTheSpecsErrorCodes(t *testing.T) {
 	}
 	if found == 0 {
 		t.Fatal("found no ErrorBodyCode values in gen.go; has the generated name changed?")
+	}
+	// The other way too: a Code the spec no longer declares is a constant callers
+	// would compare against in vain. fault_merged is the exception: the client
+	// assigns it to a merged fault's 301, which has no body to carry a code.
+	for code := range declared {
+		if !inSpec[code] && code != "fault_merged" {
+			t.Errorf("apiv3 has a Code constant for %q, which the spec no longer declares", code)
+		}
 	}
 }
 

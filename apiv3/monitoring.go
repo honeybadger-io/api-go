@@ -146,6 +146,10 @@ func (s *IntegrationsService) Get(ctx context.Context, projectID, integrationID 
 // integration and Config holds that type's settings, the same keys a GET returns
 // under config; the spec's IntegrationConfig<Type> schemas list them, and the API
 // refuses a missing or unknown one with 422.
+//
+// SiteIds and CheckInIds choose what the integration follows: left out or null
+// follows every site or check-in, including ones added later, as the UI does;
+// [] follows none; a list follows just those.
 type IntegrationCreateParams = gen.IntegrationCreateInput
 
 // IntegrationType names an integration kind: WebHook, Email, Slack, and so on.
@@ -159,9 +163,8 @@ type IntegrationEvent = gen.IntegrationEvent
 // being changed.
 //
 // SiteIds and CheckInIds are the exception: null follows every site or
-// check-in, including ones added later, and [] follows none. Leaving them out
-// on create follows every one, as the UI does; on update it keeps the stored
-// value. A read returns null for "every".
+// check-in, including ones added later, and [] follows none. Left out, they keep
+// the stored value. A read returns null for "every".
 type IntegrationUpdateParams = gen.IntegrationUpdateInput
 
 // IntegrationFilter limits one event to the errors matching Query. Filters on an

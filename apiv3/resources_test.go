@@ -74,12 +74,12 @@ func TestTeamsRequests(t *testing.T) {
 
 func TestSitesRequests(t *testing.T) {
 	id := uuid.MustParse("9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47")
-	site := `{"data":{"id":"9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47","project_id":"Xk9mZp","name":"Home","url":"https://example.com","active":true,"frequency":5,"locations":["us-east"],"match_type":"success","state":"up","created_at":"2026-10-06T00:00:00Z","links":{"web":"https://app/x"}}}`
+	site := `{"data":{"id":"9f8b6d2e-4c1a-4b7f-9e35-2a6c8d0f1b47","project_id":"Xk9mZp","name":"Home","url":"https://example.com","active":true,"frequency":5,"locations":["Virginia"],"match_type":"success","state":"up","created_at":"2026-10-06T00:00:00Z","links":{"web":"https://app/x"}}}`
 	ctx := context.Background()
 
 	c, got := captureWrite(t, http.StatusCreated, site)
 	created, err := c.Sites.Create(ctx, "Xk9mZp", SiteCreateParams{Url: "https://example.com",
-		Locations: nullable.NewNullableWithValue([]SiteLocation{"us-east"})})
+		Locations: nullable.NewNullableWithValue([]SiteLocation{"Virginia"})})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
 	}
@@ -201,5 +201,9 @@ func TestSiteOutagesAndChecksRequests(t *testing.T) {
 	}
 	if got.path != "/v3/projects/Xk9mZp/sites/"+id.String()+"/checks" {
 		t.Errorf("ListUptimeChecks sent %s", got.path)
+	}
+	// Without OlderThan the first page is the newest, so no position is sent.
+	if got.query.Has("created_before") {
+		t.Errorf("created_before = %q, want it left out", got.query.Get("created_before"))
 	}
 }
