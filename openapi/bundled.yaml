@@ -6047,8 +6047,8 @@ components:
           type:
           - string
           - 'null'
-          description: What the alarm watches for, shown with it in Honeybadger. Send
-            null to clear.
+          description: What the alarm watches for, shown with it in Honeybadger. Null
+            clears it.
         query:
           type: string
           description: BadgerQL evaluated on each check
@@ -6090,8 +6090,8 @@ components:
           type:
           - string
           - 'null'
-          description: What the alarm watches for, shown with it in Honeybadger. Send
-            null to clear.
+          description: What the alarm watches for, shown with it in Honeybadger. Null
+            clears it.
         query:
           type: string
           description: BadgerQL query evaluated on each check
@@ -6103,7 +6103,7 @@ components:
           items:
             type: string
           description: 'Stream identifiers to query. A set; can''t be empty. Order
-            is ignored and duplicates are dropped. Send null to reset to every current
+            is ignored and duplicates are dropped. Null resets it to every current
             stream in the project.
 
             '
@@ -6129,6 +6129,11 @@ components:
       required:
       - type
       - config
+      example:
+        type: alert_result_count
+        config:
+          operator: gt
+          value: 10
       properties:
         type:
           type: string
@@ -6351,7 +6356,7 @@ components:
           readOnly: true
           type: string
           format: date-time
-          description: When the channel was created
+          description: When the integration was created
         links:
           "$ref": "#/components/schemas/WebLinks"
       allOf:
@@ -7038,19 +7043,19 @@ components:
           - 'null'
           description: 'Events this integration notifies on. On create, defaults to
             the type''s default events. An event the type doesn''t support is refused
-            with 422. Send null to reset to the type''s defaults. A set; order is
-            ignored and duplicates are dropped. `up` and `down` need uptime monitoring,
-            `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding
-            one on a plan without it is 403 feature_unavailable, and defaults leave
-            them out on those plans.
+            with 422. Null resets it to the type''s defaults. A set; order is ignored
+            and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded`
+            escalation, and `volume_spike` anomaly detection; adding one on a plan
+            without it is 403 feature_unavailable, and defaults leave them out on
+            those plans.
 
             '
           items:
             "$ref": "#/components/schemas/IntegrationEvent"
         rate:
           default: wday
-          description: Period the rate_exceeded threshold counts over. Send null to
-            reset to wday.
+          description: Period the rate_exceeded threshold counts over. Null resets
+            it to wday.
           anyOf:
           - "$ref": "#/components/schemas/IntegrationRate"
           - type: 'null'
@@ -7059,14 +7064,14 @@ components:
           - integer
           - 'null'
           default: 100
-          description: Number of occurrences before rate_exceeded fires. Send null
-            to reset to 100.
+          description: Number of occurrences before rate_exceeded fires. Null resets
+            it to 100.
         notification_limit:
           type:
           - integer
           - 'null'
           description: Maximum notifications in a 10-minute window before flood control.
-            Send null to remove the limit.
+            Null removes the limit.
         site_ids:
           type:
           - array
@@ -7099,7 +7104,7 @@ components:
           - array
           - 'null'
           description: IDs of alarms whose alert events this integration receives.
-            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+            Null or empty clears it. A set; order is ignored and duplicates are dropped.
           items:
             type: string
         alarm_ok_ids:
@@ -7107,7 +7112,7 @@ components:
           - array
           - 'null'
           description: IDs of alarms whose recovery events this integration receives.
-            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+            Null or empty clears it. A set; order is ignored and duplicates are dropped.
           items:
             type: string
         excluded_environments:
@@ -7116,9 +7121,9 @@ components:
           - 'null'
           description: 'Errors from these environments never notify through this integration.
             Takes precedence over included_environments. Names are stored as given,
-            so an environment can be excluded before it first reports. Send null or
-            [] to clear. Applies only on plans with environment settings; changing
-            it on other plans is 403 feature_unavailable. Reads return what''s stored.
+            so an environment can be excluded before it first reports. Null or empty
+            clears it. Applies only on plans with environment settings; changing it
+            on other plans is 403 feature_unavailable. Reads return what''s stored.
             A set; order is ignored and duplicates are dropped.
 
             '
@@ -7130,8 +7135,8 @@ components:
           - 'null'
           description: 'When non-empty, only errors from these environments notify
             through this integration, including environments that haven''t reported
-            yet. Empty means every environment not excluded. Send null or [] to clear.
-            Applies only on plans with environment settings; changing it on other
+            yet. Empty means every environment not excluded. Null or empty clears
+            it. Applies only on plans with environment settings; changing it on other
             plans is 403 feature_unavailable. Reads return what''s stored. A set;
             order is ignored and duplicates are dropped.
 
@@ -7143,8 +7148,8 @@ components:
           - array
           - 'null'
           description: 'An ordered list. Each event that has a filter notifies only
-            for errors matching its query. Replaces the stored filters; send [] or
-            null to clear. Applies only on plans with integration filters; changing
+            for errors matching its query. Replaces the stored filters; null or empty
+            clears them. Applies only on plans with integration filters; changing
             it on other plans is 403 feature_unavailable. Reads return what''s stored.
 
             '
@@ -7186,19 +7191,19 @@ components:
           - 'null'
           description: 'Events this integration notifies on. On create, defaults to
             the type''s default events. An event the type doesn''t support is refused
-            with 422. Send null to reset to the type''s defaults. A set; order is
-            ignored and duplicates are dropped. `up` and `down` need uptime monitoring,
-            `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding
-            one on a plan without it is 403 feature_unavailable, and defaults leave
-            them out on those plans.
+            with 422. Null resets it to the type''s defaults. A set; order is ignored
+            and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded`
+            escalation, and `volume_spike` anomaly detection; adding one on a plan
+            without it is 403 feature_unavailable, and defaults leave them out on
+            those plans.
 
             '
           items:
             "$ref": "#/components/schemas/IntegrationEvent"
         rate:
           default: wday
-          description: Period the rate_exceeded threshold counts over. Send null to
-            reset to wday.
+          description: Period the rate_exceeded threshold counts over. Null resets
+            it to wday.
           anyOf:
           - "$ref": "#/components/schemas/IntegrationRate"
           - type: 'null'
@@ -7207,14 +7212,14 @@ components:
           - integer
           - 'null'
           default: 100
-          description: Number of occurrences before rate_exceeded fires. Send null
-            to reset to 100.
+          description: Number of occurrences before rate_exceeded fires. Null resets
+            it to 100.
         notification_limit:
           type:
           - integer
           - 'null'
           description: Maximum notifications in a 10-minute window before flood control.
-            Send null to remove the limit.
+            Null removes the limit.
         site_ids:
           type:
           - array
@@ -7247,7 +7252,7 @@ components:
           - array
           - 'null'
           description: IDs of alarms whose alert events this integration receives.
-            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+            Null or empty clears it. A set; order is ignored and duplicates are dropped.
           items:
             type: string
           default: []
@@ -7256,7 +7261,7 @@ components:
           - array
           - 'null'
           description: IDs of alarms whose recovery events this integration receives.
-            Send null or [] to clear. A set; order is ignored and duplicates are dropped.
+            Null or empty clears it. A set; order is ignored and duplicates are dropped.
           items:
             type: string
           default: []
@@ -7266,9 +7271,9 @@ components:
           - 'null'
           description: 'Errors from these environments never notify through this integration.
             Takes precedence over included_environments. Names are stored as given,
-            so an environment can be excluded before it first reports. Send null or
-            [] to clear. Applies only on plans with environment settings; changing
-            it on other plans is 403 feature_unavailable. Reads return what''s stored.
+            so an environment can be excluded before it first reports. Null or empty
+            clears it. Applies only on plans with environment settings; changing it
+            on other plans is 403 feature_unavailable. Reads return what''s stored.
             A set; order is ignored and duplicates are dropped.
 
             '
@@ -7281,8 +7286,8 @@ components:
           - 'null'
           description: 'When non-empty, only errors from these environments notify
             through this integration, including environments that haven''t reported
-            yet. Empty means every environment not excluded. Send null or [] to clear.
-            Applies only on plans with environment settings; changing it on other
+            yet. Empty means every environment not excluded. Null or empty clears
+            it. Applies only on plans with environment settings; changing it on other
             plans is 403 feature_unavailable. Reads return what''s stored. A set;
             order is ignored and duplicates are dropped.
 
@@ -7295,8 +7300,8 @@ components:
           - array
           - 'null'
           description: 'An ordered list. Each event that has a filter notifies only
-            for errors matching its query. Replaces the stored filters; send [] or
-            null to clear. Applies only on plans with integration filters; changing
+            for errors matching its query. Replaces the stored filters; null or empty
+            clears them. Applies only on plans with integration filters; changing
             it on other plans is 403 feature_unavailable. Reads return what''s stored.
 
             '
@@ -7384,9 +7389,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7420,9 +7425,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
-                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7461,9 +7466,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7491,8 +7496,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7520,8 +7524,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7549,8 +7552,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7578,8 +7580,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7610,8 +7611,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7640,8 +7640,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7679,9 +7678,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7709,8 +7708,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7745,9 +7743,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
-                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7776,8 +7774,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7806,8 +7803,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7835,8 +7831,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -7871,9 +7866,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7912,9 +7907,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7953,9 +7948,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -7988,9 +7983,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
-                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8029,9 +8024,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8070,9 +8065,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8133,9 +8128,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8174,9 +8169,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8208,8 +8203,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -8246,9 +8240,9 @@ components:
                 - check_in_missing
                 - check_in_reporting
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8273,8 +8267,8 @@ components:
                 enum:
                 - up
                 - down
-              description: 'Left out or null: `up` and `down`, less any the plan doesn''t
-                include.'
+              description: Defaults to `up` and `down`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8307,8 +8301,7 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, less any the plan doesn't include.
             active:
               default: true
       - if:
@@ -8349,9 +8342,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8389,9 +8382,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8433,9 +8426,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8471,9 +8464,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `up`, `down`, `cert_will_expire`,
-                `check_in_missing`, and `check_in_reporting`, less any the plan doesn''t
-                include.'
+              description: Defaults to `occurred`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8512,9 +8505,9 @@ components:
                 - alarm_alert
                 - alarm_ok
                 - volume_spike
-              description: 'Left out or null: `occurred`, `assigned`, `up`, `down`,
-                `cert_will_expire`, `check_in_missing`, and `check_in_reporting`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `assigned`, `up`, `down`, `cert_will_expire`,
+                `check_in_missing`, and `check_in_reporting`, less any the plan doesn't
+                include.
             active:
               default: true
       - if:
@@ -8547,8 +8540,8 @@ components:
                 - resolved
                 - unresolved
                 - rate_exceeded
-              description: 'Left out or null: `occurred`, `resolved`, and `unresolved`,
-                less any the plan doesn''t include.'
+              description: Defaults to `occurred`, `resolved`, and `unresolved`, less
+                any the plan doesn't include.
             active:
               default: true
       example:
@@ -8560,7 +8553,11 @@ components:
           url: https://example.com/hook
     CheckIn:
       type: object
-      description: A scheduled task check-in monitor
+      description: 'A check-in monitor for a scheduled job. The job requests the check-in''s
+        report URL each time it runs, and Honeybadger alerts when a report doesn''t
+        arrive on schedule.
+
+        '
       required:
       - id
       - project_id
@@ -8684,6 +8681,12 @@ components:
         check_ins:
           type: array
           minItems: 1
+          example:
+          - name: Nightly billing job
+            slug: nightly-billing
+            schedule_type: simple
+            report_period: 1 day
+            grace_period: 15 minutes
           items:
             "$ref": "#/components/schemas/CheckInReplaceEntry"
     CheckInReplaceEntry:
@@ -8824,15 +8827,15 @@ components:
           type:
           - string
           - 'null'
-          description: Send null to clear; an unnamed check-in shows its ID.
+          description: Null clears it; an unnamed check-in shows its ID.
           example: Nightly billing job
         slug:
           type:
           - string
           - 'null'
-          description: 'Short identifier used in the check-in''s reporting URL. Send
-            null to clear. Renaming it breaks jobs reporting to `…/check_in/<project
-            key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
+          description: 'Short identifier used in the check-in''s reporting URL. Null
+            clears it. Renaming it breaks jobs reporting to `…/check_in/<project key>/<slug>`
+            and changes how `PUT /check_ins` matches this check-in.
 
             '
           example: nightly-billing
@@ -8863,8 +8866,8 @@ components:
           default: '00:00:00'
           pattern: "^(\\d+ (second|minute|hour|day|week|month|year)s?)( \\d+ (second|minute|hour|day|week|month|year)s?)*$|^\\d\\d:\\d\\d:\\d\\d$"
           description: 'How long after the expected time before the check-in is considered
-            missing. Same format as `report_period`; zero is `00:00:00`. Send null
-            to reset to zero.
+            missing. Same format as `report_period`; zero is `00:00:00`. Null resets
+            it to zero.
 
             '
           example: 10 minutes
@@ -8882,7 +8885,7 @@ components:
           description: 'Timezone the cron schedule is evaluated in. A Rails/ActiveSupport
             zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not
             `America/Chicago`, which is rejected. Required when `schedule_type` is
-            `cron`. Send null to reset to `UTC`.
+            `cron`. Null resets it to `UTC`.
 
             '
           example: Central Time (US & Canada)
@@ -8961,7 +8964,10 @@ components:
           example: Rolled back, watching for recurrence.
     Dashboard:
       type: object
-      description: An Insights dashboard
+      description: 'An Insights dashboard: a project''s grid of widgets charting queries,
+        errors, uptime, check-ins, deploys and alarms.
+
+        '
       required:
       - id
       - project_id
@@ -9088,12 +9094,13 @@ components:
       properties:
         title:
           type: string
+          example: Production overview
           maxLength: 255
         default_ts:
           type:
           - string
           - 'null'
-          description: Default time range. Send null to clear.
+          description: Default time range. Null clears it.
         widgets:
           type: array
           items:
@@ -9107,12 +9114,13 @@ components:
       properties:
         title:
           type: string
+          example: Production overview
           maxLength: 255
         default_ts:
           type:
           - string
           - 'null'
-          description: Default time range. Send null to clear.
+          description: Default time range. Null clears it.
         widgets:
           type: array
           items:
@@ -9176,7 +9184,10 @@ components:
           description: When the deploy was recorded
     Environment:
       type: object
-      description: A project environment configuration
+      description: 'An environment a project''s errors are reported from, such as
+        production or staging, and whether errors from it send notifications.
+
+        '
       required:
       - id
       - project_id
@@ -9224,8 +9235,7 @@ components:
           - boolean
           - 'null'
           default: true
-          description: Whether errors in this environment notify. Send null for the
-            default.
+          description: Whether errors in this environment notify. Null means the default.
     EnvironmentInput:
       type: object
       description: 'Fields to change on an environment. Omitted fields are unchanged.
@@ -9246,8 +9256,8 @@ components:
           - boolean
           - 'null'
           default: true
-          description: Whether errors in this environment notify. Send null to reset
-            to true.
+          description: Whether errors in this environment notify. Null resets it to
+            true.
     Error:
       type: object
       description: API error response
@@ -10110,7 +10120,10 @@ components:
           example: 25
     Project:
       type: object
-      description: A Honeybadger project
+      description: 'A Honeybadger project: one application or service. Errors, Insights
+        data, uptime sites, check-ins, deploys and integrations all belong to a project.
+
+        '
       required:
       - id
       - account_id
@@ -10293,27 +10306,26 @@ components:
           - boolean
           - 'null'
           default: true
-          description: Resolve every open fault when a deploy is recorded. Send null
-            to reset to true.
+          description: Resolve every open fault when a deploy is recorded. Null resets
+            it to true.
         disable_public_links:
           type:
           - boolean
           - 'null'
           default: false
-          description: Disallow shareable public fault links. Send null to reset to
-            false.
+          description: Disallow shareable public fault links. Null resets it to false.
         language:
           type:
           - string
           - 'null'
-          description: Primary language, used to format backtraces. Send null to clear.
+          description: Primary language, used to format backtraces. Null clears it.
           example: ruby
         user_url:
           type:
           - string
           - 'null'
           description: 'Template for linking a fault''s affected user into your own
-            system. `[user_id]` and `[user_email]` are substituted. Send null to clear.
+            system. `[user_id]` and `[user_email]` are substituted. Null clears it.
 
             '
           example: https://admin.example.com/users/[user_id]
@@ -10322,7 +10334,7 @@ components:
           - string
           - 'null'
           description: 'Template for linking a backtrace line to your source host.
-            `[file]` and `[line]` are substituted. Send null to clear.
+            `[file]` and `[line]` are substituted. Null clears it.
 
             '
           example: https://github.com/acme/app/blob/main/[file]#L[line]
@@ -10331,8 +10343,8 @@ components:
           - string
           - 'null'
           description: 'Context key identifying the affected user, for when it is
-            not in the default `context.user_email` or `context.user_id`. Send null
-            to clear.
+            not in the default `context.user_email` or `context.user_id`. Null clears
+            it.
 
             '
           example: context.account_id
@@ -10340,21 +10352,21 @@ components:
           type:
           - string
           - 'null'
-          description: Asana workspace used by the project's Asana integration. Send
-            null to clear.
+          description: Asana workspace used by the project's Asana integration. Null
+            clears it.
         customer_throttle:
           type:
           - integer
           - 'null'
-          description: Notices accepted per minute before throttling kicks in. Send
-            null to clear.
+          description: Notices accepted per minute before throttling kicks in. Null
+            clears it.
         purge_days:
           type:
           - integer
           - 'null'
           description: 'Days to retain notices. Accepted only on accounts with custom
             retention; otherwise a value other than the current one (on create, the
-            default) is refused with 403 `feature_unavailable`. Send null to clear.
+            default) is refused with 403 `feature_unavailable`. Null clears it.
 
             '
     ProjectKey:
@@ -10418,7 +10430,10 @@ components:
           description: Unique identifier for the request, for correlating with support
     Site:
       type: object
-      description: An uptime monitoring site
+      description: 'A URL Honeybadger checks for uptime from several locations on
+        a schedule, alerting when it goes down and when it recovers.
+
+        '
       required:
       - id
       - project_id
@@ -10591,6 +10606,7 @@ components:
       properties:
         name:
           type: string
+          description: Name shown for the site in Honeybadger and on status pages.
           example: Marketing site
         url:
           type: string
@@ -10600,7 +10616,8 @@ components:
           example: https://www.example.com/health
         match_type:
           default: success
-          description: Send null to reset to success.
+          description: How a check decides the site is up (see SiteMatchType). Null
+            resets it to success.
           anyOf:
           - "$ref": "#/components/schemas/SiteMatchType"
           - type: 'null'
@@ -10611,13 +10628,13 @@ components:
           maxLength: 255
           description: 'What `match_type` compares against (see SiteMatchType). Required
             unless `match_type` is `success`, and must be left out with `success`.
-            Send null to clear.
+            Null clears it.
 
             '
           example: status == 'ok'
         request_method:
           default: GET
-          description: Send null to reset to GET.
+          description: HTTP method each check sends. Null resets it to GET.
           anyOf:
           - "$ref": "#/components/schemas/SiteRequestMethod"
           - type: 'null'
@@ -10627,20 +10644,20 @@ components:
           - 'null'
           default: true
           description: Fail the check when the TLS certificate does not validate.
-            Send null to reset to true.
+            Null resets it to true.
         request_body:
           type:
           - string
           - 'null'
           maxLength: 32768
-          description: Body to send with the request, up to 32 KB. Send null to clear.
+          description: Body to send with the request, up to 32 KB. Null clears it.
         request_headers:
           type:
           - object
           - 'null'
           default: {}
           description: 'Headers to send with the request, as header name to value.
-            Replaces the stored headers; send `{}` or null to clear them.
+            Replaces the stored headers; null or `{}` clears them.
 
             '
           additionalProperties:
@@ -10651,8 +10668,8 @@ components:
         frequency:
           default: 5
           description: 'Minutes between checks. Defaults to 5; plans set the most
-            frequent allowed, and a value under it is 403 `feature_unavailable`. Send
-            null to reset to 5.
+            frequent allowed, and a value under it is 403 `feature_unavailable`. Null
+            resets it to 5.
 
             '
           anyOf:
@@ -10664,8 +10681,8 @@ components:
           - 'null'
           uniqueItems: true
           default: []
-          description: 'A set of location names to check from. [] or null means every
-            location. An unknown name is 422. A set; order is ignored and duplicates
+          description: 'A set of location names to check from. Null or empty means
+            every location. An unknown name is 422. A set; order is ignored and duplicates
             are dropped.
 
             '
@@ -10685,7 +10702,7 @@ components:
           - boolean
           - 'null'
           default: true
-          description: Send null to reset to true.
+          description: Null resets it to true.
         timeout:
           type:
           - integer
@@ -10693,8 +10710,8 @@ components:
           description: 'Request timeout in seconds, 1 to 120, default 30, and less
             than the frequency in seconds. Accepted only on accounts with the uptime-timeout
             feature; otherwise a value other than the current one (on create, the
-            default) is refused with 403 `feature_unavailable`. Send null to reset
-            to the default.
+            default) is refused with 403 `feature_unavailable`. Null resets it to
+            the default.
 
             '
     StatusPage:
@@ -10912,6 +10929,10 @@ components:
         updates:
           type: array
           minItems: 1
+          example:
+          - status: investigating
+            severity: partial_outage
+            message: Some requests to the API are failing. We're looking into it.
           description: Updates to create with the incident; at least one
           items:
             "$ref": "#/components/schemas/IncidentUpdateInput"
@@ -10953,7 +10974,7 @@ components:
           - 'null'
           description: 'Custom domain the page is served on. Unique across Honeybadger.
             An account can set at most 30 domains a week; past that the change is
-            422. Send null to clear.
+            422. Null clears it.
 
             '
           example: status.example.com
@@ -10963,8 +10984,8 @@ components:
           - 'null'
           description: 'Whether the page shows incidents. Requires status page incidents
             on the plan; changing it otherwise is 403 `feature_unavailable`. On create,
-            defaults to whether the plan has them. Send null to reset to that same
-            create default.
+            defaults to whether the plan has them. Null resets it to that same create
+            default.
 
             '
         search_engine_indexing_disabled:
@@ -10972,30 +10993,30 @@ components:
           - boolean
           - 'null'
           default: false
-          description: Asks search engines not to index the page. Send null to reset
-            to false.
+          description: Asks search engines not to index the page. Null resets it to
+            false.
         message_enabled:
           type:
           - boolean
           - 'null'
           default: false
-          description: Shows the message banner. Send null to reset to false.
+          description: Shows the message banner. Null resets it to false.
         message_title:
           type:
           - string
           - 'null'
-          description: The message banner's title. Send null to clear.
+          description: The message banner's title. Null clears it.
         message_body:
           type:
           - string
           - 'null'
-          description: The message banner's text. Send null to clear.
+          description: The message banner's text. Null clears it.
         google_analytics_id:
           type:
           - string
           - 'null'
-          description: A Google Analytics measurement ID for the page. Send null to
-            clear.
+          description: A Google Analytics measurement ID for the page. Null clears
+            it.
         hide_branding:
           type:
           - boolean
@@ -11003,7 +11024,7 @@ components:
           default: false
           description: 'Requires advanced status pages to change; refused with 403
             `feature_unavailable` otherwise. The default (false) or the stored value
-            is accepted on any plan. Send null to reset to false.
+            is accepted on any plan. Null resets it to false.
 
             '
         password_protected:
@@ -11015,7 +11036,7 @@ components:
             the plan to change; refused with 403 `feature_unavailable` otherwise.
             The default (false) or the stored value is accepted on any plan. Turning
             it on needs a username and password, sent or already stored, or it''s
-            422. Send null to reset to false.
+            422. Null resets it to false.
 
             '
         username:
@@ -11049,7 +11070,7 @@ components:
           - 'null'
           default: []
           description: 'Sites listed on the page, in page order, replacing the current
-            list. null or [] removes every site.
+            list. Null or empty removes every site.
 
             '
           items:
@@ -11060,7 +11081,7 @@ components:
           - 'null'
           default: []
           description: 'Check-ins listed on the page, in page order, replacing the
-            current list. null or [] removes every check-in.
+            current list. Null or empty removes every check-in.
 
             '
           items:
@@ -11121,22 +11142,35 @@ components:
           type:
           - string
           - 'null'
+          description: URL the page header links to, usually your own site.
+          example: https://www.example.com
         up_caption:
           type:
           - string
           - 'null'
+          description: Text shown when every check is up. Unset, the page says "All
+            systems are operational".
+          example: Everything is running smoothly
         down_caption:
           type:
           - string
           - 'null'
+          description: Text shown when every check is down. Unset, the page says "All
+            systems are experiencing issues".
+          example: We're working on an outage
         mixed_caption:
           type:
           - string
           - 'null'
+          description: Text shown when only some checks are down. Unset, the page
+            says "Some systems are experiencing issues".
+          example: Some services are degraded
         custom_css:
           type:
           - string
           - 'null'
+          description: CSS added to the page after its own styles.
+          example: ".header { background: #1d4ed8; }"
     StatusPageSiteInput:
       type: object
       description: A site listed on a status page.
@@ -11147,6 +11181,7 @@ components:
           type: string
           format: uuid
           description: Identifier of a site on this account
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
         display_name:
           type:
           - string
@@ -11169,6 +11204,7 @@ components:
         check_in_id:
           type: string
           description: ID of a check-in on this account
+          example: XZbIlD
         display_name:
           type:
           - string
@@ -11222,7 +11258,10 @@ components:
           format: date-time
     Team:
       type: object
-      description: A team within an account
+      description: 'A group of account members. Members of a team can access the team''s
+        projects.
+
+        '
       required:
       - id
       - account_id
@@ -11671,11 +11710,13 @@ components:
           - string
           - 'null'
           title: Subdomain
+          description: Your Campfire subdomain.
         room_name:
           type:
           - string
           - 'null'
           title: Room name
+          description: The Campfire room notifications are posted to.
         token:
           type:
           - string
@@ -11722,6 +11763,7 @@ components:
           title: Api key
           description: Your Datadog API key. Never returned. Leave it out of an update
             to keep it.
+          example: '0123456789abcdef0123456789abcdef'
           writeOnly: true
         endpoint:
           type:
@@ -11737,6 +11779,8 @@ components:
           -
           default: US1
           title: Endpoint
+          description: 'The Datadog site your account is on: `US1` is datadoghq.com,
+            `EU1` is datadoghq.eu.'
         label:
           type:
           - string
@@ -11749,6 +11793,7 @@ components:
           - boolean
           - 'null'
           title: Send metrics
+          description: Report the number of notifications processed every minute.
     IntegrationConfigDiscordWebhook:
       type: object
       title: Discord settings
@@ -11838,6 +11883,7 @@ components:
           - string
           - 'null'
           title: Labels
+          description: A comma-separated list of labels to add to new issues.
         server_url:
           type:
           - string
@@ -11982,6 +12028,7 @@ components:
           - 'null'
           default: https://api.hipchat.com
           title: Server URL
+          description: Base URL of the HipChat server.
           example: https://api.hipchat.com
         auth_token:
           type:
@@ -11996,6 +12043,7 @@ components:
           - string
           - 'null'
           title: Room name
+          description: The HipChat room notifications are posted to.
         color:
           type:
           - string
@@ -12010,11 +12058,13 @@ components:
           -
           default: yellow
           title: Color
+          description: Background color of each message.
         alert:
           type:
           - boolean
           - 'null'
           title: Alert
+          description: Whether each message triggers a HipChat notification.
     IntegrationConfigJira:
       type: object
       title: Jira settings
@@ -12026,6 +12076,7 @@ components:
           - 'null'
           title: Username
           description: Your Jira email address.
+          example: ops@example.com
         password:
           type:
           - string
@@ -12034,18 +12085,22 @@ components:
           title: API Token
           description: You can find or generate your API Token [here](https://id.atlassian.com/manage/api-tokens).
             Never returned. Leave it out of an update to keep it.
+          example: '0123456789abcdef0123456789abcdef'
           writeOnly: true
         server_url:
           type:
           - string
           - 'null'
           title: Server URL
-          example: https://example.com
+          description: Base URL of your Jira server, e.g. https://jira.example.com.
+          example: https://jira.example.com
         project_key:
           type:
           - string
           - 'null'
           title: Project key
+          description: Key of the Jira project new issues are created in, e.g. OPS.
+          example: OPS
         resolve_transition:
           type:
           - string
@@ -12080,6 +12135,7 @@ components:
           - 'null'
           default: Bug
           title: Issue type
+          description: Type of each new issue, as Jira names it.
           example: Bug
         summary_format:
           type:
@@ -12108,6 +12164,8 @@ components:
           - string
           - 'null'
           title: Project key
+          description: Key of the Jira project new issues are created in, e.g. OPS.
+          example: OPS
         resolve_transition:
           type:
           - string
@@ -12143,6 +12201,7 @@ components:
           - 'null'
           default: Bug
           title: Issue type
+          description: Type of each new issue, as Jira names it.
           example: Bug
         summary_format:
           type:
@@ -12186,6 +12245,7 @@ components:
           -
           default: US
           title: Endpoint
+          description: The Opsgenie region your account is on.
         label:
           type:
           - string
@@ -12206,6 +12266,7 @@ components:
           title: API Key
           description: The API key from your [API integration](https://support.atlassian.com/opsgenie/docs/create-a-default-api-integration/)
             in OpsGenie. Never returned. Leave it out of an update to keep it.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
           writeOnly: true
         endpoint:
           type:
@@ -12218,6 +12279,7 @@ components:
           -
           default: US
           title: Endpoint
+          description: The Opsgenie region your account is on.
         label:
           type:
           - string
@@ -12244,6 +12306,7 @@ components:
           format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
+          example: '0123456789abcdef0123456789abcdef01234567'
           writeOnly: true
         resolve_transition:
           type:
@@ -12295,6 +12358,7 @@ components:
           description: 32 character alphanumeric integration key. Select "Honeybadger"
             from the Integration Type menu when creating a service for Honeybadger
             in PagerDuty. Never returned. Leave it out of an update to keep it.
+          example: '0123456789abcdef0123456789abcdef'
           writeOnly: true
         severity:
           type:
@@ -12326,6 +12390,9 @@ components:
           - string
           - 'null'
           title: Account email
+          description: Email address of the Sprint.ly account Honeybadger signs in
+            as.
+          example: dev@example.com
         api_key:
           type:
           - string
@@ -12333,6 +12400,7 @@ components:
           format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
+          example: '0123456789abcdef0123456789abcdef'
           writeOnly: true
         product_id:
           type:
@@ -12359,6 +12427,7 @@ components:
           title: Board
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: 5f1a2b3c4d5e6f7a8b9c0d1e
         list_id:
           type:
           - string
@@ -12366,6 +12435,7 @@ components:
           title: List
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: 5f1a2b3c4d5e6f7a8b9c0d2f
         title_format:
           type:
           - string
@@ -12386,6 +12456,7 @@ components:
           title: Team
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: 9cfb482a-81e3-4154-b5b9-2c805e70a02d
         linear_project_id:
           type:
           - string
@@ -12400,6 +12471,8 @@ components:
           items:
             type: string
           title: Labels
+          description: IDs of the Linear labels to add to new issues, as Linear's
+            API returns them.
         unresolved_state_id:
           type:
           - string
@@ -12429,6 +12502,8 @@ components:
           - 'null'
           default: "[[project]] Occurred: [class] ([fault_id])"
           title: Title format
+          description: Title of each new Linear issue. Placeholders such as `[class]`,
+            `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
           type:
@@ -12443,6 +12518,8 @@ components:
 
             View full backtrace and more info at honeybadger.io: [url]
           title: Description format
+          description: Description of each new Linear issue. Placeholders such as
+            `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: |
             [class]: [message]
 
@@ -12480,6 +12557,8 @@ components:
           - 'null'
           format: password
           title: Webhook URL
+          description: The Mattermost incoming webhook URL notifications are posted
+            to.
           example: https://example.com/hook
         label:
           type:
@@ -12522,6 +12601,7 @@ components:
           title: Api key
           description: Your Splunk On-Call API key. Never returned. Leave it out of
             an update to keep it.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
           writeOnly: true
         routing_key:
           type:
@@ -12587,6 +12667,7 @@ components:
           - string
           - 'null'
           title: Email address
+          description: Address each notification is emailed to.
           example: alerts@example.com
         email_subject:
           type:
@@ -12609,6 +12690,7 @@ components:
           title: Context field
           description: The field from the context hash that will be sent to Intercom
             as the user ID.
+          example: user_id
     IntegrationConfigAlertOps:
       type: object
       title: AlertOps settings
@@ -12650,6 +12732,7 @@ components:
           - 'null'
           maxLength: 100
           title: Label
+          description: A name for this integration, shown in Honeybadger.
     IntegrationConfigMicrosoftTeamsV2:
       type: object
       title: Microsoft Teams settings
@@ -12698,6 +12781,8 @@ components:
           - 'null'
           default: "[[project]] Occurred: [class] ([fault_id])"
           title: Story Title
+          description: Title of each new Shortcut story. Placeholders such as `[class]`,
+            `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
           type:
@@ -12712,6 +12797,8 @@ components:
 
             View full backtrace and more info at honeybadger.io: [url]
           title: Story Description
+          description: Description of each new Shortcut story. Placeholders such as
+            `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: |
             [class]: [message]
 
@@ -12761,6 +12848,7 @@ components:
           title: API Token
           description: Available from Settings > Your Account > API Tokens. Never
             returned. Leave it out of an update to keep it.
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
           writeOnly: true
         title_format:
           type:
@@ -12768,6 +12856,8 @@ components:
           - 'null'
           default: "[[project]] Occurred: [class] ([fault_id])"
           title: Story Title
+          description: Title of each new Shortcut story. Placeholders such as `[class]`,
+            `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
           type:
@@ -12782,6 +12872,8 @@ components:
 
             View full backtrace and more info at honeybadger.io: [url]
           title: Story Description
+          description: Description of each new Shortcut story. Placeholders such as
+            `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: |
             [class]: [message]
 
@@ -12795,6 +12887,8 @@ components:
           - string
           - 'null'
           title: Custom Fields
+          description: 'Custom field values to set on new stories: a comma-separated
+            list of `field_id:value_id` pairs, with IDs from Shortcut.'
         team:
           type:
           - string
@@ -12802,6 +12896,7 @@ components:
           title: Team
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: 5f1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c
         initial_state:
           type:
           - string
@@ -12809,6 +12904,7 @@ components:
           title: Initial state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: '500000007'
         resolve_transition:
           type:
           - string
@@ -12816,6 +12912,7 @@ components:
           title: Resolved workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: '500000010'
         reopen_transition:
           type:
           - string
@@ -12823,6 +12920,7 @@ components:
           title: Reopened workflow state
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: '500000007'
     IntegrationConfigPagerTree:
       type: object
       title: PagerTree settings
@@ -12848,6 +12946,7 @@ components:
           - 'null'
           format: password
           title: Webhook URL
+          description: The Instatus webhook URL notifications are posted to.
           example: https://example.com/hook
         label:
           type:
@@ -12868,6 +12967,7 @@ components:
           title: Workspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: '9012345678'
         teamspace_id:
           type:
           - string
@@ -12875,6 +12975,7 @@ components:
           title: Teamspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: '90120123456'
         folder_id:
           type:
           - string
@@ -12890,6 +12991,7 @@ components:
           description: The ID of the list to create tasks for. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
+          example: '901201234567'
         initial_status_id:
           type:
           - string
@@ -12898,6 +13000,7 @@ components:
           description: The initial status when a task is created. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
+          example: sc901201234567_AbCd1234
         resolve_status_id:
           type:
           - string
@@ -12906,6 +13009,7 @@ components:
           description: The task status when an error is resolved. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
+          example: sc901201234567_EfGh5678
         reopen_status_id:
           type:
           - string
@@ -12914,6 +13018,7 @@ components:
           description: The task status when an error is reopened. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
+          example: sc901201234567_AbCd1234
         tags:
           type:
           - string
@@ -12943,6 +13048,8 @@ components:
 
             View full backtrace and more info at honeybadger.io: [url]
           title: Description format
+          description: Description of each new ClickUp task. Placeholders such as
+            `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: |
             [class]: [message]
 
@@ -12963,6 +13070,7 @@ components:
           title: Workspace
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: '9012345678'
         channel_id:
           type:
           - string
@@ -12970,6 +13078,7 @@ components:
           title: Channel
           description: The web UI loads the choices from the connected account. Through
             the API, send the value itself, as that service's API returns it.
+          example: 4-90120123456-8
     IntegrationConfigIlert:
       type: object
       title: ilert settings
@@ -13001,6 +13110,8 @@ components:
           - string
           - 'null'
           title: Bot email
+          description: Email address of the Zulip bot that posts notifications.
+          example: honeybadger-bot@example.zulipchat.com
         api_key:
           type:
           - string
@@ -13008,6 +13119,7 @@ components:
           format: password
           title: Api key
           description: Never returned. Leave it out of an update to keep it.
+          example: AbCdEf0123456789AbCdEf0123456789
           writeOnly: true
         zulip_domain:
           type:
@@ -13030,11 +13142,15 @@ components:
           - string
           - 'null'
           title: Channel
+          description: The Zulip channel notifications are posted to.
+          example: alerts
         topic:
           type:
           - string
           - 'null'
           title: Topic
+          description: The topic within that channel.
+          example: Honeybadger
     IntegrationConfigIncidentIo:
       type: object
       title: incident.io settings
@@ -13047,12 +13163,16 @@ components:
           format: password
           title: API Key
           description: Never returned. Leave it out of an update to keep it.
+          example: '0123456789abcdef0123456789abcdef'
           writeOnly: true
         alert_source_label:
           type:
           - string
           - 'null'
           title: Alert source label
+          description: Name of the incident.io HTTP alert source that receives alerts.
+            Honeybadger finds the source by this name, or creates it.
+          example: Honeybadger
     IntegrationConfigRootly:
       type: object
       title: Rootly settings
@@ -13065,6 +13185,7 @@ components:
           format: password
           title: Webhook authorization token
           description: Never returned. Leave it out of an update to keep it.
+          example: '0123456789abcdef0123456789abcdef'
           writeOnly: true
         notification_target_type:
           type:
@@ -13076,11 +13197,14 @@ components:
           - escalationPolicy
           -
           title: Notification target type
+          description: 'What Rootly pages: a service, a team or an escalation policy.'
         notification_target_id:
           type:
           - string
           - 'null'
           title: Notification target ID
+          description: ID of the Rootly service, team or escalation policy that's
+            paged.
         label:
           type:
           - string
@@ -13109,6 +13233,7 @@ components:
           title: API Key
           description: Your Backlog API key (generate one in Personal Settings > API).
             Never returned. Leave it out of an update to keep it.
+          example: AbCdEf0123456789AbCdEf0123456789AbCdEf0123456789AbCdEf0123456789
           writeOnly: true
         backlog_project_id:
           type:
@@ -13118,6 +13243,7 @@ components:
           description: The Backlog project to create issues in. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
+          example: '123456'
         issue_type_id:
           type:
           - string
@@ -13126,6 +13252,7 @@ components:
           description: The type of issue to create. The web UI loads the choices from
             the connected account. Through the API, send the value itself, as that
             service's API returns it.
+          example: '1074711'
         priority_id:
           type:
           - string
@@ -13134,6 +13261,7 @@ components:
           description: The priority level for new issues. The web UI loads the choices
             from the connected account. Through the API, send the value itself, as
             that service's API returns it.
+          example: '3'
         resolve_status_id:
           type:
           - string
@@ -13142,6 +13270,7 @@ components:
           description: The status to use when resolving errors. The web UI loads the
             choices from the connected account. Through the API, send the value itself,
             as that service's API returns it.
+          example: '4'
         reopen_status_id:
           type:
           - string
@@ -13150,6 +13279,7 @@ components:
           description: The status to use when unresolving errors. The web UI loads
             the choices from the connected account. Through the API, send the value
             itself, as that service's API returns it.
+          example: '1'
         label:
           type:
           - string
@@ -13170,12 +13300,16 @@ components:
           - string
           - 'null'
           title: Issue Subject
+          description: Subject of each new Backlog issue. Placeholders such as `[class]`,
+            `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: "[[project]] Occurred: [class] ([fault_id])"
         description_format:
           type:
           - string
           - 'null'
           title: Issue Description
+          description: Body of each new Backlog issue. Placeholders such as `[class]`,
+            `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
           example: |
             [class]: [message]
 
@@ -13819,7 +13953,7 @@ components:
       name: project_id
       in: path
       required: true
-      description: Project public ID
+      description: The project's `id`, as a project read returns it.
       schema:
         type: string
         example: Xk9mZp
