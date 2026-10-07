@@ -2781,7 +2781,7 @@ type Integration struct {
 	// ProjectId ID of the project this channel belongs to
 	ProjectId string `json:"project_id"`
 
-	// Rate Period the rate_exceeded threshold counts over.
+	// Rate Period the rate_exceeded threshold counts over: `min` a minute, `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.
 	Rate IntegrationRate `json:"rate"`
 
 	// SiteIds Sites whose up and down events this integration receives. null means every site in the project, including ones added later.
@@ -3432,7 +3432,7 @@ type IntegrationFilter struct {
 // IntegrationFilterEvent An event a filter applies to, or `all` for every event.
 type IntegrationFilterEvent string
 
-// IntegrationRate Period the rate_exceeded threshold counts over.
+// IntegrationRate Period the rate_exceeded threshold counts over: `min` a minute, `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.
 type IntegrationRate string
 
 // IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. `type` can be sent only with its current value; any other value is 422. A key this operation doesn't take is 422, except the read-only keys a GET returns (`id`, `links` and the like), which are ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).

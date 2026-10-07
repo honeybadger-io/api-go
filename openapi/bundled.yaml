@@ -11617,7 +11617,8 @@ components:
       - hour
       - wday
       - week
-      description: Period the rate_exceeded threshold counts over.
+      description: 'Period the rate_exceeded threshold counts over: `min` a minute,
+        `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.'
     IntegrationEvent:
       type: string
       description: An event an integration can notify on. Each type supports a subset,
