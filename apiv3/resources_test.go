@@ -185,10 +185,13 @@ func TestSiteOutagesAndChecksRequests(t *testing.T) {
 	empty := `{"data":[],"time_series":{"has_older":false}}`
 
 	c, got := captureWrite(t, http.StatusOK, empty)
-	if _, err := c.Sites.ListOutages(ctx, "Xk9mZp", id, Limit(10)); err != nil {
+	// links.older's created_before has significant fractional seconds; it must go
+	// back out exactly as it came in.
+	if _, err := c.Sites.ListOutages(ctx, "Xk9mZp", id, Limit(10), OlderThan(1704153600.123456)); err != nil {
 		t.Fatalf("ListOutages: %v", err)
 	}
-	if got.path != "/v3/projects/Xk9mZp/sites/"+id.String()+"/outages" || got.query.Get("limit") != "10" {
+	if got.path != "/v3/projects/Xk9mZp/sites/"+id.String()+"/outages" || got.query.Get("limit") != "10" ||
+		got.query.Get("created_before") != "1704153600.123456" {
 		t.Errorf("ListOutages sent %s?%s", got.path, got.query.Encode())
 	}
 

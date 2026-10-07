@@ -97,7 +97,7 @@ type Outage = gen.Outage
 type UptimeCheck = gen.UptimeCheck
 
 // ListOutages returns one page of a site's outages, newest first. Limit sizes
-// the page; follow the response's older link, or use ListAllOutages, for more.
+// the page and OlderThan pages back; ListAllOutages walks them all.
 func (s *SitesService) ListOutages(ctx context.Context, projectID string, siteID SiteID, opts ...Option) (*ListResponse[Outage], error) {
 	return s.listOutages(ctx, projectID, siteID, resolve(opts))
 }
@@ -115,18 +115,14 @@ func (s *SitesService) ListAllOutages(ctx context.Context, projectID string, sit
 
 func (s *SitesService) listOutages(ctx context.Context, projectID string, siteID SiteID, ro requestOptions) (*ListResponse[Outage], error) {
 	params := &gen.ListOutagesParams{}
-	if ro.limit > 0 {
-		limit := gen.Limit(ro.limit)
-		params.Limit = &limit
-	}
+	ro.applyOlderThan(&params.Limit, &params.CreatedBefore)
 	return listTimeSeries[Outage](ctx, s.client, "listOutages", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListOutages(ctx, projectID, siteID, params)
 	})
 }
 
 // ListUptimeChecks returns one page of a site's checks, newest first. Limit
-// sizes the page; follow the response's older link, or use
-// ListAllUptimeChecks, for more.
+// sizes the page and OlderThan pages back; ListAllUptimeChecks walks them all.
 func (s *SitesService) ListUptimeChecks(ctx context.Context, projectID string, siteID SiteID, opts ...Option) (*ListResponse[UptimeCheck], error) {
 	return s.listUptimeChecks(ctx, projectID, siteID, resolve(opts))
 }
@@ -145,10 +141,7 @@ func (s *SitesService) ListAllUptimeChecks(ctx context.Context, projectID string
 
 func (s *SitesService) listUptimeChecks(ctx context.Context, projectID string, siteID SiteID, ro requestOptions) (*ListResponse[UptimeCheck], error) {
 	params := &gen.ListUptimeChecksParams{}
-	if ro.limit > 0 {
-		limit := gen.Limit(ro.limit)
-		params.Limit = &limit
-	}
+	ro.applyOlderThan(&params.Limit, &params.CreatedBefore)
 	return listTimeSeries[UptimeCheck](ctx, s.client, "listUptimeChecks", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListUptimeChecks(ctx, projectID, siteID, params)
 	})

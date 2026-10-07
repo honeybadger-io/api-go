@@ -74,10 +74,7 @@ func (s *CheckInsService) ListAllEvents(ctx context.Context, projectID, checkInI
 
 func (s *CheckInsService) listEvents(ctx context.Context, projectID, checkInID string, ro requestOptions) (*ListResponse[CheckInEvent], error) {
 	params := &gen.ListCheckInEventsParams{}
-	if ro.limit > 0 {
-		limit := gen.Limit(ro.limit)
-		params.Limit = &limit
-	}
+	ro.applyOlderThan(&params.Limit, &params.CreatedBefore)
 
 	return listTimeSeries[CheckInEvent](ctx, s.client, "listCheckInEvents", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListCheckInEvents(ctx, projectID, checkInID, params)

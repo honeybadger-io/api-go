@@ -51,6 +51,24 @@ type requestOptions struct {
 	createdAfter   float64
 	occurredAfter  float64
 	occurredBefore float64
+
+	// olderThan positions a timestamp-paged collection: the created_before value
+	// from a previous response's links.older, kept as a number because its
+	// fractional seconds are significant.
+	olderThan float64
+}
+
+// applyOlderThan fills in a timestamp-paged collection's limit and
+// created_before.
+func (ro requestOptions) applyOlderThan(limit **gen.Limit, createdBefore **gen.CreatedBefore) {
+	if ro.limit > 0 {
+		l := gen.Limit(ro.limit)
+		*limit = &l
+	}
+	if ro.olderThan > 0 {
+		b := gen.CreatedBefore(ro.olderThan)
+		*createdBefore = &b
+	}
 }
 
 // applyOffset fills in offset paging params, leaving them nil when unset so the
@@ -190,6 +208,18 @@ func (o nameOption) listAll()                 {}
 // Named filters a project or team listing to the one with exactly this name.
 func Named(name string) ListAllOption {
 	return nameOption{name: name}
+}
+
+// olderThanOption positions a timestamp-paged collection.
+type olderThanOption struct{ createdBefore float64 }
+
+func (o olderThanOption) apply(ro *requestOptions) { ro.olderThan = o.createdBefore }
+
+// OlderThan pages a timestamp-paged collection (site outages and uptime checks,
+// check-in events) to the items created before createdBefore: pass the
+// created_before value from a response's links.older unchanged.
+func OlderThan(createdBefore float64) Option {
+	return olderThanOption{createdBefore: createdBefore}
 }
 
 // environmentOption filters a deploy listing by environment.
