@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"syscall"
 	"time"
 )
 
@@ -205,7 +204,7 @@ func throttled(err error) bool {
 // whether resending is safe. Only failures that would repeat the same way are
 // refused.
 func transient(err error) bool {
-	if errors.Is(err, errBodyTooLarge) || errors.Is(err, syscall.ECONNREFUSED) || errors.Is(err, http.ErrSchemeMismatch) {
+	if errors.Is(err, errBodyTooLarge) || errors.Is(err, errConnRefused) || errors.Is(err, http.ErrSchemeMismatch) {
 		return false
 	}
 	var dnsErr *net.DNSError

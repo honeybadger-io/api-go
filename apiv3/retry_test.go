@@ -141,7 +141,7 @@ func TestRetryableByMethodAndOutcome(t *testing.T) {
 		{"body cut off", bodyCut(io.ErrUnexpectedEOF), all[:4]},
 		{"body cut off by an HTTP/2 stream error", bodyCut(errors.New("stream error: stream ID 3; INTERNAL_ERROR")), all[:4]},
 		{"body over the cap", bodyCut(fmt.Errorf("response body exceeds 1 bytes: %w", errBodyTooLarge)), nil},
-		{"connection refused", wire(&net.OpError{Op: "dial", Err: syscall.ECONNREFUSED}), nil},
+		{"connection refused", wire(&net.OpError{Op: "dial", Err: errConnRefused}), nil},
 		{"host not found", wire(&net.DNSError{Err: "no such host", Name: "x", IsNotFound: true}), nil},
 		{"untrusted certificate", wire(&tls.CertificateVerificationError{Err: x509.UnknownAuthorityError{}}), nil},
 		{"wrong hostname", wire(x509.HostnameError{Host: "x"}), nil},
