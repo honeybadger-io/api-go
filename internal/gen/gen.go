@@ -3695,7 +3695,7 @@ type OccurrenceSeries_Buckets struct {
 	Timestamp int64 `json:"timestamp"`
 }
 
-// OffsetLinks Navigation links for a numbered-page collection
+// OffsetLinks Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 type OffsetLinks struct {
 	// First First page
 	First *string `json:"first,omitempty"`
@@ -4512,7 +4512,7 @@ type TeamMemberInput struct {
 	Admin bool `json:"admin"`
 }
 
-// TimeSeriesLinks Navigation links for a time-ordered collection
+// TimeSeriesLinks Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 type TimeSeriesLinks struct {
 	// Newer Page of newer items, or null when none exist. Always null on one-directional collections, which are documented as such.
 	Newer nullable.Nullable[string] `json:"newer,omitempty"`
@@ -4691,7 +4691,7 @@ type ListAccountInvitationsParams struct {
 type ListAccountInvitations200JSONResponseBody struct {
 	Data []AccountInvitation `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -4733,7 +4733,7 @@ type ListAccountMembersParams struct {
 type ListAccountMembers200JSONResponseBody struct {
 	Data []AccountMember `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -4820,7 +4820,7 @@ type ListProjectsParams struct {
 type ListProjects200JSONResponseBody struct {
 	Data []Project `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -4859,7 +4859,7 @@ type ListAccountOccurrencesParamsPeriod string
 type ListAccountOccurrences200JSONResponseBody struct {
 	Data []OccurrenceSeries `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks    `json:"links,omitempty"`
 	Meta  *OccurrenceMeta `json:"meta,omitempty"`
 
@@ -4918,7 +4918,7 @@ type ListAlarmHistoryParams struct {
 type ListAlarmHistory200JSONResponseBody struct {
 	Data []AlarmHistoryEntry `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -4939,7 +4939,7 @@ type ListCheckInsParams struct {
 type ListCheckIns200JSONResponseBody struct {
 	Data []CheckIn `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5004,7 +5004,7 @@ type ListCheckInEventsParams struct {
 type ListCheckInEvents200JSONResponseBody struct {
 	Data []CheckInEvent `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5025,7 +5025,7 @@ type ListDashboardsParams struct {
 type ListDashboards200JSONResponseBody struct {
 	Data []Dashboard `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5076,7 +5076,7 @@ type ListDeploysParams struct {
 type ListDeploys200JSONResponseBody struct {
 	Data []Deploy `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5104,7 +5104,7 @@ type ListEnvironmentsParams struct {
 type ListEnvironments200JSONResponseBody struct {
 	Data []Environment `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5215,7 +5215,7 @@ type ListFaultsParamsSort string
 type ListFaults200JSONResponseBody struct {
 	Data []Fault `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5345,7 +5345,7 @@ type ListCommentsParams struct {
 type ListComments200JSONResponseBody struct {
 	Data []Comment `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5402,7 +5402,7 @@ type ListNoticesParams struct {
 type ListNotices200JSONResponseBody struct {
 	Data []Notice `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5525,7 +5525,7 @@ type ListIngestionKeysParams struct {
 type ListIngestionKeys200JSONResponseBody struct {
 	Data []IngestionKey `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5598,7 +5598,7 @@ type ListIntegrationsParams struct {
 type ListIntegrations200JSONResponseBody struct {
 	Data []Integration `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5660,7 +5660,7 @@ type ListSitesParams struct {
 type ListSites200JSONResponseBody struct {
 	Data []Site `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5709,7 +5709,7 @@ type ListUptimeChecksParams struct {
 type ListUptimeChecks200JSONResponseBody struct {
 	Data []UptimeCheck `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5737,7 +5737,7 @@ type ListOutagesParams struct {
 type ListOutages200JSONResponseBody struct {
 	Data []Outage `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5782,7 +5782,7 @@ type ListStreamsParams struct {
 type ListStreams200JSONResponseBody struct {
 	Data []Stream `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5803,7 +5803,7 @@ type ListStatusPagesParams struct {
 type ListStatusPages200JSONResponseBody struct {
 	Data []StatusPage `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5848,7 +5848,7 @@ type ListStatusPageIncidentsParams struct {
 type ListStatusPageIncidents200JSONResponseBody struct {
 	Data []StatusPageIncident `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5893,7 +5893,7 @@ type ListIncidentUpdatesParams struct {
 type ListIncidentUpdates200JSONResponseBody struct {
 	Data []IncidentUpdate `json:"data"`
 
-	// Links Navigation links for a time-ordered collection
+	// Links Navigation links for a time-ordered collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *TimeSeriesLinks `json:"links,omitempty"`
 	Meta  *ResponseMeta    `json:"meta,omitempty"`
 
@@ -5938,7 +5938,7 @@ type ListTeamsParams struct {
 type ListTeams200JSONResponseBody struct {
 	Data []Team `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -5980,7 +5980,7 @@ type ListTeamInvitationsParams struct {
 type ListTeamInvitations200JSONResponseBody struct {
 	Data []TeamInvitation `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -6022,7 +6022,7 @@ type ListTeamMembersParams struct {
 type ListTeamMembers200JSONResponseBody struct {
 	Data []TeamMember `json:"data"`
 
-	// Links Navigation links for a numbered-page collection
+	// Links Navigation links for a numbered-page collection. Each link is a root-relative path (`/v3/...`); resolve it against the API host.
 	Links *OffsetLinks  `json:"links,omitempty"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 
@@ -7126,7 +7126,7 @@ type ClientInterface interface {
 
 	// DeleteIngestionKey Delete an ingestion key
 	//
-	// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 403.
+	// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 422 `validation_error`.
 	//
 	// Corresponds with DELETE /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `DeleteIngestionKey` operationId).
 	DeleteIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7191,7 +7191,7 @@ type ClientInterface interface {
 
 	// CreateIntegrationWithBody Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7200,7 +7200,7 @@ type ClientInterface interface {
 
 	// CreateIntegration Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -9513,7 +9513,7 @@ func (c *Client) CreateIngestionKey(ctx context.Context, projectId ProjectId, bo
 
 // DeleteIngestionKey Delete an ingestion key
 //
-// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 403.
+// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 422 `validation_error`.
 //
 // Corresponds with DELETE /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `DeleteIngestionKey` operationId).
 func (c *Client) DeleteIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9648,7 +9648,7 @@ func (c *Client) ListIntegrations(ctx context.Context, projectId ProjectId, para
 
 // CreateIntegrationWithBody Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9667,7 +9667,7 @@ func (c *Client) CreateIntegrationWithBody(ctx context.Context, projectId Projec
 
 // CreateIntegration Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created inactive and are connected in the web UI at the integration's `links.web`. `active: true` is refused with 422 until the integration is connected.
+// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
 //
 // Takes a body of the `application/json` content type.
 //

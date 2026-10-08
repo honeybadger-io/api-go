@@ -3440,9 +3440,9 @@ paths:
       description: 'Creates a notification integration for the project. `type` picks
         the integration, and `config` holds its settings, listed for each type in
         [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
-        OAuth integrations (Slack, GitHub, Linear and the like) are created inactive
-        and are connected in the web UI at the integration''s `links.web`. `active:
-        true` is refused with 422 until the integration is connected.
+        OAuth integrations (Slack, GitHub, Linear and the like) are created active
+        by default and send nothing until someone connects them in the web UI at the
+        integration''s `links.web`.
 
         '
       tags:
@@ -3769,7 +3769,7 @@ paths:
       summary: Delete an ingestion key
       description: 'Deletes an ingestion key. A project''s last key cannot be deleted
         — without one it can no longer receive errors — and that request is refused
-        with 403.
+        with 422 `validation_error`.
 
         '
       tags:
@@ -3792,7 +3792,7 @@ paths:
         '404':
           "$ref": "#/components/responses/NotFound"
         '422':
-          "$ref": "#/components/responses/AmbiguousAccount"
+          "$ref": "#/components/responses/ValidationError"
       security:
       - bearer_auth:
         - projects:write
@@ -10015,7 +10015,8 @@ components:
                 example: 17
     OffsetLinks:
       type: object
-      description: Navigation links for a numbered-page collection
+      description: Navigation links for a numbered-page collection. Each link is a
+        root-relative path (`/v3/...`); resolve it against the API host.
       required:
       - self
       properties:
@@ -10526,6 +10527,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           description: Request body for POST/PUT checks
         outage_threshold:
           type:
@@ -10647,6 +10649,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           maxLength: 32768
           description: Body to send with the request, up to 32 KB. Null clears it.
         request_headers:
@@ -11476,7 +11479,8 @@ components:
           description: Team admins can manage the team's projects and membership
     TimeSeriesLinks:
       type: object
-      description: Navigation links for a time-ordered collection
+      description: Navigation links for a time-ordered collection. Each link is a
+        root-relative path (`/v3/...`); resolve it against the API host.
       required:
       - self
       properties:
@@ -11746,6 +11750,7 @@ components:
           type:
           - string
           - 'null'
+          format: password
           title: Chatbot URL
           description: The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#create-a-chatbot-integration-in-basecamp)
             for your Campfire chatbot.
