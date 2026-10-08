@@ -98,7 +98,7 @@ func TestAlarmsListIsUnpaginated(t *testing.T) {
 	}
 }
 
-const historyEntry = `{"id":"t1","observer_root_id":"a1","observer_id":"v7","status":"alarm",
+const historyEntry = `{"id":"t1","alarm_id":"a1","alarm_version_id":"v7","status":"alarm",
   "created_at":"2026-09-26T00:00:00Z","evaluation_started_at":"2026-09-25T23:55:00Z","evaluation_result":91.5}`
 
 // History entries are typed, and pages like every other page-numbered list.
@@ -122,7 +122,7 @@ func TestAlarmsListHistory(t *testing.T) {
 		t.Fatalf("entries = %v, want 1", page.Data)
 	}
 	entry := page.Data[0]
-	if entry.ObserverRootId != "a1" || entry.Id != "t1" {
+	if entry.AlarmId != "a1" || entry.Id != "t1" {
 		t.Errorf("entry = %+v", entry)
 	}
 	if status, err := entry.Status.Get(); err != nil || status != "alarm" {

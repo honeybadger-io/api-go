@@ -1751,6 +1751,12 @@ type AlarmCreateInput struct {
 
 // AlarmHistoryEntry One alarm state change, as recorded by the Insights backend
 type AlarmHistoryEntry struct {
+	// AlarmId The alarm's ID
+	AlarmId string `json:"alarm_id"`
+
+	// AlarmVersionId The version of the alarm that was evaluated. Editing an alarm creates a new version, and history spans every version.
+	AlarmVersionId string `json:"alarm_version_id"`
+
 	// CreatedAt When the change was recorded
 	CreatedAt time.Time `json:"created_at"`
 
@@ -1762,12 +1768,6 @@ type AlarmHistoryEntry struct {
 
 	// Id Trigger identifier
 	Id string `json:"id"`
-
-	// ObserverId The version of the alarm that was evaluated. Editing an alarm creates a new version, and history spans every version.
-	ObserverId string `json:"observer_id"`
-
-	// ObserverRootId The alarm's ID
-	ObserverRootId string `json:"observer_root_id"`
 
 	// Status The state the alarm entered
 	Status nullable.Nullable[AlarmHistoryEntryStatus] `json:"status"`
@@ -2581,8 +2581,8 @@ type Fault_Assignee struct {
 
 // Fault_Tickets defines model for Fault.Tickets.
 type Fault_Tickets struct {
-	// ChannelId ID of the channel that created the ticket
-	ChannelId *string `json:"channel_id,omitempty"`
+	// IntegrationId ID of the integration that created the ticket
+	IntegrationId *string `json:"integration_id,omitempty"`
 
 	// Url URL of the ticket
 	Url *string `json:"url,omitempty"`

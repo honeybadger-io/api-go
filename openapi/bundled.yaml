@@ -6145,8 +6145,8 @@ components:
       description: One alarm state change, as recorded by the Insights backend
       required:
       - id
-      - observer_root_id
-      - observer_id
+      - alarm_id
+      - alarm_version_id
       - status
       - created_at
       - evaluation_started_at
@@ -6155,11 +6155,11 @@ components:
         id:
           type: string
           description: Trigger identifier
-        observer_root_id:
+        alarm_id:
           type: string
           description: The alarm's ID
           example: Qx7LmP2vRt9K
-        observer_id:
+        alarm_version_id:
           type: string
           description: 'The version of the alarm that was evaluated. Editing an alarm
             creates a new version, and history spans every version.
@@ -9494,9 +9494,9 @@ components:
               url:
                 type: string
                 description: URL of the ticket
-              channel_id:
+              integration_id:
                 type: string
-                description: ID of the channel that created the ticket
+                description: ID of the integration that created the ticket
         resolve_on_deploy:
           type: boolean
           description: 'Whether this fault is waiting to be resolved by the next recorded
