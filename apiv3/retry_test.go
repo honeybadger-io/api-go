@@ -619,3 +619,19 @@ func generatedCall(fn *ast.FuncLit) string {
 	})
 	return name
 }
+
+// An Insights query gets longer than other requests: the server waits up to 60
+// seconds for one.
+func TestAnInsightsQueryHasALongerDeadline(t *testing.T) {
+	rec := &deadlineRecorder{}
+	c := NewClient().WithBaseURL("https://api.example.com").WithBearerToken("hbt_x").
+		WithHTTPClient(&http.Client{Transport: rec})
+	_, _ = c.Insights.Query(context.Background(), "p1", InsightsQuery{Query: "fields @ts"})
+
+	if len(rec.deadlines) != 1 {
+		t.Fatalf("requests = %d, want 1", len(rec.deadlines))
+	}
+	if got := rec.deadlines[0]; got > 65*time.Second || got < 60*time.Second {
+		t.Errorf("deadline in %v, want about 65s", got)
+	}
+}

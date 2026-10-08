@@ -139,8 +139,9 @@ type Client struct {
 }
 
 // NewClient returns a client pointing at the production API, resolving the
-// account from the credential. Each request has 30 seconds, or five minutes for
-// a delete, within whatever deadline the caller's context sets. Retries are off;
+// account from the credential. Each request has 30 seconds, or 65 for an
+// Insights query and five minutes for a delete, within whatever deadline the
+// caller's context sets. Retries are off;
 // see WithRetry.
 func NewClient() *Client {
 	return (&Client{

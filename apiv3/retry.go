@@ -67,9 +67,11 @@ const (
 	initialBackoff = time.Second
 
 	// Each attempt gets its own deadline, inside the caller's context. A delete
-	// gets longer: deleting a project removes its data before it answers.
+	// gets longer: deleting a project removes its data before it answers. So
+	// does an Insights query: the server waits up to 60 seconds for one.
 	attemptTimeout       = 30 * time.Second
 	deleteAttemptTimeout = 5 * time.Minute
+	queryAttemptTimeout  = 65 * time.Second
 )
 
 // WithRetry returns a client that retries failed requests under p. See
@@ -86,6 +88,9 @@ type operation func(ctx context.Context) (*http.Response, error)
 // opFollowLink names a request to a pagination link from a previous response.
 // Those links are always GETs and have no operationId of their own.
 const opFollowLink = "followLink"
+
+// opRunInsightsQuery is the Insights query, which gets a longer deadline.
+const opRunInsightsQuery = "runInsightsQuery"
 
 // methodOf returns an operation's HTTP method.
 func methodOf(opID string) (string, error) {
@@ -115,7 +120,7 @@ func (c *Client) run(ctx context.Context, opID string, op operation) (int, []byt
 	mayHaveLanded := false // an earlier attempt may have been carried out
 
 	for attempt := 1; ; attempt++ {
-		status, body, err := c.attempt(ctx, method, op)
+		status, body, err := c.attempt(ctx, opID, method, op)
 		if mayHaveLanded && method == http.MethodDelete && status == http.StatusNotFound {
 			return status, body, &goneAfterRetry{err}
 		}
@@ -149,10 +154,13 @@ func (c *Client) run(ctx context.Context, opID string, op operation) (int, []byt
 
 // attempt makes one request under its own deadline. The response body is read
 // inside it, so the deadline covers the whole exchange.
-func (c *Client) attempt(ctx context.Context, method string, op operation) (int, []byte, error) {
+func (c *Client) attempt(ctx context.Context, opID, method string, op operation) (int, []byte, error) {
 	timeout := attemptTimeout
-	if method == http.MethodDelete {
+	switch {
+	case method == http.MethodDelete:
 		timeout = deleteAttemptTimeout
+	case opID == opRunInsightsQuery:
+		timeout = queryAttemptTimeout
 	}
 	attemptCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
