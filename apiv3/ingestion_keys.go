@@ -7,9 +7,10 @@ import (
 	"github.com/honeybadger-io/api-go/internal/gen"
 )
 
-// IngestionKey is an Ingestion Key (`hbp_`): the credential an app sends errors
-// and events with, set as `api_key` in a notifier's config. It can't call the
-// API; that takes an API Token.
+// IngestionKey is an Ingestion Key (`hbp_`): the key an app uses to send errors
+// and events to Honeybadger, set as `ingestion_key` in the client's config
+// (`api_key` in older clients). It can't call the Data API; that takes an API
+// Token.
 type IngestionKey = gen.IngestionKey
 
 // IngestionKeyParams are the writable fields of an Ingestion Key.

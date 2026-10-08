@@ -1,4 +1,4 @@
-// Package apiv3 is a client for the Honeybadger v3 API.
+// Package apiv3 is a client for the Honeybadger v3 Data API.
 //
 // It wraps generated code (internal/gen) with a hand-written surface: auth,
 // pagination, and typed errors.
@@ -68,7 +68,7 @@ func (r RateLimit) RetryAfter() time.Duration {
 // and the hook simply does not fire for those.
 type RequestIDHook func(ctx context.Context, status int, requestID string)
 
-// Client is a Honeybadger v3 API client.
+// Client is a Honeybadger v3 Data API client.
 //
 // A Client is immutable once constructed. The With* methods each return a new
 // Client rather than modifying the receiver, so a configured client is safe to
@@ -213,10 +213,10 @@ func (c *Client) WithBaseURL(baseURL string) *Client {
 //
 // Accepts an API Token, user-scoped (`hbt_`) or account-scoped (`hba_`), or an
 // OAuth access token. An Ingestion Key (`hbp_`) is for sending errors and events,
-// not for calling the API, and is refused with ErrIngestionKeyNotAccepted. There is
-// deliberately no Basic-auth equivalent: v3's documented challenge is
-// `WWW-Authenticate: Bearer`, and a single credential path keeps authorization
-// decisions in one place.
+// not for calling the Data API, and is refused with ErrIngestionKeyNotAccepted.
+// There is deliberately no Basic-auth equivalent: v3's documented challenge
+// is `WWW-Authenticate: Bearer`, and a single credential path keeps
+// authorization decisions in one place.
 func (c *Client) WithBearerToken(token string) *Client {
 	next := c.clone()
 	next.bearerToken = token

@@ -2728,7 +2728,7 @@ type IncidentUpdateInput struct {
 	Status *IncidentStatus `json:"status,omitempty"`
 }
 
-// IngestionKey An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+// IngestionKey The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
 type IngestionKey struct {
 	// CreatedAt When the key was created
 	CreatedAt time.Time `json:"created_at"`
@@ -5535,21 +5535,21 @@ type ListIngestionKeys200JSONResponseBody struct {
 
 // CreateIngestionKey201JSONResponseBody defines parameters for CreateIngestionKey.
 type CreateIngestionKey201JSONResponseBody struct {
-	// Data An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
 	Data IngestionKey  `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetIngestionKey200JSONResponseBody defines parameters for GetIngestionKey.
 type GetIngestionKey200JSONResponseBody struct {
-	// Data An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
 	Data IngestionKey  `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateIngestionKey200JSONResponseBody defines parameters for UpdateIngestionKey.
 type UpdateIngestionKey200JSONResponseBody struct {
-	// Data An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
 	Data IngestionKey  `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }

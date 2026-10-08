@@ -4,7 +4,7 @@
 // credential you hold:
 //
 //	github.com/honeybadger-io/api-go/apiv2  — the v2 Data API
-//	github.com/honeybadger-io/api-go/apiv3  — the v3 API
+//	github.com/honeybadger-io/api-go/apiv3  — the v3 Data API
 //
 // v3 is where new work belongs. It accepts scoped API tokens (`hbt_` for a
 // personal one, `hba_` for an account one) and OAuth access tokens, always as

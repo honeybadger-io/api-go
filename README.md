@@ -1,11 +1,11 @@
-# Honeybadger API Client for Go
+# Honeybadger Data API Client for Go
 
-Go clients for the Honeybadger API. There are two, one per API version:
+Go clients for the Honeybadger Data API. There are two, one per API version:
 
 | Import | API |
 | --- | --- |
-| `github.com/honeybadger-io/api-go/apiv3` | v3 — where new work belongs |
-| `github.com/honeybadger-io/api-go/apiv2` | v2 — the Data API |
+| `github.com/honeybadger-io/api-go/apiv3` | v3 Data API — where new work belongs |
+| `github.com/honeybadger-io/api-go/apiv2` | v2 Data API |
 
 Which you need depends on the credential you hold. v3 takes API Tokens,
 user-scoped (`hbt_`) or account-scoped (`hba_`), and OAuth access tokens, always
