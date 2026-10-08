@@ -5,6 +5,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -191,5 +192,28 @@ func TestOversizedBodyIsAnError(t *testing.T) {
 	_, err := c.Projects.List(context.Background())
 	if err == nil || !strings.Contains(err.Error(), "exceeds") {
 		t.Fatalf("err = %v, want the oversized body reported", err)
+	}
+}
+
+// Every request names the library, after the caller's product when one is set.
+func TestUserAgent(t *testing.T) {
+	var got []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = append(got, r.Header.Get("User-Agent"))
+		writeJSON(w, 0, `{"data":{"id":"p1","account_id":"a","name":"One","active":true}}`)
+	}))
+	defer srv.Close()
+
+	base := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	ctx := context.Background()
+	if _, err := base.Projects.Get(ctx, "p1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := base.WithUserAgent("terraform-provider-honeybadger/1.2.0").Projects.Get(ctx, "p1"); err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"honeybadger-api-go", "terraform-provider-honeybadger/1.2.0 honeybadger-api-go"}
+	if !slices.Equal(got, want) {
+		t.Errorf("User-Agent = %q, want %q", got, want)
 	}
 }

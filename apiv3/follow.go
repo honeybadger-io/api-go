@@ -29,7 +29,7 @@ func followTimeSeries[T any](ctx context.Context, c *Client, link string) (*List
 			return nil, err
 		}
 		req.Header.Set("Accept", "application/json")
-		if err := c.authorize(ctx, req); err != nil {
+		if err := c.prepare(ctx, req); err != nil {
 			return nil, err
 		}
 		return c.httpClient.Do(req)

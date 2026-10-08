@@ -85,6 +85,7 @@ type Client struct {
 	httpClient  *http.Client
 	requestID   RequestIDHook
 	retry       RetryPolicy
+	userAgent   string
 
 	// rateLimit is the only mutable state, and it is observational: it records
 	// the most recent response's headers for callers that want to check their
@@ -174,6 +175,7 @@ func (c *Client) clone() *Client {
 		httpClient:  c.httpClient,
 		requestID:   c.requestID,
 		retry:       c.retry,
+		userAgent:   c.userAgent,
 	}
 	return copied.rebind()
 }
@@ -249,6 +251,20 @@ func (c *Client) WithRequestIDHook(hook RequestIDHook) *Client {
 	return next
 }
 
+// libraryProduct identifies this package in the User-Agent of every request.
+const libraryProduct = "honeybadger-api-go"
+
+// WithUserAgent returns a client that names the calling program in each
+// request's User-Agent, ahead of this library's own token, as in
+// "terraform-provider-honeybadger/1.2.0 honeybadger-api-go". It lets Honeybadger
+// attribute traffic to a program and version. An empty product sends the
+// library's token alone.
+func (c *Client) WithUserAgent(product string) *Client {
+	next := c.clone()
+	next.userAgent = strings.TrimSpace(product)
+	return next
+}
+
 // LastRateLimit returns a snapshot of the rate-limit headers from the most
 // recent response, or nil if no response has carried them.
 //
@@ -288,7 +304,7 @@ func (c *Client) gen() *gen.Client {
 	client, err := gen.NewClient(
 		c.serverURL(),
 		gen.WithHTTPClient(c.httpClient),
-		gen.WithRequestEditorFn(c.authorize),
+		gen.WithRequestEditorFn(c.prepare),
 	)
 	if err != nil {
 		// NewClient only fails if a ClientOption fails. Neither of the options
@@ -298,11 +314,16 @@ func (c *Client) gen() *gen.Client {
 	return client
 }
 
-// authorize attaches the Bearer credential. A client with no token sends no
-// Authorization header, which surfaces as a 401 from the API rather than a
-// local error — the same shape as an invalid token, and easier to diagnose from
-// a response than from a client-side panic.
-func (c *Client) authorize(ctx context.Context, req *http.Request) error {
+// prepare attaches the User-Agent and the Bearer credential. A client with no
+// token sends no Authorization header, which surfaces as a 401 from the API
+// rather than a local error — the same shape as an invalid token, and easier to
+// diagnose from a response than from a client-side panic.
+func (c *Client) prepare(ctx context.Context, req *http.Request) error {
+	userAgent := libraryProduct
+	if c.userAgent != "" {
+		userAgent = c.userAgent + " " + libraryProduct
+	}
+	req.Header.Set("User-Agent", userAgent)
 	if c.bearerToken != "" {
 		req.Header.Set("Authorization", "Bearer "+c.bearerToken)
 	}
