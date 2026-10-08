@@ -96,7 +96,7 @@ info:
 
     The other three — outages, uptime checks and check-in events — are paged on a
     timestamp window instead, with `created_after` and `created_before`, and
-    return no cursor fields. Uptime checks have no primary key to tie-break on;
+    return no cursor fields. Uptime checks can't be paged by cursor, and
     outages keep the v2 API's window parameters so a client can move between
     versions unchanged. Treat the cursors as an optimisation, not the contract.
 
@@ -208,7 +208,7 @@ tags:
   description: Insights alarms
 - name: Integrations
   description: Notification integrations (webhooks, PagerDuty, email, etc.)
-- name: Project Keys
+- name: Ingestion Keys
   description: Project ingestion keys
 - name: Comments
   description: Comments on errors
@@ -279,15 +279,14 @@ paths:
                         - faults:write
                       account_id:
                         type: string
-                        description: public_id of the account the credential is bound
-                          to.
+                        description: ID of the account the credential is bound to.
                       project_ids:
                         type: array
                         items:
                           type: string
-                        description: 'public_ids of the projects the credential can
-                          reach. Empty for a credential bound to an account with no
-                          visible projects; every project in the account when unrestricted.
+                        description: 'IDs of the projects the credential can reach.
+                          Empty for a credential bound to an account with no visible
+                          projects; every project in the account when unrestricted.
 
                           '
                       expires_at:
@@ -2900,7 +2899,7 @@ paths:
       description: |
         Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
 
-        Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
+        Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are paged on a timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
       tags:
       - Check-ins
       parameters:
@@ -3596,13 +3595,13 @@ paths:
       security:
       - bearer_auth:
         - integrations:write
-  "/projects/{project_id}/keys":
+  "/projects/{project_id}/ingestion_keys":
     get:
-      operationId: listProjectKeys
-      summary: List project keys
+      operationId: listIngestionKeys
+      summary: List ingestion keys
       description: Returns the project's ingestion keys.
       tags:
-      - Project Keys
+      - Ingestion Keys
       parameters:
       - "$ref": "#/components/parameters/ProjectId"
       - "$ref": "#/components/parameters/Page"
@@ -3620,7 +3619,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/ProjectKey"
+                      "$ref": "#/components/schemas/IngestionKey"
                   pagination:
                     "$ref": "#/components/schemas/Pagination"
                   links:
@@ -3639,14 +3638,14 @@ paths:
       - bearer_auth:
         - projects:read
     post:
-      operationId: createProjectKey
-      summary: Create a project key
+      operationId: createIngestionKey
+      summary: Create an ingestion key
       description: 'Creates a new ingestion key for the project. A project may hold
         a limited number of keys; a request beyond that limit is refused with 403.
 
         '
       tags:
-      - Project Keys
+      - Ingestion Keys
       parameters:
       - "$ref": "#/components/parameters/ProjectId"
       requestBody:
@@ -3654,7 +3653,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/ProjectKeyInput"
+              "$ref": "#/components/schemas/IngestionKeyInput"
       responses:
         '201':
           description: Key created
@@ -3666,7 +3665,7 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/ProjectKey"
+                    "$ref": "#/components/schemas/IngestionKey"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -3680,16 +3679,16 @@ paths:
       security:
       - bearer_auth:
         - projects:write
-  "/projects/{project_id}/keys/{key_id}":
+  "/projects/{project_id}/ingestion_keys/{ingestion_key_id}":
     get:
-      operationId: getProjectKey
-      summary: Get a project key
+      operationId: getIngestionKey
+      summary: Get an ingestion key
       description: Returns a single ingestion key.
       tags:
-      - Project Keys
+      - Ingestion Keys
       parameters:
       - "$ref": "#/components/parameters/ProjectId"
-      - name: key_id
+      - name: ingestion_key_id
         in: path
         required: true
         description: Key public ID
@@ -3706,7 +3705,7 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/ProjectKey"
+                    "$ref": "#/components/schemas/IngestionKey"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -3721,14 +3720,14 @@ paths:
       - bearer_auth:
         - projects:read
     patch:
-      operationId: updateProjectKey
-      summary: Update a project key
+      operationId: updateIngestionKey
+      summary: Update an ingestion key
       description: Updates a key's label. The key value itself cannot be changed.
       tags:
-      - Project Keys
+      - Ingestion Keys
       parameters:
       - "$ref": "#/components/parameters/ProjectId"
-      - name: key_id
+      - name: ingestion_key_id
         in: path
         required: true
         description: Key public ID
@@ -3739,7 +3738,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/ProjectKeyInput"
+              "$ref": "#/components/schemas/IngestionKeyInput"
       responses:
         '200':
           description: Success
@@ -3751,7 +3750,7 @@ paths:
                 - data
                 properties:
                   data:
-                    "$ref": "#/components/schemas/ProjectKey"
+                    "$ref": "#/components/schemas/IngestionKey"
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -3766,18 +3765,18 @@ paths:
       - bearer_auth:
         - projects:write
     delete:
-      operationId: deleteProjectKey
-      summary: Delete a project key
+      operationId: deleteIngestionKey
+      summary: Delete an ingestion key
       description: 'Deletes an ingestion key. A project''s last key cannot be deleted
         — without one it can no longer receive errors — and that request is refused
         with 403.
 
         '
       tags:
-      - Project Keys
+      - Ingestion Keys
       parameters:
       - "$ref": "#/components/parameters/ProjectId"
-      - name: key_id
+      - name: ingestion_key_id
         in: path
         required: true
         description: Key public ID
@@ -5900,9 +5899,8 @@ components:
           "$ref": "#/components/schemas/AccountRole"
     Alarm:
       type: object
-      description: 'An Insights alarm. Read from Honeybadger''s copy of the alarm,
-        written after each change; an edit made directly in the alarm service doesn''t
-        show here.
+      description: 'An Insights alarm: a BadgerQL query run on a schedule over a project''s
+        streams, which notifies its integrations when the result crosses the trigger.
 
         '
       required:
@@ -5926,8 +5924,8 @@ components:
         id:
           readOnly: true
           type: string
-          description: Alarm identifier (opticon observer root ID)
-          example: obs_abc123
+          description: The alarm's ID
+          example: Qx7LmP2vRt9K
         project_id:
           readOnly: true
           type: string
@@ -5954,9 +5952,8 @@ components:
           type:
           - string
           - 'null'
-          description: 'BadgerQL evaluated on each check. A string, the same shape
-            AlarmCreateInput accepts — the presenter renders the observer''s stored
-            query text, not a structured object.
+          description: 'BadgerQL run on each check, as the text a create or update
+            sent.
 
             '
           example: filter event_type::str == "notice" | stats count() as count
@@ -6030,7 +6027,7 @@ components:
           "$ref": "#/components/schemas/WebLinks"
     AlarmCreateInput:
       type: object
-      description: An alarm and the observer that evaluates it
+      description: A new alarm
       required:
       - name
       - query
@@ -6161,7 +6158,7 @@ components:
         observer_root_id:
           type: string
           description: The alarm's ID
-          example: obs_abc123
+          example: Qx7LmP2vRt9K
         observer_id:
           type: string
           description: 'The version of the alarm that was evaluated. Editing an alarm
@@ -8827,15 +8824,16 @@ components:
           type:
           - string
           - 'null'
-          description: Null clears it; an unnamed check-in shows its ID.
+          description: Display name. Null clears it; an unnamed check-in shows its
+            ID.
           example: Nightly billing job
         slug:
           type:
           - string
           - 'null'
           description: 'Short identifier used in the check-in''s reporting URL. Null
-            clears it. Renaming it breaks jobs reporting to `…/check_in/<project key>/<slug>`
-            and changes how `PUT /check_ins` matches this check-in.
+            clears it. Renaming it breaks jobs reporting to `…/check_in/<ingestion
+            key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
 
             '
           example: nightly-billing
@@ -8882,10 +8880,10 @@ components:
           - string
           - 'null'
           default: UTC
-          description: 'Timezone the cron schedule is evaluated in. A Rails/ActiveSupport
-            zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not
-            `America/Chicago`, which is rejected. Required when `schedule_type` is
-            `cron`. Null resets it to `UTC`.
+          description: 'Timezone the cron schedule is evaluated in. A Rails time zone
+            name, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`,
+            which is rejected. Required when `schedule_type` is `cron`. Null resets
+            it to `UTC`.
 
             '
           example: Central Time (US & Canada)
@@ -9298,7 +9296,7 @@ components:
           - rate_limit_exceeded
           - concurrent_request
           - streams_provisioning
-          - project_key_not_accepted
+          - ingestion_key_not_accepted
           - maintenance_mode
           - invalid_parameter
           - forbidden_attributes
@@ -9660,7 +9658,7 @@ components:
         resolve_on_deploy:
           type: boolean
           description: |
-            Resolve this fault the next time a deploy is recorded. Not a column on the fault — it is stored as a pending resolution — so it is applied after the update succeeds and is echoed back on the fault as `resolve_on_deploy`.
+            Resolve this fault the next time a deploy is recorded. Reads back on the fault as `resolve_on_deploy` until that deploy.
 
             Setting it on a fault that is already resolved or ignored does nothing, since those states clear any pending resolution. Sending false removes a pending resolution.
     IncidentUpdate:
@@ -10369,10 +10367,10 @@ components:
             default) is refused with 403 `feature_unavailable`. Null clears it.
 
             '
-    ProjectKey:
+    IngestionKey:
       type: object
-      description: 'A Project Key: what an app sends errors and events with, set as
-        `api_key` in a notifier''s config. It only sends data; reading or managing
+      description: 'An Ingestion Key: what an app sends errors and events with, set
+        as `api_key` in a notifier''s config. It only sends data; reading or managing
         anything through the API takes an API Token.
 
         '
@@ -10396,7 +10394,7 @@ components:
         key:
           readOnly: true
           type: string
-          description: 'The Project Key value a notifier sends. Returned in full:
+          description: 'The Ingestion Key value a notifier sends. Returned in full:
             unlike an API Token, it''s meant to ship with your application.
 
             '
@@ -10412,7 +10410,7 @@ components:
           type: string
           format: date-time
           description: When the key was created
-    ProjectKeyInput:
+    IngestionKeyInput:
       type: object
       additionalProperties: false
       properties:
@@ -10667,9 +10665,8 @@ components:
             Authorization: Bearer abc123
         frequency:
           default: 5
-          description: 'Minutes between checks. Defaults to 5; plans set the most
-            frequent allowed, and a value under it is 403 `feature_unavailable`. Null
-            resets it to 5.
+          description: 'Minutes between checks. Plans set the most frequent allowed,
+            and a value under it is 403 `feature_unavailable`. Null resets it to 5.
 
             '
           anyOf:
@@ -10702,7 +10699,10 @@ components:
           - boolean
           - 'null'
           default: true
-          description: Null resets it to true.
+          description: 'Whether monitoring is active. After 740 consecutive failed
+            checks the server sets it to false. Null resets it to true.
+
+            '
         timeout:
           type:
           - integer
@@ -14056,7 +14056,7 @@ components:
       description: |
         Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
 
-        Defaults to `hour` when omitted, and `meta.period` reports what was used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
+        `meta.period` reports the period used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
       schema:
         type: string
         enum:
@@ -14190,8 +14190,7 @@ components:
             meta:
               request_id: abc123
     AlarmServiceUnavailable:
-      description: The alarm service could not be reached or failed to handle the
-        request.
+      description: Alarms are temporarily unavailable. Retry later.
       content:
         application/json:
           schema:

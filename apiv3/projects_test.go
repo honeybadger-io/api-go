@@ -277,9 +277,9 @@ func writeJSON(w http.ResponseWriter, status int, body string) {
 	_, _ = w.Write([]byte(body))
 }
 
-func TestProjectKeysGet(t *testing.T) {
+func TestIngestionKeysGet(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if want := "/v3/projects/Xk9mZp/keys/k1"; r.URL.Path != want {
+		if want := "/v3/projects/Xk9mZp/ingestion_keys/k1"; r.URL.Path != want {
 			t.Errorf("path = %q, want %q", r.URL.Path, want)
 		}
 		writeJSON(w, 0, `{"data":{"id":"k1","project_id":"Xk9mZp","key":"hbp_abc","label":"CI"}}`)
@@ -287,7 +287,7 @@ func TestProjectKeysGet(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
-	key, err := c.ProjectKeys.Get(context.Background(), "Xk9mZp", "k1")
+	key, err := c.IngestionKeys.Get(context.Background(), "Xk9mZp", "k1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}

@@ -21,29 +21,29 @@ type Code string
 // The codes v3 declares. Auth and authorization first, then the rest, matching
 // the spec's own ordering.
 const (
-	CodeUnauthorized          Code = "unauthorized"
-	CodeUnsupportedAuthScheme Code = "unsupported_auth_scheme"
-	CodeCredentialInQuery     Code = "credential_in_query"
-	CodeProjectKeyNotAccepted Code = "project_key_not_accepted"
-	CodeAccessDenied          Code = "access_denied"
-	CodeInsufficientScope     Code = "insufficient_scope"
-	CodeRequiresUserToken     Code = "requires_user_token"
-	CodeProjectRestricted     Code = "project_restricted"
-	CodeAccountInactive       Code = "account_inactive"
-	CodeAccountParked         Code = "account_parked"
-	CodeFeatureUnavailable    Code = "feature_unavailable"
-	CodeNotFound              Code = "not_found"
-	CodeValidationError       Code = "validation_error"
-	CodeDeleteFailed          Code = "delete_failed"
-	CodeLimitReached          Code = "limit_reached"
-	CodeRateLimitExceeded     Code = "rate_limit_exceeded"
-	CodeConcurrentRequest     Code = "concurrent_request"
-	CodeStreamsProvisioning   Code = "streams_provisioning"
-	CodeMaintenanceMode       Code = "maintenance_mode"
-	CodeInvalidParameter      Code = "invalid_parameter"
-	CodeForbiddenAttributes   Code = "forbidden_attributes"
-	CodeServiceUnavailable    Code = "service_unavailable"
-	CodeAmbiguousAccount      Code = "ambiguous_account"
+	CodeUnauthorized            Code = "unauthorized"
+	CodeUnsupportedAuthScheme   Code = "unsupported_auth_scheme"
+	CodeCredentialInQuery       Code = "credential_in_query"
+	CodeIngestionKeyNotAccepted Code = "ingestion_key_not_accepted"
+	CodeAccessDenied            Code = "access_denied"
+	CodeInsufficientScope       Code = "insufficient_scope"
+	CodeRequiresUserToken       Code = "requires_user_token"
+	CodeProjectRestricted       Code = "project_restricted"
+	CodeAccountInactive         Code = "account_inactive"
+	CodeAccountParked           Code = "account_parked"
+	CodeFeatureUnavailable      Code = "feature_unavailable"
+	CodeNotFound                Code = "not_found"
+	CodeValidationError         Code = "validation_error"
+	CodeDeleteFailed            Code = "delete_failed"
+	CodeLimitReached            Code = "limit_reached"
+	CodeRateLimitExceeded       Code = "rate_limit_exceeded"
+	CodeConcurrentRequest       Code = "concurrent_request"
+	CodeStreamsProvisioning     Code = "streams_provisioning"
+	CodeMaintenanceMode         Code = "maintenance_mode"
+	CodeInvalidParameter        Code = "invalid_parameter"
+	CodeForbiddenAttributes     Code = "forbidden_attributes"
+	CodeServiceUnavailable      Code = "service_unavailable"
+	CodeAmbiguousAccount        Code = "ambiguous_account"
 
 	// CodeFaultMerged means the fault named was merged into another. A write to it
 	// answers 409 with this code and the survivor in details.merged_into. A read
@@ -54,30 +54,30 @@ const (
 
 // Sentinels for errors.Is. Each matches any Error carrying the same code.
 var (
-	ErrUnauthorized          = &Error{Code: CodeUnauthorized}
-	ErrUnsupportedAuthScheme = &Error{Code: CodeUnsupportedAuthScheme}
-	ErrCredentialInQuery     = &Error{Code: CodeCredentialInQuery}
-	ErrProjectKeyNotAccepted = &Error{Code: CodeProjectKeyNotAccepted}
-	ErrAccessDenied          = &Error{Code: CodeAccessDenied}
-	ErrInsufficientScope     = &Error{Code: CodeInsufficientScope}
-	ErrRequiresUserToken     = &Error{Code: CodeRequiresUserToken}
-	ErrProjectRestricted     = &Error{Code: CodeProjectRestricted}
-	ErrAccountInactive       = &Error{Code: CodeAccountInactive}
-	ErrAccountParked         = &Error{Code: CodeAccountParked}
-	ErrFeatureUnavailable    = &Error{Code: CodeFeatureUnavailable}
-	ErrNotFound              = &Error{Code: CodeNotFound}
-	ErrValidation            = &Error{Code: CodeValidationError}
-	ErrDeleteFailed          = &Error{Code: CodeDeleteFailed}
-	ErrLimitReached          = &Error{Code: CodeLimitReached}
-	ErrRateLimited           = &Error{Code: CodeRateLimitExceeded}
-	ErrConcurrentRequest     = &Error{Code: CodeConcurrentRequest}
-	ErrStreamsProvisioning   = &Error{Code: CodeStreamsProvisioning}
-	ErrMaintenanceMode       = &Error{Code: CodeMaintenanceMode}
-	ErrInvalidParameter      = &Error{Code: CodeInvalidParameter}
-	ErrForbiddenAttributes   = &Error{Code: CodeForbiddenAttributes}
-	ErrServiceUnavailable    = &Error{Code: CodeServiceUnavailable}
-	ErrAmbiguousAccount      = &Error{Code: CodeAmbiguousAccount}
-	ErrFaultMerged           = &Error{Code: CodeFaultMerged}
+	ErrUnauthorized            = &Error{Code: CodeUnauthorized}
+	ErrUnsupportedAuthScheme   = &Error{Code: CodeUnsupportedAuthScheme}
+	ErrCredentialInQuery       = &Error{Code: CodeCredentialInQuery}
+	ErrIngestionKeyNotAccepted = &Error{Code: CodeIngestionKeyNotAccepted}
+	ErrAccessDenied            = &Error{Code: CodeAccessDenied}
+	ErrInsufficientScope       = &Error{Code: CodeInsufficientScope}
+	ErrRequiresUserToken       = &Error{Code: CodeRequiresUserToken}
+	ErrProjectRestricted       = &Error{Code: CodeProjectRestricted}
+	ErrAccountInactive         = &Error{Code: CodeAccountInactive}
+	ErrAccountParked           = &Error{Code: CodeAccountParked}
+	ErrFeatureUnavailable      = &Error{Code: CodeFeatureUnavailable}
+	ErrNotFound                = &Error{Code: CodeNotFound}
+	ErrValidation              = &Error{Code: CodeValidationError}
+	ErrDeleteFailed            = &Error{Code: CodeDeleteFailed}
+	ErrLimitReached            = &Error{Code: CodeLimitReached}
+	ErrRateLimited             = &Error{Code: CodeRateLimitExceeded}
+	ErrConcurrentRequest       = &Error{Code: CodeConcurrentRequest}
+	ErrStreamsProvisioning     = &Error{Code: CodeStreamsProvisioning}
+	ErrMaintenanceMode         = &Error{Code: CodeMaintenanceMode}
+	ErrInvalidParameter        = &Error{Code: CodeInvalidParameter}
+	ErrForbiddenAttributes     = &Error{Code: CodeForbiddenAttributes}
+	ErrServiceUnavailable      = &Error{Code: CodeServiceUnavailable}
+	ErrAmbiguousAccount        = &Error{Code: CodeAmbiguousAccount}
+	ErrFaultMerged             = &Error{Code: CodeFaultMerged}
 )
 
 // FieldError is one entry from a validation error's details.

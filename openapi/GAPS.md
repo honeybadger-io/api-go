@@ -99,7 +99,7 @@ Earlier in the month:
   redirect-following client would replay.
 - Snooze, unsnooze, pause and resume return the fault, with
   `recording_paused_until`.
-- `getProjectKey` exists; affected users are capped at 500, documented.
+- `getProjectKey` (now `getIngestionKey`) exists; affected users are capped at 500, documented.
 - Alarm history is typed and pages like every other numbered collection; alarm
   updates can change the trigger.
 

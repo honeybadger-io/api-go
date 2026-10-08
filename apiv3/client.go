@@ -117,9 +117,9 @@ type Client struct {
 	// Integrations handles notification integrations (webhooks, email, PagerDuty, etc.).
 	Integrations *IntegrationsService
 
-	// ProjectKeys handles a project's Project Keys, the credentials an app sends
-	// errors and events with.
-	ProjectKeys *ProjectKeysService
+	// IngestionKeys handles a project's Ingestion Keys, the credentials an app
+	// sends errors and events with.
+	IngestionKeys *IngestionKeysService
 
 	// Environments handles a project's environments.
 	Environments *EnvironmentsService
@@ -189,7 +189,7 @@ func (c *Client) rebind() *Client {
 	c.Alarms = &AlarmsService{client: c}
 	c.Dashboards = &DashboardsService{client: c}
 	c.Integrations = &IntegrationsService{client: c}
-	c.ProjectKeys = &ProjectKeysService{client: c}
+	c.IngestionKeys = &IngestionKeysService{client: c}
 	c.Environments = &EnvironmentsService{client: c}
 	c.Sites = &SitesService{client: c}
 	c.Teams = &TeamsService{client: c}
@@ -212,8 +212,8 @@ func (c *Client) WithBaseURL(baseURL string) *Client {
 // `Authorization: Bearer <token>`.
 //
 // Accepts an API Token, user-scoped (`hbt_`) or account-scoped (`hba_`), or an
-// OAuth access token. A Project Key (`hbp_`) is for sending errors, not for
-// calling the API, and is refused with ErrProjectKeyNotAccepted. There is
+// OAuth access token. An Ingestion Key (`hbp_`) is for sending errors and events,
+// not for calling the API, and is refused with ErrIngestionKeyNotAccepted. There is
 // deliberately no Basic-auth equivalent: v3's documented challenge is
 // `WWW-Authenticate: Bearer`, and a single credential path keeps authorization
 // decisions in one place.

@@ -444,30 +444,30 @@ func (e DashboardWidgetType) Valid() bool {
 
 // Defines values for ErrorBodyCode.
 const (
-	ErrorBodyCodeAccessDenied          ErrorBodyCode = "access_denied"
-	ErrorBodyCodeAccountInactive       ErrorBodyCode = "account_inactive"
-	ErrorBodyCodeAccountParked         ErrorBodyCode = "account_parked"
-	ErrorBodyCodeAmbiguousAccount      ErrorBodyCode = "ambiguous_account"
-	ErrorBodyCodeConcurrentRequest     ErrorBodyCode = "concurrent_request"
-	ErrorBodyCodeCredentialInQuery     ErrorBodyCode = "credential_in_query"
-	ErrorBodyCodeDeleteFailed          ErrorBodyCode = "delete_failed"
-	ErrorBodyCodeFaultMerged           ErrorBodyCode = "fault_merged"
-	ErrorBodyCodeFeatureUnavailable    ErrorBodyCode = "feature_unavailable"
-	ErrorBodyCodeForbiddenAttributes   ErrorBodyCode = "forbidden_attributes"
-	ErrorBodyCodeInsufficientScope     ErrorBodyCode = "insufficient_scope"
-	ErrorBodyCodeInvalidParameter      ErrorBodyCode = "invalid_parameter"
-	ErrorBodyCodeLimitReached          ErrorBodyCode = "limit_reached"
-	ErrorBodyCodeMaintenanceMode       ErrorBodyCode = "maintenance_mode"
-	ErrorBodyCodeNotFound              ErrorBodyCode = "not_found"
-	ErrorBodyCodeProjectKeyNotAccepted ErrorBodyCode = "project_key_not_accepted"
-	ErrorBodyCodeProjectRestricted     ErrorBodyCode = "project_restricted"
-	ErrorBodyCodeRateLimitExceeded     ErrorBodyCode = "rate_limit_exceeded"
-	ErrorBodyCodeRequiresUserToken     ErrorBodyCode = "requires_user_token"
-	ErrorBodyCodeServiceUnavailable    ErrorBodyCode = "service_unavailable"
-	ErrorBodyCodeStreamsProvisioning   ErrorBodyCode = "streams_provisioning"
-	ErrorBodyCodeUnauthorized          ErrorBodyCode = "unauthorized"
-	ErrorBodyCodeUnsupportedAuthScheme ErrorBodyCode = "unsupported_auth_scheme"
-	ErrorBodyCodeValidationError       ErrorBodyCode = "validation_error"
+	ErrorBodyCodeAccessDenied            ErrorBodyCode = "access_denied"
+	ErrorBodyCodeAccountInactive         ErrorBodyCode = "account_inactive"
+	ErrorBodyCodeAccountParked           ErrorBodyCode = "account_parked"
+	ErrorBodyCodeAmbiguousAccount        ErrorBodyCode = "ambiguous_account"
+	ErrorBodyCodeConcurrentRequest       ErrorBodyCode = "concurrent_request"
+	ErrorBodyCodeCredentialInQuery       ErrorBodyCode = "credential_in_query"
+	ErrorBodyCodeDeleteFailed            ErrorBodyCode = "delete_failed"
+	ErrorBodyCodeFaultMerged             ErrorBodyCode = "fault_merged"
+	ErrorBodyCodeFeatureUnavailable      ErrorBodyCode = "feature_unavailable"
+	ErrorBodyCodeForbiddenAttributes     ErrorBodyCode = "forbidden_attributes"
+	ErrorBodyCodeIngestionKeyNotAccepted ErrorBodyCode = "ingestion_key_not_accepted"
+	ErrorBodyCodeInsufficientScope       ErrorBodyCode = "insufficient_scope"
+	ErrorBodyCodeInvalidParameter        ErrorBodyCode = "invalid_parameter"
+	ErrorBodyCodeLimitReached            ErrorBodyCode = "limit_reached"
+	ErrorBodyCodeMaintenanceMode         ErrorBodyCode = "maintenance_mode"
+	ErrorBodyCodeNotFound                ErrorBodyCode = "not_found"
+	ErrorBodyCodeProjectRestricted       ErrorBodyCode = "project_restricted"
+	ErrorBodyCodeRateLimitExceeded       ErrorBodyCode = "rate_limit_exceeded"
+	ErrorBodyCodeRequiresUserToken       ErrorBodyCode = "requires_user_token"
+	ErrorBodyCodeServiceUnavailable      ErrorBodyCode = "service_unavailable"
+	ErrorBodyCodeStreamsProvisioning     ErrorBodyCode = "streams_provisioning"
+	ErrorBodyCodeUnauthorized            ErrorBodyCode = "unauthorized"
+	ErrorBodyCodeUnsupportedAuthScheme   ErrorBodyCode = "unsupported_auth_scheme"
+	ErrorBodyCodeValidationError         ErrorBodyCode = "validation_error"
 )
 
 // Valid indicates whether the value is a known member of the ErrorBodyCode enum.
@@ -493,6 +493,8 @@ func (e ErrorBodyCode) Valid() bool {
 		return true
 	case ErrorBodyCodeForbiddenAttributes:
 		return true
+	case ErrorBodyCodeIngestionKeyNotAccepted:
+		return true
 	case ErrorBodyCodeInsufficientScope:
 		return true
 	case ErrorBodyCodeInvalidParameter:
@@ -502,8 +504,6 @@ func (e ErrorBodyCode) Valid() bool {
 	case ErrorBodyCodeMaintenanceMode:
 		return true
 	case ErrorBodyCodeNotFound:
-		return true
-	case ErrorBodyCodeProjectKeyNotAccepted:
 		return true
 	case ErrorBodyCodeProjectRestricted:
 		return true
@@ -1671,7 +1671,7 @@ type AffectedUser struct {
 	User string `json:"user"`
 }
 
-// Alarm An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
+// Alarm An Insights alarm: a BadgerQL query run on a schedule over a project's streams, which notifies its integrations when the result crosses the trigger.
 type Alarm struct {
 	// CreatedAt When the alarm was created
 	CreatedAt time.Time `json:"created_at"`
@@ -1685,7 +1685,7 @@ type Alarm struct {
 	// EvaluationPeriod Window each evaluation covers, as a compact duration. The API rejects a spelled-out interval like `5 minutes`.
 	EvaluationPeriod nullable.Nullable[string] `json:"evaluation_period"`
 
-	// Id Alarm identifier (opticon observer root ID)
+	// Id The alarm's ID
 	Id string `json:"id"`
 
 	// LastCheckedAt When the alarm was last evaluated
@@ -1706,7 +1706,7 @@ type Alarm struct {
 	// ProjectId ID of the project this alarm belongs to
 	ProjectId string `json:"project_id"`
 
-	// Query BadgerQL evaluated on each check. A string, the same shape AlarmCreateInput accepts — the presenter renders the observer's stored query text, not a structured object.
+	// Query BadgerQL run on each check, as the text a create or update sent.
 	Query nullable.Nullable[string] `json:"query"`
 
 	// State Current alarm state
@@ -1725,7 +1725,7 @@ type Alarm struct {
 // AlarmState Current alarm state
 type AlarmState string
 
-// AlarmCreateInput An alarm and the observer that evaluates it
+// AlarmCreateInput A new alarm
 type AlarmCreateInput struct {
 	// Description What the alarm watches for, shown with it in Honeybadger. Null clears it.
 	Description nullable.Nullable[string] `json:"description,omitempty"`
@@ -1904,13 +1904,13 @@ type CheckInInput struct {
 	// CronSchedule Cron expression, required when `schedule_type` is `cron`.
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails time zone name, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
 	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`; zero is `00:00:00`. Null resets it to zero.
 	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
 
-	// Name Null clears it; an unnamed check-in shows its ID.
+	// Name Display name. Null clears it; an unnamed check-in shows its ID.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text.
@@ -1919,7 +1919,7 @@ type CheckInInput struct {
 	// ScheduleType Switching to `simple` clears `cron_schedule` and resets `cron_timezone` to `UTC`; switching to `cron` clears `report_period`.
 	ScheduleType *CheckInScheduleType `json:"schedule_type,omitempty"`
 
-	// Slug Short identifier used in the check-in's reporting URL. Null clears it. Renaming it breaks jobs reporting to `…/check_in/<project key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
+	// Slug Short identifier used in the check-in's reporting URL. Null clears it. Renaming it breaks jobs reporting to `…/check_in/<ingestion key>/<slug>` and changes how `PUT /check_ins` matches this check-in.
 	Slug nullable.Nullable[string] `json:"slug,omitempty"`
 }
 
@@ -1928,13 +1928,13 @@ type CheckInReplaceEntry struct {
 	// CronSchedule Cron expression, required when `schedule_type` is `cron`.
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails/ActiveSupport zone NAME, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
+	// CronTimezone Timezone the cron schedule is evaluated in. A Rails time zone name, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
 	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`; zero is `00:00:00`. Null resets it to zero.
 	GracePeriod nullable.Nullable[string] `json:"grace_period,omitempty"`
 
-	// Name Null clears it; an unnamed check-in shows its ID.
+	// Name Display name. Null clears it; an unnamed check-in shows its ID.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text.
@@ -2615,7 +2615,7 @@ type FaultInput struct {
 	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
 	Ignored    *bool                     `json:"ignored,omitempty"`
 
-	// ResolveOnDeploy Resolve this fault the next time a deploy is recorded. Not a column on the fault — it is stored as a pending resolution — so it is applied after the update succeeds and is echoed back on the fault as `resolve_on_deploy`.
+	// ResolveOnDeploy Resolve this fault the next time a deploy is recorded. Reads back on the fault as `resolve_on_deploy` until that deploy.
 	//
 	// Setting it on a fault that is already resolved or ignored does nothing, since those states clear any pending resolution. Sending false removes a pending resolution.
 	ResolveOnDeploy *bool                       `json:"resolve_on_deploy,omitempty"`
@@ -2726,6 +2726,30 @@ type IncidentUpdateInput struct {
 
 	// Status An incident's status.
 	Status *IncidentStatus `json:"status,omitempty"`
+}
+
+// IngestionKey An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+type IngestionKey struct {
+	// CreatedAt When the key was created
+	CreatedAt time.Time `json:"created_at"`
+
+	// Id Identifier for this key. Use it in paths.
+	Id string `json:"id"`
+
+	// Key The Ingestion Key value a notifier sends. Returned in full: unlike an API Token, it's meant to ship with your application.
+	Key string `json:"key"`
+
+	// Label Optional human-readable name.
+	Label nullable.Nullable[string] `json:"label"`
+
+	// ProjectId Identifier of the project the key belongs to.
+	ProjectId string `json:"project_id"`
+}
+
+// IngestionKeyInput defines model for IngestionKeyInput.
+type IngestionKeyInput struct {
+	// Label Optional human-readable name.
+	Label nullable.Nullable[string] `json:"label,omitempty"`
 }
 
 // Integration A notification integration
@@ -3866,30 +3890,6 @@ type ProjectInput struct {
 	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
-// ProjectKey A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
-type ProjectKey struct {
-	// CreatedAt When the key was created
-	CreatedAt time.Time `json:"created_at"`
-
-	// Id Identifier for this key. Use it in paths.
-	Id string `json:"id"`
-
-	// Key The Project Key value a notifier sends. Returned in full: unlike an API Token, it's meant to ship with your application.
-	Key string `json:"key"`
-
-	// Label Optional human-readable name.
-	Label nullable.Nullable[string] `json:"label"`
-
-	// ProjectId Identifier of the project the key belongs to.
-	ProjectId string `json:"project_id"`
-}
-
-// ProjectKeyInput defines model for ProjectKeyInput.
-type ProjectKeyInput struct {
-	// Label Optional human-readable name.
-	Label nullable.Nullable[string] `json:"label,omitempty"`
-}
-
 // ResponseMeta defines model for ResponseMeta.
 type ResponseMeta struct {
 	// RequestId Unique identifier for the request, for correlating with support
@@ -3959,10 +3959,10 @@ type SiteState string
 
 // SiteCreateInput Attributes for creating a site. `name` defaults to the URL.
 type SiteCreateInput struct {
-	// Active Null resets it to true.
+	// Active Whether monitoring is active. After 740 consecutive failed checks the server sets it to false. Null resets it to true.
 	Active nullable.Nullable[bool] `json:"active,omitempty"`
 
-	// Frequency Minutes between checks. Defaults to 5; plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Null resets it to 5.
+	// Frequency Minutes between checks. Plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Null resets it to 5.
 	Frequency nullable.Nullable[SiteFrequency] `json:"frequency,omitempty"`
 
 	// Locations A set of location names to check from. Null or empty means every location. An unknown name is 422. A set; order is ignored and duplicates are dropped.
@@ -4004,10 +4004,10 @@ type SiteFrequency int
 
 // SiteInput Writable uptime-check site attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
 type SiteInput struct {
-	// Active Null resets it to true.
+	// Active Whether monitoring is active. After 740 consecutive failed checks the server sets it to false. Null resets it to true.
 	Active nullable.Nullable[bool] `json:"active,omitempty"`
 
-	// Frequency Minutes between checks. Defaults to 5; plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Null resets it to 5.
+	// Frequency Minutes between checks. Plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Null resets it to 5.
 	Frequency nullable.Nullable[SiteFrequency] `json:"frequency,omitempty"`
 
 	// Locations A set of location names to check from. Null or empty means every location. An unknown name is 422. A set; order is ignored and duplicates are dropped.
@@ -4839,7 +4839,7 @@ type CreateProject201JSONResponseBody struct {
 type ListAccountOccurrencesParams struct {
 	// Period Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
 	//
-	// Defaults to `hour` when omitted, and `meta.period` reports what was used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
+	// `meta.period` reports the period used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
 	Period *ListAccountOccurrencesParamsPeriod `form:"period,omitempty" json:"period,omitempty"`
 
 	// Environment Only count notices from faults in this environment
@@ -4889,21 +4889,21 @@ type ListAlarms200JSONResponseBody struct {
 
 // CreateAlarm201JSONResponseBody defines parameters for CreateAlarm.
 type CreateAlarm201JSONResponseBody struct {
-	// Data An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
+	// Data An Insights alarm: a BadgerQL query run on a schedule over a project's streams, which notifies its integrations when the result crosses the trigger.
 	Data Alarm         `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetAlarm200JSONResponseBody defines parameters for GetAlarm.
 type GetAlarm200JSONResponseBody struct {
-	// Data An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
+	// Data An Insights alarm: a BadgerQL query run on a schedule over a project's streams, which notifies its integrations when the result crosses the trigger.
 	Data Alarm         `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateAlarm200JSONResponseBody defines parameters for UpdateAlarm.
 type UpdateAlarm200JSONResponseBody struct {
-	// Data An Insights alarm. Read from Honeybadger's copy of the alarm, written after each change; an edit made directly in the alarm service doesn't show here.
+	// Data An Insights alarm: a BadgerQL query run on a schedule over a project's streams, which notifies its integrations when the result crosses the trigger.
 	Data Alarm         `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
@@ -5512,6 +5512,48 @@ type SnoozeFault200JSONResponseBody struct {
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
+// ListIngestionKeysParams defines parameters for ListIngestionKeys.
+type ListIngestionKeysParams struct {
+	// Page Page number (1-indexed)
+	Page *Page `form:"page,omitempty" json:"page,omitempty"`
+
+	// PerPage Items per page
+	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
+// ListIngestionKeys200JSONResponseBody defines parameters for ListIngestionKeys.
+type ListIngestionKeys200JSONResponseBody struct {
+	Data []IngestionKey `json:"data"`
+
+	// Links Navigation links for a numbered-page collection
+	Links *OffsetLinks  `json:"links,omitempty"`
+	Meta  *ResponseMeta `json:"meta,omitempty"`
+
+	// Pagination Offset-based pagination information
+	Pagination *Pagination `json:"pagination,omitempty"`
+}
+
+// CreateIngestionKey201JSONResponseBody defines parameters for CreateIngestionKey.
+type CreateIngestionKey201JSONResponseBody struct {
+	// Data An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+	Data IngestionKey  `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
+// GetIngestionKey200JSONResponseBody defines parameters for GetIngestionKey.
+type GetIngestionKey200JSONResponseBody struct {
+	// Data An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+	Data IngestionKey  `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
+// UpdateIngestionKey200JSONResponseBody defines parameters for UpdateIngestionKey.
+type UpdateIngestionKey200JSONResponseBody struct {
+	// Data An Ingestion Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
+	Data IngestionKey  `json:"data"`
+	Meta *ResponseMeta `json:"meta,omitempty"`
+}
+
 // RunInsightsQueryJSONBody defines parameters for RunInsightsQuery.
 type RunInsightsQueryJSONBody struct {
 	// Query BadgerQL query
@@ -5585,53 +5627,11 @@ type UpdateIntegration200JSONResponseBody struct {
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
-// ListProjectKeysParams defines parameters for ListProjectKeys.
-type ListProjectKeysParams struct {
-	// Page Page number (1-indexed)
-	Page *Page `form:"page,omitempty" json:"page,omitempty"`
-
-	// PerPage Items per page
-	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
-}
-
-// ListProjectKeys200JSONResponseBody defines parameters for ListProjectKeys.
-type ListProjectKeys200JSONResponseBody struct {
-	Data []ProjectKey `json:"data"`
-
-	// Links Navigation links for a numbered-page collection
-	Links *OffsetLinks  `json:"links,omitempty"`
-	Meta  *ResponseMeta `json:"meta,omitempty"`
-
-	// Pagination Offset-based pagination information
-	Pagination *Pagination `json:"pagination,omitempty"`
-}
-
-// CreateProjectKey201JSONResponseBody defines parameters for CreateProjectKey.
-type CreateProjectKey201JSONResponseBody struct {
-	// Data A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
-	Data ProjectKey    `json:"data"`
-	Meta *ResponseMeta `json:"meta,omitempty"`
-}
-
-// GetProjectKey200JSONResponseBody defines parameters for GetProjectKey.
-type GetProjectKey200JSONResponseBody struct {
-	// Data A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
-	Data ProjectKey    `json:"data"`
-	Meta *ResponseMeta `json:"meta,omitempty"`
-}
-
-// UpdateProjectKey200JSONResponseBody defines parameters for UpdateProjectKey.
-type UpdateProjectKey200JSONResponseBody struct {
-	// Data A Project Key: what an app sends errors and events with, set as `api_key` in a notifier's config. It only sends data; reading or managing anything through the API takes an API Token.
-	Data ProjectKey    `json:"data"`
-	Meta *ResponseMeta `json:"meta,omitempty"`
-}
-
 // GetProjectOccurrencesParams defines parameters for GetProjectOccurrences.
 type GetProjectOccurrencesParams struct {
 	// Period Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
 	//
-	// Defaults to `hour` when omitted, and `meta.period` reports what was used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
+	// `meta.period` reports the period used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
 	Period *GetProjectOccurrencesParamsPeriod `form:"period,omitempty" json:"period,omitempty"`
 
 	// Environment Only count notices from faults in this environment
@@ -6049,7 +6049,7 @@ type GetToken200JSONResponseBodyDataKind string
 
 // GetToken200JSONResponseBody_Data defines parameters for GetToken.
 type GetToken200JSONResponseBody_Data struct {
-	// AccountId public_id of the account the credential is bound to.
+	// AccountId ID of the account the credential is bound to.
 	AccountId *string                      `json:"account_id,omitempty"`
 	ExpiresAt nullable.Nullable[time.Time] `json:"expires_at,omitempty"`
 
@@ -6062,7 +6062,7 @@ type GetToken200JSONResponseBody_Data struct {
 	// Name The token's name, or for an OAuth grant the name of the application holding it.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// ProjectIds public_ids of the projects the credential can reach. Empty for a credential bound to an account with no visible projects; every project in the account when unrestricted.
+	// ProjectIds IDs of the projects the credential can reach. Empty for a credential bound to an account with no visible projects; every project in the account when unrestricted.
 	ProjectIds *[]string `json:"project_ids,omitempty"`
 
 	// Scopes Granular permissions. For an OAuth grant these are its legacy `read`/`write` aliases expanded to the API surface as it stood when the grant was consented to.
@@ -6156,6 +6156,12 @@ type PauseFaultRecordingJSONRequestBody PauseFaultRecordingJSONBody
 // SnoozeFaultJSONRequestBody defines body for SnoozeFault for application/json ContentType.
 type SnoozeFaultJSONRequestBody SnoozeFaultJSONBody
 
+// CreateIngestionKeyJSONRequestBody defines body for CreateIngestionKey for application/json ContentType.
+type CreateIngestionKeyJSONRequestBody = IngestionKeyInput
+
+// UpdateIngestionKeyJSONRequestBody defines body for UpdateIngestionKey for application/json ContentType.
+type UpdateIngestionKeyJSONRequestBody = IngestionKeyInput
+
 // RunInsightsQueryJSONRequestBody defines body for RunInsightsQuery for application/json ContentType.
 type RunInsightsQueryJSONRequestBody RunInsightsQueryJSONBody
 
@@ -6164,12 +6170,6 @@ type CreateIntegrationJSONRequestBody = IntegrationCreateInput
 
 // UpdateIntegrationJSONRequestBody defines body for UpdateIntegration for application/json ContentType.
 type UpdateIntegrationJSONRequestBody = IntegrationUpdateInput
-
-// CreateProjectKeyJSONRequestBody defines body for CreateProjectKey for application/json ContentType.
-type CreateProjectKeyJSONRequestBody = ProjectKeyInput
-
-// UpdateProjectKeyJSONRequestBody defines body for UpdateProjectKey for application/json ContentType.
-type UpdateProjectKeyJSONRequestBody = ProjectKeyInput
 
 // CreateSiteJSONRequestBody defines body for CreateSite for application/json ContentType.
 type CreateSiteJSONRequestBody = SiteCreateInput
@@ -6620,7 +6620,7 @@ type ClientInterface interface {
 	//
 	// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
 	//
-	// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
+	// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are paged on a timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 	//
 	// Corresponds with GET /projects/{project_id}/check_ins/{check_in_id}/events (the `ListCheckInEvents` operationId).
 	ListCheckInEvents(ctx context.Context, projectId ProjectId, checkInId string, params *ListCheckInEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7099,6 +7099,63 @@ type ClientInterface interface {
 	// Corresponds with POST /projects/{project_id}/faults/{fault_id}/snooze (the `SnoozeFault` operationId).
 	SnoozeFault(ctx context.Context, projectId ProjectId, faultId FaultId, body SnoozeFaultJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListIngestionKeys List ingestion keys
+	//
+	// Returns the project's ingestion keys.
+	//
+	// Corresponds with GET /projects/{project_id}/ingestion_keys (the `ListIngestionKeys` operationId).
+	ListIngestionKeys(ctx context.Context, projectId ProjectId, params *ListIngestionKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateIngestionKeyWithBody Create an ingestion key
+	//
+	// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /projects/{project_id}/ingestion_keys (the `CreateIngestionKey` operationId).
+	CreateIngestionKeyWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateIngestionKey Create an ingestion key
+	//
+	// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /projects/{project_id}/ingestion_keys (the `CreateIngestionKey` operationId).
+	CreateIngestionKey(ctx context.Context, projectId ProjectId, body CreateIngestionKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteIngestionKey Delete an ingestion key
+	//
+	// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 403.
+	//
+	// Corresponds with DELETE /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `DeleteIngestionKey` operationId).
+	DeleteIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetIngestionKey Get an ingestion key
+	//
+	// Returns a single ingestion key.
+	//
+	// Corresponds with GET /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `GetIngestionKey` operationId).
+	GetIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateIngestionKeyWithBody Update an ingestion key
+	//
+	// Updates a key's label. The key value itself cannot be changed.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PATCH /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `UpdateIngestionKey` operationId).
+	UpdateIngestionKeyWithBody(ctx context.Context, projectId ProjectId, ingestionKeyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateIngestionKey Update an ingestion key
+	//
+	// Updates a key's label. The key value itself cannot be changed.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PATCH /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `UpdateIngestionKey` operationId).
+	UpdateIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, body UpdateIngestionKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// RunInsightsQueryWithBody Run an Insights query
 	//
 	// Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
@@ -7181,63 +7238,6 @@ type ClientInterface interface {
 	//
 	// Corresponds with PATCH /projects/{project_id}/integrations/{integration_id} (the `UpdateIntegration` operationId).
 	UpdateIntegration(ctx context.Context, projectId ProjectId, integrationId string, body UpdateIntegrationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListProjectKeys List project keys
-	//
-	// Returns the project's ingestion keys.
-	//
-	// Corresponds with GET /projects/{project_id}/keys (the `ListProjectKeys` operationId).
-	ListProjectKeys(ctx context.Context, projectId ProjectId, params *ListProjectKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateProjectKeyWithBody Create a project key
-	//
-	// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
-	//
-	// Takes any type of body and a specified content type.
-	//
-	// Corresponds with POST /projects/{project_id}/keys (the `CreateProjectKey` operationId).
-	CreateProjectKeyWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateProjectKey Create a project key
-	//
-	// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
-	//
-	// Takes a body of the `application/json` content type.
-	//
-	// Corresponds with POST /projects/{project_id}/keys (the `CreateProjectKey` operationId).
-	CreateProjectKey(ctx context.Context, projectId ProjectId, body CreateProjectKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteProjectKey Delete a project key
-	//
-	// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 403.
-	//
-	// Corresponds with DELETE /projects/{project_id}/keys/{key_id} (the `DeleteProjectKey` operationId).
-	DeleteProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetProjectKey Get a project key
-	//
-	// Returns a single ingestion key.
-	//
-	// Corresponds with GET /projects/{project_id}/keys/{key_id} (the `GetProjectKey` operationId).
-	GetProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateProjectKeyWithBody Update a project key
-	//
-	// Updates a key's label. The key value itself cannot be changed.
-	//
-	// Takes any type of body and a specified content type.
-	//
-	// Corresponds with PATCH /projects/{project_id}/keys/{key_id} (the `UpdateProjectKey` operationId).
-	UpdateProjectKeyWithBody(ctx context.Context, projectId ProjectId, keyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateProjectKey Update a project key
-	//
-	// Updates a key's label. The key value itself cannot be changed.
-	//
-	// Takes a body of the `application/json` content type.
-	//
-	// Corresponds with PATCH /projects/{project_id}/keys/{key_id} (the `UpdateProjectKey` operationId).
-	UpdateProjectKey(ctx context.Context, projectId ProjectId, keyId string, body UpdateProjectKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetProjectOccurrences Get bucketed notice counts for a project
 	//
@@ -8407,7 +8407,7 @@ func (c *Client) UpdateCheckIn(ctx context.Context, projectId ProjectId, checkIn
 //
 // Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
 //
-// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are stored in DynamoDB and paged on a raw timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
+// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are paged on a timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
 //
 // Corresponds with GET /projects/{project_id}/check_ins/{check_in_id}/events (the `ListCheckInEvents` operationId).
 func (c *Client) ListCheckInEvents(ctx context.Context, projectId ProjectId, checkInId string, params *ListCheckInEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9456,6 +9456,133 @@ func (c *Client) SnoozeFault(ctx context.Context, projectId ProjectId, faultId F
 	return c.Client.Do(req)
 }
 
+// ListIngestionKeys List ingestion keys
+//
+// Returns the project's ingestion keys.
+//
+// Corresponds with GET /projects/{project_id}/ingestion_keys (the `ListIngestionKeys` operationId).
+func (c *Client) ListIngestionKeys(ctx context.Context, projectId ProjectId, params *ListIngestionKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListIngestionKeysRequest(c.Server, projectId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateIngestionKeyWithBody Create an ingestion key
+//
+// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /projects/{project_id}/ingestion_keys (the `CreateIngestionKey` operationId).
+func (c *Client) CreateIngestionKeyWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateIngestionKeyRequestWithBody(c.Server, projectId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateIngestionKey Create an ingestion key
+//
+// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /projects/{project_id}/ingestion_keys (the `CreateIngestionKey` operationId).
+func (c *Client) CreateIngestionKey(ctx context.Context, projectId ProjectId, body CreateIngestionKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateIngestionKeyRequest(c.Server, projectId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteIngestionKey Delete an ingestion key
+//
+// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 403.
+//
+// Corresponds with DELETE /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `DeleteIngestionKey` operationId).
+func (c *Client) DeleteIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteIngestionKeyRequest(c.Server, projectId, ingestionKeyId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetIngestionKey Get an ingestion key
+//
+// Returns a single ingestion key.
+//
+// Corresponds with GET /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `GetIngestionKey` operationId).
+func (c *Client) GetIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetIngestionKeyRequest(c.Server, projectId, ingestionKeyId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateIngestionKeyWithBody Update an ingestion key
+//
+// Updates a key's label. The key value itself cannot be changed.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PATCH /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `UpdateIngestionKey` operationId).
+func (c *Client) UpdateIngestionKeyWithBody(ctx context.Context, projectId ProjectId, ingestionKeyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateIngestionKeyRequestWithBody(c.Server, projectId, ingestionKeyId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateIngestionKey Update an ingestion key
+//
+// Updates a key's label. The key value itself cannot be changed.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PATCH /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `UpdateIngestionKey` operationId).
+func (c *Client) UpdateIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, body UpdateIngestionKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateIngestionKeyRequest(c.Server, projectId, ingestionKeyId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // RunInsightsQueryWithBody Run an Insights query
 //
 // Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
@@ -9619,133 +9746,6 @@ func (c *Client) UpdateIntegrationWithBody(ctx context.Context, projectId Projec
 // Corresponds with PATCH /projects/{project_id}/integrations/{integration_id} (the `UpdateIntegration` operationId).
 func (c *Client) UpdateIntegration(ctx context.Context, projectId ProjectId, integrationId string, body UpdateIntegrationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateIntegrationRequest(c.Server, projectId, integrationId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// ListProjectKeys List project keys
-//
-// Returns the project's ingestion keys.
-//
-// Corresponds with GET /projects/{project_id}/keys (the `ListProjectKeys` operationId).
-func (c *Client) ListProjectKeys(ctx context.Context, projectId ProjectId, params *ListProjectKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListProjectKeysRequest(c.Server, projectId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// CreateProjectKeyWithBody Create a project key
-//
-// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
-//
-// Takes any type of body and a specified content type.
-//
-// Corresponds with POST /projects/{project_id}/keys (the `CreateProjectKey` operationId).
-func (c *Client) CreateProjectKeyWithBody(ctx context.Context, projectId ProjectId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateProjectKeyRequestWithBody(c.Server, projectId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// CreateProjectKey Create a project key
-//
-// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
-//
-// Takes a body of the `application/json` content type.
-//
-// Corresponds with POST /projects/{project_id}/keys (the `CreateProjectKey` operationId).
-func (c *Client) CreateProjectKey(ctx context.Context, projectId ProjectId, body CreateProjectKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateProjectKeyRequest(c.Server, projectId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// DeleteProjectKey Delete a project key
-//
-// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 403.
-//
-// Corresponds with DELETE /projects/{project_id}/keys/{key_id} (the `DeleteProjectKey` operationId).
-func (c *Client) DeleteProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteProjectKeyRequest(c.Server, projectId, keyId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// GetProjectKey Get a project key
-//
-// Returns a single ingestion key.
-//
-// Corresponds with GET /projects/{project_id}/keys/{key_id} (the `GetProjectKey` operationId).
-func (c *Client) GetProjectKey(ctx context.Context, projectId ProjectId, keyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetProjectKeyRequest(c.Server, projectId, keyId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateProjectKeyWithBody Update a project key
-//
-// Updates a key's label. The key value itself cannot be changed.
-//
-// Takes any type of body and a specified content type.
-//
-// Corresponds with PATCH /projects/{project_id}/keys/{key_id} (the `UpdateProjectKey` operationId).
-func (c *Client) UpdateProjectKeyWithBody(ctx context.Context, projectId ProjectId, keyId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateProjectKeyRequestWithBody(c.Server, projectId, keyId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// UpdateProjectKey Update a project key
-//
-// Updates a key's label. The key value itself cannot be changed.
-//
-// Takes a body of the `application/json` content type.
-//
-// Corresponds with PATCH /projects/{project_id}/keys/{key_id} (the `UpdateProjectKey` operationId).
-func (c *Client) UpdateProjectKey(ctx context.Context, projectId ProjectId, keyId string, body UpdateProjectKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateProjectKeyRequest(c.Server, projectId, keyId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -14494,6 +14494,262 @@ func NewSnoozeFaultRequestWithBody(server string, projectId ProjectId, faultId F
 	return req, nil
 }
 
+// NewListIngestionKeysRequest constructs an http.Request for the ListIngestionKeys method
+func NewListIngestionKeysRequest(server string, projectId ProjectId, params *ListIngestionKeysParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/ingestion_keys", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateIngestionKeyRequest calls the generic CreateIngestionKey builder with application/json body
+func NewCreateIngestionKeyRequest(server string, projectId ProjectId, body CreateIngestionKeyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateIngestionKeyRequestWithBody(server, projectId, "application/json", bodyReader)
+}
+
+// NewCreateIngestionKeyRequestWithBody constructs an http.Request for the CreateIngestionKey method, with any body, and a specified content type
+func NewCreateIngestionKeyRequestWithBody(server string, projectId ProjectId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/ingestion_keys", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteIngestionKeyRequest constructs an http.Request for the DeleteIngestionKey method
+func NewDeleteIngestionKeyRequest(server string, projectId ProjectId, ingestionKeyId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "ingestion_key_id", ingestionKeyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/ingestion_keys/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetIngestionKeyRequest constructs an http.Request for the GetIngestionKey method
+func NewGetIngestionKeyRequest(server string, projectId ProjectId, ingestionKeyId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "ingestion_key_id", ingestionKeyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/ingestion_keys/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateIngestionKeyRequest calls the generic UpdateIngestionKey builder with application/json body
+func NewUpdateIngestionKeyRequest(server string, projectId ProjectId, ingestionKeyId string, body UpdateIngestionKeyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateIngestionKeyRequestWithBody(server, projectId, ingestionKeyId, "application/json", bodyReader)
+}
+
+// NewUpdateIngestionKeyRequestWithBody constructs an http.Request for the UpdateIngestionKey method, with any body, and a specified content type
+func NewUpdateIngestionKeyRequestWithBody(server string, projectId ProjectId, ingestionKeyId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "ingestion_key_id", ingestionKeyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/ingestion_keys/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewRunInsightsQueryRequest calls the generic RunInsightsQuery builder with application/json body
 func NewRunInsightsQueryRequest(server string, projectId ProjectId, body RunInsightsQueryJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -14778,262 +15034,6 @@ func NewUpdateIntegrationRequestWithBody(server string, projectId ProjectId, int
 	}
 
 	operationPath := fmt.Sprintf("/projects/%s/integrations/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewListProjectKeysRequest constructs an http.Request for the ListProjectKeys method
-func NewListProjectKeysRequest(server string, projectId ProjectId, params *ListProjectKeysParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/projects/%s/keys", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		// queryValues collects non-styled parameters (passthrough, JSON)
-		// that are safe to round-trip through url.Values.Encode().
-		queryValues := queryURL.Query()
-		// rawQueryFragments collects pre-encoded query fragments from
-		// styled parameters, preserving literal commas as delimiters
-		// per the OpenAPI spec (e.g. "color=blue,black,brown").
-		var rawQueryFragments []string
-
-		if params.Page != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "page", *params.Page, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if params.PerPage != nil {
-
-			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "per_page", *params.PerPage, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
-				return nil, err
-			} else {
-				for _, qp := range strings.Split(queryFrag, "&") {
-					rawQueryFragments = append(rawQueryFragments, qp)
-				}
-			}
-
-		}
-
-		if encoded := queryValues.Encode(); encoded != "" {
-			rawQueryFragments = append(rawQueryFragments, encoded)
-		}
-		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateProjectKeyRequest calls the generic CreateProjectKey builder with application/json body
-func NewCreateProjectKeyRequest(server string, projectId ProjectId, body CreateProjectKeyJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateProjectKeyRequestWithBody(server, projectId, "application/json", bodyReader)
-}
-
-// NewCreateProjectKeyRequestWithBody constructs an http.Request for the CreateProjectKey method, with any body, and a specified content type
-func NewCreateProjectKeyRequestWithBody(server string, projectId ProjectId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/projects/%s/keys", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteProjectKeyRequest constructs an http.Request for the DeleteProjectKey method
-func NewDeleteProjectKeyRequest(server string, projectId ProjectId, keyId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "key_id", keyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/projects/%s/keys/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetProjectKeyRequest constructs an http.Request for the GetProjectKey method
-func NewGetProjectKeyRequest(server string, projectId ProjectId, keyId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "key_id", keyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/projects/%s/keys/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateProjectKeyRequest calls the generic UpdateProjectKey builder with application/json body
-func NewUpdateProjectKeyRequest(server string, projectId ProjectId, keyId string, body UpdateProjectKeyJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateProjectKeyRequestWithBody(server, projectId, keyId, "application/json", bodyReader)
-}
-
-// NewUpdateProjectKeyRequestWithBody constructs an http.Request for the UpdateProjectKey method, with any body, and a specified content type
-func NewUpdateProjectKeyRequestWithBody(server string, projectId ProjectId, keyId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "project_id", projectId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "key_id", keyId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/projects/%s/keys/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
