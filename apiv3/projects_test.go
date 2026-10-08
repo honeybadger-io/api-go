@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -75,6 +76,32 @@ func TestProjectsListOmitsZeroValuedParams(t *testing.T) {
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("List: %v", err)
+	}
+}
+
+// A ListAll walk asks for the largest page unless Limit sizes it; on one page,
+// Limit sizes an offset page too.
+func TestOffsetPageSize(t *testing.T) {
+	var got []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = append(got, r.URL.Query().Get("per_page"))
+		writeJSON(w, 0, `{"data":[],"pagination":{"page":1,"per_page":25},"links":{"self":"/v3/projects","next":null}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	ctx := context.Background()
+	if _, err := c.Projects.ListAll(ctx); err != nil {
+		t.Fatalf("ListAll: %v", err)
+	}
+	if _, err := c.Projects.ListAll(ctx, Limit(40)); err != nil {
+		t.Fatalf("ListAll(Limit): %v", err)
+	}
+	if _, err := c.Projects.List(ctx, Limit(10)); err != nil {
+		t.Fatalf("List(Limit): %v", err)
+	}
+	if want := []string{"100", "40", "10"}; !slices.Equal(got, want) {
+		t.Errorf("per_page = %q, want %q", got, want)
 	}
 }
 

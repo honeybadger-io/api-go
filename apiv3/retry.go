@@ -33,6 +33,8 @@ import (
 //     delete of an id that never existed reports success after, say, a 503
 //     and then a 404, so under WithRetry ErrNotFound from a delete isn't
 //     reliable. After a 429, which ran nothing, a 404 is returned as it is.
+//     A DELETE that returns the resource (Faults.Unassign) has nothing to
+//     return, so it reports the 404.
 //   - Anything else is returned at once: other statuses; failures that would
 //     only repeat (a host that doesn't resolve, a refused connection, a TLS
 //     certificate the client won't trust, a body over the size cap, a request
@@ -115,7 +117,7 @@ func (c *Client) run(ctx context.Context, opID string, op operation) (int, []byt
 	for attempt := 1; ; attempt++ {
 		status, body, err := c.attempt(ctx, method, op)
 		if mayHaveLanded && method == http.MethodDelete && status == http.StatusNotFound {
-			return http.StatusNoContent, nil, nil
+			return status, body, &goneAfterRetry{err}
 		}
 		if err == nil || attempt >= c.retry.MaxAttempts || !retryable(ctx, method, err) {
 			return status, body, err
@@ -156,6 +158,15 @@ func (c *Client) attempt(ctx context.Context, method string, op operation) (int,
 	defer cancel()
 	return c.do(attemptCtx, op)
 }
+
+// goneAfterRetry is a DELETE's 404 after an earlier attempt may have been
+// carried out: the earlier attempt probably deleted it. A delete that returns no
+// content treats it as done; one that returns the resource can't, so it still
+// sees the 404, which errors.Is matches as ErrNotFound.
+type goneAfterRetry struct{ err error }
+
+func (e *goneAfterRetry) Error() string { return e.err.Error() }
+func (e *goneAfterRetry) Unwrap() error { return e.err }
 
 // retryable reports whether a failed attempt may be made again.
 func retryable(ctx context.Context, method string, err error) bool {

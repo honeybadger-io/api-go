@@ -128,7 +128,9 @@ func (s *SitesService) ListUptimeChecks(ctx context.Context, projectID string, s
 }
 
 // ListAllUptimeChecks returns every check for a site, walking from newest to
-// oldest. A busy site has many; bound the walk with Limit.
+// oldest. A busy site has thousands a day, so a full walk can run past the rate
+// limit or the 500-page cap (ErrTooManyPages). To read back only so far, page
+// with ListUptimeChecks and OlderThan and stop when you have enough.
 func (s *SitesService) ListAllUptimeChecks(ctx context.Context, projectID string, siteID SiteID, opts ...ListAllOption) ([]UptimeCheck, error) {
 	ro := resolveListAll(opts)
 	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[UptimeCheck], error) {

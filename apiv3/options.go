@@ -72,14 +72,19 @@ func (ro requestOptions) applyOlderThan(limit **gen.Limit, createdBefore **gen.C
 }
 
 // applyOffset fills in offset paging params, leaving them nil when unset so the
-// API applies its own defaults rather than receiving page=0.
+// API applies its own defaults rather than receiving page=0. Limit sizes the
+// page when Page didn't.
 func (ro requestOptions) applyOffset(page **gen.Page, perPage **gen.PerPage) {
 	if ro.page > 0 {
 		p := gen.Page(ro.page)
 		*page = &p
 	}
-	if ro.perPage > 0 {
-		pp := gen.PerPage(ro.perPage)
+	size := ro.perPage
+	if size == 0 {
+		size = ro.limit
+	}
+	if size > 0 {
+		pp := gen.PerPage(size)
 		*perPage = &pp
 	}
 }
@@ -111,12 +116,20 @@ func resolve(opts []Option) requestOptions {
 	return ro
 }
 
+// maxPageSize is the largest page the API returns. A ListAll walk asks for it
+// unless Limit says otherwise: the walk wants every item anyway, and smaller
+// pages only spend more of the rate limit getting them.
+const maxPageSize = 100
+
 func resolveListAll(opts []ListAllOption) requestOptions {
 	var ro requestOptions
 	for _, o := range opts {
 		if o != nil {
 			o.apply(&ro)
 		}
+	}
+	if ro.limit == 0 {
+		ro.limit = maxPageSize
 	}
 	return ro
 }
@@ -148,9 +161,10 @@ type limitOption struct{ n int }
 func (o limitOption) apply(ro *requestOptions) { ro.limit = o.n }
 func (o limitOption) listAll()                 {}
 
-// Limit caps how many items a single request returns, for time-ordered
-// collections. It caps at 100 and defaults to 25 when zero. On a ListAll call it
-// sets the size of each underlying request rather than a total.
+// Limit caps how many items a single request returns. It caps at 100; a List
+// call defaults to 25 when it's zero, and a ListAll call to 100. On a ListAll
+// call it sets the size of each underlying request rather than a total. For an
+// offset-paginated collection it's the page size, as Page's perPage is.
 func Limit(n int) ListAllOption {
 	return limitOption{n: n}
 }

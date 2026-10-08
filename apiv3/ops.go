@@ -2,6 +2,7 @@ package apiv3
 
 import (
 	"context"
+	"errors"
 )
 
 // The helpers below exist because every service method is otherwise the
@@ -35,6 +36,10 @@ func listOffset[T any](ctx context.Context, c *Client, opID string, op operation
 // malformed.
 func noContent(ctx context.Context, c *Client, opID string, op operation) error {
 	_, _, err := c.run(ctx, opID, op)
+	var gone *goneAfterRetry
+	if errors.As(err, &gone) {
+		return nil
+	}
 	return err
 }
 

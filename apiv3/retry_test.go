@@ -326,6 +326,22 @@ func TestRetryTreatsADeletesLater404AsDone(t *testing.T) {
 	}
 }
 
+// A delete that returns the resource has nothing to return after the retry's
+// 404, so it reports the 404 rather than an empty success.
+func TestRetryReportsA404FromADeleteThatReturnsTheResource(t *testing.T) {
+	c, s := newScripted(t, RetryPolicy{MaxAttempts: 3},
+		step{status: http.StatusServiceUnavailable, header: now},
+		step{status: http.StatusNotFound, body: `{"error":{"code":"not_found","message":"Not found"}}`})
+
+	fault, err := c.Faults.Unassign(context.Background(), "p1", "f1")
+	if !errors.Is(err, ErrNotFound) {
+		t.Fatalf("Unassign: fault = %v, err = %v, want ErrNotFound", fault, err)
+	}
+	if s.count() != 2 {
+		t.Errorf("calls = %d, want 2", s.count())
+	}
+}
+
 // A 429 ran nothing, and a first-attempt 404 is just a 404.
 func TestRetryKeepsADeletes404WhenNothingRan(t *testing.T) {
 	notFound := step{status: http.StatusNotFound, body: `{"error":{"code":"not_found","message":"Not found"}}`}
