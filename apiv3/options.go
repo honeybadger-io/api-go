@@ -81,7 +81,9 @@ func (ro requestOptions) applyOffset(page **gen.Page, perPage **gen.PerPage) {
 	}
 	size := ro.perPage
 	if size == 0 {
-		size = ro.limit
+		// Limit caps at 100, as the API clamps limit; per_page has no
+		// documented clamp, so cap it here rather than risk a 400.
+		size = min(ro.limit, maxPageSize)
 	}
 	if size > 0 {
 		pp := gen.PerPage(size)

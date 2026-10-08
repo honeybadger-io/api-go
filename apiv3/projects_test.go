@@ -100,7 +100,10 @@ func TestOffsetPageSize(t *testing.T) {
 	if _, err := c.Projects.List(ctx, Limit(10)); err != nil {
 		t.Fatalf("List(Limit): %v", err)
 	}
-	if want := []string{"100", "40", "10"}; !slices.Equal(got, want) {
+	if _, err := c.Projects.ListAll(ctx, Limit(500)); err != nil {
+		t.Fatalf("ListAll(Limit 500): %v", err)
+	}
+	if want := []string{"100", "40", "10", "100"}; !slices.Equal(got, want) {
 		t.Errorf("per_page = %q, want %q", got, want)
 	}
 }
