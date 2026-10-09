@@ -1838,7 +1838,7 @@ type CheckIn struct {
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
 
-	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`), and zero reads `00:00:00`; every form a read returns can be written back. Compare periods by duration, not text. Zero reads as `00:00:00`.
+	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`), and zero reads `00:00:00`; every form a read returns can be written back. Compare periods by duration, not text.
 	GracePeriod string `json:"grace_period"`
 
 	// Id Unique identifier
