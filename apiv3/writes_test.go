@@ -40,7 +40,7 @@ func captureWrite(t *testing.T, status int, response string) (*Client, *captured
 		writeJSON(w, status, response)
 	}))
 	t.Cleanup(srv.Close)
-	return NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x"), got
+	return NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x"), got
 }
 
 // A 204 carries no body, so it must not be treated as a malformed envelope.
@@ -469,7 +469,7 @@ func TestFaultsListSendsOrderAndTimeFilters(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	at := time.Unix(1704067200, 500*1000*1000) // fractional seconds are significant
 
 	_, err := c.Faults.ListAll(context.Background(), "Xk9mZp",
@@ -497,7 +497,7 @@ func TestFaultsSummarySendsTimeFilters(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	at := time.Unix(1704067200, 0)
 
 	if _, err := c.Faults.Summary(context.Background(), "Xk9mZp",

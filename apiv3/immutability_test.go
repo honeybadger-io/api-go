@@ -98,7 +98,7 @@ func TestWithNilHTTPClientIsIgnored(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").WithHTTPClient(nil)
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x").WithHTTPClient(nil)
 	if c.httpClient == nil {
 		t.Fatal("httpClient is nil; a nil argument must be ignored")
 	}
@@ -125,7 +125,7 @@ func TestErrorRateLimitComesFromItsOwnResponse(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("first call: %v", err)
 	}

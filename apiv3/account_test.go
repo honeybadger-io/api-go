@@ -17,7 +17,7 @@ func TestAccountIsResolvedFromTheCredential(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("List: %v", err)
 	}
@@ -35,7 +35,7 @@ func TestAmbiguousAccountIsTyped(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.List(context.Background())
 	if err == nil {
 		t.Fatal("want an error for a 422 ambiguous_account")

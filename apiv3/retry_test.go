@@ -89,7 +89,7 @@ func newScripted(t *testing.T, p RetryPolicy, steps ...step) (*Client, *script) 
 		writeJSON(w, st.status, st.body)
 	}))
 	t.Cleanup(srv.Close)
-	return NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").WithRetry(p), s
+	return NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x").WithRetry(p), s
 }
 
 const projectBody = `{"data":{"id":"p1","account_id":"a1","name":"App","active":true}}`
@@ -366,7 +366,7 @@ func TestRetryDoesNotResendAfterAPermanentFailure(t *testing.T) {
 		dials.Add(1)
 		return (&net.Dialer{}).DialContext(ctx, network, addr)
 	}}
-	c := NewClient().WithBaseURL("http://" + addr).WithBearerToken("hbt_x").
+	c := NewClient().WithBaseURL("http://" + addr).WithBearerToken("hbu_x").
 		WithHTTPClient(&http.Client{Transport: transport}).WithRetry(RetryPolicy{MaxAttempts: 3})
 	if _, err := c.Projects.Get(context.Background(), "p1"); err == nil {
 		t.Fatal("Get succeeded against a closed port")
@@ -479,7 +479,7 @@ func (d *deadlineRecorder) RoundTrip(req *http.Request) (*http.Response, error) 
 
 func TestEachAttemptHasItsOwnDeadline(t *testing.T) {
 	rec := &deadlineRecorder{}
-	c := NewClient().WithBaseURL("https://api.example.com").WithBearerToken("hbt_x").
+	c := NewClient().WithBaseURL("https://api.example.com").WithBearerToken("hbu_x").
 		WithHTTPClient(&http.Client{Transport: rec})
 
 	if _, err := c.Projects.Get(context.Background(), "p1"); err != nil {
@@ -624,7 +624,7 @@ func generatedCall(fn *ast.FuncLit) string {
 // seconds for one.
 func TestAnInsightsQueryHasALongerDeadline(t *testing.T) {
 	rec := &deadlineRecorder{}
-	c := NewClient().WithBaseURL("https://api.example.com").WithBearerToken("hbt_x").
+	c := NewClient().WithBaseURL("https://api.example.com").WithBearerToken("hbu_x").
 		WithHTTPClient(&http.Client{Transport: rec})
 	_, _ = c.Insights.Query(context.Background(), "p1", InsightsQuery{Query: "fields @ts"})
 

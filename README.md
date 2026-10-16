@@ -8,7 +8,7 @@ Go clients for the Honeybadger Data API. There are two, one per API version:
 | `github.com/honeybadger-io/api-go/apiv2` | v2 Data API |
 
 Which you need depends on the credential you hold. v3 takes API Tokens,
-user-scoped (`hbt_`) or account-scoped (`hba_`), and OAuth access tokens, always
+user-scoped (`hbu_`) or account-scoped (`hba_`), and OAuth access tokens, always
 as Bearer; an Ingestion Key (`hbp_`) is only for sending errors and events. v3
 rejects v2's older personal auth tokens outright. So moving to v3 means a new
 credential, not only new code.
@@ -88,7 +88,7 @@ import (
 
 func main() {
     ctx := context.Background()
-    client := apiv3.NewClient().WithBearerToken("hbt_...")
+    client := apiv3.NewClient().WithBearerToken("hbu_...")
 
     // Every listing has a ListAll that walks the pages.
     projects, err := client.Projects.ListAll(ctx, apiv3.Named("My App"))

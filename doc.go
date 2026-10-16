@@ -6,7 +6,7 @@
 //	github.com/honeybadger-io/api-go/apiv2  — the v2 Data API
 //	github.com/honeybadger-io/api-go/apiv3  — the v3 Data API
 //
-// v3 is where new work belongs. It accepts scoped API tokens (`hbt_` for a
+// v3 is where new work belongs. It accepts scoped API tokens (`hbu_` for a
 // personal one, `hba_` for an account one) and OAuth access tokens, always as
 // Bearer. v2's older personal auth tokens are rejected by v3 outright, so moving
 // to it means a new credential rather than only new code.

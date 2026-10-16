@@ -30,7 +30,7 @@ func TestListAllCommentsFollowsOlderLinks(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	all, err := c.Faults.ListAllComments(context.Background(), "Xk9mZp", "1", Limit(1))
 	if err != nil {
 		t.Fatalf("ListAllComments: %v", err)

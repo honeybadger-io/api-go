@@ -21,7 +21,7 @@ func TestTokensGet(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	info, err := c.Tokens.Get(context.Background())
 	if err != nil {
 		t.Fatalf("Get: %v", err)

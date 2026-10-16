@@ -59,12 +59,12 @@ func TestBearerTokenIsSent(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_secret")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
 
-	if want := "Bearer hbt_secret"; gotAuth != want {
+	if want := "Bearer hbu_secret"; gotAuth != want {
 		t.Errorf("Authorization = %q, want %q", gotAuth, want)
 	}
 	if want := "/v3/projects"; gotPath != want {
@@ -83,7 +83,7 @@ func TestNoBasicAuthIsSent(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_secret")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
@@ -101,7 +101,7 @@ func TestRateLimitIsCaptured(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("request failed: %v", err)
 	}
@@ -131,7 +131,7 @@ func TestRequestIDHookReceivesContext(t *testing.T) {
 	var gotMarker any
 	var gotStatus int
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x").
 		WithRequestIDHook(func(ctx context.Context, status int, id string) {
 			gotMarker = ctx.Value(ctxKey{})
 			gotStatus = status
@@ -163,7 +163,7 @@ func TestRequestIDHookNotCalledWhenAbsent(t *testing.T) {
 	defer srv.Close()
 
 	called := false
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x").
 		WithRequestIDHook(func(ctx context.Context, status int, id string) { called = true })
 
 	if _, err := c.Projects.List(context.Background()); err != nil {
@@ -189,7 +189,7 @@ func TestOversizedBodyIsAnError(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.List(context.Background())
 	if err == nil || !strings.Contains(err.Error(), "exceeds") {
 		t.Fatalf("err = %v, want the oversized body reported", err)
@@ -211,7 +211,7 @@ func TestOversizedBodyIsNotReadToTheEnd(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	start := time.Now()
 	_, err := c.Projects.List(context.Background())
 	if err == nil || !strings.Contains(err.Error(), "exceeds") {
@@ -231,7 +231,7 @@ func TestUserAgent(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	base := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	base := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	ctx := context.Background()
 	if _, err := base.Projects.Get(ctx, "p1"); err != nil {
 		t.Fatal(err)

@@ -19,7 +19,7 @@ func TestFaultsListSendsSearchQuery(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Faults.List(context.Background(), "Xk9mZp", Search("environment:production is:resolved"))
 	if err != nil {
 		t.Fatalf("List: %v", err)
@@ -42,7 +42,7 @@ func TestFaultsListDecodesFaults(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	resp, err := c.Faults.List(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("List: %v", err)
@@ -64,7 +64,7 @@ func TestFaultsGet(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "101")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
@@ -82,7 +82,7 @@ func TestFaultNullableFieldsAreThreeState(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
@@ -127,7 +127,7 @@ func TestFaultsListNoticesUsesTimeSeriesPagination(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	resp, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", "1", Limit(10))
 	if err != nil {
 		t.Fatalf("ListNotices: %v", err)
@@ -170,7 +170,7 @@ func TestFaultsListAllNoticesFollowsOlderLinks(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", Limit(1))
 	if err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
@@ -193,7 +193,7 @@ func TestListAllNoticesRefusesOffHostLink(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_secret")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_secret")
 	_, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrUntrustedLink) {
 		t.Fatalf("err = %v, want ErrUntrustedLink", err)
@@ -213,7 +213,7 @@ func TestListAllNoticesSendsNoAfterCursor(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1"); err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
@@ -226,7 +226,7 @@ func TestFaultsListInsufficientScope(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Faults.List(context.Background(), "Xk9mZp")
 	if !errors.Is(err, ErrInsufficientScope) {
 		t.Fatalf("err = %v, want ErrInsufficientScope", err)
@@ -250,7 +250,7 @@ func TestZeroTimeFilterIsUnset(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Faults.List(context.Background(), "Xk9mZp", CreatedAfter(time.Time{})); err != nil {
 		t.Fatalf("List: %v", err)
 	}

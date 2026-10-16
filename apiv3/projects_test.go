@@ -32,7 +32,7 @@ func TestProjectsListDecodesEnvelope(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	resp, err := c.Projects.List(context.Background(), Page(2, 50))
 	if err != nil {
 		t.Fatalf("List: %v", err)
@@ -73,7 +73,7 @@ func TestProjectsListOmitsZeroValuedParams(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Projects.List(context.Background()); err != nil {
 		t.Fatalf("List: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestOffsetPageSize(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	ctx := context.Background()
 	if _, err := c.Projects.ListAll(ctx); err != nil {
 		t.Fatalf("ListAll: %v", err)
@@ -125,7 +125,7 @@ func TestProjectsListAllWalksPages(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	all, err := c.Projects.ListAll(context.Background())
 	if err != nil {
 		t.Fatalf("ListAll: %v", err)
@@ -145,7 +145,7 @@ func TestProjectsGet(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	p, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
@@ -161,7 +161,7 @@ func TestProjectsGetNotFoundIsTyped(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.Get(context.Background(), "nope")
 	if !errors.Is(err, ErrNotFound) {
 		t.Fatalf("err = %v, want ErrNotFound", err)
@@ -178,7 +178,7 @@ func TestProjectsGetInsufficientScopeNamesScope(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if !errors.Is(err, ErrInsufficientScope) {
 		t.Fatalf("err = %v, want ErrInsufficientScope", err)
@@ -204,7 +204,7 @@ func TestProjectsListRateLimitedCarriesReset(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.List(context.Background())
 	if !errors.Is(err, ErrRateLimited) {
 		t.Fatalf("err = %v, want ErrRateLimited", err)
@@ -232,7 +232,7 @@ func TestProjectsGetMalformedBody(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if err == nil {
 		t.Fatal("want an error for a non-JSON 200")
@@ -261,7 +261,7 @@ func TestProjectsGetRejectsMissingDataMember(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if err == nil {
 		t.Fatal("want an error when the response has no data member")
@@ -278,7 +278,7 @@ func TestListsRejectMissingDataArray(t *testing.T) {
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 0, body)
 		}))
-		c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+		c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 		ctx := context.Background()
 
 		if _, err := c.Projects.List(ctx); err == nil || !strings.Contains(err.Error(), "no data array") {
@@ -294,7 +294,7 @@ func TestListsRejectMissingDataArray(t *testing.T) {
 		writeJSON(w, 0, `{"data":[]}`)
 	}))
 	defer srv.Close()
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	projects, err := c.Projects.ListAll(context.Background())
 	if err != nil || len(projects) != 0 {
 		t.Errorf("ListAll with an empty page = %v, %v; want no projects and no error", projects, err)
@@ -311,7 +311,7 @@ func TestProxyErrorBodyStillTyped(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Projects.List(context.Background())
 
 	var apiErr *Error
@@ -346,7 +346,7 @@ func TestIngestionKeysGet(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	key, err := c.IngestionKeys.Get(context.Background(), "Xk9mZp", "k1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
@@ -366,7 +366,7 @@ func TestProjectsListNamed(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Projects.ListAll(context.Background(), Named("My App")); err != nil {
 		t.Fatalf("ListAll: %v", err)
 	}

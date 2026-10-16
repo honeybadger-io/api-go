@@ -21,7 +21,7 @@ func TestInsightsQuerySendsBody(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Insights.Query(context.Background(), "Xk9mZp", InsightsQuery{
 		Query:     "@size > 0 | limit 10",
 		StreamIDs: []string{"str_1", "str_2"},
@@ -61,7 +61,7 @@ func TestInsightsQueryOmitsEmptyFields(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Insights.Query(context.Background(), "Xk9mZp",
 		InsightsQuery{Query: "count()"}); err != nil {
 		t.Fatalf("Query: %v", err)
@@ -87,7 +87,7 @@ func TestInsightsQueryPassesResultThrough(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	res, err := c.Insights.Query(context.Background(), "Xk9mZp", InsightsQuery{Query: "count()"})
 	if err != nil {
 		t.Fatalf("Query: %v", err)
@@ -123,7 +123,7 @@ func TestInsightsQueryRejectedQueryIsAnError(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Insights.Query(context.Background(), "Xk9mZp", InsightsQuery{Query: "| limit"})
 	if !errors.Is(err, ErrValidation) {
 		t.Fatalf("err = %v, want ErrValidation", err)
@@ -152,7 +152,7 @@ func TestInsightsQueryServiceUnavailableIsTyped(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	_, err := c.Insights.Query(context.Background(), "Xk9mZp", InsightsQuery{Query: "count()"})
 	if !errors.Is(err, ErrServiceUnavailable) {
 		t.Fatalf("err = %v, want ErrServiceUnavailable", err)
@@ -171,7 +171,7 @@ func TestListStreams(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	resp, err := c.Insights.ListStreams(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("ListStreams: %v", err)

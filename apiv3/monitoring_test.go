@@ -17,7 +17,7 @@ func TestCheckInsList(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	resp, err := c.CheckIns.List(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("List: %v", err)
@@ -41,7 +41,7 @@ func TestCheckInEventsNeverSendCreatedBefore(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.CheckIns.ListAllEvents(context.Background(), "Xk9mZp", "c1", Limit(5)); err != nil {
 		t.Fatalf("ListAllEvents: %v", err)
 	}
@@ -61,7 +61,7 @@ func TestCheckInEventsWalkFollowsLinks(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	all, err := c.CheckIns.ListAllEvents(context.Background(), "Xk9mZp", "c1")
 	if err != nil {
 		t.Fatalf("ListAllEvents: %v", err)
@@ -85,7 +85,7 @@ func TestAlarmsListIsUnpaginated(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	resp, err := c.Alarms.List(context.Background(), "Xk9mZp")
 	if err != nil {
 		t.Fatalf("List: %v", err)
@@ -113,7 +113,7 @@ func TestAlarmsListHistory(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	page, err := c.Alarms.ListHistory(context.Background(), "Xk9mZp", "a1")
 	if err != nil {
 		t.Fatalf("ListHistory: %v", err)
@@ -152,7 +152,7 @@ func TestAlarmsListAllHistoryWalksPages(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	all, err := c.Alarms.ListAllHistory(context.Background(), "Xk9mZp", "a1")
 	if err != nil {
 		t.Fatalf("ListAllHistory: %v", err)
@@ -175,7 +175,7 @@ func TestAlarmHistorySendsPageOnly(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	if _, err := c.Alarms.ListHistory(context.Background(), "Xk9mZp", "a1", Page(3, 50)); err != nil {
 		t.Fatalf("ListHistory: %v", err)
 	}
@@ -190,7 +190,7 @@ func TestDashboardsGet(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	d, err := c.Dashboards.Get(context.Background(), "Xk9mZp", "d1")
 	if err != nil {
 		t.Fatalf("Get: %v", err)
@@ -209,7 +209,7 @@ func TestFaultsAffectedUsers(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	data, err := c.Faults.AffectedUsers(context.Background(), "Xk9mZp", "1")
 	if err != nil {
 		t.Fatalf("AffectedUsers: %v", err)
@@ -236,7 +236,7 @@ func TestProjectsOccurrencesIsTyped(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	series, err := c.Projects.Occurrences(context.Background(), "Xk9mZp", OccurrenceOptions{Period: PeriodDay})
 	if err != nil {
 		t.Fatalf("Occurrences: %v", err)

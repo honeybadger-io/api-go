@@ -45,7 +45,7 @@ func mergedServer(t *testing.T) (*httptest.Server, func() []string) {
 // is never retried against the survivor.
 func TestWriteToMergedFaultNamesTheSurvivor(t *testing.T) {
 	srv, seen := mergedServer(t)
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 
 	err := c.Faults.Delete(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrFaultMerged) {
@@ -66,7 +66,7 @@ func TestWriteToMergedFaultNamesTheSurvivor(t *testing.T) {
 // A read of a merged fault must not quietly return a different fault.
 func TestGetMergedFaultReportsTheSurvivor(t *testing.T) {
 	srv, seen := mergedServer(t)
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 
 	f, err := c.Faults.Get(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrFaultMerged) {
@@ -88,7 +88,7 @@ func TestGetMergedFaultReportsTheSurvivor(t *testing.T) {
 func TestCustomHTTPClientDoesNotFollowRedirects(t *testing.T) {
 	srv, seen := mergedServer(t)
 	own := &http.Client{}
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x").WithHTTPClient(own)
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x").WithHTTPClient(own)
 
 	if _, err := c.Faults.Get(context.Background(), "Xk9mZp", "1"); !errors.Is(err, ErrFaultMerged) {
 		t.Fatalf("err = %v, want ErrFaultMerged", err)
@@ -110,7 +110,7 @@ func TestTruncatedBodyUnwrapsToItsCause(t *testing.T) {
 		_, _ = w.Write([]byte(`{"data":`))
 	}))
 	t.Cleanup(srv.Close)
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 
 	_, err := c.Projects.Get(context.Background(), "Xk9mZp")
 	if !errors.Is(err, io.ErrUnexpectedEOF) {
@@ -126,7 +126,7 @@ func TestRedirectElsewhereIsNotAMerge(t *testing.T) {
 		w.WriteHeader(http.StatusMovedPermanently)
 	}))
 	t.Cleanup(srv.Close)
-	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 
 	_, err := c.Projects.List(context.Background())
 	var apiErr *Error

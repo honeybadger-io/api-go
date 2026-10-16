@@ -4,7 +4,7 @@
 // pagination, and typed errors.
 //
 // v3 rejects Honeybadger's older personal auth tokens. The accepted credentials
-// are API Tokens, user-scoped (`hbt_`) or account-scoped (`hba_`), and OAuth
+// are API Tokens, user-scoped (`hbu_`) or account-scoped (`hba_`), and OAuth
 // access tokens, all presented as Bearer. There is no Basic-auth option here by
 // design; see WithBearerToken.
 //
@@ -214,7 +214,7 @@ func (c *Client) WithBaseURL(baseURL string) *Client {
 // WithBearerToken returns a client using the given credential, sent as
 // `Authorization: Bearer <token>`.
 //
-// Accepts an API Token, user-scoped (`hbt_`) or account-scoped (`hba_`), or an
+// Accepts an API Token, user-scoped (`hbu_`) or account-scoped (`hba_`), or an
 // OAuth access token. An Ingestion Key (`hbp_`) is for sending errors and events,
 // not for calling the Data API, and is refused with ErrIngestionKeyNotAccepted.
 // There is deliberately no Basic-auth equivalent: v3's documented challenge
