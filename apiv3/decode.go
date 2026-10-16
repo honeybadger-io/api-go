@@ -2,6 +2,7 @@ package apiv3
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -35,11 +36,21 @@ type singleEnvelope[T any] struct {
 	} `json:"meta"`
 }
 
+// errNoDataArray reports a collection response without a data array.
+var errNoDataArray = errors.New("response has no data array")
+
 // decodeOffsetList parses an offset-paginated collection response.
+//
+// A missing or null data member is an error, for the same reason as in
+// decodeSingle: read as an empty list, it would tell a caller that nothing
+// exists. An empty page is "data":[], which decodes to an empty, non-nil slice.
 func decodeOffsetList[T any](status int, body []byte) (*ListResponse[T], error) {
 	var envelope offsetEnvelope[T]
 	if err := json.Unmarshal(body, &envelope); err != nil {
 		return nil, malformed(status, body, err)
+	}
+	if envelope.Data == nil {
+		return nil, malformed(status, body, errNoDataArray)
 	}
 	return &ListResponse[T]{
 		Data:       envelope.Data,
@@ -49,11 +60,15 @@ func decodeOffsetList[T any](status int, body []byte) (*ListResponse[T], error) 
 	}, nil
 }
 
-// decodeTimeSeriesList parses a time-ordered collection response.
+// decodeTimeSeriesList parses a time-ordered collection response. A missing or
+// null data member is an error, as in decodeOffsetList.
 func decodeTimeSeriesList[T any](status int, body []byte) (*ListResponse[T], error) {
 	var envelope timeSeriesEnvelope[T]
 	if err := json.Unmarshal(body, &envelope); err != nil {
 		return nil, malformed(status, body, err)
+	}
+	if envelope.Data == nil {
+		return nil, malformed(status, body, errNoDataArray)
 	}
 	return &ListResponse[T]{
 		Data:            envelope.Data,

@@ -271,6 +271,36 @@ func TestProjectsGetRejectsMissingDataMember(t *testing.T) {
 	}
 }
 
+// A collection without a data array is malformed, not empty: read as no items,
+// it would tell ListAll that nothing exists. "data":[] is a real empty page.
+func TestListsRejectMissingDataArray(t *testing.T) {
+	for _, body := range []string{`{}`, `null`, `{"data":null}`} {
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			writeJSON(w, 0, body)
+		}))
+		c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+		ctx := context.Background()
+
+		if _, err := c.Projects.List(ctx); err == nil || !strings.Contains(err.Error(), "no data array") {
+			t.Errorf("Projects.List with %s: err = %v, want the missing data array reported", body, err)
+		}
+		if _, err := c.Faults.ListNotices(ctx, "Xk9mZp", "1"); err == nil || !strings.Contains(err.Error(), "no data array") {
+			t.Errorf("Faults.ListNotices with %s: err = %v, want the missing data array reported", body, err)
+		}
+		srv.Close()
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":[]}`)
+	}))
+	defer srv.Close()
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	projects, err := c.Projects.ListAll(context.Background())
+	if err != nil || len(projects) != 0 {
+		t.Errorf("ListAll with an empty page = %v, %v; want no projects and no error", projects, err)
+	}
+}
+
 // An error body that is not the documented envelope must still reach parseError
 // through a real call, not just in a unit test of parseError itself.
 func TestProxyErrorBodyStillTyped(t *testing.T) {
