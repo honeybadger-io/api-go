@@ -344,10 +344,11 @@ func (c *Client) do(ctx context.Context, op operation) (int, []byte, error) {
 	if err != nil {
 		return 0, nil, err
 	}
-	defer func() {
-		_, _ = io.Copy(io.Discard, resp.Body)
-		_ = resp.Body.Close()
-	}()
+	// No drain before closing: the read below runs to EOF, which is what lets the
+	// connection be reused, except when the body passes the cap. Draining that
+	// one would read the rest of an oversized or endless body until the
+	// attempt's deadline, only to report the same error.
+	defer func() { _ = resp.Body.Close() }()
 
 	rateLimit := readRateLimit(resp)
 	if rateLimit != nil {

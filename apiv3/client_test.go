@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestNewClientDefaults(t *testing.T) {
@@ -192,6 +193,32 @@ func TestOversizedBodyIsAnError(t *testing.T) {
 	_, err := c.Projects.List(context.Background())
 	if err == nil || !strings.Contains(err.Error(), "exceeds") {
 		t.Fatalf("err = %v, want the oversized body reported", err)
+	}
+}
+
+// A body past the cap is closed, not read to its end: an endless one must not
+// hold the call until the attempt's deadline.
+func TestOversizedBodyIsNotReadToTheEnd(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":[`))
+		chunk := bytes.Repeat([]byte(" "), 1<<20)
+		for {
+			if _, err := w.Write(chunk); err != nil {
+				return
+			}
+		}
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbt_x")
+	start := time.Now()
+	_, err := c.Projects.List(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "exceeds") {
+		t.Fatalf("err = %v, want the oversized body reported", err)
+	}
+	if elapsed := time.Since(start); elapsed > 10*time.Second {
+		t.Errorf("took %v, want the call to return once the cap is passed", elapsed)
 	}
 }
 
