@@ -1,0 +1,7 @@
+# Machine-written files. GitHub collapses them in diffs and leaves them out of
+# the language stats. `make verify` checks them in CI: the bundle against its
+# sha256, and the Go code against what the bundle generates.
+internal/gen/gen.go linguist-generated=true
+apiv3/scopes_gen.go linguist-generated=true
+apiv3/operations_gen.go linguist-generated=true
+openapi/bundled.yaml linguist-generated=true

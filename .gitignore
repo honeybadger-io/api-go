@@ -27,3 +27,6 @@ go.work.sum
 
 # OS
 .DS_Store
+
+# Built by `make tools` from the pinned generator in internal/tools.
+bin/
