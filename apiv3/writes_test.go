@@ -270,7 +270,7 @@ func TestAlarmsCreateSendsQueryAndTrigger(t *testing.T) {
 		Query:            "count() > 100",
 		EvaluationPeriod: period,
 		LookbackLag:      lag,
-		StreamIds:        &streams,
+		StreamIds:        nullable.NewNullableWithValue(streams),
 		TriggerConfig: AlarmTriggerConfig{Type: TriggerResultCount,
 			Config: AlarmTriggerCondition{Operator: OperatorGt, Value: 100}},
 	})
@@ -543,7 +543,7 @@ func TestIntegrationsCreateNestsSettingsUnderConfig(t *testing.T) {
 	}
 }
 
-// Nil StreamIds on create leaves the field out, which runs the query against
+// Unset StreamIds on create leaves the field out, which runs the query against
 // every current stream.
 func TestAlarmsCreateOmitsUnsetStreams(t *testing.T) {
 	c, got := captureWrite(t, http.StatusCreated, `{"data":{"id":"a1","name":"Spike"}}`)
@@ -552,7 +552,7 @@ func TestAlarmsCreateOmitsUnsetStreams(t *testing.T) {
 		t.Fatalf("Create: %v", err)
 	}
 	if _, present := got.body["stream_ids"]; present {
-		t.Error("stream_ids was sent though it was nil")
+		t.Error("stream_ids was sent though it was unset")
 	}
 }
 

@@ -503,8 +503,9 @@ func TestEachAttemptHasItsOwnDeadline(t *testing.T) {
 }
 
 func TestOperationMethodsCoverTheSpec(t *testing.T) {
-	if len(operationMethods) != len(OperationScopes)+1 { // +1: getToken needs no scope
-		t.Errorf("%d methods for %d scoped operations plus getToken", len(operationMethods), len(OperationScopes))
+	// getToken, getOpenapiJson and getOpenapiYaml need no scope.
+	if len(operationMethods) != len(OperationScopes)+3 {
+		t.Errorf("%d methods for %d scoped operations plus 3 unscoped", len(operationMethods), len(OperationScopes))
 	}
 	for op := range OperationScopes {
 		if _, ok := operationMethods[op]; !ok {
