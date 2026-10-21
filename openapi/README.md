@@ -46,6 +46,9 @@ go test ./...
 Then update the provenance table above in the same commit as the regenerated
 code, so the three always move together.
 
+Name the branch `vendor/spec-<commit>` after the source commit, so each
+refresh gets its own branch and the name matches the table.
+
 Longer term, consider vendoring the split sources under `openapi/v3/**` and
 running the bundle step here instead. That would make the input tracked and
 diffable, at the cost of reimplementing the bundler.
