@@ -1742,8 +1742,8 @@ type AlarmCreateInput struct {
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
 
-	// StreamIds Streams the query runs against. A set: order is ignored, duplicates are dropped, and it can't be empty. Left out, every current stream in the project, which a read then lists. An ID that isn't one of the project's streams fails the request with 422.
-	StreamIds *[]string `json:"stream_ids,omitempty"`
+	// StreamIds Streams the query runs against. A set: order is ignored, duplicates are dropped, and it can't be empty. Left out or null, every current stream in the project, which a read then lists. An ID that isn't one of the project's streams fails the request with 422.
+	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
 	TriggerConfig AlarmTriggerConfig `json:"trigger_config"`
@@ -6401,6 +6401,20 @@ type ClientInterface interface {
 	// Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 	GetNotice(ctx context.Context, uuid openapi_types.UUID, params *GetNoticeParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetOpenapiJson Get this API's OpenAPI document as JSON
+	//
+	// Returns this OpenAPI document, built from the running release, so it describes exactly what the server accepts. Requires no scope. Send the `ETag` back as `If-None-Match` to skip an unchanged download.
+	//
+	// Corresponds with GET /openapi.json (the `GetOpenapiJson` operationId).
+	GetOpenapiJson(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetOpenapiYaml Get this API's OpenAPI document as YAML
+	//
+	// The same document as `/openapi.json`, as YAML.
+	//
+	// Corresponds with GET /openapi.yaml (the `GetOpenapiYaml` operationId).
+	GetOpenapiYaml(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListProjects List projects
 	//
 	// Returns a list of projects for the account.
@@ -7928,6 +7942,40 @@ func (c *Client) GetAccountUsage(ctx context.Context, reqEditors ...RequestEdito
 // Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 func (c *Client) GetNotice(ctx context.Context, uuid openapi_types.UUID, params *GetNoticeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetNoticeRequest(c.Server, uuid, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetOpenapiJson Get this API's OpenAPI document as JSON
+//
+// Returns this OpenAPI document, built from the running release, so it describes exactly what the server accepts. Requires no scope. Send the `ETag` back as `If-None-Match` to skip an unchanged download.
+//
+// Corresponds with GET /openapi.json (the `GetOpenapiJson` operationId).
+func (c *Client) GetOpenapiJson(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOpenapiJsonRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetOpenapiYaml Get this API's OpenAPI document as YAML
+//
+// The same document as `/openapi.json`, as YAML.
+//
+// Corresponds with GET /openapi.yaml (the `GetOpenapiYaml` operationId).
+func (c *Client) GetOpenapiYaml(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOpenapiYamlRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -11224,6 +11272,60 @@ func NewGetNoticeRequest(server string, uuid openapi_types.UUID, params *GetNoti
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
 		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetOpenapiJsonRequest constructs an http.Request for the GetOpenapiJson method
+func NewGetOpenapiJsonRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/openapi.json")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetOpenapiYamlRequest constructs an http.Request for the GetOpenapiYaml method
+func NewGetOpenapiYamlRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/openapi.yaml")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
 	}
 
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)

@@ -124,9 +124,9 @@ const (
 )
 
 // AlarmCreateParams are a new alarm's fields. Name, Query, EvaluationPeriod,
-// LookbackLag and TriggerConfig are required. Nil StreamIds runs the query
-// against every current stream on the project; a list must name at least one
-// stream, and an empty one is refused with 422.
+// LookbackLag and TriggerConfig are required. StreamIds left unset or null runs
+// the query against every current stream on the project; a list must name at
+// least one stream, and an empty one is refused with 422.
 type AlarmCreateParams = gen.AlarmCreateInput
 
 // AlarmUpdateParams are the fields an alarm update can change. Unset fields keep

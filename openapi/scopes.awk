@@ -27,6 +27,10 @@ BEGIN {
   # Operations that legitimately carry no security block. getToken must stay
   # reachable with any credential so a caller can always discover its own limits.
   unsecured["getToken"] = 1
+  # The API's own description: any credential may read it, so a client can check
+  # what the running release accepts before calling it.
+  unsecured["getOpenapiJson"] = 1
+  unsecured["getOpenapiYaml"] = 1
 
   print "// Code generated from openapi/bundled.yaml by openapi/scopes.awk. DO NOT EDIT."
   print ""

@@ -6,6 +6,8 @@ package apiv3
 // spec so the retry rules cannot drift from it.
 var operationMethods = map[string]string{
 	"getToken":                 "GET",
+	"getOpenapiJson":           "GET",
+	"getOpenapiYaml":           "GET",
 	"getAccount":               "GET",
 	"getAccountUsage":          "GET",
 	"listAccountMembers":       "GET",
