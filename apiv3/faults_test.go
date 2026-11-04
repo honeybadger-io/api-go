@@ -293,3 +293,48 @@ func TestFaultsListNoticesIncludeBreadcrumbs(t *testing.T) {
 		t.Errorf("trail = %+v, want one ui.click entry", crumbs.Trail)
 	}
 }
+
+// ListAllNotices sends the option on the first page only. Later pages follow
+// links.older verbatim, which works because the server copies every query
+// parameter, breadcrumbs included, into that link.
+func TestFaultsListAllNoticesIncludeBreadcrumbs(t *testing.T) {
+	var queries []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		queries = append(queries, r.URL.Path+" breadcrumbs="+r.URL.Query().Get("breadcrumbs"))
+		const trail = `"breadcrumbs":{"enabled":true,"total_entries":1,"truncated":false,
+		  "trail":[{"category":"ui.click","message":"button#buy","metadata":null,"timestamp":"2026-11-03T18:22:41.516Z"}]}`
+		switch r.URL.Path {
+		case "/v3/projects/Xk9mZp/faults/1/notices":
+			writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111",`+trail+`}],
+			  "pagination":{"has_older":true,"limit":1},
+			  "links":{"self":"http://`+r.Host+`/v3/self","older":"http://`+r.Host+`/v3/projects/Xk9mZp/faults/1/older?before=cur_1&breadcrumbs=true"}}`)
+		default:
+			writeJSON(w, 0, `{"data":[{"id":"22222222-2222-4222-8222-222222222222",`+trail+`}],
+			  "pagination":{"has_older":false,"limit":1},
+			  "links":{"self":"http://`+r.Host+`/v3/self"}}`)
+		}
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
+	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", IncludeBreadcrumbs())
+	if err != nil {
+		t.Fatalf("ListAllNotices: %v", err)
+	}
+
+	want := []string{
+		"/v3/projects/Xk9mZp/faults/1/notices breadcrumbs=true",
+		"/v3/projects/Xk9mZp/faults/1/older breadcrumbs=true",
+	}
+	if !equal(queries, want) {
+		t.Errorf("requests %q, want %q", queries, want)
+	}
+	if len(all) != 2 {
+		t.Fatalf("got %d notices, want 2", len(all))
+	}
+	for i, n := range all {
+		if crumbs, err := n.Breadcrumbs.Get(); err != nil || len(crumbs.Trail) != 1 {
+			t.Errorf("notice %d breadcrumbs = %+v (err %v), want one entry", i, crumbs, err)
+		}
+	}
+}
