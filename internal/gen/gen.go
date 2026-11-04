@@ -201,16 +201,16 @@ func (e CheckInEventState) Valid() bool {
 
 // Defines values for CheckInScheduleType.
 const (
-	Cron   CheckInScheduleType = "cron"
-	Simple CheckInScheduleType = "simple"
+	CheckInScheduleTypeCron   CheckInScheduleType = "cron"
+	CheckInScheduleTypeSimple CheckInScheduleType = "simple"
 )
 
 // Valid indicates whether the value is a known member of the CheckInScheduleType enum.
 func (e CheckInScheduleType) Valid() bool {
 	switch e {
-	case Cron:
+	case CheckInScheduleTypeCron:
 		return true
-	case Simple:
+	case CheckInScheduleTypeSimple:
 		return true
 	default:
 		return false
@@ -1303,6 +1303,672 @@ func (e StreamSlug) Valid() bool {
 	}
 }
 
+// Defines values for WebhookV2AlarmState.
+const (
+	WebhookV2AlarmStateAlarm       WebhookV2AlarmState = "alarm"
+	WebhookV2AlarmStateInitial     WebhookV2AlarmState = "initial"
+	WebhookV2AlarmStateLessThannil WebhookV2AlarmState = "<nil>"
+	WebhookV2AlarmStateOk          WebhookV2AlarmState = "ok"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2AlarmState enum.
+func (e WebhookV2AlarmState) Valid() bool {
+	switch e {
+	case WebhookV2AlarmStateAlarm:
+		return true
+	case WebhookV2AlarmStateInitial:
+		return true
+	case WebhookV2AlarmStateLessThannil:
+		return true
+	case WebhookV2AlarmStateOk:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2AlarmEventEvent.
+const (
+	WebhookV2AlarmEventEventAlarmAlert WebhookV2AlarmEventEvent = "alarm_alert"
+	WebhookV2AlarmEventEventAlarmOk    WebhookV2AlarmEventEvent = "alarm_ok"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2AlarmEventEvent enum.
+func (e WebhookV2AlarmEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2AlarmEventEventAlarmAlert:
+		return true
+	case WebhookV2AlarmEventEventAlarmOk:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2AssignedEventEvent.
+const (
+	WebhookV2AssignedEventEventAssigned WebhookV2AssignedEventEvent = "assigned"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2AssignedEventEvent enum.
+func (e WebhookV2AssignedEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2AssignedEventEventAssigned:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2BacktraceLineContext.
+const (
+	WebhookV2BacktraceLineContextAll WebhookV2BacktraceLineContext = "all"
+	WebhookV2BacktraceLineContextApp WebhookV2BacktraceLineContext = "app"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2BacktraceLineContext enum.
+func (e WebhookV2BacktraceLineContext) Valid() bool {
+	switch e {
+	case WebhookV2BacktraceLineContextAll:
+		return true
+	case WebhookV2BacktraceLineContextApp:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2CertExpirationEventEvent.
+const (
+	WebhookV2CertExpirationEventEventCertWillExpire WebhookV2CertExpirationEventEvent = "cert_will_expire"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2CertExpirationEventEvent enum.
+func (e WebhookV2CertExpirationEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2CertExpirationEventEventCertWillExpire:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2CheckInScheduleType.
+const (
+	WebhookV2CheckInScheduleTypeCron   WebhookV2CheckInScheduleType = "cron"
+	WebhookV2CheckInScheduleTypeSimple WebhookV2CheckInScheduleType = "simple"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2CheckInScheduleType enum.
+func (e WebhookV2CheckInScheduleType) Valid() bool {
+	switch e {
+	case WebhookV2CheckInScheduleTypeCron:
+		return true
+	case WebhookV2CheckInScheduleTypeSimple:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2CheckInState.
+const (
+	WebhookV2CheckInStateMissing   WebhookV2CheckInState = "missing"
+	WebhookV2CheckInStatePaused    WebhookV2CheckInState = "paused"
+	WebhookV2CheckInStatePending   WebhookV2CheckInState = "pending"
+	WebhookV2CheckInStateReporting WebhookV2CheckInState = "reporting"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2CheckInState enum.
+func (e WebhookV2CheckInState) Valid() bool {
+	switch e {
+	case WebhookV2CheckInStateMissing:
+		return true
+	case WebhookV2CheckInStatePaused:
+		return true
+	case WebhookV2CheckInStatePending:
+		return true
+	case WebhookV2CheckInStateReporting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2CheckInEventEvent.
+const (
+	WebhookV2CheckInEventEventCheckInMissing   WebhookV2CheckInEventEvent = "check_in_missing"
+	WebhookV2CheckInEventEventCheckInReporting WebhookV2CheckInEventEvent = "check_in_reporting"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2CheckInEventEvent enum.
+func (e WebhookV2CheckInEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2CheckInEventEventCheckInMissing:
+		return true
+	case WebhookV2CheckInEventEventCheckInReporting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2CommentedEventEvent.
+const (
+	WebhookV2CommentedEventEventCommented WebhookV2CommentedEventEvent = "commented"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2CommentedEventEvent enum.
+func (e WebhookV2CommentedEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2CommentedEventEventCommented:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2DeployedEventEvent.
+const (
+	WebhookV2DeployedEventEventDeployed WebhookV2DeployedEventEvent = "deployed"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2DeployedEventEvent enum.
+func (e WebhookV2DeployedEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2DeployedEventEventDeployed:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2OccurredEventEvent.
+const (
+	WebhookV2OccurredEventEventOccurred     WebhookV2OccurredEventEvent = "occurred"
+	WebhookV2OccurredEventEventRateExceeded WebhookV2OccurredEventEvent = "rate_exceeded"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2OccurredEventEvent enum.
+func (e WebhookV2OccurredEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2OccurredEventEventOccurred:
+		return true
+	case WebhookV2OccurredEventEventRateExceeded:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2OutageEventEvent.
+const (
+	WebhookV2OutageEventEventDown WebhookV2OutageEventEvent = "down"
+	WebhookV2OutageEventEventUp   WebhookV2OutageEventEvent = "up"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2OutageEventEvent enum.
+func (e WebhookV2OutageEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2OutageEventEventDown:
+		return true
+	case WebhookV2OutageEventEventUp:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2ResolutionEventEvent.
+const (
+	WebhookV2ResolutionEventEventResolved   WebhookV2ResolutionEventEvent = "resolved"
+	WebhookV2ResolutionEventEventUnresolved WebhookV2ResolutionEventEvent = "unresolved"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2ResolutionEventEvent enum.
+func (e WebhookV2ResolutionEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2ResolutionEventEventResolved:
+		return true
+	case WebhookV2ResolutionEventEventUnresolved:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2SiteState.
+const (
+	WebhookV2SiteStateDown    WebhookV2SiteState = "down"
+	WebhookV2SiteStatePending WebhookV2SiteState = "pending"
+	WebhookV2SiteStateUp      WebhookV2SiteState = "up"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2SiteState enum.
+func (e WebhookV2SiteState) Valid() bool {
+	switch e {
+	case WebhookV2SiteStateDown:
+		return true
+	case WebhookV2SiteStatePending:
+		return true
+	case WebhookV2SiteStateUp:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV2VolumeSpikeEventEvent.
+const (
+	WebhookV2VolumeSpikeEventEventVolumeSpike WebhookV2VolumeSpikeEventEvent = "volume_spike"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV2VolumeSpikeEventEvent enum.
+func (e WebhookV2VolumeSpikeEventEvent) Valid() bool {
+	switch e {
+	case WebhookV2VolumeSpikeEventEventVolumeSpike:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3AlarmState.
+const (
+	WebhookV3AlarmStateAlarm   WebhookV3AlarmState = "alarm"
+	WebhookV3AlarmStateInitial WebhookV3AlarmState = "initial"
+	WebhookV3AlarmStateOk      WebhookV3AlarmState = "ok"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3AlarmState enum.
+func (e WebhookV3AlarmState) Valid() bool {
+	switch e {
+	case WebhookV3AlarmStateAlarm:
+		return true
+	case WebhookV3AlarmStateInitial:
+		return true
+	case WebhookV3AlarmStateOk:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3AlarmEventEvent.
+const (
+	WebhookV3AlarmEventEventAlarmAlert WebhookV3AlarmEventEvent = "alarm_alert"
+	WebhookV3AlarmEventEventAlarmOk    WebhookV3AlarmEventEvent = "alarm_ok"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3AlarmEventEvent enum.
+func (e WebhookV3AlarmEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3AlarmEventEventAlarmAlert:
+		return true
+	case WebhookV3AlarmEventEventAlarmOk:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3AlarmEventPayloadVersion.
+const (
+	WebhookV3AlarmEventPayloadVersionV3 WebhookV3AlarmEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3AlarmEventPayloadVersion enum.
+func (e WebhookV3AlarmEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3AlarmEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3AssignedEventEvent.
+const (
+	WebhookV3AssignedEventEventAssigned WebhookV3AssignedEventEvent = "assigned"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3AssignedEventEvent enum.
+func (e WebhookV3AssignedEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3AssignedEventEventAssigned:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3AssignedEventPayloadVersion.
+const (
+	WebhookV3AssignedEventPayloadVersionV3 WebhookV3AssignedEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3AssignedEventPayloadVersion enum.
+func (e WebhookV3AssignedEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3AssignedEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CertExpirationEventEvent.
+const (
+	WebhookV3CertExpirationEventEventCertWillExpire WebhookV3CertExpirationEventEvent = "cert_will_expire"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CertExpirationEventEvent enum.
+func (e WebhookV3CertExpirationEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3CertExpirationEventEventCertWillExpire:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CertExpirationEventPayloadVersion.
+const (
+	WebhookV3CertExpirationEventPayloadVersionV3 WebhookV3CertExpirationEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CertExpirationEventPayloadVersion enum.
+func (e WebhookV3CertExpirationEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3CertExpirationEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CheckInState.
+const (
+	WebhookV3CheckInStateMissing   WebhookV3CheckInState = "missing"
+	WebhookV3CheckInStatePaused    WebhookV3CheckInState = "paused"
+	WebhookV3CheckInStatePending   WebhookV3CheckInState = "pending"
+	WebhookV3CheckInStateReporting WebhookV3CheckInState = "reporting"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CheckInState enum.
+func (e WebhookV3CheckInState) Valid() bool {
+	switch e {
+	case WebhookV3CheckInStateMissing:
+		return true
+	case WebhookV3CheckInStatePaused:
+		return true
+	case WebhookV3CheckInStatePending:
+		return true
+	case WebhookV3CheckInStateReporting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CheckInEventEvent.
+const (
+	WebhookV3CheckInEventEventCheckInMissing   WebhookV3CheckInEventEvent = "check_in_missing"
+	WebhookV3CheckInEventEventCheckInReporting WebhookV3CheckInEventEvent = "check_in_reporting"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CheckInEventEvent enum.
+func (e WebhookV3CheckInEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3CheckInEventEventCheckInMissing:
+		return true
+	case WebhookV3CheckInEventEventCheckInReporting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CheckInEventPayloadVersion.
+const (
+	WebhookV3CheckInEventPayloadVersionV3 WebhookV3CheckInEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CheckInEventPayloadVersion enum.
+func (e WebhookV3CheckInEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3CheckInEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CommentedEventEvent.
+const (
+	WebhookV3CommentedEventEventCommented WebhookV3CommentedEventEvent = "commented"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CommentedEventEvent enum.
+func (e WebhookV3CommentedEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3CommentedEventEventCommented:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3CommentedEventPayloadVersion.
+const (
+	WebhookV3CommentedEventPayloadVersionV3 WebhookV3CommentedEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3CommentedEventPayloadVersion enum.
+func (e WebhookV3CommentedEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3CommentedEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3DeployedEventEvent.
+const (
+	WebhookV3DeployedEventEventDeployed WebhookV3DeployedEventEvent = "deployed"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3DeployedEventEvent enum.
+func (e WebhookV3DeployedEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3DeployedEventEventDeployed:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3DeployedEventPayloadVersion.
+const (
+	WebhookV3DeployedEventPayloadVersionV3 WebhookV3DeployedEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3DeployedEventPayloadVersion enum.
+func (e WebhookV3DeployedEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3DeployedEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3EventPayloadVersion.
+const (
+	WebhookV3EventPayloadVersionV3 WebhookV3EventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3EventPayloadVersion enum.
+func (e WebhookV3EventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3EventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3OccurredEventEvent.
+const (
+	WebhookV3OccurredEventEventOccurred     WebhookV3OccurredEventEvent = "occurred"
+	WebhookV3OccurredEventEventRateExceeded WebhookV3OccurredEventEvent = "rate_exceeded"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3OccurredEventEvent enum.
+func (e WebhookV3OccurredEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3OccurredEventEventOccurred:
+		return true
+	case WebhookV3OccurredEventEventRateExceeded:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3OccurredEventPayloadVersion.
+const (
+	WebhookV3OccurredEventPayloadVersionV3 WebhookV3OccurredEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3OccurredEventPayloadVersion enum.
+func (e WebhookV3OccurredEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3OccurredEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3OutageEventEvent.
+const (
+	WebhookV3OutageEventEventDown WebhookV3OutageEventEvent = "down"
+	WebhookV3OutageEventEventUp   WebhookV3OutageEventEvent = "up"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3OutageEventEvent enum.
+func (e WebhookV3OutageEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3OutageEventEventDown:
+		return true
+	case WebhookV3OutageEventEventUp:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3OutageEventPayloadVersion.
+const (
+	WebhookV3OutageEventPayloadVersionV3 WebhookV3OutageEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3OutageEventPayloadVersion enum.
+func (e WebhookV3OutageEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3OutageEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3ResolutionEventEvent.
+const (
+	WebhookV3ResolutionEventEventResolved   WebhookV3ResolutionEventEvent = "resolved"
+	WebhookV3ResolutionEventEventUnresolved WebhookV3ResolutionEventEvent = "unresolved"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3ResolutionEventEvent enum.
+func (e WebhookV3ResolutionEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3ResolutionEventEventResolved:
+		return true
+	case WebhookV3ResolutionEventEventUnresolved:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3ResolutionEventPayloadVersion.
+const (
+	WebhookV3ResolutionEventPayloadVersionV3 WebhookV3ResolutionEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3ResolutionEventPayloadVersion enum.
+func (e WebhookV3ResolutionEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3ResolutionEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3SiteState.
+const (
+	WebhookV3SiteStateDown    WebhookV3SiteState = "down"
+	WebhookV3SiteStatePending WebhookV3SiteState = "pending"
+	WebhookV3SiteStateUp      WebhookV3SiteState = "up"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3SiteState enum.
+func (e WebhookV3SiteState) Valid() bool {
+	switch e {
+	case WebhookV3SiteStateDown:
+		return true
+	case WebhookV3SiteStatePending:
+		return true
+	case WebhookV3SiteStateUp:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3VolumeSpikeEventEvent.
+const (
+	WebhookV3VolumeSpikeEventEventVolumeSpike WebhookV3VolumeSpikeEventEvent = "volume_spike"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3VolumeSpikeEventEvent enum.
+func (e WebhookV3VolumeSpikeEventEvent) Valid() bool {
+	switch e {
+	case WebhookV3VolumeSpikeEventEventVolumeSpike:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookV3VolumeSpikeEventPayloadVersion.
+const (
+	WebhookV3VolumeSpikeEventPayloadVersionV3 WebhookV3VolumeSpikeEventPayloadVersion = "v3"
+)
+
+// Valid indicates whether the value is a known member of the WebhookV3VolumeSpikeEventPayloadVersion enum.
+func (e WebhookV3VolumeSpikeEventPayloadVersion) Valid() bool {
+	switch e {
+	case WebhookV3VolumeSpikeEventPayloadVersionV3:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for FaultOrder.
 const (
 	FaultOrderFrequent FaultOrder = "frequent"
@@ -1535,9 +2201,7 @@ type Account struct {
 
 	// Email Primary account email
 	Email nullable.Nullable[openapi_types.Email] `json:"email"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id    string                                 `json:"id"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
@@ -1568,9 +2232,7 @@ type AccountInvitation struct {
 
 	// Email Email address of the invitee
 	Email string `json:"email"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id    string `json:"id"`
 
 	// Role Role granted upon acceptance
 	Role nullable.Nullable[AccountInvitationRole] `json:"role,omitempty"`
@@ -1603,7 +2265,7 @@ type AccountInvitation_CreatedBy struct {
 // AccountInvitationRole Role granted upon acceptance
 type AccountInvitationRole string
 
-// AccountInvitationCreateInput Attributes for creating a account-invitation.
+// AccountInvitationCreateInput Attributes for creating an account invitation.
 type AccountInvitationCreateInput struct {
 	// DisableEmailNotifications Create the member with email notifications off
 	DisableEmailNotifications *bool               `json:"disable_email_notifications,omitempty"`
@@ -1612,7 +2274,7 @@ type AccountInvitationCreateInput struct {
 	// Role A member's role in the account.
 	Role *AccountRole `json:"role,omitempty"`
 
-	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
+	// TeamIds IDs of teams to add the invitee to.
 	TeamIds nullable.Nullable[[]string] `json:"team_ids,omitempty"`
 }
 
@@ -1625,7 +2287,7 @@ type AccountInvitationInput struct {
 	// Role A member's role in the account.
 	Role *AccountRole `json:"role,omitempty"`
 
-	// TeamIds IDs of teams to add the invitee to. An ID that isn't a team on this account fails the request with 422.
+	// TeamIds IDs of teams to add the invitee to.
 	TeamIds nullable.Nullable[[]string] `json:"team_ids,omitempty"`
 }
 
@@ -1639,9 +2301,7 @@ type AccountMember struct {
 
 	// Email Member email address
 	Email string `json:"email"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id    string `json:"id"`
 
 	// Name Member display name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
@@ -1667,7 +2327,7 @@ type AffectedUser struct {
 	// Count How many times this user was seen on the fault
 	Count int `json:"count"`
 
-	// User The affected user as the reporting client identified them. Opaque: not a Honeybadger user id, and not necessarily an email.
+	// User The affected user exactly as the reporting client identified them: not a Honeybadger user ID, and not necessarily an email.
 	User string `json:"user"`
 }
 
@@ -1684,9 +2344,7 @@ type Alarm struct {
 
 	// EvaluationPeriod Window each evaluation covers, as a compact duration. The API rejects a spelled-out interval like `5 minutes`.
 	EvaluationPeriod nullable.Nullable[string] `json:"evaluation_period"`
-
-	// Id The alarm's ID
-	Id string `json:"id"`
+	Id               string                    `json:"id"`
 
 	// LastCheckedAt When the alarm was last evaluated
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
@@ -1694,7 +2352,7 @@ type Alarm struct {
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
 
-	// LookbackLag How far behind now the window ends, allowing for ingestion delay. Same compact duration format as evaluation_period.
+	// LookbackLag How far behind now the window ends, allowing for ingestion delay. Same compact duration format as `evaluation_period`.
 	LookbackLag nullable.Nullable[string] `json:"lookback_lag"`
 
 	// Name Alarm name
@@ -1742,14 +2400,14 @@ type AlarmCreateInput struct {
 	// Query BadgerQL evaluated on each check
 	Query string `json:"query"`
 
-	// StreamIds Streams the query runs against. A set: order is ignored, duplicates are dropped, and it can't be empty. Left out or null, every current stream in the project, which a read then lists. An ID that isn't one of the project's streams fails the request with 422.
+	// StreamIds Streams the query runs against. A set: order is ignored, duplicates are dropped, and it can't be empty. Left out or null, set to the project's current streams.
 	StreamIds nullable.Nullable[[]string] `json:"stream_ids,omitempty"`
 
 	// TriggerConfig What turns the alarm on. Sent whole: on update, a `trigger_config` replaces the stored one rather than merging into it.
 	TriggerConfig AlarmTriggerConfig `json:"trigger_config"`
 }
 
-// AlarmHistoryEntry One alarm state change, as recorded by the Insights backend
+// AlarmHistoryEntry One alarm state change
 type AlarmHistoryEntry struct {
 	// AlarmId The alarm's ID
 	AlarmId string `json:"alarm_id"`
@@ -1765,9 +2423,7 @@ type AlarmHistoryEntry struct {
 
 	// EvaluationStartedAt Start of the window whose evaluation caused the change
 	EvaluationStartedAt time.Time `json:"evaluation_started_at"`
-
-	// Id Trigger identifier
-	Id string `json:"id"`
+	Id                  string    `json:"id"`
 
 	// Status The state the alarm entered
 	Status nullable.Nullable[AlarmHistoryEntryStatus] `json:"status"`
@@ -1832,17 +2488,15 @@ type CheckIn struct {
 	// CronSchedule Cron expression (for cron schedule type)
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone for cron schedule, as a Rails zone name. `UTC` on a simple check-in.
+	// CronTimezone Timezone for cron schedule, as the web app names time zones. `UTC` on a simple check-in.
 	CronTimezone string `json:"cron_timezone"`
 
 	// ExpectedAt When the next report is expected
 	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
 
-	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`), and zero reads `00:00:00`; every form a read returns can be written back. Compare periods by duration, not text.
+	// GracePeriod How long after the expected time before the check-in is missing. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Returned in long form: `1 week` comes back as `7 days`, and zero as `00:00:00`.
 	GracePeriod string `json:"grace_period"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id          string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
@@ -1899,12 +2553,12 @@ type CheckInEvent struct {
 // CheckInEventState The state the check-in entered
 type CheckInEventState string
 
-// CheckInInput Writable check-in attributes. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
+// CheckInInput Writable check-in attributes. Read-only fields are ignored.
 type CheckInInput struct {
 	// CronSchedule Cron expression, required when `schedule_type` is `cron`.
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails time zone name, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
+	// CronTimezone Timezone the cron schedule is evaluated in. A time zone name as the web app lists them, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
 	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`; zero is `00:00:00`. Null resets it to zero.
@@ -1913,7 +2567,7 @@ type CheckInInput struct {
 	// Name Display name. Null clears it; an unnamed check-in shows its ID.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text.
+	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Returned in long form: `1 week` comes back as `7 days`.
 	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
 
 	// ScheduleType Switching to `simple` clears `cron_schedule` and resets `cron_timezone` to `UTC`; switching to `cron` clears `report_period`.
@@ -1928,7 +2582,7 @@ type CheckInReplaceEntry struct {
 	// CronSchedule Cron expression, required when `schedule_type` is `cron`.
 	CronSchedule nullable.Nullable[string] `json:"cron_schedule,omitempty"`
 
-	// CronTimezone Timezone the cron schedule is evaluated in. A Rails time zone name, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
+	// CronTimezone Timezone the cron schedule is evaluated in. A time zone name as the web app lists them, not an IANA identifier — `Central Time (US & Canada)`, not `America/Chicago`, which is rejected. Required when `schedule_type` is `cron`. Null resets it to `UTC`.
 	CronTimezone nullable.Nullable[string] `json:"cron_timezone,omitempty"`
 
 	// GracePeriod How long after the expected time before the check-in is considered missing. Same format as `report_period`; zero is `00:00:00`. Null resets it to zero.
@@ -1937,7 +2591,7 @@ type CheckInReplaceEntry struct {
 	// Name Display name. Null clears it; an unnamed check-in shows its ID.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
-	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Reads return the canonical long form (`1 week` reads `7 days`); every form a read returns can be written back. Compare periods by duration, not text.
+	// ReportPeriod How often a report is expected, for `simple` schedules. Required unless `schedule_type` is `cron`, and may not be zero. A duration such as `5 minutes`, `1 hour 30 minutes` or `01:30:00`. Returned in long form: `1 week` comes back as `7 days`.
 	ReportPeriod nullable.Nullable[string] `json:"report_period,omitempty"`
 
 	// ScheduleType Switching to `simple` clears `cron_schedule` and resets `cron_timezone` to `UTC`; switching to `cron` clears `report_period`.
@@ -1947,7 +2601,7 @@ type CheckInReplaceEntry struct {
 	Slug string `json:"slug"`
 }
 
-// CheckInReplaceInput The project's complete set of check-ins. This replaces rather than merges: any check-in the project has and this payload does not name is DELETED. Must be a non-empty array, and every entry needs a slug — an empty payload is rejected rather than taken to mean "delete all of them".
+// CheckInReplaceInput The project's complete set of check-ins. Any check-in the project has that this list doesn't name is deleted. Must be non-empty, and every entry needs a slug.
 type CheckInReplaceInput struct {
 	CheckIns []CheckInReplaceEntry `json:"check_ins"`
 }
@@ -1971,14 +2625,12 @@ type Comment struct {
 
 	// FaultId ID of the fault this comment belongs to
 	FaultId string `json:"fault_id"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id      string `json:"id"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
 
-	// Source Source of the comment
+	// Source Where the comment was made: `web`, `web-batch` (a bulk action in the web app), `api`, `email` (a reply to a notification email), `feedback` (a user feedback form) or `unknown`.
 	Source string `json:"source"`
 }
 
@@ -2007,9 +2659,7 @@ type Dashboard struct {
 
 	// DefaultTs Default time range for the dashboard
 	DefaultTs nullable.Nullable[string] `json:"default_ts"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id        string                    `json:"id"`
 
 	// IsDefault Whether this is the default dashboard
 	IsDefault bool `json:"is_default"`
@@ -2029,7 +2679,7 @@ type Dashboard struct {
 	// UpdatedAt When the dashboard was last updated
 	UpdatedAt time.Time `json:"updated_at"`
 
-	// Widgets The dashboard's widgets, in the order they were written and in the same shape a write accepts, including `config.streams` as stream slugs (`stream_ids` exists only inside the model).
+	// Widgets The dashboard's widgets, in the order they were written and in the same shape a write accepts, including `config.streams` as stream slugs.
 	Widgets []DashboardWidget `json:"widgets"`
 }
 
@@ -2167,16 +2817,16 @@ type DashboardChartConfigLine struct {
 	// Groups Per-series display options keyed by series name, e.g. `{"web": {"color": "#4A90D9"}}`; entries may also set `axis` (`left`|`right`) to plot a series on the right y axis. Advanced — usually omit
 	Groups *map[string]interface{} `json:"groups,omitempty"`
 
-	// RightYAxisFormat Right y-axis format (accepted but not currently applied by the renderer)
+	// RightYAxisFormat Right y-axis format (stored, but charts don't use it yet)
 	RightYAxisFormat *string `json:"rightYAxisFormat,omitempty"`
 
-	// RightYAxisLabel Right y-axis label (accepted but not currently applied by the renderer)
+	// RightYAxisLabel Right y-axis label (stored, but charts don't use it yet)
 	RightYAxisLabel *string `json:"rightYAxisLabel,omitempty"`
 
-	// RightYAxisMax Right y-axis maximum (accepted but not currently applied by the renderer)
+	// RightYAxisMax Right y-axis maximum (stored, but charts don't use it yet)
 	RightYAxisMax *float32 `json:"rightYAxisMax,omitempty"`
 
-	// RightYAxisMin Right y-axis minimum (accepted but not currently applied by the renderer)
+	// RightYAxisMin Right y-axis minimum (stored, but charts don't use it yet)
 	RightYAxisMin *float32 `json:"rightYAxisMin,omitempty"`
 
 	// XField Alias for the x axis, typically a time bin such as `bin(1h)`
@@ -2185,13 +2835,13 @@ type DashboardChartConfigLine struct {
 	// XFieldUnit Unit used to format x values: `percent`, `microseconds`, or `milliseconds`
 	XFieldUnit *string `json:"xFieldUnit,omitempty"`
 
-	// YAxisLabel Left y-axis label (accepted but not currently applied by the renderer)
+	// YAxisLabel Left y-axis label (stored, but charts don't use it yet)
 	YAxisLabel *string `json:"yAxisLabel,omitempty"`
 
-	// YAxisMax Left y-axis maximum (accepted but not currently applied by the renderer)
+	// YAxisMax Left y-axis maximum (stored, but charts don't use it yet)
 	YAxisMax *float32 `json:"yAxisMax,omitempty"`
 
-	// YAxisMin Left y-axis minimum (accepted but not currently applied by the renderer)
+	// YAxisMin Left y-axis minimum (stored, but charts don't use it yet)
 	YAxisMin *float32 `json:"yAxisMin,omitempty"`
 
 	// YField Alias plotted as the series value; required when `groupType` is `events`
@@ -2260,15 +2910,15 @@ type DashboardUpdateInput struct {
 	Widgets *[]DashboardWidgetInput `json:"widgets,omitempty"`
 }
 
-// DashboardWidget A widget on an Insights dashboard. A read leaves out null, "", [] and {} values (an object that is empty once those are gone too); false and 0 are kept. A widget written without an `id` gets a generated one, and its `grid` is merged into the default {x: 0, y: 0, w: 12, h: 3}.
+// DashboardWidget A widget on an Insights dashboard. Responses leave out empty values (null, "", [], {}); false and 0 are kept. A widget written without an `id` gets a generated one, and its `grid` is merged into the default {x: 0, y: 0, w: 12, h: 3}.
 type DashboardWidget struct {
-	// Config Type-specific configuration. Its accepted fields depend on `type` and are enforced on write by the dashboard validator; left open here because the conditional that selects them cannot be expressed as a single static type.
+	// Config Type-specific configuration. Its fields depend on `type`; the DashboardWidgetConfig schema for each type lists them.
 	Config *map[string]interface{} `json:"config,omitempty"`
 
 	// Grid Position and size on the dashboard grid.
 	Grid *DashboardWidget_Grid `json:"grid,omitempty"`
 
-	// Id Stable identifier for the widget: the id a write sent, kept exactly, or one the server generated when a write left it out. A read-edit-write round trip must echo it back to keep widget identity.
+	// Id Kept as sent, or generated when left out. Send it back on update to keep the widget.
 	Id *string `json:"id,omitempty"`
 
 	// Presentation Display-only chrome.
@@ -2348,7 +2998,7 @@ type DashboardWidgetConfigInsightsVis struct {
 	// Query BadgerQL query producing the widget's data
 	Query *string `json:"query,omitempty"`
 
-	// Streams Streams to query, by slug: `default` (the project's own stream) or `internal`. Anything else is refused (422). Left out or empty, every stream in the project, which a read then lists. A slug whose stream the project doesn't have yet, right after it's created, is dropped.
+	// Streams Streams to query, by slug: `default` (the project's own stream) or `internal`. Anything else is refused (422). Left out or empty, set to the project's current streams. A slug whose stream the project doesn't have yet, right after it's created, is dropped.
 	Streams *[]DashboardWidgetConfigInsightsVisStreams `json:"streams,omitempty"`
 
 	// Vis How to render the result: `{view, chart_config}`
@@ -2373,7 +3023,7 @@ type DashboardWidgetConfigUptime struct {
 	Limit *int `json:"limit,omitempty"`
 }
 
-// DashboardWidgetInput A dashboard widget. A read leaves out null, "", [] and {} values (an object that is empty once those are gone too); false and 0 are kept.
+// DashboardWidgetInput A dashboard widget. Responses leave out empty values (null, "", [], {}); false and 0 are kept.
 type DashboardWidgetInput struct {
 	// Config The widget's settings, as described by DashboardWidgetConfig<Type> for its `type`.
 	Config *map[string]interface{} `json:"config,omitempty"`
@@ -2381,7 +3031,7 @@ type DashboardWidgetInput struct {
 	// Grid Merged into the default {x: 0, y: 0, w: 12, h: 3}: left out, the widget gets the default, and a key left out takes the default's value.
 	Grid *DashboardWidgetInput_Grid `json:"grid,omitempty"`
 
-	// Id Kept exactly as sent. Unique within its dashboard; another dashboard can use the same id. Left out, the server assigns one, so a client that wants stable widgets sends its own. Stick to letters, digits, `-` and `_`: the id appears in web UI links.
+	// Id Kept as sent. Unique within its dashboard; another dashboard can use the same ID. Left out, the server assigns one. Use letters, digits, `-` and `_`.
 	Id           *string                            `json:"id,omitempty"`
 	Presentation *DashboardWidgetInput_Presentation `json:"presentation,omitempty"`
 
@@ -2413,9 +3063,7 @@ type Deploy struct {
 
 	// Environment Deploy environment; null when the deploy named none
 	Environment nullable.Nullable[string] `json:"environment"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id          string                    `json:"id"`
 
 	// LocalUsername Username of the person who triggered the deploy
 	LocalUsername nullable.Nullable[string] `json:"local_username"`
@@ -2434,9 +3082,7 @@ type Deploy struct {
 type Environment struct {
 	// CreatedAt When the environment was created
 	CreatedAt nullable.Nullable[time.Time] `json:"created_at"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id        string                       `json:"id"`
 
 	// Name Environment name
 	Name string `json:"name"`
@@ -2456,7 +3102,7 @@ type EnvironmentCreateInput struct {
 	Notifications nullable.Nullable[bool] `json:"notifications,omitempty"`
 }
 
-// EnvironmentInput Fields to change on an environment. Omitted fields are unchanged. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
+// EnvironmentInput Fields to change on an environment. Omitted fields are unchanged. Read-only fields are ignored.
 type EnvironmentInput struct {
 	// Name Can only be sent with its current value; an environment can't be renamed.
 	Name *string `json:"name,omitempty"`
@@ -2465,7 +3111,54 @@ type EnvironmentInput struct {
 	Notifications nullable.Nullable[bool] `json:"notifications,omitempty"`
 }
 
-// Error API error response
+// Error An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type Error struct {
 	Error ErrorBody     `json:"error"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
@@ -2473,17 +3166,17 @@ type Error struct {
 
 // ErrorBody defines model for ErrorBody.
 type ErrorBody struct {
-	// Code Machine-readable code. Branch on this rather than on the message, which is free text and may be the upstream service's own wording.
+	// Code Machine-readable code. Branch on this, not the message.
 	Code ErrorBodyCode `json:"code"`
 
-	// Details A list of field errors for `validation_error`, `invalid_parameter`, `feature_unavailable`, and `limit_reached` from PUT /check_ins; an object naming the missing permission for `insufficient_scope`, or the surviving fault for `fault_merged`. Absent for every other code.
+	// Details A list of `{field, message}` on `validation_error` and `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when one field caused the refusal; `{required_scope, token_scopes}` on `insufficient_scope`; `{merged_into, location}` on `fault_merged`. Absent when there's nothing to add.
 	Details *json.RawMessage `json:"details,omitempty"`
 
 	// Message Human-readable explanation
 	Message string `json:"message"`
 }
 
-// ErrorBodyCode Machine-readable code. Branch on this rather than on the message, which is free text and may be the upstream service's own wording.
+// ErrorBodyCode Machine-readable code. Branch on this, not the message.
 type ErrorBodyCode string
 
 // ErrorDetail defines model for ErrorDetail.
@@ -2503,7 +3196,7 @@ type Fault struct {
 	// Assignee User assigned to this fault
 	Assignee nullable.Nullable[Fault_Assignee] `json:"assignee,omitempty"`
 
-	// AssigneeId Same as `assignee.id`. Written by POST …/assign.
+	// AssigneeId Same as `assignee.id`. Written by PATCH or POST …/assign.
 	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
 
 	// CommentsCount Number of comments on this fault
@@ -2517,9 +3210,7 @@ type Fault struct {
 
 	// Environment Environment name
 	Environment nullable.Nullable[string] `json:"environment,omitempty"`
-
-	// Id Unique identifier. Like every v3 ID it's an opaque string, although today it's the fault's number.
-	Id string `json:"id"`
+	Id          string                    `json:"id"`
 
 	// Ignored Whether the fault is ignored
 	Ignored *bool `json:"ignored,omitempty"`
@@ -2590,7 +3281,7 @@ type Fault_Tickets struct {
 
 // FaultAssignmentInput Who to assign a fault to
 type FaultAssignmentInput struct {
-	// AssigneeId ID of a user on the project. An ID that is not a member is rejected with 422 rather than silently unassigning. DELETE the same path to unassign.
+	// AssigneeId ID of a user on the project. To unassign, DELETE the same path.
 	AssigneeId string `json:"assignee_id"`
 }
 
@@ -2602,22 +3293,22 @@ type FaultBulkResult struct {
 	// DryRun True when nothing was written. Echoed back so a response is never ambiguous about whether it took effect.
 	DryRun bool `json:"dry_run"`
 
-	// FaultIds IDs of the faults that changed, capped at 100. `count` is exact regardless; see fault_ids_truncated.
+	// FaultIds IDs of the faults that changed, capped at 100. `count` is exact regardless; see `fault_ids_truncated`.
 	FaultIds []string `json:"fault_ids"`
 
-	// FaultIdsTruncated True when more faults changed than fault_ids lists.
+	// FaultIdsTruncated True when more faults changed than `fault_ids` lists.
 	FaultIdsTruncated *bool `json:"fault_ids_truncated,omitempty"`
 }
 
 // FaultInput Writable fault attributes
 type FaultInput struct {
-	// AssigneeId ID of a user on the project. Null unassigns. An ID that is not a member of this project is rejected with 422 rather than silently unassigning.
+	// AssigneeId ID of a user on the project. Null unassigns.
 	AssigneeId nullable.Nullable[string] `json:"assignee_id,omitempty"`
 	Ignored    *bool                     `json:"ignored,omitempty"`
 
-	// ResolveOnDeploy Resolve this fault the next time a deploy is recorded. Reads back on the fault as `resolve_on_deploy` until that deploy.
+	// ResolveOnDeploy Set to true to resolve this fault when the project's next deploy is recorded, in any environment. After that deploy, it reads false again.
 	//
-	// Setting it on a fault that is already resolved or ignored does nothing, since those states clear any pending resolution. Sending false removes a pending resolution.
+	// It has no effect if the fault is resolved or ignored once the rest of this update is applied. If the fault is resolved or ignored before the next deploy, the pending resolution is cancelled. Set it to false to cancel it yourself.
 	ResolveOnDeploy *bool                       `json:"resolve_on_deploy,omitempty"`
 	Resolved        *bool                       `json:"resolved,omitempty"`
 	Tags            nullable.Nullable[[]string] `json:"tags,omitempty"`
@@ -2628,7 +3319,7 @@ type FaultMerge struct {
 	// BatchId Identifies the background merge
 	BatchId string `json:"batch_id"`
 
-	// SourceId ID of the fault merged away — the one from the path
+	// SourceId ID of the fault being merged, from the path.
 	SourceId string `json:"source_id"`
 
 	// TargetId ID of the fault kept
@@ -2637,31 +3328,31 @@ type FaultMerge struct {
 
 // FaultMergeInput Names the fault to merge into
 type FaultMergeInput struct {
-	// TargetFaultId ID of the fault to keep. Must be in the same project as the fault in the path, which is the one being merged away.
+	// TargetFaultId ID of the fault to keep. The fault in the path is merged into it.
 	TargetFaultId string `json:"target_fault_id"`
 }
 
 // FaultSelectionInput Selects the faults a bulk operation applies to
 type FaultSelectionInput struct {
-	// All Apply to every fault the other filters match, which with no other filters is every fault in the project. Required to make an unbounded change explicit; ignored when fault_ids names specific faults.
+	// All Apply to every fault the other filters match, which with no other filters is every fault in the project. Required to make an unbounded change explicit; ignored when `fault_ids` names specific faults.
 	All *bool `json:"all,omitempty"`
 
-	// CreatedAfter Only faults created after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	// CreatedAfter Only faults created after this Unix timestamp. Applied when `fault_ids` is omitted, alongside q.
 	CreatedAfter *float64 `json:"created_after,omitempty"`
 
 	// DryRun Report what the request would change without changing it — no state change, no comments, no timeline entries. The response has the same shape either way, with `dry_run` echoed back.
 	DryRun *bool `json:"dry_run,omitempty"`
 
-	// FaultIds IDs of the faults to change. An ID that isn't a fault in this project fails the whole request with 422. Omit to act on everything the query and time filters match; with no filters, that requires all=true.
+	// FaultIds IDs of the faults to change. If any ID isn't a fault in this project, nothing changes. Omit to act on everything the query and time filters match; with no filters, that requires `"all": true`.
 	FaultIds *[]string `json:"fault_ids,omitempty"`
 
-	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	// OccurredAfter Only faults that occurred after this Unix timestamp. Applied when `fault_ids` is omitted, alongside `q`.
 	OccurredAfter *float64 `json:"occurred_after,omitempty"`
 
-	// OccurredBefore Only faults that occurred before this Unix timestamp. Applied when fault_ids is omitted, alongside q.
+	// OccurredBefore Only faults that occurred before this Unix timestamp. Applied when `fault_ids` is omitted, alongside `q`.
 	OccurredBefore *float64 `json:"occurred_before,omitempty"`
 
-	// Q Search query, applied when fault_ids is omitted
+	// Q Search query, in the syntax of the web UI's error search, applied when `fault_ids` is left out. See [Error search](https://docs.honeybadger.io/guides/errors/search/) for the syntax and filters.
 	Q *string `json:"q,omitempty"`
 }
 
@@ -2674,13 +3365,11 @@ type IncidentSeverity string
 // IncidentStatus An incident's status.
 type IncidentStatus string
 
-// IncidentUpdate An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
+// IncidentUpdate An update to a status page incident. The incident's prose lives here, and its `current_status`, `current_severity` and `closed_at` are derived from its updates.
 type IncidentUpdate struct {
 	// CreatedAt When the update was posted
 	CreatedAt *time.Time `json:"created_at,omitempty"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id        string     `json:"id"`
 
 	// IncidentId ID of the incident
 	IncidentId string `json:"incident_id"`
@@ -2707,7 +3396,7 @@ type IncidentUpdate struct {
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
-// IncidentUpdateInput The writable fields of an incident update. status and severity default to investigating and problem_detected. If neither start_at nor start_now is given, the update starts now.
+// IncidentUpdateInput The writable fields of an incident update. `status` and `severity` default to `investigating` and `problem_detected`. If neither `start_at` nor `start_now` is given, the update starts now.
 type IncidentUpdateInput struct {
 	// Message The update's prose
 	Message *string `json:"message,omitempty"`
@@ -2721,14 +3410,14 @@ type IncidentUpdateInput struct {
 	// StartAt When the update takes effect. Only a scheduled_maintenance incident may set this in the future.
 	StartAt *time.Time `json:"start_at,omitempty"`
 
-	// StartNow Start the update immediately, ignoring start_at. An update that has already started is left as it is, so sending it again changes nothing.
+	// StartNow Start the update immediately, ignoring `start_at`. An update that has already started is left as it is, so sending it again changes nothing.
 	StartNow *bool `json:"start_now,omitempty"`
 
 	// Status An incident's status.
 	Status *IncidentStatus `json:"status,omitempty"`
 }
 
-// IngestionKey The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
+// IngestionKey The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't authenticate to this API; use an API token for that.
 type IngestionKey struct {
 	// CreatedAt When the key was created
 	CreatedAt time.Time `json:"created_at"`
@@ -2766,32 +3455,30 @@ type Integration struct {
 	// CheckInIds Check-ins whose events this integration receives. null means every check-in in the project, including ones added later.
 	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids"`
 
-	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Write-only secrets are never returned; everything else, webhook URLs included, comes back as stored.
+	// Config The type's settings, one IntegrationConfig<Type> per `type`. Unset settings are null. Write-only secrets are never returned. Other settings are, including webhook URLs, which can contain credentials.
 	Config map[string]interface{} `json:"config"`
 
-	// Connected Present only on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like): whether the integration is authenticated, which someone does in the web UI at `links.web`. Separate from `active`: an active integration that isn't connected sends nothing until it is, and connecting doesn't change `active`. GitHub authenticates through the GitHub App: the app is installed on the repo, and the installation is attached when someone with access to it saves the integration. A creator who signed in to Honeybadger with GitHub is connected on create.
+	// Connected Present on OAuth integrations (Slack, GitHub, GitLab, Bitbucket, Jira Cloud, Asana, Intercom and the like) and WebSocket integrations. On an OAuth integration it says whether the integration is authenticated, which someone does in the web UI at `links.web`. Separate from `active`: an active integration that isn't connected sends nothing until it is, and connecting doesn't change `active`. GitHub authenticates through the GitHub App: the app is installed on the repo, and the installation is attached when someone with access to it saves the integration. A creator who signed in to Honeybadger with GitHub is connected on create. On a WebSocket integration it says whether a client checked in within the last two minutes.
 	Connected *bool `json:"connected,omitempty"`
 
 	// CreatedAt When the integration was created
 	CreatedAt time.Time `json:"created_at"`
 
-	// Error Whether the channel is in an error state
+	// Error Set when a delivery fails in a way that stops the integration; `error_reason` says why. The integration sends nothing while it's set. A successful update clears it.
 	Error *bool `json:"error,omitempty"`
 
 	// ErrorReason Reason for the error state, if any
 	ErrorReason *string `json:"error_reason,omitempty"`
 
-	// Events Event types this channel listens for
+	// Events Events this integration notifies on
 	Events []string `json:"events"`
 
-	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments.
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over `included_environments`.
 	ExcludedEnvironments []string `json:"excluded_environments"`
 
 	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query.
 	Filters []IntegrationFilter `json:"filters"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id      string              `json:"id"`
 
 	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration.
 	IncludedEnvironments []string `json:"included_environments"`
@@ -2802,16 +3489,16 @@ type Integration struct {
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control
 	NotificationLimit nullable.Nullable[int] `json:"notification_limit"`
 
-	// ProjectId ID of the project this channel belongs to
+	// ProjectId ID of the project this integration belongs to
 	ProjectId string `json:"project_id"`
 
-	// Rate Period the rate_exceeded threshold counts over: `min` a minute, `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.
+	// Rate Period the `rate_exceeded` threshold counts over: `min` a minute, `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.
 	Rate IntegrationRate `json:"rate"`
 
 	// SiteIds Sites whose up and down events this integration receives. null means every site in the project, including ones added later.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids"`
 
-	// Threshold Occurrence threshold before rate_exceeded fires
+	// Threshold Occurrence threshold before `rate_exceeded` fires
 	Threshold int `json:"threshold"`
 
 	// Type Integration type
@@ -2838,7 +3525,7 @@ type IntegrationConfigBacklog struct {
 	// ApiKey Your Backlog API key (generate one in Personal Settings > API). Never returned. Leave it out of an update to keep it.
 	ApiKey nullable.Nullable[string] `json:"api_key,omitempty"`
 
-	// BacklogProjectId The Backlog project to create issues in. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// BacklogProjectId The Backlog project to create issues in. The value that service's API uses for it, usually an ID.
 	BacklogProjectId nullable.Nullable[string] `json:"backlog_project_id,omitempty"`
 
 	// DescriptionFormat Body of each new Backlog issue. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
@@ -2847,19 +3534,19 @@ type IntegrationConfigBacklog struct {
 	// EnableWebhook When enabled Honeybadger will create a webhook in Backlog to sync issue status changes back to Honeybadger.
 	EnableWebhook nullable.Nullable[bool] `json:"enable_webhook,omitempty"`
 
-	// IssueTypeId The type of issue to create. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// IssueTypeId The type of issue to create. The value that service's API uses for it, usually an ID.
 	IssueTypeId nullable.Nullable[string] `json:"issue_type_id,omitempty"`
 
 	// Label Optional label to show in the integrations list.
 	Label nullable.Nullable[string] `json:"label,omitempty"`
 
-	// PriorityId The priority level for new issues. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// PriorityId The priority level for new issues. The value that service's API uses for it, usually an ID.
 	PriorityId nullable.Nullable[string] `json:"priority_id,omitempty"`
 
-	// ReopenStatusId The status to use when unresolving errors. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ReopenStatusId The status to use when unresolving errors. The value that service's API uses for it, usually an ID.
 	ReopenStatusId nullable.Nullable[string] `json:"reopen_status_id,omitempty"`
 
-	// ResolveStatusId The status to use when resolving errors. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ResolveStatusId The status to use when resolving errors. The value that service's API uses for it, usually an ID.
 	ResolveStatusId nullable.Nullable[string] `json:"resolve_status_id,omitempty"`
 
 	// SpaceUrl Your Backlog space URL (e.g., https://example.backlog.com or https://example.backlog.jp).
@@ -2895,7 +3582,7 @@ type IntegrationConfigCampfireV2 struct {
 
 // IntegrationConfigCampfireV3 defines model for IntegrationConfigCampfireV3.
 type IntegrationConfigCampfireV3 struct {
-	// ChatbotUrl The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#create-a-chatbot-integration-in-basecamp) for your Campfire chatbot.
+	// ChatbotUrl The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#2-create-a-chatbot-integration-in-basecamp) for your Campfire chatbot.
 	ChatbotUrl nullable.Nullable[string] `json:"chatbot_url,omitempty"`
 }
 
@@ -2904,40 +3591,40 @@ type IntegrationConfigClickUp struct {
 	// DescriptionFormat Description of each new ClickUp task. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
 	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
-	// FolderId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// FolderId The value that service's API uses for it, usually an ID.
 	FolderId nullable.Nullable[string] `json:"folder_id,omitempty"`
 
-	// InitialStatusId The initial status when a task is created. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// InitialStatusId The initial status when a task is created. The value that service's API uses for it, usually an ID.
 	InitialStatusId nullable.Nullable[string] `json:"initial_status_id,omitempty"`
 
-	// ListId The ID of the list to create tasks for. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ListId The ID of the list to create tasks for. The value that service's API uses for it, usually an ID.
 	ListId nullable.Nullable[string] `json:"list_id,omitempty"`
 
-	// ReopenStatusId The task status when an error is reopened. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ReopenStatusId The task status when an error is reopened. The value that service's API uses for it, usually an ID.
 	ReopenStatusId nullable.Nullable[string] `json:"reopen_status_id,omitempty"`
 
-	// ResolveStatusId The task status when an error is resolved. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ResolveStatusId The task status when an error is resolved. The value that service's API uses for it, usually an ID.
 	ResolveStatusId nullable.Nullable[string] `json:"resolve_status_id,omitempty"`
 
 	// Tags Comma-separated list of tags.
 	Tags nullable.Nullable[string] `json:"tags,omitempty"`
 
-	// TeamspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// TeamspaceId The value that service's API uses for it, usually an ID.
 	TeamspaceId nullable.Nullable[string] `json:"teamspace_id,omitempty"`
 
 	// TitleFormat You can customize the ClickUp task name, or you can leave this blank for the default name. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
 	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 
-	// WorkspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// WorkspaceId The value that service's API uses for it, usually an ID.
 	WorkspaceId nullable.Nullable[string] `json:"workspace_id,omitempty"`
 }
 
 // IntegrationConfigClickUpChat defines model for IntegrationConfigClickUpChat.
 type IntegrationConfigClickUpChat struct {
-	// ChannelId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ChannelId The value that service's API uses for it, usually an ID.
 	ChannelId nullable.Nullable[string] `json:"channel_id,omitempty"`
 
-	// WorkspaceId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// WorkspaceId The value that service's API uses for it, usually an ID.
 	WorkspaceId nullable.Nullable[string] `json:"workspace_id,omitempty"`
 }
 
@@ -3129,7 +3816,7 @@ type IntegrationConfigJira struct {
 
 // IntegrationConfigJiraCloud defines model for IntegrationConfigJiraCloud.
 type IntegrationConfigJiraCloud struct {
-	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger. **NOTE: Components are not avaliable for next-gen projects.**
+	// ComponentNames A comma-delimited list of components to be added to the issues created by Honeybadger. **NOTE: Components are not available for next-gen projects.**
 	ComponentNames nullable.Nullable[string] `json:"component_names,omitempty"`
 
 	// IssueType Type of each new issue, as Jira names it.
@@ -3165,19 +3852,19 @@ type IntegrationConfigLinear struct {
 	// LabelIds IDs of the Linear labels to add to new issues, as Linear's API returns them.
 	LabelIds nullable.Nullable[[]string] `json:"label_ids,omitempty"`
 
-	// LinearProjectId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// LinearProjectId The value that service's API uses for it, usually an ID.
 	LinearProjectId nullable.Nullable[string] `json:"linear_project_id,omitempty"`
 
-	// ResolvedStateId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ResolvedStateId The value that service's API uses for it, usually an ID.
 	ResolvedStateId nullable.Nullable[string] `json:"resolved_state_id,omitempty"`
 
-	// TeamId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// TeamId The value that service's API uses for it, usually an ID.
 	TeamId nullable.Nullable[string] `json:"team_id,omitempty"`
 
 	// TitleFormat Title of each new Linear issue. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
 	TitleFormat nullable.Nullable[string] `json:"title_format,omitempty"`
 
-	// UnresolvedStateId We will use this state for new issues and when an existing issue is reopened. The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// UnresolvedStateId We will use this state for new issues and when an existing issue is reopened. The value that service's API uses for it, usually an ID.
 	UnresolvedStateId nullable.Nullable[string] `json:"unresolved_state_id,omitempty"`
 }
 
@@ -3327,16 +4014,16 @@ type IntegrationConfigShortcut struct {
 	// DescriptionFormat Description of each new Shortcut story. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
 	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
-	// ExternalProjectId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ExternalProjectId The value that service's API uses for it, usually an ID.
 	ExternalProjectId nullable.Nullable[string] `json:"external_project_id,omitempty"`
 
 	// OrganizationName e.g. app.shortcut.com/**yourorg**/dashboard.
 	OrganizationName nullable.Nullable[string] `json:"organization_name,omitempty"`
 
-	// ReopenTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ReopenTransition The value that service's API uses for it, usually an ID.
 	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
 
-	// ResolveTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ResolveTransition The value that service's API uses for it, usually an ID.
 	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
 
 	// TitleFormat Title of each new Shortcut story. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
@@ -3354,19 +4041,19 @@ type IntegrationConfigShortcutV2 struct {
 	// DescriptionFormat Description of each new Shortcut story. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
 	DescriptionFormat nullable.Nullable[string] `json:"description_format,omitempty"`
 
-	// InitialState The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// InitialState The value that service's API uses for it, usually an ID.
 	InitialState nullable.Nullable[string] `json:"initial_state,omitempty"`
 
 	// OrganizationName e.g. app.shortcut.com/**yourorg**/dashboard.
 	OrganizationName nullable.Nullable[string] `json:"organization_name,omitempty"`
 
-	// ReopenTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ReopenTransition The value that service's API uses for it, usually an ID.
 	ReopenTransition nullable.Nullable[string] `json:"reopen_transition,omitempty"`
 
-	// ResolveTransition The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ResolveTransition The value that service's API uses for it, usually an ID.
 	ResolveTransition nullable.Nullable[string] `json:"resolve_transition,omitempty"`
 
-	// Team The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// Team The value that service's API uses for it, usually an ID.
 	Team nullable.Nullable[string] `json:"team,omitempty"`
 
 	// TitleFormat Title of each new Shortcut story. Placeholders such as `[class]`, `[message]` and `[fault_id]` are filled in; see [custom formatters](https://docs.honeybadger.io/guides/integrations/#custom-formatters).
@@ -3399,10 +4086,10 @@ type IntegrationConfigSprintly struct {
 
 // IntegrationConfigTrello defines model for IntegrationConfigTrello.
 type IntegrationConfigTrello struct {
-	// BoardId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// BoardId The value that service's API uses for it, usually an ID.
 	BoardId nullable.Nullable[string] `json:"board_id,omitempty"`
 
-	// ListId The web UI loads the choices from the connected account. Through the API, send the value itself, as that service's API returns it.
+	// ListId The value that service's API uses for it, usually an ID.
 	ListId nullable.Nullable[string] `json:"list_id,omitempty"`
 
 	// TitleFormat You can customize the trello card title, or you can leave this blank for the default title. Please see [our documentation](https://docs.honeybadger.io/guides/integrations/#custom-formatters) for details.
@@ -3471,34 +4158,34 @@ type IntegrationCreateInput struct {
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives. Null or empty clears it. A set; order is ignored and duplicates are dropped.
 	AlarmOkIds nullable.Nullable[[]string] `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Check-ins whose events this integration receives. null follows every check-in in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those check-ins. An ID that isn't one of this project's check-ins fails the request with 422. A set; order is ignored and duplicates are dropped.
+	// CheckInIds Check-ins whose events this integration receives. null follows every check-in in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those check-ins. A set; order is ignored and duplicates are dropped.
 	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids,omitempty"`
 
 	// Config The type's settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 	Config *map[string]interface{} `json:"config,omitempty"`
 
-	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422. Null resets it to the type's defaults. A set; order is ignored and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding one on a plan without it is 403 feature_unavailable, and defaults leave them out on those plans.
+	// Events Events this integration notifies on. On create, defaults to the type's default events. Null resets it to the type's defaults. A set; order is ignored and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded` escalation, and `volume_spike` anomaly detection on the plan; the defaults leave them out on plans without them.
 	Events nullable.Nullable[[]IntegrationEvent] `json:"events,omitempty"`
 
-	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports. Null or empty clears it. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over `included_environments`. An environment can be excluded before it first reports. Null or empty clears it. Changing it requires environment settings on the plan. A set; order is ignored and duplicates are dropped.
 	ExcludedEnvironments nullable.Nullable[[]string] `json:"excluded_environments,omitempty"`
 
-	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query. Replaces the stored filters; null or empty clears them. Applies only on plans with integration filters; changing it on other plans is 403 feature_unavailable. Reads return what's stored.
+	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query. Replaces the stored filters; null or empty clears them. Changing it requires integration filters on the plan.
 	Filters nullable.Nullable[[]IntegrationFilter] `json:"filters,omitempty"`
 
-	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded. Null or empty clears it. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded. Null or empty clears it. Changing it requires environment settings on the plan. A set; order is ignored and duplicates are dropped.
 	IncludedEnvironments nullable.Nullable[[]string] `json:"included_environments,omitempty"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control. Null removes the limit.
 	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// Rate Period the rate_exceeded threshold counts over. Null resets it to wday.
+	// Rate Period the `rate_exceeded` threshold counts over. Null resets it to `wday`.
 	Rate nullable.Nullable[IntegrationRate] `json:"rate,omitempty"`
 
-	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. An ID that isn't one of this project's sites fails the request with 422. A set; order is ignored and duplicates are dropped.
+	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. A set; order is ignored and duplicates are dropped.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
 
-	// Threshold Number of occurrences before rate_exceeded fires. Null resets it to 100.
+	// Threshold Number of occurrences before `rate_exceeded` fires. Null resets it to 100.
 	Threshold nullable.Nullable[int] `json:"threshold,omitempty"`
 
 	// Type Integration type. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/), and in its IntegrationConfig<Type> schema.
@@ -3523,10 +4210,10 @@ type IntegrationFilter struct {
 // IntegrationFilterEvent An event a filter applies to, or `all` for every event.
 type IntegrationFilterEvent string
 
-// IntegrationRate Period the rate_exceeded threshold counts over: `min` a minute, `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.
+// IntegrationRate Period the `rate_exceeded` threshold counts over: `min` a minute, `hour` an hour, `wday` a day (24 hours, not a weekday), `week` a week.
 type IntegrationRate string
 
-// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. `type` can be sent only with its current value; any other value is 422. A key this operation doesn't take is 422, except the read-only keys a GET returns (`id`, `links` and the like), which are ignored. Type-specific settings go under `config`, in the shape a GET returns, so a fetched integration can be edited and sent back. Each type's settings are listed in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
+// IntegrationUpdateInput Fields to change on an integration. Omitted fields are left as they are. `type` can't be changed. Read-only fields are ignored. Type-specific settings go under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/).
 type IntegrationUpdateInput struct {
 	// Active Whether to use the integration. An OAuth integration that's active sends nothing until someone connects it in the web UI at `links.web`.
 	Active *bool `json:"active,omitempty"`
@@ -3537,34 +4224,34 @@ type IntegrationUpdateInput struct {
 	// AlarmOkIds IDs of alarms whose recovery events this integration receives. Null or empty clears it. A set; order is ignored and duplicates are dropped.
 	AlarmOkIds nullable.Nullable[[]string] `json:"alarm_ok_ids,omitempty"`
 
-	// CheckInIds Check-ins whose events this integration receives. null follows every check-in in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those check-ins. An ID that isn't one of this project's check-ins fails the request with 422. A set; order is ignored and duplicates are dropped.
+	// CheckInIds Check-ins whose events this integration receives. null follows every check-in in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those check-ins. A set; order is ignored and duplicates are dropped.
 	CheckInIds nullable.Nullable[[]string] `json:"check_in_ids,omitempty"`
 
-	// Config Type-specific settings, the same keys a GET returns under `config`, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Merged into the stored settings: a key left out keeps its value; a key sent as null is cleared, or reset to its default. Secrets are never returned; leave them out to keep them. A key the type doesn't have, or a value with leading or trailing whitespace on a setting that doesn't allow it, is 422. Sending a setting outside `config` is refused with 422.
+	// Config Type-specific settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). Merged into the stored settings: a key left out keeps its value; a key sent as null is cleared, or reset to its default. Secrets are never returned; leave them out to keep them.
 	Config *map[string]interface{} `json:"config,omitempty"`
 
-	// Events Events this integration notifies on. On create, defaults to the type's default events. An event the type doesn't support is refused with 422. Null resets it to the type's defaults. A set; order is ignored and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded` escalation, and `volume_spike` anomaly detection; adding one on a plan without it is 403 feature_unavailable, and defaults leave them out on those plans.
+	// Events Events this integration notifies on. On create, defaults to the type's default events. Null resets it to the type's defaults. A set; order is ignored and duplicates are dropped. `up` and `down` need uptime monitoring, `rate_exceeded` escalation, and `volume_spike` anomaly detection on the plan; the defaults leave them out on plans without them.
 	Events nullable.Nullable[[]IntegrationEvent] `json:"events,omitempty"`
 
-	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over included_environments. Names are stored as given, so an environment can be excluded before it first reports. Null or empty clears it. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	// ExcludedEnvironments Errors from these environments never notify through this integration. Takes precedence over `included_environments`. An environment can be excluded before it first reports. Null or empty clears it. Changing it requires environment settings on the plan. A set; order is ignored and duplicates are dropped.
 	ExcludedEnvironments nullable.Nullable[[]string] `json:"excluded_environments,omitempty"`
 
-	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query. Replaces the stored filters; null or empty clears them. Applies only on plans with integration filters; changing it on other plans is 403 feature_unavailable. Reads return what's stored.
+	// Filters An ordered list. Each event that has a filter notifies only for errors matching its query. Replaces the stored filters; null or empty clears them. Changing it requires integration filters on the plan.
 	Filters nullable.Nullable[[]IntegrationFilter] `json:"filters,omitempty"`
 
-	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded. Null or empty clears it. Applies only on plans with environment settings; changing it on other plans is 403 feature_unavailable. Reads return what's stored. A set; order is ignored and duplicates are dropped.
+	// IncludedEnvironments When non-empty, only errors from these environments notify through this integration, including environments that haven't reported yet. Empty means every environment not excluded. Null or empty clears it. Changing it requires environment settings on the plan. A set; order is ignored and duplicates are dropped.
 	IncludedEnvironments nullable.Nullable[[]string] `json:"included_environments,omitempty"`
 
 	// NotificationLimit Maximum notifications in a 10-minute window before flood control. Null removes the limit.
 	NotificationLimit nullable.Nullable[int] `json:"notification_limit,omitempty"`
 
-	// Rate Period the rate_exceeded threshold counts over. Null resets it to wday.
+	// Rate Period the `rate_exceeded` threshold counts over. Null resets it to `wday`.
 	Rate nullable.Nullable[IntegrationRate] `json:"rate,omitempty"`
 
-	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. An ID that isn't one of this project's sites fails the request with 422. A set; order is ignored and duplicates are dropped.
+	// SiteIds Sites whose up and down events this integration receives. null follows every site in the project, including ones added later; a create that leaves it out does the same. [] follows none, and a list follows just those sites. A set; order is ignored and duplicates are dropped.
 	SiteIds nullable.Nullable[[]openapi_types.UUID] `json:"site_ids,omitempty"`
 
-	// Threshold Number of occurrences before rate_exceeded fires. Null resets it to 100.
+	// Threshold Number of occurrences before `rate_exceeded` fires. Null resets it to 100.
 	Threshold nullable.Nullable[int] `json:"threshold,omitempty"`
 }
 
@@ -3582,19 +4269,22 @@ type Notice struct {
 	// BacktraceTruncated Whether `backtrace` omits frames because of the 20-frame limit.
 	BacktraceTruncated *bool `json:"backtrace_truncated,omitempty"`
 
+	// Breadcrumbs Events the notifier recorded in the moments before the error, such as clicks, console logs, network requests and earlier notices. Null when the notice carries no breadcrumbs data, which is the case for notifiers that don't send it. Always present on the single-notice endpoint; the notices list leaves it out unless `breadcrumbs=true` is passed.
+	Breadcrumbs nullable.Nullable[Notice_Breadcrumbs] `json:"breadcrumbs,omitempty"`
+
 	// Context Custom context data sent with the notice
 	Context *map[string]interface{} `json:"context,omitempty"`
 
 	// CreatedAt When the notice was received
 	CreatedAt time.Time `json:"created_at"`
 
-	// Environment Environment name, from the fault's environment or the notice's own environment_name. Null when neither is set.
+	// Environment Environment name: the fault's environment, or the one the notice reported when the fault has none. Null when neither is set.
 	Environment nullable.Nullable[string] `json:"environment,omitempty"`
 
 	// FaultId ID of the fault this notice belongs to
 	FaultId string `json:"fault_id"`
 
-	// Id The notice's token UUID, which addresses it globally
+	// Id The notice's ID, a UUID that addresses it without its project or fault
 	Id openapi_types.UUID `json:"id"`
 
 	// Links Links into the Honeybadger web UI
@@ -3609,12 +4299,42 @@ type Notice struct {
 	// Request Request details when the error occurred. Fields not reported are null.
 	Request nullable.Nullable[Notice_Request] `json:"request,omitempty"`
 
-	// RequestFieldsRemoved Names of `request` fields removed at ingest because the payload exceeded the size limit. Null when nothing was removed. Present so a caller can tell an empty field from a stripped one.
+	// RequestFieldsRemoved Names of `request` fields removed at ingest because the payload exceeded the size limit. Null when nothing was removed.
 	RequestFieldsRemoved nullable.Nullable[[]string] `json:"request_fields_removed,omitempty"`
 }
 
 // NoticeBacktraceMode Which representation of the trace this response carries. `source_mapped` when a stored mapped trace was served, `reported` when the frames are as the client sent them — either because `unmapped=true` was requested or because no different mapped trace was stored.
 type NoticeBacktraceMode string
+
+// Notice_Breadcrumbs_Trail defines model for Notice.Breadcrumbs.Trail.
+type Notice_Breadcrumbs_Trail struct {
+	// Category The kind of event, as the notifier named it (for example `ui.click`, `log`, `request`, `error`).
+	Category nullable.Nullable[string] `json:"category"`
+
+	// Message What happened
+	Message nullable.Nullable[string] `json:"message"`
+
+	// Metadata Details the notifier attached to the event
+	Metadata nullable.Nullable[map[string]interface{}] `json:"metadata"`
+
+	// Timestamp When the event happened, as the notifier reported it (usually ISO 8601)
+	Timestamp nullable.Nullable[string] `json:"timestamp"`
+}
+
+// Notice_Breadcrumbs Events the notifier recorded in the moments before the error, such as clicks, console logs, network requests and earlier notices. Null when the notice carries no breadcrumbs data, which is the case for notifiers that don't send it. Always present on the single-notice endpoint; the notices list leaves it out unless `breadcrumbs=true` is passed.
+type Notice_Breadcrumbs struct {
+	// Enabled Whether breadcrumbs were enabled in the notifier that sent this notice.
+	Enabled bool `json:"enabled"`
+
+	// TotalEntries Total events in the stored trail before the 40-entry limit was applied.
+	TotalEntries int `json:"total_entries"`
+
+	// Trail The recorded events in the order they happened, oldest first. At most 40; when there were more, these are the 40 nearest the error.
+	Trail []Notice_Breadcrumbs_Trail `json:"trail"`
+
+	// Truncated Whether `trail` omits older events because of the 40-entry limit.
+	Truncated bool `json:"truncated"`
+}
 
 // Notice_Request Request details when the error occurred. Fields not reported are null.
 type Notice_Request struct {
@@ -3722,13 +4442,8 @@ type Outage struct {
 	DurationSeconds nullable.Nullable[int] `json:"duration_seconds"`
 
 	// Headers Response headers of the failing check
-	Headers map[string]string `json:"headers"`
-
-	// Id Unique identifier
-	Id openapi_types.UUID `json:"id"`
-
-	// Links Links into the Honeybadger web UI
-	Links WebLinks `json:"links"`
+	Headers map[string]string  `json:"headers"`
+	Id      openapi_types.UUID `json:"id"`
 
 	// Reason Why the check failed
 	Reason nullable.Nullable[string] `json:"reason"`
@@ -3775,17 +4490,15 @@ type Project struct {
 	// DisablePublicLinks Whether public error links are disabled
 	DisablePublicLinks bool `json:"disable_public_links"`
 
-	// EarliestNoticeAt The start of the retention window: now minus the project's purge_days (or the account's retention when unset), at most 180 days. Computed on each read, so it moves forward with the clock.
+	// EarliestNoticeAt The start of the retention window: now minus the project's `purge_days` (or the account's retention when unset), at most 180 days. Computed on each read, so it moves forward with the clock.
 	EarliestNoticeAt nullable.Nullable[time.Time] `json:"earliest_notice_at"`
 
 	// Environments List of environment names seen in this project
 	Environments []string `json:"environments"`
 
 	// FaultCount Total number of faults (errors) in this project
-	FaultCount int `json:"fault_count"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	FaultCount int    `json:"fault_count"`
+	Id         string `json:"id"`
 
 	// Language Primary programming language
 	Language nullable.Nullable[string] `json:"language"`
@@ -3826,7 +4539,7 @@ type ProjectCreateInput struct {
 	// CustomerThrottle Notices accepted per minute before throttling kicks in. Null clears it.
 	CustomerThrottle nullable.Nullable[int] `json:"customer_throttle,omitempty"`
 
-	// DisableEmailNotifications Create-only. Members added with the project get email notifications switched off. Not a stored setting, so reading a project never returns it.
+	// DisableEmailNotifications Create-only. Members added with the project get email notifications switched off. Not stored or returned.
 	DisableEmailNotifications *bool `json:"disable_email_notifications,omitempty"`
 
 	// DisablePublicLinks Disallow shareable public fault links. Null resets it to false.
@@ -3838,7 +4551,7 @@ type ProjectCreateInput struct {
 	// Name Project name
 	Name string `json:"name"`
 
-	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Null clears it.
+	// PurgeDays Days to retain notices. Changing it requires custom retention on the account; without it, only the current value (on create, the default) is accepted. Null clears it.
 	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
 
 	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded. Null resets it to true.
@@ -3847,7 +4560,7 @@ type ProjectCreateInput struct {
 	// SourceUrl Template for linking a backtrace line to your source host. `[file]` and `[line]` are substituted. Null clears it.
 	SourceUrl nullable.Nullable[string] `json:"source_url,omitempty"`
 
-	// TeamId Puts the new project in this team. Create-only: afterwards the team's `project_ids` owns membership. Including it requires team:write in addition to the operation's project scope, and the user must be allowed to manage the team. Without team:write the entire request is rejected with 403 insufficient_scope; no other fields are saved. An ID that isn't a team on this account fails the request with 422.
+	// TeamId Puts the new project in this team. Create-only: afterwards the team's `project_ids` owns membership. Including it requires `team:write` in addition to the operation's project scope, and the user must be allowed to manage the team. Without `team:write` the entire request is rejected with 403 `insufficient_scope`; no other fields are saved.
 	TeamId *string `json:"team_id,omitempty"`
 
 	// UserSearchField Context key identifying the affected user, for when it is not in the default `context.user_email` or `context.user_id`. Null clears it.
@@ -3857,7 +4570,7 @@ type ProjectCreateInput struct {
 	UserUrl nullable.Nullable[string] `json:"user_url,omitempty"`
 }
 
-// ProjectInput Writable project attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take, including the create-only `team_id` and `disable_email_notifications`, is 422; the read-only keys a GET returns are ignored.
+// ProjectInput Writable project attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. `team_id` and `disable_email_notifications` can only be set on create. Read-only fields are ignored.
 type ProjectInput struct {
 	// AsanaWorkspaceId Asana workspace used by the project's Asana integration. Null clears it.
 	AsanaWorkspaceId nullable.Nullable[string] `json:"asana_workspace_id,omitempty"`
@@ -3874,7 +4587,7 @@ type ProjectInput struct {
 	// Name Project name
 	Name *string `json:"name,omitempty"`
 
-	// PurgeDays Days to retain notices. Accepted only on accounts with custom retention; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Null clears it.
+	// PurgeDays Days to retain notices. Changing it requires custom retention on the account; without it, only the current value (on create, the default) is accepted. Null clears it.
 	PurgeDays nullable.Nullable[int] `json:"purge_days,omitempty"`
 
 	// ResolveErrorsOnDeploy Resolve every open fault when a deploy is recorded. Null resets it to true.
@@ -3905,10 +4618,8 @@ type Site struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	// Frequency Minutes between checks. A value below the plan's floor is refused.
-	Frequency SiteFrequency `json:"frequency"`
-
-	// Id Unique identifier
-	Id openapi_types.UUID `json:"id"`
+	Frequency SiteFrequency      `json:"frequency"`
+	Id        openapi_types.UUID `json:"id"`
 
 	// LastCheckedAt When the site was last checked
 	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
@@ -3962,10 +4673,10 @@ type SiteCreateInput struct {
 	// Active Whether monitoring is active. After 740 consecutive failed checks the server sets it to false. Null resets it to true.
 	Active nullable.Nullable[bool] `json:"active,omitempty"`
 
-	// Frequency Minutes between checks. Plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Null resets it to 5.
+	// Frequency Minutes between checks. The plan sets the most frequent allowed. Null resets it to 5.
 	Frequency nullable.Nullable[SiteFrequency] `json:"frequency,omitempty"`
 
-	// Locations A set of location names to check from. Null or empty means every location. An unknown name is 422. A set; order is ignored and duplicates are dropped.
+	// Locations A set of location names to check from. Null or empty means every location. A set; order is ignored and duplicates are dropped.
 	Locations nullable.Nullable[[]SiteLocation] `json:"locations,omitempty"`
 
 	// Match What `match_type` compares against (see SiteMatchType). Required unless `match_type` is `success`, and must be left out with `success`. Null clears it.
@@ -3989,7 +4700,7 @@ type SiteCreateInput struct {
 	// RequestMethod HTTP method each check sends. Null resets it to GET.
 	RequestMethod nullable.Nullable[SiteRequestMethod] `json:"request_method,omitempty"`
 
-	// Timeout Request timeout in seconds, 1 to 120, default 30, and less than the frequency in seconds. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Null resets it to the default.
+	// Timeout Request timeout in seconds, 1 to 120, default 30, and less than the frequency in seconds. Changing it requires the uptime timeout feature on the account; without it, only the current value (on create, the default) is accepted. Null resets it to the default.
 	Timeout nullable.Nullable[int] `json:"timeout,omitempty"`
 
 	// Url Must start with http:// or https://, with no surrounding whitespace.
@@ -4002,15 +4713,15 @@ type SiteCreateInput struct {
 // SiteFrequency Minutes between checks. A value below the plan's floor is refused.
 type SiteFrequency int
 
-// SiteInput Writable uptime-check site attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take is 422; the read-only keys a GET returns are ignored.
+// SiteInput Writable uptime-check site attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. Read-only fields are ignored.
 type SiteInput struct {
 	// Active Whether monitoring is active. After 740 consecutive failed checks the server sets it to false. Null resets it to true.
 	Active nullable.Nullable[bool] `json:"active,omitempty"`
 
-	// Frequency Minutes between checks. Plans set the most frequent allowed, and a value under it is 403 `feature_unavailable`. Null resets it to 5.
+	// Frequency Minutes between checks. The plan sets the most frequent allowed. Null resets it to 5.
 	Frequency nullable.Nullable[SiteFrequency] `json:"frequency,omitempty"`
 
-	// Locations A set of location names to check from. Null or empty means every location. An unknown name is 422. A set; order is ignored and duplicates are dropped.
+	// Locations A set of location names to check from. Null or empty means every location. A set; order is ignored and duplicates are dropped.
 	Locations nullable.Nullable[[]SiteLocation] `json:"locations,omitempty"`
 
 	// Match What `match_type` compares against (see SiteMatchType). Required unless `match_type` is `success`, and must be left out with `success`. Null clears it.
@@ -4034,7 +4745,7 @@ type SiteInput struct {
 	// RequestMethod HTTP method each check sends. Null resets it to GET.
 	RequestMethod nullable.Nullable[SiteRequestMethod] `json:"request_method,omitempty"`
 
-	// Timeout Request timeout in seconds, 1 to 120, default 30, and less than the frequency in seconds. Accepted only on accounts with the uptime-timeout feature; otherwise a value other than the current one (on create, the default) is refused with 403 `feature_unavailable`. Null resets it to the default.
+	// Timeout Request timeout in seconds, 1 to 120, default 30, and less than the frequency in seconds. Changing it requires the uptime timeout feature on the account; without it, only the current value (on create, the default) is accepted. Null resets it to the default.
 	Timeout nullable.Nullable[int] `json:"timeout,omitempty"`
 
 	// Url Must start with http:// or https://, with no surrounding whitespace.
@@ -4085,9 +4796,7 @@ type StatusPage struct {
 	// GoogleAnalyticsId The page's Google Analytics measurement ID
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id"`
 	HideBranding      bool                      `json:"hide_branding"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id                string                    `json:"id"`
 
 	// IncidentsEnabled Whether the page shows incidents
 	IncidentsEnabled bool `json:"incidents_enabled"`
@@ -4145,24 +4854,24 @@ type StatusPageCheckInInput struct {
 	DisplayName nullable.Nullable[string] `json:"display_name,omitempty"`
 }
 
-// StatusPageCreateInput Attributes for creating a status-page.
+// StatusPageCreateInput Attributes for creating a status page.
 type StatusPageCreateInput struct {
 	// CheckIns Check-ins listed on the page, in page order, replacing the current list. Null or empty removes every check-in.
 	CheckIns nullable.Nullable[[]StatusPageCheckInInput] `json:"check_ins,omitempty"`
 
-	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Null clears it.
+	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week. Null clears it.
 	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default ({}) or the stored value is accepted on any plan.
+	// Features Presentation copy and styling. Replaces the whole object; null clears it. Changing it requires advanced status pages on the plan; the default ({}) or the stored value is accepted on any plan.
 	Features nullable.Nullable[StatusPageFeatures] `json:"features,omitempty"`
 
 	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Null clears it.
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
 
-	// HideBranding Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Null resets it to false.
+	// HideBranding Changing it requires advanced status pages on the plan; the default (false) or the stored value is accepted on any plan. Null resets it to false.
 	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
-	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Null resets it to that same create default.
+	// IncidentsEnabled Whether the page shows incidents. Changing it requires status page incidents on the plan. On create, defaults to whether the plan has them. Null resets it to that same create default.
 	IncidentsEnabled nullable.Nullable[bool] `json:"incidents_enabled,omitempty"`
 
 	// MessageBody The message banner's text. Null clears it.
@@ -4178,7 +4887,7 @@ type StatusPageCreateInput struct {
 	// Password Basic-auth password when password protected. Never returned. Requires advanced status pages and password protection on the plan.
 	Password nullable.Nullable[string] `json:"password,omitempty"`
 
-	// PasswordProtected Requires advanced status pages and password protection on the plan to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Turning it on needs a username and password, sent or already stored, or it's 422. Null resets it to false.
+	// PasswordProtected Changing it requires advanced status pages and password protection on the plan; the default (false) or the stored value is accepted on any plan. Turning it on needs a username and password, sent or already stored. Null resets it to false.
 	PasswordProtected nullable.Nullable[bool] `json:"password_protected,omitempty"`
 
 	// SearchEngineIndexingDisabled Asks search engines not to index the page. Null resets it to false.
@@ -4209,7 +4918,7 @@ type StatusPageFeatures struct {
 	UpCaption nullable.Nullable[string] `json:"up_caption,omitempty"`
 }
 
-// StatusPageIncident An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
+// StatusPageIncident An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and `current_status`, `current_severity` and `closed_at` are derived from them and are never writable.
 type StatusPageIncident struct {
 	// BuildType How the incident was opened. `current` is happening now, `retroactive` records something already over, `scheduled_maintenance` is planned. Only a scheduled_maintenance incident may have updates starting in the future.
 	BuildType IncidentBuildType `json:"build_type"`
@@ -4225,14 +4934,12 @@ type StatusPageIncident struct {
 
 	// CurrentStatus Status of the update in effect now. Derived from the updates.
 	CurrentStatus nullable.Nullable[IncidentStatus] `json:"current_status,omitempty"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id            string                            `json:"id"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
 
-	// RetroNotifyMessage The announcement sent when retro_should_notify is true
+	// RetroNotifyMessage The announcement sent when `retro_should_notify` is true
 	RetroNotifyMessage nullable.Nullable[string] `json:"retro_notify_message"`
 
 	// RetroShouldNotify For a retroactive incident, whether to announce it once on the status page's connected accounts
@@ -4277,24 +4984,24 @@ type StatusPageIncidentUpdateInput struct {
 	Title              *string                   `json:"title,omitempty"`
 }
 
-// StatusPageInput Writable status-page attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. A key this operation doesn't take is 422; the read-only keys a GET returns (including each monitor's state) are ignored.
+// StatusPageInput Writable status-page attributes. Omitted fields are unchanged; null resets or clears the fields marked nullable. Read-only fields, including each monitor's state, are ignored.
 type StatusPageInput struct {
 	// CheckIns Check-ins listed on the page, in page order, replacing the current list. Null or empty removes every check-in.
 	CheckIns nullable.Nullable[[]StatusPageCheckInInput] `json:"check_ins,omitempty"`
 
-	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week; past that the change is 422. Null clears it.
+	// Domain Custom domain the page is served on. Unique across Honeybadger. An account can set at most 30 domains a week. Null clears it.
 	Domain nullable.Nullable[string] `json:"domain,omitempty"`
 
-	// Features Presentation copy and styling. Replaces the whole object; null clears it. Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default ({}) or the stored value is accepted on any plan.
+	// Features Presentation copy and styling. Replaces the whole object; null clears it. Changing it requires advanced status pages on the plan; the default ({}) or the stored value is accepted on any plan.
 	Features nullable.Nullable[StatusPageFeatures] `json:"features,omitempty"`
 
 	// GoogleAnalyticsId A Google Analytics measurement ID for the page. Null clears it.
 	GoogleAnalyticsId nullable.Nullable[string] `json:"google_analytics_id,omitempty"`
 
-	// HideBranding Requires advanced status pages to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Null resets it to false.
+	// HideBranding Changing it requires advanced status pages on the plan; the default (false) or the stored value is accepted on any plan. Null resets it to false.
 	HideBranding nullable.Nullable[bool] `json:"hide_branding,omitempty"`
 
-	// IncidentsEnabled Whether the page shows incidents. Requires status page incidents on the plan; changing it otherwise is 403 `feature_unavailable`. On create, defaults to whether the plan has them. Null resets it to that same create default.
+	// IncidentsEnabled Whether the page shows incidents. Changing it requires status page incidents on the plan. On create, defaults to whether the plan has them. Null resets it to that same create default.
 	IncidentsEnabled nullable.Nullable[bool] `json:"incidents_enabled,omitempty"`
 
 	// MessageBody The message banner's text. Null clears it.
@@ -4310,7 +5017,7 @@ type StatusPageInput struct {
 	// Password Basic-auth password when password protected. Never returned. Requires advanced status pages and password protection on the plan.
 	Password nullable.Nullable[string] `json:"password,omitempty"`
 
-	// PasswordProtected Requires advanced status pages and password protection on the plan to change; refused with 403 `feature_unavailable` otherwise. The default (false) or the stored value is accepted on any plan. Turning it on needs a username and password, sent or already stored, or it's 422. Null resets it to false.
+	// PasswordProtected Changing it requires advanced status pages and password protection on the plan; the default (false) or the stored value is accepted on any plan. Turning it on needs a username and password, sent or already stored. Null resets it to false.
 	PasswordProtected nullable.Nullable[bool] `json:"password_protected,omitempty"`
 
 	// SearchEngineIndexingDisabled Asks search engines not to index the page. Null resets it to false.
@@ -4351,7 +5058,7 @@ type StatusPageSiteInput struct {
 type Stream struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
-	// Id Stream identifier: 12 lowercase hex characters. Randomly assigned rather than sequential, so unlike other v3 resources this is not a public ID — it is the stream's own identifier, and the value to pass as `stream_ids` when querying.
+	// Id Stream ID: 12 lowercase hex characters, randomly assigned. Pass it in `stream_ids` when querying.
 	Id *string `json:"id,omitempty"`
 
 	// Internal True for the stream carrying Honeybadger-generated event types (`notice`, `deploy`, `uptime_check`, `check_in`). Those event classes are only queryable when this stream is selected.
@@ -4377,9 +5084,7 @@ type Team struct {
 
 	// CreatedAt When the team was created
 	CreatedAt time.Time `json:"created_at"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id        string    `json:"id"`
 
 	// Links Links into the Honeybadger web UI
 	Links WebLinks `json:"links"`
@@ -4398,7 +5103,7 @@ type Team struct {
 type TeamCreateInput struct {
 	Name string `json:"name"`
 
-	// ProjectIds IDs of projects this team can access: the whole membership. An ID that isn't a project the caller can see fails the request with 422. A project's create-time `team_id` only attaches it to one team. A set; order is ignored and duplicates are dropped.
+	// ProjectIds IDs of projects this team can access: the whole membership. A project's create-time `team_id` only attaches it to one team. A set; order is ignored and duplicates are dropped.
 	ProjectIds nullable.Nullable[[]string] `json:"project_ids,omitempty"`
 }
 
@@ -4406,7 +5111,7 @@ type TeamCreateInput struct {
 type TeamInput struct {
 	Name *string `json:"name,omitempty"`
 
-	// ProjectIds IDs of projects this team can access: the whole membership. An ID that isn't a project the caller can see fails the request with 422. A project's create-time `team_id` only attaches it to one team. A set; order is ignored and duplicates are dropped.
+	// ProjectIds IDs of projects this team can access: the whole membership. A project's create-time `team_id` only attaches it to one team. A set; order is ignored and duplicates are dropped.
 	ProjectIds nullable.Nullable[[]string] `json:"project_ids,omitempty"`
 }
 
@@ -4429,9 +5134,7 @@ type TeamInvitation struct {
 
 	// Email Email address of the invitee
 	Email string `json:"email"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id    string `json:"id"`
 
 	// Message Optional message included with the invitation
 	Message nullable.Nullable[string] `json:"message,omitempty"`
@@ -4464,7 +5167,7 @@ type TeamInvitation_CreatedBy struct {
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 }
 
-// TeamInvitationCreateInput Attributes for creating a team-invitation.
+// TeamInvitationCreateInput Attributes for creating a team invitation.
 type TeamInvitationCreateInput struct {
 	Admin *bool               `json:"admin,omitempty"`
 	Email openapi_types.Email `json:"email"`
@@ -4492,9 +5195,7 @@ type TeamMember struct {
 
 	// Email Member email
 	Email string `json:"email"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id    string `json:"id"`
 
 	// Name Member name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
@@ -4535,10 +5236,10 @@ type TimeSeriesPagination struct {
 	// Limit Maximum items per page
 	Limit int `json:"limit"`
 
-	// NewestCursor Opaque cursor for the newest item on this page, to be passed as `after`. Absent or null on collections that page on a timestamp rather than a cursor, and on one-directional collections; use `links.newer` instead.
+	// NewestCursor Cursor for the newest item on this page. Pass it back unchanged as `after`. Absent or null on collections that page on a timestamp rather than a cursor, and on one-directional collections; use `links.newer` instead.
 	NewestCursor nullable.Nullable[string] `json:"newest_cursor,omitempty"`
 
-	// OldestCursor Opaque cursor for the oldest item on this page, to be passed as `before`. Absent or null on collections that page on a timestamp rather than a cursor; use `links.older` instead.
+	// OldestCursor Cursor for the oldest item on this page. Pass it back unchanged as `before`. Absent or null on collections that page on a timestamp rather than a cursor; use `links.older` instead.
 	OldestCursor nullable.Nullable[string] `json:"oldest_cursor,omitempty"`
 }
 
@@ -4561,9 +5262,7 @@ type UptimeCheck struct {
 type User struct {
 	// Email User email address
 	Email openapi_types.Email `json:"email"`
-
-	// Id Unique identifier
-	Id string `json:"id"`
+	Id    string              `json:"id"`
 
 	// Name User display name
 	Name nullable.Nullable[string] `json:"name,omitempty"`
@@ -4571,15 +5270,1060 @@ type User struct {
 
 // WebLinks Links into the Honeybadger web UI
 type WebLinks struct {
-	// Web Absolute URL of this resource's page in the Honeybadger web UI, on the web UI's host rather than the API's. For a project provisioned through Heroku, error, notice and comment links go through Heroku's single sign-on, on Heroku's host.
+	// Web The resource's page in the Honeybadger web UI, as an absolute URL. Resources without a page, such as outages and deploys, don't have `links`. For a project provisioned through Heroku, error, notice and comment links go through Heroku's single sign-on.
 	Web string `json:"web"`
 }
+
+// WebhookV2Alarm The Insights alarm the event is about.
+type WebhookV2Alarm struct {
+	CreatedAt time.Time `json:"created_at"`
+
+	// DetailsUrl The same as `url`.
+	DetailsUrl string                                 `json:"details_url"`
+	Id         nullable.Nullable[string]              `json:"id"`
+	Name       nullable.Nullable[string]              `json:"name"`
+	State      nullable.Nullable[WebhookV2AlarmState] `json:"state"`
+	Url        string                                 `json:"url"`
+}
+
+// WebhookV2AlarmState defines model for WebhookV2Alarm.State.
+type WebhookV2AlarmState string
+
+// WebhookV2AlarmEvent An Insights alarm was triggered, or returned to normal.
+type WebhookV2AlarmEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// Alarm The Insights alarm the event is about.
+	Alarm WebhookV2Alarm           `json:"alarm"`
+	Event WebhookV2AlarmEventEvent `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+}
+
+// WebhookV2AlarmEventEvent defines model for WebhookV2AlarmEvent.Event.
+type WebhookV2AlarmEventEvent string
+
+// WebhookV2AssignedEvent A fault, or a bulk action's faults, were assigned.
+type WebhookV2AssignedEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// Assignee Absent when the fault was unassigned before the webhook was sent.
+	Assignee *WebhookV2User              `json:"assignee,omitempty"`
+	Event    WebhookV2AssignedEventEvent `json:"event"`
+
+	// Fault The fault. Absent for a bulk action, which sends `fault_ids` instead.
+	Fault *WebhookV2Fault `json:"fault,omitempty"`
+
+	// FaultIds The faults a bulk action changed. Sent in place of `fault`.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+}
+
+// WebhookV2AssignedEventEvent defines model for WebhookV2AssignedEvent.Event.
+type WebhookV2AssignedEventEvent string
+
+// WebhookV2BacktraceLine One backtrace frame, as the notifier reported it or a source map rewrote it. Notifiers can send keys beyond the ones listed here, such as `column`.
+type WebhookV2BacktraceLine struct {
+	// ApplicationFile The file's path within the project. Sent for `app` frames.
+	ApplicationFile *string `json:"application_file,omitempty"`
+
+	// Context `app` for a frame in the project's own code, otherwise `all`.
+	Context *WebhookV2BacktraceLineContext `json:"context,omitempty"`
+	File    nullable.Nullable[string]      `json:"file,omitempty"`
+	Method  nullable.Nullable[string]      `json:"method,omitempty"`
+
+	// Number The line number. Ruby notifiers send a string, PHP and JavaScript an integer.
+	Number nullable.Nullable[json.RawMessage] `json:"number,omitempty"`
+
+	// Source Lines of source around the frame, usually an object keyed by line number. Null when a source map has no source for the frame, and notifiers can send other shapes.
+	Source               interface{}            `json:"source,omitempty"`
+	AdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// WebhookV2BacktraceLineContext `app` for a frame in the project's own code, otherwise `all`.
+type WebhookV2BacktraceLineContext string
+
+// WebhookV2CertExpirationEvent An uptime site's TLS certificate is about to expire.
+type WebhookV2CertExpirationEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User                    `json:"actor,omitempty"`
+	Event WebhookV2CertExpirationEventEvent `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Project The project the event belongs to, by ID and name.
+	Project WebhookV2ProjectRef `json:"project"`
+
+	// Site The uptime site the event is about.
+	Site WebhookV2Site `json:"site"`
+}
+
+// WebhookV2CertExpirationEventEvent defines model for WebhookV2CertExpirationEvent.Event.
+type WebhookV2CertExpirationEventEvent string
+
+// WebhookV2CheckIn The check-in the event is about.
+type WebhookV2CheckIn struct {
+	// CronSchedule Sent for `cron` check-ins.
+	CronSchedule *string `json:"cron_schedule,omitempty"`
+
+	// CronTimezone Sent for `cron` check-ins.
+	CronTimezone *string                      `json:"cron_timezone,omitempty"`
+	DetailsUrl   string                       `json:"details_url"`
+	ExpectedAt   nullable.Nullable[time.Time] `json:"expected_at"`
+
+	// GracePeriod How late a report can be before the check-in is missing, as a duration such as `5 minutes`. Empty when there's no grace period.
+	GracePeriod string                    `json:"grace_period"`
+	Id          string                    `json:"id"`
+	MissedCount int                       `json:"missed_count"`
+	Name        nullable.Nullable[string] `json:"name"`
+
+	// ReportPeriod How often the job reports, as a duration such as `1 day`. Sent for `simple` check-ins.
+	ReportPeriod *string                      `json:"report_period,omitempty"`
+	ReportedAt   nullable.Nullable[time.Time] `json:"reported_at"`
+	ScheduleType WebhookV2CheckInScheduleType `json:"schedule_type"`
+	Slug         nullable.Nullable[string]    `json:"slug"`
+	State        WebhookV2CheckInState        `json:"state"`
+
+	// Url The URL the job reports to.
+	Url string `json:"url"`
+}
+
+// WebhookV2CheckInScheduleType defines model for WebhookV2CheckIn.ScheduleType.
+type WebhookV2CheckInScheduleType string
+
+// WebhookV2CheckInState defines model for WebhookV2CheckIn.State.
+type WebhookV2CheckInState string
+
+// WebhookV2CheckInEvent A check-in missed its schedule, or started reporting again.
+type WebhookV2CheckInEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// CheckIn The check-in the event is about.
+	CheckIn WebhookV2CheckIn           `json:"check_in"`
+	Event   WebhookV2CheckInEventEvent `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Project The project the event belongs to.
+	Project WebhookV2Project `json:"project"`
+}
+
+// WebhookV2CheckInEventEvent defines model for WebhookV2CheckInEvent.Event.
+type WebhookV2CheckInEventEvent string
+
+// WebhookV2Comment The comment that was added.
+type WebhookV2Comment struct {
+	// Author The commenter's name.
+	Author    nullable.Nullable[string] `json:"author"`
+	Body      nullable.Nullable[string] `json:"body"`
+	CreatedAt time.Time                 `json:"created_at"`
+
+	// Email The commenter's email, for a comment from someone without an account.
+	Email   nullable.Nullable[string] `json:"email"`
+	Event   nullable.Nullable[string] `json:"event"`
+	FaultId int                       `json:"fault_id"`
+	Id      int                       `json:"id"`
+	Source  string                    `json:"source"`
+}
+
+// WebhookV2CommentedEvent A comment was added to a fault, or to a bulk action's faults.
+type WebhookV2CommentedEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// Comment The comment that was added.
+	Comment WebhookV2Comment             `json:"comment"`
+	Event   WebhookV2CommentedEventEvent `json:"event"`
+
+	// Fault The fault. Absent for a bulk action, which sends `fault_ids` instead.
+	Fault *WebhookV2Fault `json:"fault,omitempty"`
+
+	// FaultIds The faults a bulk action changed. Sent in place of `fault`.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+}
+
+// WebhookV2CommentedEventEvent defines model for WebhookV2CommentedEvent.Event.
+type WebhookV2CommentedEventEvent string
+
+// WebhookV2Deploy A deploy.
+type WebhookV2Deploy struct {
+	// Changelog Commits in the deploy, as the deploy notification sent them.
+	Changelog     nullable.Nullable[[]interface{}] `json:"changelog"`
+	CreatedAt     time.Time                        `json:"created_at"`
+	Environment   string                           `json:"environment"`
+	LocalUsername nullable.Nullable[string]        `json:"local_username"`
+	Repository    nullable.Nullable[string]        `json:"repository"`
+	Revision      nullable.Nullable[string]        `json:"revision"`
+	Url           string                           `json:"url"`
+}
+
+// WebhookV2DeployedEvent A deploy was recorded.
+type WebhookV2DeployedEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// Deploy A deploy.
+	Deploy WebhookV2Deploy             `json:"deploy"`
+	Event  WebhookV2DeployedEventEvent `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Project The project the event belongs to.
+	Project WebhookV2Project `json:"project"`
+}
+
+// WebhookV2DeployedEventEvent defines model for WebhookV2DeployedEvent.Event.
+type WebhookV2DeployedEventEvent string
+
+// WebhookV2Environment One of the project's environments.
+type WebhookV2Environment struct {
+	CreatedAt time.Time `json:"created_at"`
+	Id        int       `json:"id"`
+	Name      string    `json:"name"`
+
+	// Notifications Whether errors in this environment send notifications.
+	Notifications bool      `json:"notifications"`
+	ProjectId     int       `json:"project_id"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
+// WebhookV2Event The fields every v2 webhook body carries. Each event adds the records it's about. A v2 body has no `payload_version`; that's how it differs from the later versions.
+type WebhookV2Event struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// Event The event's name, the same as its key under `webhooks`.
+	Event string `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+}
+
+// WebhookV2Fault The fault (a unique error) the event is about. When the account is inactive, only `id`, `project_id`, `message` and `created_at` are sent.
+type WebhookV2Fault struct {
+	Action nullable.Nullable[string] `json:"action,omitempty"`
+
+	// Assignee The assignee's email address.
+	Assignee      nullable.Nullable[string] `json:"assignee,omitempty"`
+	CommentsCount *int                      `json:"comments_count,omitempty"`
+	Component     nullable.Nullable[string] `json:"component,omitempty"`
+	CreatedAt     time.Time                 `json:"created_at"`
+
+	// Deploy The latest deploy to the fault's environment.
+	Deploy      nullable.Nullable[WebhookV2Deploy] `json:"deploy,omitempty"`
+	Environment nullable.Nullable[string]          `json:"environment,omitempty"`
+	Id          int                                `json:"id"`
+	Ignored     *bool                              `json:"ignored,omitempty"`
+
+	// Klass Error class name
+	Klass        nullable.Nullable[string]    `json:"klass,omitempty"`
+	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at,omitempty"`
+
+	// Message The error message, without the class name.
+	Message      nullable.Nullable[string]   `json:"message"`
+	NoticesCount *int                        `json:"notices_count,omitempty"`
+	ProjectId    int                         `json:"project_id"`
+	ProjectName  nullable.Nullable[string]   `json:"project_name,omitempty"`
+	Resolved     *bool                       `json:"resolved,omitempty"`
+	Tags         nullable.Nullable[[]string] `json:"tags,omitempty"`
+	Url          *string                     `json:"url,omitempty"`
+}
+
+// WebhookV2Notice The occurrence that triggered the event. When the account is inactive, only `id`, `fault_id` and `created_at` are sent. When the notice is older than the plan keeps, its request and environment data are sent empty.
+type WebhookV2Notice struct {
+	// ApplicationTrace The frames of `backtrace` in the project's own code.
+	ApplicationTrace *[]WebhookV2BacktraceLine          `json:"application_trace,omitempty"`
+	Backtrace        *[]WebhookV2BacktraceLine          `json:"backtrace,omitempty"`
+	CreatedAt        time.Time                          `json:"created_at"`
+	Deploy           nullable.Nullable[WebhookV2Deploy] `json:"deploy,omitempty"`
+
+	// Environment The server environment the notifier reported (`environment-name`, hostname and the like). Defined by the notifier.
+	Environment interface{}               `json:"environment,omitempty"`
+	FaultId     int                       `json:"fault_id"`
+	Id          int                       `json:"id"`
+	Message     nullable.Nullable[string] `json:"message,omitempty"`
+
+	// Request The request the error happened in. `context` is moved to the body's top-level `context`.
+	Request *WebhookV2Notice_Request `json:"request,omitempty"`
+
+	// Token The notice's UUID.
+	Token *openapi_types.UUID `json:"token,omitempty"`
+	Url   *string             `json:"url,omitempty"`
+
+	// WebEnvironment CGI-style request environment, as the notifier sent it.
+	WebEnvironment interface{} `json:"web_environment,omitempty"`
+}
+
+// WebhookV2Notice_Request The request the error happened in. `context` is moved to the body's top-level `context`.
+type WebhookV2Notice_Request struct {
+	Action    nullable.Nullable[string] `json:"action,omitempty"`
+	Component nullable.Nullable[string] `json:"component,omitempty"`
+
+	// Params Request parameters, as the notifier sent them. Usually an object, but any JSON value.
+	Params interface{} `json:"params,omitempty"`
+
+	// Session Session data, as the notifier sent it. Usually an object, but any JSON value, including null.
+	Session interface{}               `json:"session,omitempty"`
+	Url     nullable.Nullable[string] `json:"url,omitempty"`
+}
+
+// WebhookV2OccurredEvent An error occurred, or a fault passed its notification rate threshold.
+type WebhookV2OccurredEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User `json:"actor,omitempty"`
+
+	// Context The notice's request context, as the notifier sent it. Usually an object, but any JSON value. Moved here from `notice.request`.
+	Context interface{} `json:"context,omitempty"`
+
+	// CustomFields The integration's custom fields, when it has any.
+	CustomFields interface{}                 `json:"custom_fields,omitempty"`
+	Event        WebhookV2OccurredEventEvent `json:"event"`
+
+	// Fault The fault (a unique error) the event is about. When the account is inactive, only `id`, `project_id`, `message` and `created_at` are sent.
+	Fault WebhookV2Fault `json:"fault"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Notice The occurrence that triggered the event. When the account is inactive, only `id`, `fault_id` and `created_at` are sent. When the notice is older than the plan keeps, its request and environment data are sent empty.
+	Notice WebhookV2Notice `json:"notice"`
+
+	// Project The project the event belongs to.
+	Project WebhookV2Project `json:"project"`
+}
+
+// WebhookV2OccurredEventEvent defines model for WebhookV2OccurredEvent.Event.
+type WebhookV2OccurredEventEvent string
+
+// WebhookV2Outage The site's latest outage. Every field but `details_url` is null when the site has none on record.
+type WebhookV2Outage struct {
+	DetailsUrl string                       `json:"details_url"`
+	DownAt     nullable.Nullable[time.Time] `json:"down_at"`
+
+	// Headers Headers from the failing check's response.
+	Headers nullable.Nullable[map[string]interface{}] `json:"headers"`
+	Reason  nullable.Nullable[string]                 `json:"reason"`
+
+	// Status The HTTP status the failing check got.
+	Status nullable.Nullable[int] `json:"status"`
+
+	// UpAt Null while the site is still down.
+	UpAt nullable.Nullable[time.Time] `json:"up_at"`
+}
+
+// WebhookV2OutageEvent An uptime site went down or came back up.
+type WebhookV2OutageEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User            `json:"actor,omitempty"`
+	Event WebhookV2OutageEventEvent `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Outage The site's latest outage. Every field but `details_url` is null when the site has none on record.
+	Outage WebhookV2Outage `json:"outage"`
+
+	// Project The project the event belongs to.
+	Project WebhookV2Project `json:"project"`
+
+	// Site The uptime site the event is about.
+	Site WebhookV2Site `json:"site"`
+}
+
+// WebhookV2OutageEventEvent defines model for WebhookV2OutageEvent.Event.
+type WebhookV2OutageEventEvent string
+
+// WebhookV2Project The project the event belongs to.
+type WebhookV2Project struct {
+	// Active Whether the account is active.
+	Active             bool                      `json:"active"`
+	AsanaWorkspaceId   nullable.Nullable[string] `json:"asana_workspace_id"`
+	CreatedAt          time.Time                 `json:"created_at"`
+	DisablePublicLinks nullable.Nullable[bool]   `json:"disable_public_links"`
+
+	// EarliestNoticeAt The oldest notice the plan's retention keeps.
+	EarliestNoticeAt time.Time              `json:"earliest_notice_at"`
+	Environments     []WebhookV2Environment `json:"environments"`
+	FaultCount       int                    `json:"fault_count"`
+
+	// GithubProject The repository of the project's newest GitHub integration.
+	GithubProject nullable.Nullable[string]    `json:"github_project"`
+	Id            int                          `json:"id"`
+	LastNoticeAt  nullable.Nullable[time.Time] `json:"last_notice_at"`
+	Name          nullable.Nullable[string]    `json:"name"`
+
+	// Owner The account that owns the project.
+	Owner            WebhookV2User             `json:"owner"`
+	PivotalProjectId nullable.Nullable[string] `json:"pivotal_project_id"`
+	Sites            []WebhookV2ProjectSite    `json:"sites"`
+	TeamId           nullable.Nullable[int]    `json:"team_id"`
+
+	// Token The project's ingestion key, the one its notifiers report with.
+	Token                string `json:"token"`
+	UnresolvedFaultCount int    `json:"unresolved_fault_count"`
+
+	// Url The project's errors page. Sent on `volume_spike` only.
+	Url   *string         `json:"url,omitempty"`
+	Users []WebhookV2User `json:"users"`
+}
+
+// WebhookV2ProjectRef The project the event belongs to, by ID and name.
+type WebhookV2ProjectRef struct {
+	Id   int                       `json:"id"`
+	Name nullable.Nullable[string] `json:"name"`
+}
+
+// WebhookV2ProjectSite One of the project's uptime sites, in brief.
+type WebhookV2ProjectSite struct {
+	Active        bool                         `json:"active"`
+	Id            openapi_types.UUID           `json:"id"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
+	Name          string                       `json:"name"`
+	State         string                       `json:"state"`
+
+	// Url The checked URL, as entered.
+	Url string `json:"url"`
+}
+
+// WebhookV2ResolutionEvent A fault was resolved or reopened.
+type WebhookV2ResolutionEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User                `json:"actor,omitempty"`
+	Event WebhookV2ResolutionEventEvent `json:"event"`
+
+	// Fault The fault (a unique error) the event is about. When the account is inactive, only `id`, `project_id`, `message` and `created_at` are sent.
+	Fault WebhookV2Fault `json:"fault"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+}
+
+// WebhookV2ResolutionEventEvent defines model for WebhookV2ResolutionEvent.Event.
+type WebhookV2ResolutionEventEvent string
+
+// WebhookV2Site The uptime site the event is about.
+type WebhookV2Site struct {
+	Active           bool                         `json:"active"`
+	CertWillExpireAt nullable.Nullable[time.Time] `json:"cert_will_expire_at"`
+	DetailsUrl       string                       `json:"details_url"`
+
+	// Frequency Minutes between checks.
+	Frequency     int                          `json:"frequency"`
+	Id            openapi_types.UUID           `json:"id"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
+	Match         nullable.Nullable[string]    `json:"match"`
+	MatchType     string                       `json:"match_type"`
+	Name          string                       `json:"name"`
+	Proxy         int                          `json:"proxy"`
+
+	// ResponseHeaders Headers the site is set to expect in each check's response.
+	ResponseHeaders nullable.Nullable[map[string]interface{}] `json:"response_headers"`
+	Retries         nullable.Nullable[int]                    `json:"retries"`
+	State           WebhookV2SiteState                        `json:"state"`
+	Timeout         nullable.Nullable[int]                    `json:"timeout"`
+
+	// Url The checked URL, as entered.
+	Url string `json:"url"`
+}
+
+// WebhookV2SiteState defines model for WebhookV2Site.State.
+type WebhookV2SiteState string
+
+// WebhookV2User A Honeybadger user, or an account by its owner's details.
+type WebhookV2User struct {
+	Email string                    `json:"email"`
+	Id    int                       `json:"id"`
+	Name  nullable.Nullable[string] `json:"name"`
+}
+
+// WebhookV2VolumeSpike The error volume that triggered the spike alert.
+type WebhookV2VolumeSpike struct {
+	BaselineMedian int                        `json:"baseline_median"`
+	Factor         nullable.Nullable[float32] `json:"factor"`
+
+	// Observed Errors in the window just checked.
+	Observed      int                        `json:"observed"`
+	WindowMinutes int                        `json:"window_minutes"`
+	ZScore        nullable.Nullable[float32] `json:"z_score"`
+}
+
+// WebhookV2VolumeSpikeEvent A project's error volume rose well above its usual level.
+type WebhookV2VolumeSpikeEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger, or an API token with no user, did.
+	Actor *WebhookV2User                 `json:"actor,omitempty"`
+	Event WebhookV2VolumeSpikeEventEvent `json:"event"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Project The project the event belongs to.
+	Project WebhookV2Project `json:"project"`
+
+	// VolumeSpike The error volume that triggered the spike alert.
+	VolumeSpike WebhookV2VolumeSpike `json:"volume_spike"`
+}
+
+// WebhookV2VolumeSpikeEventEvent defines model for WebhookV2VolumeSpikeEvent.Event.
+type WebhookV2VolumeSpikeEventEvent string
+
+// WebhookV3Alarm The Insights alarm the event is about.
+type WebhookV3Alarm struct {
+	CreatedAt   time.Time                 `json:"created_at"`
+	Description nullable.Nullable[string] `json:"description"`
+	Id          string                    `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links     WebLinks            `json:"links"`
+	Name      string              `json:"name"`
+	ProjectId string              `json:"project_id"`
+	State     WebhookV3AlarmState `json:"state"`
+}
+
+// WebhookV3AlarmState defines model for WebhookV3Alarm.State.
+type WebhookV3AlarmState string
+
+// WebhookV3AlarmEvent An Insights alarm was triggered, or returned to normal.
+type WebhookV3AlarmEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Alarm The Insights alarm the event is about.
+	Alarm WebhookV3Alarm `json:"alarm"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential     `json:"credential,omitempty"`
+	Event      WebhookV3AlarmEventEvent `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3AlarmEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3AlarmEventEvent defines model for WebhookV3AlarmEvent.Event.
+type WebhookV3AlarmEventEvent string
+
+// WebhookV3AlarmEventPayloadVersion The integration's payload version.
+type WebhookV3AlarmEventPayloadVersion string
+
+// WebhookV3AssignedEvent A fault, or a bulk action's faults, were assigned.
+type WebhookV3AssignedEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Assignee Absent when the fault was unassigned before the webhook was sent.
+	Assignee *WebhookV3Person `json:"assignee,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential        `json:"credential,omitempty"`
+	Event      WebhookV3AssignedEventEvent `json:"event"`
+
+	// Fault The fault. Absent for a bulk action, which sends `fault_ids` instead.
+	Fault *WebhookV3Fault `json:"fault,omitempty"`
+
+	// FaultIds The faults a bulk action changed. Sent in place of `fault`.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3AssignedEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3AssignedEventEvent defines model for WebhookV3AssignedEvent.Event.
+type WebhookV3AssignedEventEvent string
+
+// WebhookV3AssignedEventPayloadVersion The integration's payload version.
+type WebhookV3AssignedEventPayloadVersion string
+
+// WebhookV3CertExpirationEvent An uptime site's TLS certificate is about to expire.
+type WebhookV3CertExpirationEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential              `json:"credential,omitempty"`
+	Event      WebhookV3CertExpirationEventEvent `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3CertExpirationEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+
+	// Site The uptime site the event is about.
+	Site WebhookV3Site `json:"site"`
+}
+
+// WebhookV3CertExpirationEventEvent defines model for WebhookV3CertExpirationEvent.Event.
+type WebhookV3CertExpirationEventEvent string
+
+// WebhookV3CertExpirationEventPayloadVersion The integration's payload version.
+type WebhookV3CertExpirationEventPayloadVersion string
+
+// WebhookV3CheckIn The check-in the event is about.
+type WebhookV3CheckIn struct {
+	CreatedAt  time.Time                    `json:"created_at"`
+	ExpectedAt nullable.Nullable[time.Time] `json:"expected_at"`
+	Id         string                       `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links       WebLinks                     `json:"links"`
+	MissedCount int                          `json:"missed_count"`
+	Name        nullable.Nullable[string]    `json:"name"`
+	ProjectId   string                       `json:"project_id"`
+	ReportedAt  nullable.Nullable[time.Time] `json:"reported_at"`
+
+	// ScheduleType `simple` expects a report every `report_period`. `cron` expects reports on a cron schedule and requires `cron_schedule`.
+	ScheduleType CheckInScheduleType       `json:"schedule_type"`
+	Slug         nullable.Nullable[string] `json:"slug"`
+	State        WebhookV3CheckInState     `json:"state"`
+}
+
+// WebhookV3CheckInState defines model for WebhookV3CheckIn.State.
+type WebhookV3CheckInState string
+
+// WebhookV3CheckInEvent A check-in missed its schedule, or started reporting again.
+type WebhookV3CheckInEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// CheckIn The check-in the event is about.
+	CheckIn WebhookV3CheckIn `json:"check_in"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential       `json:"credential,omitempty"`
+	Event      WebhookV3CheckInEventEvent `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3CheckInEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3CheckInEventEvent defines model for WebhookV3CheckInEvent.Event.
+type WebhookV3CheckInEventEvent string
+
+// WebhookV3CheckInEventPayloadVersion The integration's payload version.
+type WebhookV3CheckInEventPayloadVersion string
+
+// WebhookV3Comment The comment that was added.
+type WebhookV3Comment struct {
+	Author    nullable.Nullable[WebhookV3Person] `json:"author"`
+	Body      nullable.Nullable[string]          `json:"body"`
+	CreatedAt time.Time                          `json:"created_at"`
+	FaultId   string                             `json:"fault_id"`
+	Id        string                             `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links WebLinks `json:"links"`
+
+	// Source Where the comment was made, such as `web` or `email`.
+	Source string `json:"source"`
+}
+
+// WebhookV3CommentedEvent A comment was added to a fault, or to a bulk action's faults.
+type WebhookV3CommentedEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Comment The comment that was added.
+	Comment WebhookV3Comment `json:"comment"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential         `json:"credential,omitempty"`
+	Event      WebhookV3CommentedEventEvent `json:"event"`
+
+	// Fault The fault. Absent for a bulk action, which sends `fault_ids` instead.
+	Fault *WebhookV3Fault `json:"fault,omitempty"`
+
+	// FaultIds The faults a bulk action changed. Sent in place of `fault`.
+	FaultIds *[]string `json:"fault_ids,omitempty"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3CommentedEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3CommentedEventEvent defines model for WebhookV3CommentedEvent.Event.
+type WebhookV3CommentedEventEvent string
+
+// WebhookV3CommentedEventPayloadVersion The integration's payload version.
+type WebhookV3CommentedEventPayloadVersion string
+
+// WebhookV3Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+type WebhookV3Credential struct {
+	Id string `json:"id"`
+
+	// Name The token's name. For an OAuth grant, the name the user gave the connection, or the application's name if none.
+	Name nullable.Nullable[string] `json:"name"`
+
+	// Type `ApiToken` for an API token, `OauthAccessToken` for an OAuth grant.
+	Type string `json:"type"`
+}
+
+// WebhookV3Deploy The deploy the event is about.
+type WebhookV3Deploy struct {
+	CreatedAt     time.Time                 `json:"created_at"`
+	Environment   string                    `json:"environment"`
+	Id            string                    `json:"id"`
+	LocalUsername nullable.Nullable[string] `json:"local_username"`
+	ProjectId     string                    `json:"project_id"`
+
+	// Repository The repository URL, with any credentials in it removed.
+	Repository nullable.Nullable[string] `json:"repository"`
+	Revision   nullable.Nullable[string] `json:"revision"`
+}
+
+// WebhookV3DeployedEvent A deploy was recorded.
+type WebhookV3DeployedEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential `json:"credential,omitempty"`
+
+	// Deploy The deploy the event is about.
+	Deploy WebhookV3Deploy             `json:"deploy"`
+	Event  WebhookV3DeployedEventEvent `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3DeployedEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3DeployedEventEvent defines model for WebhookV3DeployedEvent.Event.
+type WebhookV3DeployedEventEvent string
+
+// WebhookV3DeployedEventPayloadVersion The integration's payload version.
+type WebhookV3DeployedEventPayloadVersion string
+
+// WebhookV3Event The fields every v3 webhook body carries. Each event adds the records it's about.
+type WebhookV3Event struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential `json:"credential,omitempty"`
+
+	// Event The event's name, the same as its key under `webhooks`.
+	Event string `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3EventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3EventPayloadVersion The integration's payload version.
+type WebhookV3EventPayloadVersion string
+
+// WebhookV3Fault The fault (a unique error) the event is about.
+type WebhookV3Fault struct {
+	Action      nullable.Nullable[string]          `json:"action"`
+	Assignee    nullable.Nullable[WebhookV3Person] `json:"assignee"`
+	Component   nullable.Nullable[string]          `json:"component"`
+	CreatedAt   time.Time                          `json:"created_at"`
+	Environment nullable.Nullable[string]          `json:"environment"`
+	Id          string                             `json:"id"`
+	Ignored     bool                               `json:"ignored"`
+
+	// Klass Error class name
+	Klass        nullable.Nullable[string]    `json:"klass"`
+	LastNoticeAt nullable.Nullable[time.Time] `json:"last_notice_at"`
+
+	// Links Links into the Honeybadger web UI
+	Links        WebLinks                    `json:"links"`
+	Message      nullable.Nullable[string]   `json:"message"`
+	NoticesCount int                         `json:"notices_count"`
+	ProjectId    string                      `json:"project_id"`
+	Resolved     bool                        `json:"resolved"`
+	Tags         nullable.Nullable[[]string] `json:"tags"`
+}
+
+// WebhookV3Notice The occurrence that triggered the event.
+type WebhookV3Notice struct {
+	CreatedAt   time.Time                 `json:"created_at"`
+	Environment nullable.Nullable[string] `json:"environment"`
+	FaultId     nullable.Nullable[string] `json:"fault_id"`
+	Id          openapi_types.UUID        `json:"id"`
+
+	// Links Links into the Honeybadger web UI
+	Links     *WebLinks                 `json:"links,omitempty"`
+	Message   nullable.Nullable[string] `json:"message"`
+	ProjectId nullable.Nullable[string] `json:"project_id"`
+}
+
+// WebhookV3OccurredEvent An error occurred, or a fault passed its notification rate threshold.
+type WebhookV3OccurredEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential        `json:"credential,omitempty"`
+	Event      WebhookV3OccurredEventEvent `json:"event"`
+
+	// Fault The fault (a unique error) the event is about.
+	Fault WebhookV3Fault `json:"fault"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Notice The occurrence that triggered the event.
+	Notice WebhookV3Notice `json:"notice"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3OccurredEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3OccurredEventEvent defines model for WebhookV3OccurredEvent.Event.
+type WebhookV3OccurredEventEvent string
+
+// WebhookV3OccurredEventPayloadVersion The integration's payload version.
+type WebhookV3OccurredEventPayloadVersion string
+
+// WebhookV3Outage The site's latest outage. Every field is null when the site has none on record. Outages have no page of their own; the site's `links` has its page.
+type WebhookV3Outage struct {
+	CreatedAt nullable.Nullable[time.Time] `json:"created_at"`
+	DownAt    nullable.Nullable[time.Time] `json:"down_at"`
+
+	// DurationSeconds Null until the site is back up.
+	DurationSeconds nullable.Nullable[int]                `json:"duration_seconds"`
+	Id              nullable.Nullable[openapi_types.UUID] `json:"id"`
+	SiteId          nullable.Nullable[openapi_types.UUID] `json:"site_id"`
+
+	// UpAt Null while the site is still down.
+	UpAt nullable.Nullable[time.Time] `json:"up_at"`
+}
+
+// WebhookV3OutageEvent An uptime site went down or came back up.
+type WebhookV3OutageEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential      `json:"credential,omitempty"`
+	Event      WebhookV3OutageEventEvent `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// Outage The site's latest outage. Every field is null when the site has none on record. Outages have no page of their own; the site's `links` has its page.
+	Outage WebhookV3Outage `json:"outage"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3OutageEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+
+	// Site The uptime site the event is about.
+	Site WebhookV3Site `json:"site"`
+}
+
+// WebhookV3OutageEventEvent defines model for WebhookV3OutageEvent.Event.
+type WebhookV3OutageEventEvent string
+
+// WebhookV3OutageEventPayloadVersion The integration's payload version.
+type WebhookV3OutageEventPayloadVersion string
+
+// WebhookV3Person A person, by ID, name and email.
+type WebhookV3Person struct {
+	Email nullable.Nullable[string] `json:"email"`
+
+	// Id The user's ID, or null when the person has no Honeybadger account.
+	Id   nullable.Nullable[string] `json:"id"`
+	Name nullable.Nullable[string] `json:"name"`
+}
+
+// WebhookV3Project The project the event belongs to.
+type WebhookV3Project struct {
+	CreatedAt time.Time                 `json:"created_at"`
+	Id        string                    `json:"id"`
+	Language  nullable.Nullable[string] `json:"language"`
+
+	// Links Links into the Honeybadger web UI
+	Links WebLinks `json:"links"`
+	Name  string   `json:"name"`
+}
+
+// WebhookV3ResolutionEvent A fault was resolved or reopened.
+type WebhookV3ResolutionEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential          `json:"credential,omitempty"`
+	Event      WebhookV3ResolutionEventEvent `json:"event"`
+
+	// Fault The fault (a unique error) the event is about.
+	Fault WebhookV3Fault `json:"fault"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3ResolutionEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+}
+
+// WebhookV3ResolutionEventEvent defines model for WebhookV3ResolutionEvent.Event.
+type WebhookV3ResolutionEventEvent string
+
+// WebhookV3ResolutionEventPayloadVersion The integration's payload version.
+type WebhookV3ResolutionEventPayloadVersion string
+
+// WebhookV3Site The uptime site the event is about.
+type WebhookV3Site struct {
+	CreatedAt time.Time `json:"created_at"`
+
+	// Frequency Minutes between checks. A value below the plan's floor is refused.
+	Frequency     SiteFrequency                `json:"frequency"`
+	Id            openapi_types.UUID           `json:"id"`
+	LastCheckedAt nullable.Nullable[time.Time] `json:"last_checked_at"`
+
+	// Links Links into the Honeybadger web UI
+	Links     WebLinks           `json:"links"`
+	Name      string             `json:"name"`
+	ProjectId string             `json:"project_id"`
+	State     WebhookV3SiteState `json:"state"`
+
+	// Url The checked URL, with any credentials in it removed.
+	Url string `json:"url"`
+}
+
+// WebhookV3SiteState defines model for WebhookV3Site.State.
+type WebhookV3SiteState string
+
+// WebhookV3VolumeSpike The error volume that triggered the spike alert.
+type WebhookV3VolumeSpike struct {
+	// BaselineMedian The median for a window of the same length over the baseline.
+	BaselineMedian int `json:"baseline_median"`
+
+	// Factor `observed` over `baseline_median`, to one decimal.
+	Factor nullable.Nullable[float32] `json:"factor"`
+
+	// Observed Errors in the window just checked.
+	Observed      int                        `json:"observed"`
+	WindowMinutes int                        `json:"window_minutes"`
+	ZScore        nullable.Nullable[float32] `json:"z_score"`
+}
+
+// WebhookV3VolumeSpikeEvent A project's error volume rose well above its usual level.
+type WebhookV3VolumeSpikeEvent struct {
+	// Actor The person who caused the event. Absent when Honeybadger did.
+	Actor *WebhookV3Person `json:"actor,omitempty"`
+
+	// Credential The API token or OAuth grant the event was caused through. Absent when the event wasn't caused through the API.
+	Credential *WebhookV3Credential           `json:"credential,omitempty"`
+	Event      WebhookV3VolumeSpikeEventEvent `json:"event"`
+
+	// Links The page to open for this event.
+	Links WebLinks `json:"links"`
+
+	// Message A one-line summary of the event, as notifications show it.
+	Message string `json:"message"`
+
+	// PayloadVersion The integration's payload version.
+	PayloadVersion WebhookV3VolumeSpikeEventPayloadVersion `json:"payload_version"`
+
+	// Project The project the event belongs to.
+	Project WebhookV3Project `json:"project"`
+
+	// VolumeSpike The error volume that triggered the spike alert.
+	VolumeSpike WebhookV3VolumeSpike `json:"volume_spike"`
+}
+
+// WebhookV3VolumeSpikeEventEvent defines model for WebhookV3VolumeSpikeEvent.Event.
+type WebhookV3VolumeSpikeEventEvent string
+
+// WebhookV3VolumeSpikeEventPayloadVersion The integration's payload version.
+type WebhookV3VolumeSpikeEventPayloadVersion string
 
 // After defines model for After.
 type After = string
 
 // Before defines model for Before.
 type Before = string
+
+// Breadcrumbs defines model for Breadcrumbs.
+type Breadcrumbs = bool
 
 // CreatedAfter defines model for CreatedAfter.
 type CreatedAfter = float64
@@ -4632,43 +6376,654 @@ type Sort string
 // Unmapped defines model for Unmapped.
 type Unmapped = bool
 
-// AlarmServiceUnavailable API error response
+// AlarmServiceUnavailable An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type AlarmServiceUnavailable = Error
 
-// AmbiguousAccount API error response
+// AmbiguousAccount An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type AmbiguousAccount = Error
 
-// BadRequest API error response
+// BadRequest An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type BadRequest = Error
 
-// ConcurrentCreate API error response
+// ConcurrentCreate An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type ConcurrentCreate = Error
 
-// FaultBulkRejected API error response
+// FaultBulkRejected An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type FaultBulkRejected = Error
 
-// FaultMergedConflict API error response
+// FaultMergedConflict An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type FaultMergedConflict = Error
 
-// Forbidden API error response
+// Forbidden An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type Forbidden = Error
 
-// NotFound API error response
+// NotFound An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type NotFound = Error
 
-// RateLimitExceeded API error response
+// RateLimitExceeded An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type RateLimitExceeded = Error
 
-// ServiceUnavailable API error response
+// ServiceUnavailable An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type ServiceUnavailable = Error
 
-// StreamsProvisioning API error response
+// StreamsProvisioning An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type StreamsProvisioning = Error
 
-// Unauthorized API error response
+// Unauthorized An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type Unauthorized = Error
 
-// ValidationError API error response
+// ValidationError An error response. `error.code` names the error and is stable; branch on
+// it, since several codes share a status. `error.message` is for people and
+// may change.
+//
+// `error.details`, when present, takes one of three shapes:
+//
+//   - **A list of `{field, message}`**, on `validation_error` and
+//     `invalid_parameter`, and on `feature_unavailable` or `limit_reached` when
+//     one field caused the refusal. `field` can be a path such as
+//     `widgets[1].id` or `check_ins.<slug>`, or `base` for the record as a
+//     whole, and the same field can appear more than once.
+//   - **`{required_scope, token_scopes}`**, on `insufficient_scope`: the scope
+//     the operation needs, and the scopes the token has.
+//   - **`{merged_into, location}`**, on `fault_merged`: the fault it was merged
+//     into. Only writes get this; reads of a merged fault redirect to it with a
+//     301.
+//
+// Every 429 sends a `Retry-After` header with the seconds to wait. A 503 can
+// be retried after a short wait.
+//
+// Include `meta.request_id` when contacting support.
+//
+// | `error.code` | Status | Meaning |
+// | --- | --- | --- |
+// | `invalid_parameter` | 400 | A query parameter is malformed or outside its allowed values. |
+// | `unauthorized` | 401 | The credential is missing, invalid or revoked. |
+// | `unsupported_auth_scheme` | 401 | The credential was sent with HTTP basic auth instead of as a Bearer token. |
+// | `credential_in_query` | 401 | The credential was sent in the URL. |
+// | `ingestion_key_not_accepted` | 401 | An ingestion key was sent; this API takes an API token. |
+// | `access_denied` | 403 | The credential isn't allowed to do this to this record. |
+// | `insufficient_scope` | 403 | The token lacks a scope this needs. `details` names it. |
+// | `project_restricted` | 403 | A token limited to some projects can't create projects. |
+// | `requires_user_token` | 403 | This records who acted, so it needs a user token, not an account token. |
+// | `feature_unavailable` | 403 | The plan doesn't include this. |
+// | `limit_reached` | 403 | The plan's limit for this resource is reached. |
+// | `account_inactive` | 403 | The account isn't active. |
+// | `account_parked` | 403 | The account is parked. |
+// | `not_found` | 404 | Doesn't exist, or isn't visible to this credential. |
+// | `fault_merged` | 409 | The fault was merged into another. `details` names it. |
+// | `validation_error` | 422 | The body is invalid. `details`, when present, names each field. |
+// | `forbidden_attributes` | 422 | The body sets fields that can't be set. |
+// | `ambiguous_account` | 422 | The credential covers more than one account. |
+// | `delete_failed` | 422 | The delete didn't complete. |
+// | `rate_limit_exceeded` | 429 | Over the rate limit. Wait for `Retry-After`. |
+// | `concurrent_request` | 429 | Another request is changing the same thing. Retry. |
+// | `streams_provisioning` | 429 | The project's Insights streams are still being set up. Retry. |
+// | `maintenance_mode` | 503 | Writes are paused for maintenance. Retry later. |
+// | `service_unavailable` | 503 | Temporarily unavailable. Retry shortly. |
 type ValidationError = Error
 
 // GetAccount200JSONResponseBody defines parameters for GetAccount.
@@ -4791,9 +7146,7 @@ type GetAccountUsage200JSONResponseBody struct {
 
 // GetNoticeParams defines parameters for GetNotice.
 type GetNoticeParams struct {
-	// Unmapped Return the backtrace exactly as the client reported it, instead of the source-mapped one. Frames are source-mapped by default. Where no different mapped trace was stored — no source map was uploaded for the revision, or mapping did not change the frames — both forms are the same.
-	//
-	// Accepts `true`/`false` and the usual spellings (`1`/`0`, `yes`/`no`, `on`/`off`). Any other value is refused with 400 `invalid_parameter` rather than being read as true.
+	// Unmapped Return the backtrace as the client reported it instead of source-mapped. Accepts `true`/`false`, `1`/`0`, `yes`/`no`, `on`/`off`.
 	Unmapped *Unmapped `form:"unmapped,omitempty" json:"unmapped,omitempty"`
 }
 
@@ -4837,9 +7190,7 @@ type CreateProject201JSONResponseBody struct {
 
 // ListAccountOccurrencesParams defines parameters for ListAccountOccurrences.
 type ListAccountOccurrencesParams struct {
-	// Period Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
-	//
-	// `meta.period` reports the period used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
+	// Period Window to report over. Both ends are inclusive: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
 	Period *ListAccountOccurrencesParamsPeriod `form:"period,omitempty" json:"period,omitempty"`
 
 	// Environment Only count notices from faults in this environment
@@ -4991,12 +7342,10 @@ type UpdateCheckIn200JSONResponseBody struct {
 
 // ListCheckInEventsParams defines parameters for ListCheckInEvents.
 type ListCheckInEventsParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// CreatedBefore Only items created before this Unix timestamp (seconds, not ISO 8601). Take it from `links.older`; fractional seconds count.
 	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
@@ -5056,7 +7405,7 @@ type UpdateDashboard200JSONResponseBody struct {
 
 // ListDeploysParams defines parameters for ListDeploys.
 type ListDeploysParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
 	// Before Cursor for fetching older items
@@ -5121,7 +7470,7 @@ type CreateEnvironment201JSONResponseBody struct {
 
 // BulkDeleteEnvironmentsJSONBody defines parameters for BulkDeleteEnvironments.
 type BulkDeleteEnvironmentsJSONBody struct {
-	// EnvironmentIds Public IDs of environments to delete
+	// EnvironmentIds IDs of environments to delete
 	EnvironmentIds []string `json:"environment_ids"`
 }
 
@@ -5139,7 +7488,7 @@ type BulkDeleteEnvironments200JSONResponseBody struct {
 
 // BulkUpdateEnvironmentsJSONBody defines parameters for BulkUpdateEnvironments.
 type BulkUpdateEnvironmentsJSONBody struct {
-	// EnvironmentIds Public IDs of environments to update
+	// EnvironmentIds IDs of environments to update
 	EnvironmentIds []string `json:"environment_ids"`
 
 	// Notifications Whether notifications should fire for these environments.
@@ -5180,28 +7529,22 @@ type ListFaultsParams struct {
 	// PerPage Items per page
 	PerPage *PerPage `form:"per_page,omitempty" json:"per_page,omitempty"`
 
-	// Q Search query. Filtering by environment, resolved and ignored status is expressed here rather than as separate parameters — `environment:production`, `is:resolved`, `is:ignored`, and each negatable with a leading `-`. See the error search reference for the full filter list.
-	Q *string `form:"q,omitempty" json:"q,omitempty"`
+	// Q Search query, in the syntax of the web UI's error search, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it. See [Error search](https://docs.honeybadger.io/guides/errors/search/) for the syntax and filters. Filters that need the search index return nothing when it holds no data for the project.
+	Q *SearchFilter `form:"q,omitempty" json:"q,omitempty"`
 
-	// Order How to sort the list. `recent` is by most recent occurrence, `frequent` by occurrence count. Omitted means creation order. An unrecognised value is refused with 400 `invalid_parameter`.
+	// Order `recent` sorts by last occurrence, `frequent` by occurrence count. Left out, by creation time.
 	Order *ListFaultsParamsOrder `form:"order,omitempty" json:"order,omitempty"`
 
-	// Sort Direction for `order`. Each ordering has its own default — most recent and most frequent descend, creation order ascends. An unrecognised value is refused with 400 `invalid_parameter` rather than sorting the other way.
+	// Sort Direction for `order`. Defaults to `desc` for `recent` and `frequent`, `asc` for creation time.
 	Sort *ListFaultsParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
 
-	// CreatedAfter Only faults first seen after this Unix timestamp. Clamped to the project's creation date.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// CreatedAfter Only faults first seen after this Unix timestamp (seconds, not ISO 8601).
 	CreatedAfter *FaultCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
-	// OccurredAfter Only faults with an occurrence after this Unix timestamp. Clamped to the project's retention window, so a value beyond it returns what is retained. Occurrence counts in the response are for this window.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// OccurredAfter Only occurrences after this Unix timestamp (seconds, not ISO 8601). A value before the project's retention window is moved up to it. On the fault list, occurrence counts cover this window.
 	OccurredAfter *FaultOccurredAfter `form:"occurred_after,omitempty" json:"occurred_after,omitempty"`
 
-	// OccurredBefore Only faults with an occurrence before this Unix timestamp. On the occurrence timeline it is the upper bound of the reported window; omitting `occurred_after` reports the hour before it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped, as is an empty value.
+	// OccurredBefore Only occurrences before this Unix timestamp (seconds, not ISO 8601).
 	OccurredBefore *FaultOccurredBefore `form:"occurred_before,omitempty" json:"occurred_before,omitempty"`
 }
 
@@ -5237,13 +7580,11 @@ type ResolveFaults200JSONResponseBody struct {
 
 // GetFaultSummaryParams defines parameters for GetFaultSummary.
 type GetFaultSummaryParams struct {
-	// Q Search filter, the same syntax the fault list accepts
-	Q *string `form:"q,omitempty" json:"q,omitempty"`
+	// Q Search query, in the syntax of the web UI's error search, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it. See [Error search](https://docs.honeybadger.io/guides/errors/search/) for the syntax and filters. Filters that need the search index return nothing when it holds no data for the project.
+	Q *SearchFilter `form:"q,omitempty" json:"q,omitempty"`
 
-	// CreatedAfter Only return items created after this Unix timestamp. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
-	CreatedAfter *CreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
+	// CreatedAfter Only faults first seen after this Unix timestamp (seconds, not ISO 8601).
+	CreatedAfter *FaultCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
 	// OccurredAfter Only count faults that occurred after this Unix timestamp
 	OccurredAfter *float64 `form:"occurred_after,omitempty" json:"occurred_after,omitempty"`
@@ -5305,7 +7646,7 @@ type UpdateFault200JSONResponseBody struct {
 
 // ListFaultAffectedUsersParams defines parameters for ListFaultAffectedUsers.
 type ListFaultAffectedUsersParams struct {
-	// Q Search filter, the same syntax the web UI accepts — `is:resolved`, `environment:production`, `class:ArgumentError`. Filters that need the search index return nothing when it holds no data for the project.
+	// Q Search query, in the syntax of the web UI's error search, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it. See [Error search](https://docs.honeybadger.io/guides/errors/search/) for the syntax and filters. Filters that need the search index return nothing when it holds no data for the project.
 	Q *SearchFilter `form:"q,omitempty" json:"q,omitempty"`
 }
 
@@ -5331,7 +7672,7 @@ type AssignFault200JSONResponseBody struct {
 
 // ListCommentsParams defines parameters for ListComments.
 type ListCommentsParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
 	// Before Cursor for fetching older items
@@ -5383,7 +7724,7 @@ type MergeFaults202JSONResponseBody struct {
 
 // ListNoticesParams defines parameters for ListNotices.
 type ListNoticesParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
 	// Before Cursor for fetching older items
@@ -5392,10 +7733,11 @@ type ListNoticesParams struct {
 	// After Cursor for fetching newer items
 	After *After `form:"after,omitempty" json:"after,omitempty"`
 
-	// Unmapped Return the backtrace exactly as the client reported it, instead of the source-mapped one. Frames are source-mapped by default. Where no different mapped trace was stored — no source map was uploaded for the revision, or mapping did not change the frames — both forms are the same.
-	//
-	// Accepts `true`/`false` and the usual spellings (`1`/`0`, `yes`/`no`, `on`/`off`). Any other value is refused with 400 `invalid_parameter` rather than being read as true.
+	// Unmapped Return the backtrace as the client reported it instead of source-mapped. Accepts `true`/`false`, `1`/`0`, `yes`/`no`, `on`/`off`.
 	Unmapped *Unmapped `form:"unmapped,omitempty" json:"unmapped,omitempty"`
+
+	// Breadcrumbs Include each notice's `breadcrumbs` in the list. Off by default because a trail adds up to 40 entries per notice; the single-notice endpoint always includes them. Accepts `true`/`false`, `1`/`0`, `yes`/`no`, `on`/`off`.
+	Breadcrumbs *Breadcrumbs `form:"breadcrumbs,omitempty" json:"breadcrumbs,omitempty"`
 }
 
 // ListNotices200JSONResponseBody defines parameters for ListNotices.
@@ -5412,17 +7754,13 @@ type ListNotices200JSONResponseBody struct {
 
 // ListFaultOccurrencesParams defines parameters for ListFaultOccurrences.
 type ListFaultOccurrencesParams struct {
-	// OccurredAfter Only faults with an occurrence after this Unix timestamp. Clamped to the project's retention window, so a value beyond it returns what is retained. Occurrence counts in the response are for this window.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// OccurredAfter Only occurrences after this Unix timestamp (seconds, not ISO 8601). A value before the project's retention window is moved up to it. On the fault list, occurrence counts cover this window.
 	OccurredAfter *FaultOccurredAfter `form:"occurred_after,omitempty" json:"occurred_after,omitempty"`
 
-	// OccurredBefore Only faults with an occurrence before this Unix timestamp. On the occurrence timeline it is the upper bound of the reported window; omitting `occurred_after` reports the hour before it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped, as is an empty value.
+	// OccurredBefore Only occurrences before this Unix timestamp (seconds, not ISO 8601).
 	OccurredBefore *FaultOccurredBefore `form:"occurred_before,omitempty" json:"occurred_before,omitempty"`
 
-	// Q Search filter, the same syntax the web UI accepts — `is:resolved`, `environment:production`, `class:ArgumentError`. Filters that need the search index return nothing when it holds no data for the project.
+	// Q Search query, in the syntax of the web UI's error search, such as `environment:production`, `is:resolved` or `class:ArgumentError`. Prefix a filter with `-` to negate it. See [Error search](https://docs.honeybadger.io/guides/errors/search/) for the syntax and filters. Filters that need the search index return nothing when it holds no data for the project.
 	Q *SearchFilter `form:"q,omitempty" json:"q,omitempty"`
 }
 
@@ -5535,21 +7873,21 @@ type ListIngestionKeys200JSONResponseBody struct {
 
 // CreateIngestionKey201JSONResponseBody defines parameters for CreateIngestionKey.
 type CreateIngestionKey201JSONResponseBody struct {
-	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
+	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't authenticate to this API; use an API token for that.
 	Data IngestionKey  `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // GetIngestionKey200JSONResponseBody defines parameters for GetIngestionKey.
 type GetIngestionKey200JSONResponseBody struct {
-	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
+	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't authenticate to this API; use an API token for that.
 	Data IngestionKey  `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
 
 // UpdateIngestionKey200JSONResponseBody defines parameters for UpdateIngestionKey.
 type UpdateIngestionKey200JSONResponseBody struct {
-	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't call the Data API; use an API Token for that.
+	// Data The key your app uses to send data to Honeybadger, set as `ingestion_key` in the client's config (`api_key` in older clients). It can't authenticate to this API; use an API token for that.
 	Data IngestionKey  `json:"data"`
 	Meta *ResponseMeta `json:"meta,omitempty"`
 }
@@ -5559,7 +7897,7 @@ type RunInsightsQueryJSONBody struct {
 	// Query BadgerQL query
 	Query string `json:"query"`
 
-	// StreamIds Streams to search. Omit it, or pass an empty array, to search every stream on the project. Every id must belong to this project; repeated ids are deduplicated. A value that is not an array of strings is rejected with 422.
+	// StreamIds Streams to search. Omit it, or pass an empty array, to search every stream on the project. Every ID must belong to this project; repeated IDs are deduplicated.
 	StreamIds *[]string `json:"stream_ids,omitempty"`
 
 	// Timezone Timezone for time bucketing and display
@@ -5571,10 +7909,10 @@ type RunInsightsQueryJSONBody struct {
 
 // RunInsightsQuery200JSONResponseBody defines parameters for RunInsightsQuery.
 type RunInsightsQuery200JSONResponseBody struct {
-	// Data Query result, as returned by the query service
+	// Data The query result; its fields depend on the query.
 	Data map[string]interface{} `json:"data"`
 
-	// Links Links into the Honeybadger web UI
+	// Links Opens this query in Insights.
 	Links WebLinks      `json:"links"`
 	Meta  *ResponseMeta `json:"meta,omitempty"`
 }
@@ -5629,9 +7967,7 @@ type UpdateIntegration200JSONResponseBody struct {
 
 // GetProjectOccurrencesParams defines parameters for GetProjectOccurrences.
 type GetProjectOccurrencesParams struct {
-	// Period Window to report over. Both ends of the window are inclusive, so each period returns one more bucket than its name suggests: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
-	//
-	// `meta.period` reports the period used. An unrecognised value is refused with 400 `invalid_parameter` rather than silently reinterpreted.
+	// Period Window to report over. Both ends are inclusive: `hour` gives 61 one-minute buckets, `day` 25 hourly, `week` 8 daily, `month` 31 daily.
 	Period *GetProjectOccurrencesParamsPeriod `form:"period,omitempty" json:"period,omitempty"`
 
 	// Environment Only count notices from faults in this environment
@@ -5691,17 +8027,13 @@ type UpdateSite200JSONResponseBody struct {
 
 // ListUptimeChecksParams defines parameters for ListUptimeChecks.
 type ListUptimeChecksParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedAfter With created_before, a window. Alone, pages forward: the items just after it, newest first, with a newer link while more exist. `links.newer` uses it this way. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// CreatedAfter With `created_before`, limits the list to a window. Alone, returns the items just after it, newest first. A Unix timestamp (seconds, not ISO 8601). Take it from `links.newer`; fractional seconds count.
 	CreatedAfter *PageCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
-	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// CreatedBefore Only items created before this Unix timestamp (seconds, not ISO 8601). Take it from `links.older`; fractional seconds count.
 	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
@@ -5719,17 +8051,13 @@ type ListUptimeChecks200JSONResponseBody struct {
 
 // ListOutagesParams defines parameters for ListOutages.
 type ListOutagesParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
-	// CreatedAfter With created_before, a window. Alone, pages forward: the items just after it, newest first, with a newer link while more exist. `links.newer` uses it this way. Fractional seconds are significant; take the value from `links.newer` rather than constructing it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// CreatedAfter With `created_before`, limits the list to a window. Alone, returns the items just after it, newest first. A Unix timestamp (seconds, not ISO 8601). Take it from `links.newer`; fractional seconds count.
 	CreatedAfter *PageCreatedAfter `form:"created_after,omitempty" json:"created_after,omitempty"`
 
-	// CreatedBefore Only return items created before this Unix timestamp. Fractional seconds are significant; take the value from `links.older` rather than constructing it.
-	//
-	// A value in any other format — including the ISO8601 form this API returns in response bodies — is refused with 400 `invalid_parameter` rather than silently dropped.
+	// CreatedBefore Only items created before this Unix timestamp (seconds, not ISO 8601). Take it from `links.older`; fractional seconds count.
 	CreatedBefore *CreatedBefore `form:"created_before,omitempty" json:"created_before,omitempty"`
 }
 
@@ -5834,7 +8162,7 @@ type UpdateStatusPage200JSONResponseBody struct {
 
 // ListStatusPageIncidentsParams defines parameters for ListStatusPageIncidents.
 type ListStatusPageIncidentsParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
 	// Before Cursor for fetching older items
@@ -5858,28 +8186,28 @@ type ListStatusPageIncidents200JSONResponseBody struct {
 
 // CreateStatusPageIncident201JSONResponseBody defines parameters for CreateStatusPageIncident.
 type CreateStatusPageIncident201JSONResponseBody struct {
-	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
+	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and `current_status`, `current_severity` and `closed_at` are derived from them and are never writable.
 	Data StatusPageIncident `json:"data"`
 	Meta *ResponseMeta      `json:"meta,omitempty"`
 }
 
 // GetStatusPageIncident200JSONResponseBody defines parameters for GetStatusPageIncident.
 type GetStatusPageIncident200JSONResponseBody struct {
-	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
+	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and `current_status`, `current_severity` and `closed_at` are derived from them and are never writable.
 	Data StatusPageIncident `json:"data"`
 	Meta *ResponseMeta      `json:"meta,omitempty"`
 }
 
 // UpdateStatusPageIncident200JSONResponseBody defines parameters for UpdateStatusPageIncident.
 type UpdateStatusPageIncident200JSONResponseBody struct {
-	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and current_status, current_severity and closed_at are derived from them and are never writable.
+	// Data An incident on a status page. An incident is a container for a thread of updates: the prose lives on each update, and `current_status`, `current_severity` and `closed_at` are derived from them and are never writable.
 	Data StatusPageIncident `json:"data"`
 	Meta *ResponseMeta      `json:"meta,omitempty"`
 }
 
 // ListIncidentUpdatesParams defines parameters for ListIncidentUpdates.
 type ListIncidentUpdatesParams struct {
-	// Limit Maximum items to return. A value above the maximum is clamped down to it; a value that is not a positive integer is refused with 400 `invalid_parameter` rather than being reinterpreted.
+	// Limit Maximum items to return. Values above 100 are treated as 100.
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 
 	// Before Cursor for fetching older items
@@ -5903,21 +8231,21 @@ type ListIncidentUpdates200JSONResponseBody struct {
 
 // CreateIncidentUpdate201JSONResponseBody defines parameters for CreateIncidentUpdate.
 type CreateIncidentUpdate201JSONResponseBody struct {
-	// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
+	// Data An update to a status page incident. The incident's prose lives here, and its `current_status`, `current_severity` and `closed_at` are derived from its updates.
 	Data IncidentUpdate `json:"data"`
 	Meta *ResponseMeta  `json:"meta,omitempty"`
 }
 
 // GetIncidentUpdate200JSONResponseBody defines parameters for GetIncidentUpdate.
 type GetIncidentUpdate200JSONResponseBody struct {
-	// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
+	// Data An update to a status page incident. The incident's prose lives here, and its `current_status`, `current_severity` and `closed_at` are derived from its updates.
 	Data IncidentUpdate `json:"data"`
 	Meta *ResponseMeta  `json:"meta,omitempty"`
 }
 
 // UpdateIncidentUpdate200JSONResponseBody defines parameters for UpdateIncidentUpdate.
 type UpdateIncidentUpdate200JSONResponseBody struct {
-	// Data An update to a status page incident. The incident's prose lives here, and its current_status, current_severity and closed_at are derived from its updates.
+	// Data An update to a status page incident. The incident's prose lives here, and its `current_status`, `current_severity` and `closed_at` are derived from its updates.
 	Data IncidentUpdate `json:"data"`
 	Meta *ResponseMeta  `json:"meta,omitempty"`
 }
@@ -6059,7 +8387,7 @@ type GetToken200JSONResponseBody_Data struct {
 	// LastUsedAt When the credential was last used before this request. Recorded at most once a minute, so it can lag by up to a minute; null on first use.
 	LastUsedAt nullable.Nullable[time.Time] `json:"last_used_at,omitempty"`
 
-	// Name The token's name, or for an OAuth grant the name of the application holding it.
+	// Name The token's name. For an OAuth grant, the name the user gave the connection, or the application's name if none.
 	Name nullable.Nullable[string] `json:"name,omitempty"`
 
 	// ProjectIds IDs of the projects the credential can reach. Empty for a credential bound to an account with no visible projects; every project in the account when unrestricted.
@@ -6073,6 +8401,171 @@ type GetToken200JSONResponseBody_Data struct {
 type GetToken200JSONResponseBody struct {
 	Data GetToken200JSONResponseBody_Data `json:"data"`
 	Meta *ResponseMeta                    `json:"meta,omitempty"`
+}
+
+// AlarmAlertJSONBody defines parameters for AlarmAlert.
+type AlarmAlertJSONBody struct {
+	union json.RawMessage
+}
+
+// AlarmAlertParams defines parameters for AlarmAlert.
+type AlarmAlertParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// AlarmOkJSONBody defines parameters for AlarmOk.
+type AlarmOkJSONBody struct {
+	union json.RawMessage
+}
+
+// AlarmOkParams defines parameters for AlarmOk.
+type AlarmOkParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// AssignedJSONBody defines parameters for Assigned.
+type AssignedJSONBody struct {
+	union json.RawMessage
+}
+
+// AssignedParams defines parameters for Assigned.
+type AssignedParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// CertWillExpireJSONBody defines parameters for CertWillExpire.
+type CertWillExpireJSONBody struct {
+	union json.RawMessage
+}
+
+// CertWillExpireParams defines parameters for CertWillExpire.
+type CertWillExpireParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// CheckInMissingJSONBody defines parameters for CheckInMissing.
+type CheckInMissingJSONBody struct {
+	union json.RawMessage
+}
+
+// CheckInMissingParams defines parameters for CheckInMissing.
+type CheckInMissingParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// CheckInReportingJSONBody defines parameters for CheckInReporting.
+type CheckInReportingJSONBody struct {
+	union json.RawMessage
+}
+
+// CheckInReportingParams defines parameters for CheckInReporting.
+type CheckInReportingParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// CommentedJSONBody defines parameters for Commented.
+type CommentedJSONBody struct {
+	union json.RawMessage
+}
+
+// CommentedParams defines parameters for Commented.
+type CommentedParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// DeployedJSONBody defines parameters for Deployed.
+type DeployedJSONBody struct {
+	union json.RawMessage
+}
+
+// DeployedParams defines parameters for Deployed.
+type DeployedParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// DownJSONBody defines parameters for Down.
+type DownJSONBody struct {
+	union json.RawMessage
+}
+
+// DownParams defines parameters for Down.
+type DownParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// OccurredJSONBody defines parameters for Occurred.
+type OccurredJSONBody struct {
+	union json.RawMessage
+}
+
+// OccurredParams defines parameters for Occurred.
+type OccurredParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// RateExceededJSONBody defines parameters for RateExceeded.
+type RateExceededJSONBody struct {
+	union json.RawMessage
+}
+
+// RateExceededParams defines parameters for RateExceeded.
+type RateExceededParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// ResolvedJSONBody defines parameters for Resolved.
+type ResolvedJSONBody struct {
+	union json.RawMessage
+}
+
+// ResolvedParams defines parameters for Resolved.
+type ResolvedParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// UnresolvedJSONBody defines parameters for Unresolved.
+type UnresolvedJSONBody struct {
+	union json.RawMessage
+}
+
+// UnresolvedParams defines parameters for Unresolved.
+type UnresolvedParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// UpJSONBody defines parameters for Up.
+type UpJSONBody struct {
+	union json.RawMessage
+}
+
+// UpParams defines parameters for Up.
+type UpParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
+}
+
+// VolumeSpikeJSONBody defines parameters for VolumeSpike.
+type VolumeSpikeJSONBody struct {
+	union json.RawMessage
+}
+
+// VolumeSpikeParams defines parameters for VolumeSpike.
+type VolumeSpikeParams struct {
+	// HoneybadgerToken The project's Honeybadger token, shown in the project's settings next to its ingestion keys, so the receiver can check the request came from Honeybadger.
+	HoneybadgerToken string `json:"Honeybadger-Token"`
 }
 
 // CreateAccountInvitationJSONRequestBody defines body for CreateAccountInvitation for application/json ContentType.
@@ -6210,6 +8703,1122 @@ type UpdateTeamInvitationJSONRequestBody = TeamInvitationInput
 // UpdateTeamMemberJSONRequestBody defines body for UpdateTeamMember for application/json ContentType.
 type UpdateTeamMemberJSONRequestBody = TeamMemberInput
 
+// AlarmAlertJSONRequestBody defines body for AlarmAlert for application/json ContentType.
+type AlarmAlertJSONRequestBody AlarmAlertJSONBody
+
+// AlarmOkJSONRequestBody defines body for AlarmOk for application/json ContentType.
+type AlarmOkJSONRequestBody AlarmOkJSONBody
+
+// AssignedJSONRequestBody defines body for Assigned for application/json ContentType.
+type AssignedJSONRequestBody AssignedJSONBody
+
+// CertWillExpireJSONRequestBody defines body for CertWillExpire for application/json ContentType.
+type CertWillExpireJSONRequestBody CertWillExpireJSONBody
+
+// CheckInMissingJSONRequestBody defines body for CheckInMissing for application/json ContentType.
+type CheckInMissingJSONRequestBody CheckInMissingJSONBody
+
+// CheckInReportingJSONRequestBody defines body for CheckInReporting for application/json ContentType.
+type CheckInReportingJSONRequestBody CheckInReportingJSONBody
+
+// CommentedJSONRequestBody defines body for Commented for application/json ContentType.
+type CommentedJSONRequestBody CommentedJSONBody
+
+// DeployedJSONRequestBody defines body for Deployed for application/json ContentType.
+type DeployedJSONRequestBody DeployedJSONBody
+
+// DownJSONRequestBody defines body for Down for application/json ContentType.
+type DownJSONRequestBody DownJSONBody
+
+// OccurredJSONRequestBody defines body for Occurred for application/json ContentType.
+type OccurredJSONRequestBody OccurredJSONBody
+
+// RateExceededJSONRequestBody defines body for RateExceeded for application/json ContentType.
+type RateExceededJSONRequestBody RateExceededJSONBody
+
+// ResolvedJSONRequestBody defines body for Resolved for application/json ContentType.
+type ResolvedJSONRequestBody ResolvedJSONBody
+
+// UnresolvedJSONRequestBody defines body for Unresolved for application/json ContentType.
+type UnresolvedJSONRequestBody UnresolvedJSONBody
+
+// UpJSONRequestBody defines body for Up for application/json ContentType.
+type UpJSONRequestBody UpJSONBody
+
+// VolumeSpikeJSONRequestBody defines body for VolumeSpike for application/json ContentType.
+type VolumeSpikeJSONRequestBody VolumeSpikeJSONBody
+
+// Getter for additional properties for WebhookV2BacktraceLine. Returns the specified
+// element and whether it was found
+func (a WebhookV2BacktraceLine) Get(fieldName string) (value interface{}, found bool) {
+	if a.AdditionalProperties != nil {
+		value, found = a.AdditionalProperties[fieldName]
+	}
+	return
+}
+
+// Setter for additional properties for WebhookV2BacktraceLine
+func (a *WebhookV2BacktraceLine) Set(fieldName string, value interface{}) {
+	if a.AdditionalProperties == nil {
+		a.AdditionalProperties = make(map[string]interface{})
+	}
+	a.AdditionalProperties[fieldName] = value
+}
+
+// Override default JSON handling for WebhookV2BacktraceLine to handle AdditionalProperties
+func (a *WebhookV2BacktraceLine) UnmarshalJSON(b []byte) error {
+	object := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &object)
+	if err != nil {
+		return err
+	}
+
+	if raw, found := object["application_file"]; found {
+		err = json.Unmarshal(raw, &a.ApplicationFile)
+		if err != nil {
+			return fmt.Errorf("error reading 'application_file': %w", err)
+		}
+		delete(object, "application_file")
+	}
+
+	if raw, found := object["context"]; found {
+		err = json.Unmarshal(raw, &a.Context)
+		if err != nil {
+			return fmt.Errorf("error reading 'context': %w", err)
+		}
+		delete(object, "context")
+	}
+
+	if raw, found := object["file"]; found {
+		err = json.Unmarshal(raw, &a.File)
+		if err != nil {
+			return fmt.Errorf("error reading 'file': %w", err)
+		}
+		delete(object, "file")
+	}
+
+	if raw, found := object["method"]; found {
+		err = json.Unmarshal(raw, &a.Method)
+		if err != nil {
+			return fmt.Errorf("error reading 'method': %w", err)
+		}
+		delete(object, "method")
+	}
+
+	if raw, found := object["number"]; found {
+		err = json.Unmarshal(raw, &a.Number)
+		if err != nil {
+			return fmt.Errorf("error reading 'number': %w", err)
+		}
+		delete(object, "number")
+	}
+
+	if raw, found := object["source"]; found {
+		err = json.Unmarshal(raw, &a.Source)
+		if err != nil {
+			return fmt.Errorf("error reading 'source': %w", err)
+		}
+		delete(object, "source")
+	}
+
+	if len(object) != 0 {
+		a.AdditionalProperties = make(map[string]interface{})
+		for fieldName, fieldBuf := range object {
+			var fieldVal interface{}
+			err := json.Unmarshal(fieldBuf, &fieldVal)
+			if err != nil {
+				return fmt.Errorf("error unmarshaling field %s: %w", fieldName, err)
+			}
+			a.AdditionalProperties[fieldName] = fieldVal
+		}
+	}
+	return nil
+}
+
+// Override default JSON handling for WebhookV2BacktraceLine to handle AdditionalProperties
+func (a WebhookV2BacktraceLine) MarshalJSON() ([]byte, error) {
+	var err error
+	object := make(map[string]json.RawMessage)
+
+	if a.ApplicationFile != nil {
+		object["application_file"], err = json.Marshal(a.ApplicationFile)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'application_file': %w", err)
+		}
+	}
+
+	if a.Context != nil {
+		object["context"], err = json.Marshal(a.Context)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'context': %w", err)
+		}
+	}
+
+	if a.File != nil {
+		object["file"], err = json.Marshal(a.File)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'file': %w", err)
+		}
+	}
+
+	if a.Method != nil {
+		object["method"], err = json.Marshal(a.Method)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'method': %w", err)
+		}
+	}
+
+	if a.Number != nil {
+		object["number"], err = json.Marshal(a.Number)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling 'number': %w", err)
+		}
+	}
+
+	object["source"], err = json.Marshal(a.Source)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling 'source': %w", err)
+	}
+
+	for fieldName, field := range a.AdditionalProperties {
+		object[fieldName], err = json.Marshal(field)
+		if err != nil {
+			return nil, fmt.Errorf("error marshaling '%s': %w", fieldName, err)
+		}
+	}
+	return json.Marshal(object)
+}
+
+// AsWebhookV2AlarmEvent returns the union data inside the AlarmAlertJSONBody as a WebhookV2AlarmEvent
+func (t AlarmAlertJSONBody) AsWebhookV2AlarmEvent() (WebhookV2AlarmEvent, error) {
+	var body WebhookV2AlarmEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2AlarmEvent overwrites any union data inside the AlarmAlertJSONBody as the provided WebhookV2AlarmEvent
+func (t *AlarmAlertJSONBody) FromWebhookV2AlarmEvent(v WebhookV2AlarmEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2AlarmEvent performs a merge with any union data inside the AlarmAlertJSONBody, using the provided WebhookV2AlarmEvent
+func (t *AlarmAlertJSONBody) MergeWebhookV2AlarmEvent(v WebhookV2AlarmEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3AlarmEvent returns the union data inside the AlarmAlertJSONBody as a WebhookV3AlarmEvent
+func (t AlarmAlertJSONBody) AsWebhookV3AlarmEvent() (WebhookV3AlarmEvent, error) {
+	var body WebhookV3AlarmEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3AlarmEvent overwrites any union data inside the AlarmAlertJSONBody as the provided WebhookV3AlarmEvent
+func (t *AlarmAlertJSONBody) FromWebhookV3AlarmEvent(v WebhookV3AlarmEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3AlarmEvent performs a merge with any union data inside the AlarmAlertJSONBody, using the provided WebhookV3AlarmEvent
+func (t *AlarmAlertJSONBody) MergeWebhookV3AlarmEvent(v WebhookV3AlarmEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t AlarmAlertJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AlarmAlertJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2AlarmEvent returns the union data inside the AlarmOkJSONBody as a WebhookV2AlarmEvent
+func (t AlarmOkJSONBody) AsWebhookV2AlarmEvent() (WebhookV2AlarmEvent, error) {
+	var body WebhookV2AlarmEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2AlarmEvent overwrites any union data inside the AlarmOkJSONBody as the provided WebhookV2AlarmEvent
+func (t *AlarmOkJSONBody) FromWebhookV2AlarmEvent(v WebhookV2AlarmEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2AlarmEvent performs a merge with any union data inside the AlarmOkJSONBody, using the provided WebhookV2AlarmEvent
+func (t *AlarmOkJSONBody) MergeWebhookV2AlarmEvent(v WebhookV2AlarmEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3AlarmEvent returns the union data inside the AlarmOkJSONBody as a WebhookV3AlarmEvent
+func (t AlarmOkJSONBody) AsWebhookV3AlarmEvent() (WebhookV3AlarmEvent, error) {
+	var body WebhookV3AlarmEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3AlarmEvent overwrites any union data inside the AlarmOkJSONBody as the provided WebhookV3AlarmEvent
+func (t *AlarmOkJSONBody) FromWebhookV3AlarmEvent(v WebhookV3AlarmEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3AlarmEvent performs a merge with any union data inside the AlarmOkJSONBody, using the provided WebhookV3AlarmEvent
+func (t *AlarmOkJSONBody) MergeWebhookV3AlarmEvent(v WebhookV3AlarmEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t AlarmOkJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AlarmOkJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2AssignedEvent returns the union data inside the AssignedJSONBody as a WebhookV2AssignedEvent
+func (t AssignedJSONBody) AsWebhookV2AssignedEvent() (WebhookV2AssignedEvent, error) {
+	var body WebhookV2AssignedEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2AssignedEvent overwrites any union data inside the AssignedJSONBody as the provided WebhookV2AssignedEvent
+func (t *AssignedJSONBody) FromWebhookV2AssignedEvent(v WebhookV2AssignedEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2AssignedEvent performs a merge with any union data inside the AssignedJSONBody, using the provided WebhookV2AssignedEvent
+func (t *AssignedJSONBody) MergeWebhookV2AssignedEvent(v WebhookV2AssignedEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3AssignedEvent returns the union data inside the AssignedJSONBody as a WebhookV3AssignedEvent
+func (t AssignedJSONBody) AsWebhookV3AssignedEvent() (WebhookV3AssignedEvent, error) {
+	var body WebhookV3AssignedEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3AssignedEvent overwrites any union data inside the AssignedJSONBody as the provided WebhookV3AssignedEvent
+func (t *AssignedJSONBody) FromWebhookV3AssignedEvent(v WebhookV3AssignedEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3AssignedEvent performs a merge with any union data inside the AssignedJSONBody, using the provided WebhookV3AssignedEvent
+func (t *AssignedJSONBody) MergeWebhookV3AssignedEvent(v WebhookV3AssignedEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t AssignedJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *AssignedJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2CertExpirationEvent returns the union data inside the CertWillExpireJSONBody as a WebhookV2CertExpirationEvent
+func (t CertWillExpireJSONBody) AsWebhookV2CertExpirationEvent() (WebhookV2CertExpirationEvent, error) {
+	var body WebhookV2CertExpirationEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2CertExpirationEvent overwrites any union data inside the CertWillExpireJSONBody as the provided WebhookV2CertExpirationEvent
+func (t *CertWillExpireJSONBody) FromWebhookV2CertExpirationEvent(v WebhookV2CertExpirationEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2CertExpirationEvent performs a merge with any union data inside the CertWillExpireJSONBody, using the provided WebhookV2CertExpirationEvent
+func (t *CertWillExpireJSONBody) MergeWebhookV2CertExpirationEvent(v WebhookV2CertExpirationEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3CertExpirationEvent returns the union data inside the CertWillExpireJSONBody as a WebhookV3CertExpirationEvent
+func (t CertWillExpireJSONBody) AsWebhookV3CertExpirationEvent() (WebhookV3CertExpirationEvent, error) {
+	var body WebhookV3CertExpirationEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3CertExpirationEvent overwrites any union data inside the CertWillExpireJSONBody as the provided WebhookV3CertExpirationEvent
+func (t *CertWillExpireJSONBody) FromWebhookV3CertExpirationEvent(v WebhookV3CertExpirationEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3CertExpirationEvent performs a merge with any union data inside the CertWillExpireJSONBody, using the provided WebhookV3CertExpirationEvent
+func (t *CertWillExpireJSONBody) MergeWebhookV3CertExpirationEvent(v WebhookV3CertExpirationEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CertWillExpireJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CertWillExpireJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2CheckInEvent returns the union data inside the CheckInMissingJSONBody as a WebhookV2CheckInEvent
+func (t CheckInMissingJSONBody) AsWebhookV2CheckInEvent() (WebhookV2CheckInEvent, error) {
+	var body WebhookV2CheckInEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2CheckInEvent overwrites any union data inside the CheckInMissingJSONBody as the provided WebhookV2CheckInEvent
+func (t *CheckInMissingJSONBody) FromWebhookV2CheckInEvent(v WebhookV2CheckInEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2CheckInEvent performs a merge with any union data inside the CheckInMissingJSONBody, using the provided WebhookV2CheckInEvent
+func (t *CheckInMissingJSONBody) MergeWebhookV2CheckInEvent(v WebhookV2CheckInEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3CheckInEvent returns the union data inside the CheckInMissingJSONBody as a WebhookV3CheckInEvent
+func (t CheckInMissingJSONBody) AsWebhookV3CheckInEvent() (WebhookV3CheckInEvent, error) {
+	var body WebhookV3CheckInEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3CheckInEvent overwrites any union data inside the CheckInMissingJSONBody as the provided WebhookV3CheckInEvent
+func (t *CheckInMissingJSONBody) FromWebhookV3CheckInEvent(v WebhookV3CheckInEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3CheckInEvent performs a merge with any union data inside the CheckInMissingJSONBody, using the provided WebhookV3CheckInEvent
+func (t *CheckInMissingJSONBody) MergeWebhookV3CheckInEvent(v WebhookV3CheckInEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CheckInMissingJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CheckInMissingJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2CheckInEvent returns the union data inside the CheckInReportingJSONBody as a WebhookV2CheckInEvent
+func (t CheckInReportingJSONBody) AsWebhookV2CheckInEvent() (WebhookV2CheckInEvent, error) {
+	var body WebhookV2CheckInEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2CheckInEvent overwrites any union data inside the CheckInReportingJSONBody as the provided WebhookV2CheckInEvent
+func (t *CheckInReportingJSONBody) FromWebhookV2CheckInEvent(v WebhookV2CheckInEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2CheckInEvent performs a merge with any union data inside the CheckInReportingJSONBody, using the provided WebhookV2CheckInEvent
+func (t *CheckInReportingJSONBody) MergeWebhookV2CheckInEvent(v WebhookV2CheckInEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3CheckInEvent returns the union data inside the CheckInReportingJSONBody as a WebhookV3CheckInEvent
+func (t CheckInReportingJSONBody) AsWebhookV3CheckInEvent() (WebhookV3CheckInEvent, error) {
+	var body WebhookV3CheckInEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3CheckInEvent overwrites any union data inside the CheckInReportingJSONBody as the provided WebhookV3CheckInEvent
+func (t *CheckInReportingJSONBody) FromWebhookV3CheckInEvent(v WebhookV3CheckInEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3CheckInEvent performs a merge with any union data inside the CheckInReportingJSONBody, using the provided WebhookV3CheckInEvent
+func (t *CheckInReportingJSONBody) MergeWebhookV3CheckInEvent(v WebhookV3CheckInEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CheckInReportingJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CheckInReportingJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2CommentedEvent returns the union data inside the CommentedJSONBody as a WebhookV2CommentedEvent
+func (t CommentedJSONBody) AsWebhookV2CommentedEvent() (WebhookV2CommentedEvent, error) {
+	var body WebhookV2CommentedEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2CommentedEvent overwrites any union data inside the CommentedJSONBody as the provided WebhookV2CommentedEvent
+func (t *CommentedJSONBody) FromWebhookV2CommentedEvent(v WebhookV2CommentedEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2CommentedEvent performs a merge with any union data inside the CommentedJSONBody, using the provided WebhookV2CommentedEvent
+func (t *CommentedJSONBody) MergeWebhookV2CommentedEvent(v WebhookV2CommentedEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3CommentedEvent returns the union data inside the CommentedJSONBody as a WebhookV3CommentedEvent
+func (t CommentedJSONBody) AsWebhookV3CommentedEvent() (WebhookV3CommentedEvent, error) {
+	var body WebhookV3CommentedEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3CommentedEvent overwrites any union data inside the CommentedJSONBody as the provided WebhookV3CommentedEvent
+func (t *CommentedJSONBody) FromWebhookV3CommentedEvent(v WebhookV3CommentedEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3CommentedEvent performs a merge with any union data inside the CommentedJSONBody, using the provided WebhookV3CommentedEvent
+func (t *CommentedJSONBody) MergeWebhookV3CommentedEvent(v WebhookV3CommentedEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t CommentedJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *CommentedJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2DeployedEvent returns the union data inside the DeployedJSONBody as a WebhookV2DeployedEvent
+func (t DeployedJSONBody) AsWebhookV2DeployedEvent() (WebhookV2DeployedEvent, error) {
+	var body WebhookV2DeployedEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2DeployedEvent overwrites any union data inside the DeployedJSONBody as the provided WebhookV2DeployedEvent
+func (t *DeployedJSONBody) FromWebhookV2DeployedEvent(v WebhookV2DeployedEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2DeployedEvent performs a merge with any union data inside the DeployedJSONBody, using the provided WebhookV2DeployedEvent
+func (t *DeployedJSONBody) MergeWebhookV2DeployedEvent(v WebhookV2DeployedEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3DeployedEvent returns the union data inside the DeployedJSONBody as a WebhookV3DeployedEvent
+func (t DeployedJSONBody) AsWebhookV3DeployedEvent() (WebhookV3DeployedEvent, error) {
+	var body WebhookV3DeployedEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3DeployedEvent overwrites any union data inside the DeployedJSONBody as the provided WebhookV3DeployedEvent
+func (t *DeployedJSONBody) FromWebhookV3DeployedEvent(v WebhookV3DeployedEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3DeployedEvent performs a merge with any union data inside the DeployedJSONBody, using the provided WebhookV3DeployedEvent
+func (t *DeployedJSONBody) MergeWebhookV3DeployedEvent(v WebhookV3DeployedEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t DeployedJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *DeployedJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2OutageEvent returns the union data inside the DownJSONBody as a WebhookV2OutageEvent
+func (t DownJSONBody) AsWebhookV2OutageEvent() (WebhookV2OutageEvent, error) {
+	var body WebhookV2OutageEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2OutageEvent overwrites any union data inside the DownJSONBody as the provided WebhookV2OutageEvent
+func (t *DownJSONBody) FromWebhookV2OutageEvent(v WebhookV2OutageEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2OutageEvent performs a merge with any union data inside the DownJSONBody, using the provided WebhookV2OutageEvent
+func (t *DownJSONBody) MergeWebhookV2OutageEvent(v WebhookV2OutageEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3OutageEvent returns the union data inside the DownJSONBody as a WebhookV3OutageEvent
+func (t DownJSONBody) AsWebhookV3OutageEvent() (WebhookV3OutageEvent, error) {
+	var body WebhookV3OutageEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3OutageEvent overwrites any union data inside the DownJSONBody as the provided WebhookV3OutageEvent
+func (t *DownJSONBody) FromWebhookV3OutageEvent(v WebhookV3OutageEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3OutageEvent performs a merge with any union data inside the DownJSONBody, using the provided WebhookV3OutageEvent
+func (t *DownJSONBody) MergeWebhookV3OutageEvent(v WebhookV3OutageEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t DownJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *DownJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2OccurredEvent returns the union data inside the OccurredJSONBody as a WebhookV2OccurredEvent
+func (t OccurredJSONBody) AsWebhookV2OccurredEvent() (WebhookV2OccurredEvent, error) {
+	var body WebhookV2OccurredEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2OccurredEvent overwrites any union data inside the OccurredJSONBody as the provided WebhookV2OccurredEvent
+func (t *OccurredJSONBody) FromWebhookV2OccurredEvent(v WebhookV2OccurredEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2OccurredEvent performs a merge with any union data inside the OccurredJSONBody, using the provided WebhookV2OccurredEvent
+func (t *OccurredJSONBody) MergeWebhookV2OccurredEvent(v WebhookV2OccurredEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3OccurredEvent returns the union data inside the OccurredJSONBody as a WebhookV3OccurredEvent
+func (t OccurredJSONBody) AsWebhookV3OccurredEvent() (WebhookV3OccurredEvent, error) {
+	var body WebhookV3OccurredEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3OccurredEvent overwrites any union data inside the OccurredJSONBody as the provided WebhookV3OccurredEvent
+func (t *OccurredJSONBody) FromWebhookV3OccurredEvent(v WebhookV3OccurredEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3OccurredEvent performs a merge with any union data inside the OccurredJSONBody, using the provided WebhookV3OccurredEvent
+func (t *OccurredJSONBody) MergeWebhookV3OccurredEvent(v WebhookV3OccurredEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t OccurredJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *OccurredJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2OccurredEvent returns the union data inside the RateExceededJSONBody as a WebhookV2OccurredEvent
+func (t RateExceededJSONBody) AsWebhookV2OccurredEvent() (WebhookV2OccurredEvent, error) {
+	var body WebhookV2OccurredEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2OccurredEvent overwrites any union data inside the RateExceededJSONBody as the provided WebhookV2OccurredEvent
+func (t *RateExceededJSONBody) FromWebhookV2OccurredEvent(v WebhookV2OccurredEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2OccurredEvent performs a merge with any union data inside the RateExceededJSONBody, using the provided WebhookV2OccurredEvent
+func (t *RateExceededJSONBody) MergeWebhookV2OccurredEvent(v WebhookV2OccurredEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3OccurredEvent returns the union data inside the RateExceededJSONBody as a WebhookV3OccurredEvent
+func (t RateExceededJSONBody) AsWebhookV3OccurredEvent() (WebhookV3OccurredEvent, error) {
+	var body WebhookV3OccurredEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3OccurredEvent overwrites any union data inside the RateExceededJSONBody as the provided WebhookV3OccurredEvent
+func (t *RateExceededJSONBody) FromWebhookV3OccurredEvent(v WebhookV3OccurredEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3OccurredEvent performs a merge with any union data inside the RateExceededJSONBody, using the provided WebhookV3OccurredEvent
+func (t *RateExceededJSONBody) MergeWebhookV3OccurredEvent(v WebhookV3OccurredEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t RateExceededJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *RateExceededJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2ResolutionEvent returns the union data inside the ResolvedJSONBody as a WebhookV2ResolutionEvent
+func (t ResolvedJSONBody) AsWebhookV2ResolutionEvent() (WebhookV2ResolutionEvent, error) {
+	var body WebhookV2ResolutionEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2ResolutionEvent overwrites any union data inside the ResolvedJSONBody as the provided WebhookV2ResolutionEvent
+func (t *ResolvedJSONBody) FromWebhookV2ResolutionEvent(v WebhookV2ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2ResolutionEvent performs a merge with any union data inside the ResolvedJSONBody, using the provided WebhookV2ResolutionEvent
+func (t *ResolvedJSONBody) MergeWebhookV2ResolutionEvent(v WebhookV2ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3ResolutionEvent returns the union data inside the ResolvedJSONBody as a WebhookV3ResolutionEvent
+func (t ResolvedJSONBody) AsWebhookV3ResolutionEvent() (WebhookV3ResolutionEvent, error) {
+	var body WebhookV3ResolutionEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3ResolutionEvent overwrites any union data inside the ResolvedJSONBody as the provided WebhookV3ResolutionEvent
+func (t *ResolvedJSONBody) FromWebhookV3ResolutionEvent(v WebhookV3ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3ResolutionEvent performs a merge with any union data inside the ResolvedJSONBody, using the provided WebhookV3ResolutionEvent
+func (t *ResolvedJSONBody) MergeWebhookV3ResolutionEvent(v WebhookV3ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ResolvedJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ResolvedJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2ResolutionEvent returns the union data inside the UnresolvedJSONBody as a WebhookV2ResolutionEvent
+func (t UnresolvedJSONBody) AsWebhookV2ResolutionEvent() (WebhookV2ResolutionEvent, error) {
+	var body WebhookV2ResolutionEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2ResolutionEvent overwrites any union data inside the UnresolvedJSONBody as the provided WebhookV2ResolutionEvent
+func (t *UnresolvedJSONBody) FromWebhookV2ResolutionEvent(v WebhookV2ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2ResolutionEvent performs a merge with any union data inside the UnresolvedJSONBody, using the provided WebhookV2ResolutionEvent
+func (t *UnresolvedJSONBody) MergeWebhookV2ResolutionEvent(v WebhookV2ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3ResolutionEvent returns the union data inside the UnresolvedJSONBody as a WebhookV3ResolutionEvent
+func (t UnresolvedJSONBody) AsWebhookV3ResolutionEvent() (WebhookV3ResolutionEvent, error) {
+	var body WebhookV3ResolutionEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3ResolutionEvent overwrites any union data inside the UnresolvedJSONBody as the provided WebhookV3ResolutionEvent
+func (t *UnresolvedJSONBody) FromWebhookV3ResolutionEvent(v WebhookV3ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3ResolutionEvent performs a merge with any union data inside the UnresolvedJSONBody, using the provided WebhookV3ResolutionEvent
+func (t *UnresolvedJSONBody) MergeWebhookV3ResolutionEvent(v WebhookV3ResolutionEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t UnresolvedJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *UnresolvedJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2OutageEvent returns the union data inside the UpJSONBody as a WebhookV2OutageEvent
+func (t UpJSONBody) AsWebhookV2OutageEvent() (WebhookV2OutageEvent, error) {
+	var body WebhookV2OutageEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2OutageEvent overwrites any union data inside the UpJSONBody as the provided WebhookV2OutageEvent
+func (t *UpJSONBody) FromWebhookV2OutageEvent(v WebhookV2OutageEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2OutageEvent performs a merge with any union data inside the UpJSONBody, using the provided WebhookV2OutageEvent
+func (t *UpJSONBody) MergeWebhookV2OutageEvent(v WebhookV2OutageEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3OutageEvent returns the union data inside the UpJSONBody as a WebhookV3OutageEvent
+func (t UpJSONBody) AsWebhookV3OutageEvent() (WebhookV3OutageEvent, error) {
+	var body WebhookV3OutageEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3OutageEvent overwrites any union data inside the UpJSONBody as the provided WebhookV3OutageEvent
+func (t *UpJSONBody) FromWebhookV3OutageEvent(v WebhookV3OutageEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3OutageEvent performs a merge with any union data inside the UpJSONBody, using the provided WebhookV3OutageEvent
+func (t *UpJSONBody) MergeWebhookV3OutageEvent(v WebhookV3OutageEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t UpJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *UpJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsWebhookV2VolumeSpikeEvent returns the union data inside the VolumeSpikeJSONBody as a WebhookV2VolumeSpikeEvent
+func (t VolumeSpikeJSONBody) AsWebhookV2VolumeSpikeEvent() (WebhookV2VolumeSpikeEvent, error) {
+	var body WebhookV2VolumeSpikeEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV2VolumeSpikeEvent overwrites any union data inside the VolumeSpikeJSONBody as the provided WebhookV2VolumeSpikeEvent
+func (t *VolumeSpikeJSONBody) FromWebhookV2VolumeSpikeEvent(v WebhookV2VolumeSpikeEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV2VolumeSpikeEvent performs a merge with any union data inside the VolumeSpikeJSONBody, using the provided WebhookV2VolumeSpikeEvent
+func (t *VolumeSpikeJSONBody) MergeWebhookV2VolumeSpikeEvent(v WebhookV2VolumeSpikeEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsWebhookV3VolumeSpikeEvent returns the union data inside the VolumeSpikeJSONBody as a WebhookV3VolumeSpikeEvent
+func (t VolumeSpikeJSONBody) AsWebhookV3VolumeSpikeEvent() (WebhookV3VolumeSpikeEvent, error) {
+	var body WebhookV3VolumeSpikeEvent
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromWebhookV3VolumeSpikeEvent overwrites any union data inside the VolumeSpikeJSONBody as the provided WebhookV3VolumeSpikeEvent
+func (t *VolumeSpikeJSONBody) FromWebhookV3VolumeSpikeEvent(v WebhookV3VolumeSpikeEvent) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeWebhookV3VolumeSpikeEvent performs a merge with any union data inside the VolumeSpikeJSONBody, using the provided WebhookV3VolumeSpikeEvent
+func (t *VolumeSpikeJSONBody) MergeWebhookV3VolumeSpikeEvent(v WebhookV3VolumeSpikeEvent) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t VolumeSpikeJSONBody) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *VolumeSpikeJSONBody) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -6286,7 +9895,7 @@ type ClientInterface interface {
 
 	// GetAccount Get the account
 	//
-	// Returns the account this API token belongs to. There is no id in the path: a token is bound to exactly one account, and every other v3 path is scoped to that same account.
+	// Returns the account the token belongs to.
 	//
 	// Corresponds with GET /account (the `GetAccount` operationId).
 	GetAccount(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6396,21 +10005,21 @@ type ClientInterface interface {
 
 	// GetNotice Get a notice
 	//
-	// Returns a single notice by its token UUID, without needing to know which project or fault it belongs to. Notice ids are lowercase v4 UUIDs.
+	// Returns a notice by its ID, without its project or fault in the path.
 	//
 	// Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 	GetNotice(ctx context.Context, uuid openapi_types.UUID, params *GetNoticeParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetOpenapiJson Get this API's OpenAPI document as JSON
+	// GetOpenapiJson Get the OpenAPI spec (JSON)
 	//
-	// Returns this OpenAPI document, built from the running release, so it describes exactly what the server accepts. Requires no scope. Send the `ETag` back as `If-None-Match` to skip an unchanged download.
+	// Returns the OpenAPI spec for this API. It needs no scope. Send the `ETag` back as `If-None-Match` to skip downloading an unchanged spec.
 	//
 	// Corresponds with GET /openapi.json (the `GetOpenapiJson` operationId).
 	GetOpenapiJson(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetOpenapiYaml Get this API's OpenAPI document as YAML
+	// GetOpenapiYaml Get the OpenAPI spec (YAML)
 	//
-	// The same document as `/openapi.json`, as YAML.
+	// Returns the same spec as `/openapi.json`, in YAML.
 	//
 	// Corresponds with GET /openapi.yaml (the `GetOpenapiYaml` operationId).
 	GetOpenapiYaml(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6440,13 +10049,9 @@ type ClientInterface interface {
 	// Corresponds with POST /projects (the `CreateProject` operationId).
 	CreateProject(ctx context.Context, body CreateProjectJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListAccountOccurrences Get bucketed notice counts for every project on the account
+	// ListAccountOccurrences Get occurrence counts for all projects
 	//
-	// The same series as the per-project form, one per project the caller can read, ordered by project name.
-	//
-	// v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
-	//
-	// Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+	// Returns the same counts as Get a project's occurrence counts, for every project the token can read, ordered by project name.
 	//
 	// Corresponds with GET /projects/occurrences (the `ListAccountOccurrences` operationId).
 	ListAccountOccurrences(ctx context.Context, params *ListAccountOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6486,8 +10091,6 @@ type ClientInterface interface {
 	// ListAlarms List alarms
 	//
 	// Returns every alarm on the project.
-	//
-	// Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
 	//
 	// Corresponds with GET /projects/{project_id}/alarms (the `ListAlarms` operationId).
 	ListAlarms(ctx context.Context, projectId ProjectId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6544,9 +10147,7 @@ type ClientInterface interface {
 
 	// ListAlarmHistory List alarm trigger history
 	//
-	// Returns the trigger history for an alarm.
-	//
-	// Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
+	// Returns an alarm's trigger history, newest first, 25 per page.
 	//
 	// Corresponds with GET /projects/{project_id}/alarms/{alarm_id}/history (the `ListAlarmHistory` operationId).
 	ListAlarmHistory(ctx context.Context, projectId ProjectId, alarmId string, params *ListAlarmHistoryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6578,9 +10179,9 @@ type ClientInterface interface {
 
 	// ReplaceCheckInsWithBody Replace the project's check-ins
 	//
-	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+	// Replaces the project's check-ins with the ones supplied. Each is matched to an existing check-in by `slug`: a matching check-in is updated, a new slug creates one, and any existing check-in that isn't supplied is deleted. The response lists what happened to each slug.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
+	// If any create, update or delete fails, nothing changes, and `error.details` has an entry for each failed slug (field `check_ins.<slug>`). A cron entry needs cron on the plan.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6589,9 +10190,9 @@ type ClientInterface interface {
 
 	// ReplaceCheckIns Replace the project's check-ins
 	//
-	// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+	// Replaces the project's check-ins with the ones supplied. Each is matched to an existing check-in by `slug`: a matching check-in is updated, a new slug creates one, and any existing check-in that isn't supplied is deleted. The response lists what happened to each slug.
 	//
-	// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
+	// If any create, update or delete fails, nothing changes, and `error.details` has an entry for each failed slug (field `check_ins.<slug>`). A cron entry needs cron on the plan.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6614,7 +10215,7 @@ type ClientInterface interface {
 
 	// UpdateCheckInWithBody Update a check-in
 	//
-	// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
+	// Updates a check-in's settings. Switching to a cron schedule needs cron on the plan.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6623,7 +10224,7 @@ type ClientInterface interface {
 
 	// UpdateCheckIn Update a check-in
 	//
-	// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
+	// Updates a check-in's settings. Switching to a cron schedule needs cron on the plan.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6632,9 +10233,9 @@ type ClientInterface interface {
 
 	// ListCheckInEvents List check-in events
 	//
-	// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
+	// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message`, and the `_original_size` in bytes.
 	//
-	// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are paged on a timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
+	// The first page is always the newest events; follow `links.older` for earlier ones. `links.newer` is always null and `has_newer` always false.
 	//
 	// Corresponds with GET /projects/{project_id}/check_ins/{check_in_id}/events (the `ListCheckInEvents` operationId).
 	ListCheckInEvents(ctx context.Context, projectId ProjectId, checkInId string, params *ListCheckInEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6666,7 +10267,7 @@ type ClientInterface interface {
 
 	// DeleteDashboard Delete a dashboard
 	//
-	// Deletes an Insights dashboard, the project's default one (`is_default`) included. A project has no default dashboard until someone first opens Insights in the web UI, which creates one, and does again after it's deleted.
+	// Deletes an Insights dashboard, including the project's default one (`is_default`). Opening Insights in the web UI creates a new default dashboard when the project has none.
 	//
 	// Corresponds with DELETE /projects/{project_id}/dashboards/{dashboard_id} (the `DeleteDashboard` operationId).
 	DeleteDashboard(ctx context.Context, projectId ProjectId, dashboardId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6680,9 +10281,7 @@ type ClientInterface interface {
 
 	// UpdateDashboardWithBody Update a dashboard
 	//
-	// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
-	//
-	// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
+	// Updates an Insights dashboard. Fields left out keep their values. `widgets` replaces the whole list, so send every widget you want to keep; a widget sent without its `id` gets a new one.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6691,9 +10290,7 @@ type ClientInterface interface {
 
 	// UpdateDashboard Update a dashboard
 	//
-	// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
-	//
-	// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
+	// Updates an Insights dashboard. Fields left out keep their values. `widgets` replaces the whole list, so send every widget you want to keep; a widget sent without its `id` gets a new one.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6748,7 +10345,7 @@ type ClientInterface interface {
 
 	// BulkDeleteEnvironmentsWithBody Bulk delete environments
 	//
-	// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+	// Deletes several environments at once. An empty `environment_ids` deletes nothing. If any ID isn't one of the project's environments, nothing is deleted.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6757,7 +10354,7 @@ type ClientInterface interface {
 
 	// BulkDeleteEnvironments Bulk delete environments
 	//
-	// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+	// Deletes several environments at once. An empty `environment_ids` deletes nothing. If any ID isn't one of the project's environments, nothing is deleted.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6766,7 +10363,7 @@ type ClientInterface interface {
 
 	// BulkUpdateEnvironmentsWithBody Bulk update environments
 	//
-	// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+	// Updates notifications for several environments at once. An empty `environment_ids` changes nothing. If any ID isn't one of the project's environments, nothing changes.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6775,7 +10372,7 @@ type ClientInterface interface {
 
 	// BulkUpdateEnvironments Bulk update environments
 	//
-	// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+	// Updates notifications for several environments at once. An empty `environment_ids` changes nothing. If any ID isn't one of the project's environments, nothing changes.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6823,7 +10420,7 @@ type ClientInterface interface {
 
 	// IgnoreFaultsWithBody Ignore faults
 	//
-	// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, narrow them with a filter, or pass all=true. A body naming none of these is refused.
+	// Marks faults as ignored, which stops data collection for them. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to ignore every fault in the project. The request must include one of these.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6832,7 +10429,7 @@ type ClientInterface interface {
 
 	// IgnoreFaults Ignore faults
 	//
-	// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, narrow them with a filter, or pass all=true. A body naming none of these is refused.
+	// Marks faults as ignored, which stops data collection for them. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to ignore every fault in the project. The request must include one of these.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6841,7 +10438,7 @@ type ClientInterface interface {
 
 	// ResolveFaultsWithBody Resolve faults
 	//
-	// Marks faults as resolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to resolve every fault in the project. A body naming none of these is refused.
+	// Marks faults as resolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to resolve every fault in the project. The request must include one of these.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6850,25 +10447,23 @@ type ClientInterface interface {
 
 	// ResolveFaults Resolve faults
 	//
-	// Marks faults as resolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to resolve every fault in the project. A body naming none of these is refused.
+	// Marks faults as resolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to resolve every fault in the project. The request must include one of these.
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with POST /projects/{project_id}/faults/resolve (the `ResolveFaults` operationId).
 	ResolveFaults(ctx context.Context, projectId ProjectId, body ResolveFaultsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetFaultSummary Get fault counts by environment and state
+	// GetFaultSummary Get fault counts
 	//
-	// Project-wide fault counts, grouped by environment and by resolved/ignored state.
-	//
-	// Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+	// Returns the project's fault counts, grouped by environment and by resolved or ignored state. It takes the same `q` and time parameters as List faults, and counts the same faults.
 	//
 	// Corresponds with GET /projects/{project_id}/faults/summary (the `GetFaultSummary` operationId).
 	GetFaultSummary(ctx context.Context, projectId ProjectId, params *GetFaultSummaryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UnignoreFaultsWithBody Unignore faults
 	//
-	// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
+	// Marks faults as no longer ignored. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unignore every fault in the project. The request must include one of these.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6877,7 +10472,7 @@ type ClientInterface interface {
 
 	// UnignoreFaults Unignore faults
 	//
-	// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
+	// Marks faults as no longer ignored. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unignore every fault in the project. The request must include one of these.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6886,7 +10481,7 @@ type ClientInterface interface {
 
 	// UnresolveFaultsWithBody Unresolve faults
 	//
-	// Marks faults as unresolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to unresolve every fault in the project. A body naming none of these is refused.
+	// Marks faults as unresolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unresolve every fault in the project. The request must include one of these.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6895,7 +10490,7 @@ type ClientInterface interface {
 
 	// UnresolveFaults Unresolve faults
 	//
-	// Marks faults as unresolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to unresolve every fault in the project. A body naming none of these is refused.
+	// Marks faults as unresolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unresolve every fault in the project. The request must include one of these.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -6904,7 +10499,7 @@ type ClientInterface interface {
 
 	// DeleteFault Delete a fault
 	//
-	// Permanently deletes a fault. Synchronous. Its notices aren't purged; they stay retrievable by id until retention expires them.
+	// Permanently deletes a fault. Its notices aren't deleted; they stay retrievable by ID until retention removes them.
 	//
 	// Corresponds with DELETE /projects/{project_id}/faults/{fault_id} (the `DeleteFault` operationId).
 	DeleteFault(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -6934,9 +10529,9 @@ type ClientInterface interface {
 	// Corresponds with PATCH /projects/{project_id}/faults/{fault_id} (the `UpdateFault` operationId).
 	UpdateFault(ctx context.Context, projectId ProjectId, faultId FaultId, body UpdateFaultJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListFaultAffectedUsers Get affected users
+	// ListFaultAffectedUsers List affected users
 	//
-	// Returns the 500 affected users with the most notices, counting only notices that match `q` when it's given. Not paginated.
+	// Returns the 500 users a fault affected most, ranked by notice count. With `q`, only matching notices count.
 	//
 	// Corresponds with GET /projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
 	ListFaultAffectedUsers(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7025,9 +10620,9 @@ type ClientInterface interface {
 
 	// MergeFaultsWithBody Merge a fault into another
 	//
-	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+	// Merges the fault in the path into the fault named by `target_fault_id`. Its notices, comments, tickets, notification opt-outs, Actions runs and merge history move to the target, and its tags, assignee and resolved or ignored state are dropped.
 	//
-	// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
+	// The merge runs in the background, so the response is 202. Until it finishes, the merged fault can still be read and written; once it's done, a GET on it redirects (301) to the target. The redirect lasts about as long as the project's retention, and then the old ID returns 404.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7036,9 +10631,9 @@ type ClientInterface interface {
 
 	// MergeFaults Merge a fault into another
 	//
-	// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+	// Merges the fault in the path into the fault named by `target_fault_id`. Its notices, comments, tickets, notification opt-outs, Actions runs and merge history move to the target, and its tags, assignee and resolved or ignored state are dropped.
 	//
-	// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
+	// The merge runs in the background, so the response is 202. Until it finishes, the merged fault can still be read and written; once it's done, a GET on it redirects (301) to the target. The redirect lasts about as long as the project's retention, and then the old ID returns 404.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7052,20 +10647,18 @@ type ClientInterface interface {
 	// Corresponds with GET /projects/{project_id}/faults/{fault_id}/notices (the `ListNotices` operationId).
 	ListNotices(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListNoticesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListFaultOccurrences Get fault occurrence timeline
+	// ListFaultOccurrences Get a fault's occurrence counts
 	//
-	// Occurrence counts for a fault, bucketed over an explicit window.
+	// Returns a fault's occurrence counts over a window, set with `occurred_after` and `occurred_before`. With neither, the window is the last hour; with only `occurred_before`, the hour before it; with only `occurred_after`, from then until now. A start older than the project's retention is moved up to it.
 	//
-	// The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour; `occurred_before` alone gives the hour before it; `occurred_after` alone runs to now. The start is clamped to retention. Bucket resolution is derived from the window's length, not chosen by the caller.
-	//
-	// `meta.window` reports the window actually served, which is narrower than the one requested when retention clamped the start, and `meta.interval_seconds` gives the spacing between the timestamps in `data`. Buckets are zero-filled, so every interval in the window is present.
+	// The bucket size depends on the window's length. `meta.window` gives the window served and `meta.interval_seconds` the bucket size. Every interval is included, with 0 where there were no occurrences.
 	//
 	// Corresponds with GET /projects/{project_id}/faults/{fault_id}/occurrences (the `ListFaultOccurrences` operationId).
 	ListFaultOccurrences(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PauseFaultRecordingWithBody Pause fault recording
 	//
-	// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
+	// Stops recording a fault's notices for a given duration; notices during the pause are discarded. Pausing again replaces the end time. The first occurrence after the pause notifies as usual.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7074,7 +10667,7 @@ type ClientInterface interface {
 
 	// PauseFaultRecording Pause fault recording
 	//
-	// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
+	// Stops recording a fault's notices for a given duration; notices during the pause are discarded. Pausing again replaces the end time. The first occurrence after the pause notifies as usual.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7083,21 +10676,21 @@ type ClientInterface interface {
 
 	// ResumeFaultRecording Resume fault recording
 	//
-	// Resumes recording of new notices for a fault. On a fault that isn't paused, it's a 200 with no change.
+	// Resumes recording a fault's notices. A fault that isn't paused is left as it is.
 	//
 	// Corresponds with POST /projects/{project_id}/faults/{fault_id}/resume_recording (the `ResumeFaultRecording` operationId).
 	ResumeFaultRecording(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UnsnoozeFault Unsnooze a fault
 	//
-	// Removes snooze from a fault.
+	// Removes a fault's snooze.
 	//
 	// Corresponds with DELETE /projects/{project_id}/faults/{fault_id}/snooze (the `UnsnoozeFault` operationId).
 	UnsnoozeFault(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// SnoozeFaultWithBody Snooze a fault
 	//
-	// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
+	// Snoozes a fault's notifications for a `time` duration or a `count` of occurrences, replacing any existing snooze. While it's snoozed, recurrences and rate escalations don't notify, but a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. The web UI calls this "pause"; it's unrelated to Pause fault recording.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7106,7 +10699,7 @@ type ClientInterface interface {
 
 	// SnoozeFault Snooze a fault
 	//
-	// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
+	// Snoozes a fault's notifications for a `time` duration or a `count` of occurrences, replacing any existing snooze. While it's snoozed, recurrences and rate escalations don't notify, but a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. The web UI calls this "pause"; it's unrelated to Pause fault recording.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7122,7 +10715,7 @@ type ClientInterface interface {
 
 	// CreateIngestionKeyWithBody Create an ingestion key
 	//
-	// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+	// Creates an ingestion key for the project.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7131,7 +10724,7 @@ type ClientInterface interface {
 
 	// CreateIngestionKey Create an ingestion key
 	//
-	// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+	// Creates an ingestion key for the project.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7140,7 +10733,7 @@ type ClientInterface interface {
 
 	// DeleteIngestionKey Delete an ingestion key
 	//
-	// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 422 `validation_error`.
+	// Deletes an ingestion key. A project's last key can't be deleted.
 	//
 	// Corresponds with DELETE /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `DeleteIngestionKey` operationId).
 	DeleteIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7154,7 +10747,7 @@ type ClientInterface interface {
 
 	// UpdateIngestionKeyWithBody Update an ingestion key
 	//
-	// Updates a key's label. The key value itself cannot be changed.
+	// Updates a key's label. The key itself can't be changed.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7163,7 +10756,7 @@ type ClientInterface interface {
 
 	// UpdateIngestionKey Update an ingestion key
 	//
-	// Updates a key's label. The key value itself cannot be changed.
+	// Updates a key's label. The key itself can't be changed.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7172,11 +10765,9 @@ type ClientInterface interface {
 
 	// RunInsightsQueryWithBody Run an Insights query
 	//
-	// Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
+	// Runs a BadgerQL query against the project's event streams and returns the result. It's a POST, but it changes nothing.
 	//
-	// Selecting streams is part of the request, not the query: pass `stream_ids`, or omit it to search every stream on the project. An event class that lives on an unselected stream returns no rows, which looks exactly like the events not existing — so list the project's streams first. Unlike v2, an id that does not belong to the project is rejected rather than silently dropped, so a partial result can never be mistaken for a complete one.
-	//
-	// See the BadgerQL reference for the query language.
+	// Pass `stream_ids` to choose streams, or leave it out to search them all. Events on a stream that isn't selected return no rows. See [BadgerQL](https://docs.honeybadger.io/guides/insights/badgerql/) for the query language.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7185,11 +10776,9 @@ type ClientInterface interface {
 
 	// RunInsightsQuery Run an Insights query
 	//
-	// Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
+	// Runs a BadgerQL query against the project's event streams and returns the result. It's a POST, but it changes nothing.
 	//
-	// Selecting streams is part of the request, not the query: pass `stream_ids`, or omit it to search every stream on the project. An event class that lives on an unselected stream returns no rows, which looks exactly like the events not existing — so list the project's streams first. Unlike v2, an id that does not belong to the project is rejected rather than silently dropped, so a partial result can never be mistaken for a complete one.
-	//
-	// See the BadgerQL reference for the query language.
+	// Pass `stream_ids` to choose streams, or leave it out to search them all. Events on a stream that isn't selected return no rows. See [BadgerQL](https://docs.honeybadger.io/guides/insights/badgerql/) for the query language.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7205,7 +10794,7 @@ type ClientInterface interface {
 
 	// CreateIntegrationWithBody Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
+	// Creates a notification integration. `type` picks the integration, and `config` holds its settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). An OAuth integration (Slack, GitHub, Linear and the like) sends nothing until someone connects it in the web UI at its `links.web`.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7214,7 +10803,7 @@ type ClientInterface interface {
 
 	// CreateIntegration Create an integration
 	//
-	// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
+	// Creates a notification integration. `type` picks the integration, and `config` holds its settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). An OAuth integration (Slack, GitHub, Linear and the like) sends nothing until someone connects it in the web UI at its `links.web`.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7223,7 +10812,7 @@ type ClientInterface interface {
 
 	// DeleteIntegration Delete an integration
 	//
-	// Permanently deletes a notification integration, including all associated tickets and configurations. Works on all integration types, including OAuth integrations.
+	// Permanently deletes an integration. Faults lose their links to the issues it created (`tickets`); the issues themselves stay in the issue tracker.
 	//
 	// Corresponds with DELETE /projects/{project_id}/integrations/{integration_id} (the `DeleteIntegration` operationId).
 	DeleteIntegration(ctx context.Context, projectId ProjectId, integrationId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7237,7 +10826,7 @@ type ClientInterface interface {
 
 	// UpdateIntegrationWithBody Update an integration
 	//
-	// Updates a notification integration's settings.
+	// Updates an integration's settings. A successful update also clears `error`, so an active integration starts delivering again.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7246,18 +10835,16 @@ type ClientInterface interface {
 
 	// UpdateIntegration Update an integration
 	//
-	// Updates a notification integration's settings.
+	// Updates an integration's settings. A successful update also clears `error`, so an active integration starts delivering again.
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PATCH /projects/{project_id}/integrations/{integration_id} (the `UpdateIntegration` operationId).
 	UpdateIntegration(ctx context.Context, projectId ProjectId, integrationId string, body UpdateIntegrationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetProjectOccurrences Get bucketed notice counts for a project
+	// GetProjectOccurrences Get a project's occurrence counts
 	//
-	// Notice counts over a fixed window, bucketed by interval.
-	//
-	// The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+	// Returns the project's notice counts over `period`, one count per interval. Intervals with no notices are included with a count of 0.
 	//
 	// Corresponds with GET /projects/{project_id}/occurrences (the `GetProjectOccurrences` operationId).
 	GetProjectOccurrences(ctx context.Context, projectId ProjectId, params *GetProjectOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7271,7 +10858,7 @@ type ClientInterface interface {
 
 	// CreateSiteWithBody Create a site
 	//
-	// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
+	// Creates an uptime monitoring site. Requires uptime monitoring on the plan.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7280,7 +10867,7 @@ type ClientInterface interface {
 
 	// CreateSite Create a site
 	//
-	// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
+	// Creates an uptime monitoring site. Requires uptime monitoring on the plan.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7342,11 +10929,7 @@ type ClientInterface interface {
 
 	// ListStreams List event streams
 	//
-	// Returns the project's Insights event streams. A project is provisioned with a `default` stream carrying events your applications send and an `internal` stream carrying events Honeybadger generates about the project — errors, deploys, uptime checks and check-ins.
-	//
-	// Provisioning is asynchronous, so a just-created project may return an empty or partial list for a short time. Retry before concluding that a stream is missing.
-	//
-	// Listing streams is a prerequisite for querying: a query against an unselected stream returns nothing, which is indistinguishable from the events not existing.
+	// Returns the project's Insights event streams: `default`, for events your applications send, and `internal`, for events Honeybadger records about the project (errors, deploys, uptime checks and check-ins). A new project's streams can take a moment to appear.
 	//
 	// Corresponds with GET /projects/{project_id}/streams (the `ListStreams` operationId).
 	ListStreams(ctx context.Context, projectId ProjectId, params *ListStreamsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7360,7 +10943,7 @@ type ClientInterface interface {
 
 	// CreateStatusPageWithBody Create a status page
 	//
-	// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
+	// Creates a status page.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7369,7 +10952,7 @@ type ClientInterface interface {
 
 	// CreateStatusPage Create a status page
 	//
-	// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
+	// Creates a status page.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7417,7 +11000,7 @@ type ClientInterface interface {
 
 	// CreateStatusPageIncidentWithBody Create an incident
 	//
-	// Creates a new incident on a status page. An incident is a container for a thread of updates and needs at least one: its prose, status and severity all come from the updates.
+	// Creates an incident on a status page. An incident needs at least one update, and its prose, status and severity come from its updates.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7426,7 +11009,7 @@ type ClientInterface interface {
 
 	// CreateStatusPageIncident Create an incident
 	//
-	// Creates a new incident on a status page. An incident is a container for a thread of updates and needs at least one: its prose, status and severity all come from the updates.
+	// Creates an incident on a status page. An incident needs at least one update, and its prose, status and severity come from its updates.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7449,7 +11032,7 @@ type ClientInterface interface {
 
 	// UpdateStatusPageIncidentWithBody Update an incident
 	//
-	// Updates an incident's details. current_status, current_severity and closed_at are derived from the incident's updates and cannot be written here; post or edit an update instead. build_type is fixed at creation.
+	// Updates an incident's details. Its status, severity and `closed_at` come from its updates, so change those by posting or editing an update. `build_type` can't be changed.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7458,7 +11041,7 @@ type ClientInterface interface {
 
 	// UpdateStatusPageIncident Update an incident
 	//
-	// Updates an incident's details. current_status, current_severity and closed_at are derived from the incident's updates and cannot be written here; post or edit an update instead. build_type is fixed at creation.
+	// Updates an incident's details. Its status, severity and `closed_at` come from its updates, so change those by posting or editing an update. `build_type` can't be changed.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7492,7 +11075,7 @@ type ClientInterface interface {
 
 	// DeleteIncidentUpdate Delete an incident update
 	//
-	// Deletes an incident update. An incident must keep at least one update, so deleting its only update returns 422.
+	// Deletes an incident update. An incident must keep at least one update, so its only update can't be deleted.
 	//
 	// Corresponds with DELETE /status_pages/{status_page_id}/incidents/{incident_id}/updates/{update_id} (the `DeleteIncidentUpdate` operationId).
 	DeleteIncidentUpdate(ctx context.Context, statusPageId string, incidentId string, updateId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7506,7 +11089,7 @@ type ClientInterface interface {
 
 	// UpdateIncidentUpdateWithBody Update an incident update
 	//
-	// Modifies an existing incident update.
+	// Updates an incident update.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -7515,7 +11098,7 @@ type ClientInterface interface {
 
 	// UpdateIncidentUpdate Update an incident update
 	//
-	// Modifies an existing incident update.
+	// Updates an incident update.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7675,11 +11258,11 @@ type ClientInterface interface {
 	// Corresponds with PATCH /teams/{team_id}/members/{member_id} (the `UpdateTeamMember` operationId).
 	UpdateTeamMember(ctx context.Context, teamId string, memberId string, body UpdateTeamMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetToken Describe the current credential
+	// GetToken Get the current token
 	//
-	// Reports what the credential making the request is and what it can reach.
-	// Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
-	// `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+	// Returns the credential making the request and what it can reach. It needs no scope.
+	//
+	// `project_ids` lists the projects the token can reach now; a user token loses a project as soon as its owner does.
 	//
 	// Corresponds with GET /token (the `GetToken` operationId).
 	GetToken(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -7687,7 +11270,7 @@ type ClientInterface interface {
 
 // GetAccount Get the account
 //
-// Returns the account this API token belongs to. There is no id in the path: a token is bound to exactly one account, and every other v3 path is scoped to that same account.
+// Returns the account the token belongs to.
 //
 // Corresponds with GET /account (the `GetAccount` operationId).
 func (c *Client) GetAccount(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7937,7 +11520,7 @@ func (c *Client) GetAccountUsage(ctx context.Context, reqEditors ...RequestEdito
 
 // GetNotice Get a notice
 //
-// Returns a single notice by its token UUID, without needing to know which project or fault it belongs to. Notice ids are lowercase v4 UUIDs.
+// Returns a notice by its ID, without its project or fault in the path.
 //
 // Corresponds with GET /notices/{uuid} (the `GetNotice` operationId).
 func (c *Client) GetNotice(ctx context.Context, uuid openapi_types.UUID, params *GetNoticeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7952,9 +11535,9 @@ func (c *Client) GetNotice(ctx context.Context, uuid openapi_types.UUID, params 
 	return c.Client.Do(req)
 }
 
-// GetOpenapiJson Get this API's OpenAPI document as JSON
+// GetOpenapiJson Get the OpenAPI spec (JSON)
 //
-// Returns this OpenAPI document, built from the running release, so it describes exactly what the server accepts. Requires no scope. Send the `ETag` back as `If-None-Match` to skip an unchanged download.
+// Returns the OpenAPI spec for this API. It needs no scope. Send the `ETag` back as `If-None-Match` to skip downloading an unchanged spec.
 //
 // Corresponds with GET /openapi.json (the `GetOpenapiJson` operationId).
 func (c *Client) GetOpenapiJson(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -7969,9 +11552,9 @@ func (c *Client) GetOpenapiJson(ctx context.Context, reqEditors ...RequestEditor
 	return c.Client.Do(req)
 }
 
-// GetOpenapiYaml Get this API's OpenAPI document as YAML
+// GetOpenapiYaml Get the OpenAPI spec (YAML)
 //
-// The same document as `/openapi.json`, as YAML.
+// Returns the same spec as `/openapi.json`, in YAML.
 //
 // Corresponds with GET /openapi.yaml (the `GetOpenapiYaml` operationId).
 func (c *Client) GetOpenapiYaml(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8041,13 +11624,9 @@ func (c *Client) CreateProject(ctx context.Context, body CreateProjectJSONReques
 	return c.Client.Do(req)
 }
 
-// ListAccountOccurrences Get bucketed notice counts for every project on the account
+// ListAccountOccurrences Get occurrence counts for all projects
 //
-// The same series as the per-project form, one per project the caller can read, ordered by project name.
-//
-// v2's equivalent spanned every project the user could see across all of their accounts. There is no v3 shape for that, because every v3 path is account-scoped — call this once per account instead.
-//
-// Paginated, unlike v2's, because every project in the page costs its own rollup query and its own bucket array. Accounts have no project limit, so an unpaginated form would let one request run an unbounded number of queries.
+// Returns the same counts as Get a project's occurrence counts, for every project the token can read, ordered by project name.
 //
 // Corresponds with GET /projects/occurrences (the `ListAccountOccurrences` operationId).
 func (c *Client) ListAccountOccurrences(ctx context.Context, params *ListAccountOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8137,8 +11716,6 @@ func (c *Client) UpdateProject(ctx context.Context, projectId ProjectId, body Up
 // ListAlarms List alarms
 //
 // Returns every alarm on the project.
-//
-// Unlike other v3 collections this one is not paginated: alarms are fetched from the Insights backend as a whole set, so there is no `pagination` or `links` object and `page`/`per_page` are not accepted.
 //
 // Corresponds with GET /projects/{project_id}/alarms (the `ListAlarms` operationId).
 func (c *Client) ListAlarms(ctx context.Context, projectId ProjectId, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8265,9 +11842,7 @@ func (c *Client) UpdateAlarm(ctx context.Context, projectId ProjectId, alarmId s
 
 // ListAlarmHistory List alarm trigger history
 //
-// Returns the trigger history for an alarm.
-//
-// Newest first, 25 per page; `per_page` is ignored. A page past the end returns an empty `data`.
+// Returns an alarm's trigger history, newest first, 25 per page.
 //
 // Corresponds with GET /projects/{project_id}/alarms/{alarm_id}/history (the `ListAlarmHistory` operationId).
 func (c *Client) ListAlarmHistory(ctx context.Context, projectId ProjectId, alarmId string, params *ListAlarmHistoryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8339,9 +11914,9 @@ func (c *Client) CreateCheckIn(ctx context.Context, projectId ProjectId, body Cr
 
 // ReplaceCheckInsWithBody Replace the project's check-ins
 //
-// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+// Replaces the project's check-ins with the ones supplied. Each is matched to an existing check-in by `slug`: a matching check-in is updated, a new slug creates one, and any existing check-in that isn't supplied is deleted. The response lists what happened to each slug.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
+// If any create, update or delete fails, nothing changes, and `error.details` has an entry for each failed slug (field `check_ins.<slug>`). A cron entry needs cron on the plan.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8360,9 +11935,9 @@ func (c *Client) ReplaceCheckInsWithBody(ctx context.Context, projectId ProjectI
 
 // ReplaceCheckIns Replace the project's check-ins
 //
-// Sets the project's check-ins to exactly what the payload lists. Entries are matched to existing check-ins by slug: a match is updated, a new slug is created, and any check-in the payload does not name is DELETED. The response reports the operation performed for each slug, including the deletions.
+// Replaces the project's check-ins with the ones supplied. Each is matched to an existing check-in by `slug`: a matching check-in is updated, a new slug creates one, and any existing check-in that isn't supplied is deleted. The response lists what happened to each slug.
 //
-// All or nothing: if any create, update or delete fails, nothing is changed and the response is 422, with one `error.details` entry per failed slug (field `check_ins.<slug>`). An inactive account gets 403 `account_inactive` before anything is applied. A cron entry on a plan without cron is 403 `feature_unavailable`, and a new check-in past the plan's limit is 403 `limit_reached`; nothing is changed.
+// If any create, update or delete fails, nothing changes, and `error.details` has an entry for each failed slug (field `check_ins.<slug>`). A cron entry needs cron on the plan.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8415,7 +11990,7 @@ func (c *Client) GetCheckIn(ctx context.Context, projectId ProjectId, checkInId 
 
 // UpdateCheckInWithBody Update a check-in
 //
-// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
+// Updates a check-in's settings. Switching to a cron schedule needs cron on the plan.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8434,7 +12009,7 @@ func (c *Client) UpdateCheckInWithBody(ctx context.Context, projectId ProjectId,
 
 // UpdateCheckIn Update a check-in
 //
-// Updates a check-in's settings. Switching to a cron schedule on a plan without cron is 403 `feature_unavailable`; nothing is changed.
+// Updates a check-in's settings. Switching to a cron schedule needs cron on the plan.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8453,9 +12028,9 @@ func (c *Client) UpdateCheckIn(ctx context.Context, projectId ProjectId, checkIn
 
 // ListCheckInEvents List check-in events
 //
-// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message` and the `_original_size` in bytes.
+// Returns a check-in's events, newest first. A report payload over 50 KB is stored truncated: it's replaced by `_truncated: true`, a `_message`, and the `_original_size` in bytes.
 //
-// Paging is one-directional: page one is always the newest events, so walk backwards with `links.older` and there is nothing to walk forward to. `has_newer` is therefore always false and `links.newer` always null. Events are paged on a timestamp rather than an opaque cursor, so `oldest_cursor` and `newest_cursor` are not returned.
+// The first page is always the newest events; follow `links.older` for earlier ones. `links.newer` is always null and `has_newer` always false.
 //
 // Corresponds with GET /projects/{project_id}/check_ins/{check_in_id}/events (the `ListCheckInEvents` operationId).
 func (c *Client) ListCheckInEvents(ctx context.Context, projectId ProjectId, checkInId string, params *ListCheckInEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8527,7 +12102,7 @@ func (c *Client) CreateDashboard(ctx context.Context, projectId ProjectId, body 
 
 // DeleteDashboard Delete a dashboard
 //
-// Deletes an Insights dashboard, the project's default one (`is_default`) included. A project has no default dashboard until someone first opens Insights in the web UI, which creates one, and does again after it's deleted.
+// Deletes an Insights dashboard, including the project's default one (`is_default`). Opening Insights in the web UI creates a new default dashboard when the project has none.
 //
 // Corresponds with DELETE /projects/{project_id}/dashboards/{dashboard_id} (the `DeleteDashboard` operationId).
 func (c *Client) DeleteDashboard(ctx context.Context, projectId ProjectId, dashboardId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8561,9 +12136,7 @@ func (c *Client) GetDashboard(ctx context.Context, projectId ProjectId, dashboar
 
 // UpdateDashboardWithBody Update a dashboard
 //
-// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
-//
-// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
+// Updates an Insights dashboard. Fields left out keep their values. `widgets` replaces the whole list, so send every widget you want to keep; a widget sent without its `id` gets a new one.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8582,9 +12155,7 @@ func (c *Client) UpdateDashboardWithBody(ctx context.Context, projectId ProjectI
 
 // UpdateDashboard Update a dashboard
 //
-// Replaces an Insights dashboard's contents — unlike the fault and check-in updates, which merge. `title` and `widgets` are both required, and the widgets you send become the whole set, so a partial update has to send the widgets it wants to keep.
-//
-// Widget ids are regenerated when omitted, so a read-edit-write round trip changes widget identity unless each widget echoes back the `id` it was read with.
+// Updates an Insights dashboard. Fields left out keep their values. `widgets` replaces the whole list, so send every widget you want to keep; a widget sent without its `id` gets a new one.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8709,7 +12280,7 @@ func (c *Client) CreateEnvironment(ctx context.Context, projectId ProjectId, bod
 
 // BulkDeleteEnvironmentsWithBody Bulk delete environments
 //
-// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+// Deletes several environments at once. An empty `environment_ids` deletes nothing. If any ID isn't one of the project's environments, nothing is deleted.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8728,7 +12299,7 @@ func (c *Client) BulkDeleteEnvironmentsWithBody(ctx context.Context, projectId P
 
 // BulkDeleteEnvironments Bulk delete environments
 //
-// Deletes multiple environments at once. An empty `environment_ids` deletes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+// Deletes several environments at once. An empty `environment_ids` deletes nothing. If any ID isn't one of the project's environments, nothing is deleted.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8747,7 +12318,7 @@ func (c *Client) BulkDeleteEnvironments(ctx context.Context, projectId ProjectId
 
 // BulkUpdateEnvironmentsWithBody Bulk update environments
 //
-// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+// Updates notifications for several environments at once. An empty `environment_ids` changes nothing. If any ID isn't one of the project's environments, nothing changes.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8766,7 +12337,7 @@ func (c *Client) BulkUpdateEnvironmentsWithBody(ctx context.Context, projectId P
 
 // BulkUpdateEnvironments Bulk update environments
 //
-// Updates notification settings for multiple environments at once. An empty `environment_ids` changes nothing and answers with a count of 0; an id that isn't one of the project's environments fails the whole request with 422.
+// Updates notifications for several environments at once. An empty `environment_ids` changes nothing. If any ID isn't one of the project's environments, nothing changes.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8874,7 +12445,7 @@ func (c *Client) ListFaults(ctx context.Context, projectId ProjectId, params *Li
 
 // IgnoreFaultsWithBody Ignore faults
 //
-// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, narrow them with a filter, or pass all=true. A body naming none of these is refused.
+// Marks faults as ignored, which stops data collection for them. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to ignore every fault in the project. The request must include one of these.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8893,7 +12464,7 @@ func (c *Client) IgnoreFaultsWithBody(ctx context.Context, projectId ProjectId, 
 
 // IgnoreFaults Ignore faults
 //
-// Marks faults as ignored, stopping data collection for them. Send fault_ids to choose them, narrow them with a filter, or pass all=true. A body naming none of these is refused.
+// Marks faults as ignored, which stops data collection for them. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to ignore every fault in the project. The request must include one of these.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8912,7 +12483,7 @@ func (c *Client) IgnoreFaults(ctx context.Context, projectId ProjectId, body Ign
 
 // ResolveFaultsWithBody Resolve faults
 //
-// Marks faults as resolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to resolve every fault in the project. A body naming none of these is refused.
+// Marks faults as resolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to resolve every fault in the project. The request must include one of these.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8931,7 +12502,7 @@ func (c *Client) ResolveFaultsWithBody(ctx context.Context, projectId ProjectId,
 
 // ResolveFaults Resolve faults
 //
-// Marks faults as resolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to resolve every fault in the project. A body naming none of these is refused.
+// Marks faults as resolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to resolve every fault in the project. The request must include one of these.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -8948,11 +12519,9 @@ func (c *Client) ResolveFaults(ctx context.Context, projectId ProjectId, body Re
 	return c.Client.Do(req)
 }
 
-// GetFaultSummary Get fault counts by environment and state
+// GetFaultSummary Get fault counts
 //
-// Project-wide fault counts, grouped by environment and by resolved/ignored state.
-//
-// Accepts the same `q` search filter and time parameters as the fault list, so a caller can count the same set it would otherwise page through — which is the point, since the list cannot answer "how many, broken down how" without fetching every match.
+// Returns the project's fault counts, grouped by environment and by resolved or ignored state. It takes the same `q` and time parameters as List faults, and counts the same faults.
 //
 // Corresponds with GET /projects/{project_id}/faults/summary (the `GetFaultSummary` operationId).
 func (c *Client) GetFaultSummary(ctx context.Context, projectId ProjectId, params *GetFaultSummaryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -8969,7 +12538,7 @@ func (c *Client) GetFaultSummary(ctx context.Context, projectId ProjectId, param
 
 // UnignoreFaultsWithBody Unignore faults
 //
-// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
+// Marks faults as no longer ignored. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unignore every fault in the project. The request must include one of these.
 //
 // Takes any type of body and a specified content type.
 //
@@ -8988,7 +12557,7 @@ func (c *Client) UnignoreFaultsWithBody(ctx context.Context, projectId ProjectId
 
 // UnignoreFaults Unignore faults
 //
-// Removes the ignored status. Send fault_ids to choose the faults, or omit the body to unignore everything the filters match.
+// Marks faults as no longer ignored. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unignore every fault in the project. The request must include one of these.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9007,7 +12576,7 @@ func (c *Client) UnignoreFaults(ctx context.Context, projectId ProjectId, body U
 
 // UnresolveFaultsWithBody Unresolve faults
 //
-// Marks faults as unresolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to unresolve every fault in the project. A body naming none of these is refused.
+// Marks faults as unresolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unresolve every fault in the project. The request must include one of these.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9026,7 +12595,7 @@ func (c *Client) UnresolveFaultsWithBody(ctx context.Context, projectId ProjectI
 
 // UnresolveFaults Unresolve faults
 //
-// Marks faults as unresolved. Name them with fault_ids, narrow them with q or a time filter, or pass all=true to unresolve every fault in the project. A body naming none of these is refused.
+// Marks faults as unresolved. Name them with `fault_ids`, narrow them with `q` or a time filter, or pass `"all": true` to unresolve every fault in the project. The request must include one of these.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9045,7 +12614,7 @@ func (c *Client) UnresolveFaults(ctx context.Context, projectId ProjectId, body 
 
 // DeleteFault Delete a fault
 //
-// Permanently deletes a fault. Synchronous. Its notices aren't purged; they stay retrievable by id until retention expires them.
+// Permanently deletes a fault. Its notices aren't deleted; they stay retrievable by ID until retention removes them.
 //
 // Corresponds with DELETE /projects/{project_id}/faults/{fault_id} (the `DeleteFault` operationId).
 func (c *Client) DeleteFault(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9115,9 +12684,9 @@ func (c *Client) UpdateFault(ctx context.Context, projectId ProjectId, faultId F
 	return c.Client.Do(req)
 }
 
-// ListFaultAffectedUsers Get affected users
+// ListFaultAffectedUsers List affected users
 //
-// Returns the 500 affected users with the most notices, counting only notices that match `q` when it's given. Not paginated.
+// Returns the 500 users a fault affected most, ranked by notice count. With `q`, only matching notices count.
 //
 // Corresponds with GET /projects/{project_id}/faults/{fault_id}/affected_users (the `ListFaultAffectedUsers` operationId).
 func (c *Client) ListFaultAffectedUsers(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultAffectedUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9316,9 +12885,9 @@ func (c *Client) UpdateComment(ctx context.Context, projectId ProjectId, faultId
 
 // MergeFaultsWithBody Merge a fault into another
 //
-// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+// Merges the fault in the path into the fault named by `target_fault_id`. Its notices, comments, tickets, notification opt-outs, Actions runs and merge history move to the target, and its tags, assignee and resolved or ignored state are dropped.
 //
-// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
+// The merge runs in the background, so the response is 202. Until it finishes, the merged fault can still be read and written; once it's done, a GET on it redirects (301) to the target. The redirect lasts about as long as the project's retention, and then the old ID returns 404.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9337,9 +12906,9 @@ func (c *Client) MergeFaultsWithBody(ctx context.Context, projectId ProjectId, f
 
 // MergeFaults Merge a fault into another
 //
-// Merges the fault in the path into the one named by `target_fault_id`. The path fault is the source: its notices move to the target and it is removed. The merge runs in the background, so this answers 202 rather than the merged fault.
+// Merges the fault in the path into the fault named by `target_fault_id`. Its notices, comments, tickets, notification opt-outs, Actions runs and merge history move to the target, and its tags, assignee and resolved or ignored state are dropped.
 //
-// The source stays readable and writable until the merge finishes; it's done once GET on the source answers 301. The redirect lasts about as long as the project's retention, after which the old id is 404. Comments, tickets, unsubscriptions, action events and merge history move to the target. The source's tags, assignee and resolved or ignored state are dropped.
+// The merge runs in the background, so the response is 202. Until it finishes, the merged fault can still be read and written; once it's done, a GET on it redirects (301) to the target. The redirect lasts about as long as the project's retention, and then the old ID returns 404.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9373,13 +12942,11 @@ func (c *Client) ListNotices(ctx context.Context, projectId ProjectId, faultId F
 	return c.Client.Do(req)
 }
 
-// ListFaultOccurrences Get fault occurrence timeline
+// ListFaultOccurrences Get a fault's occurrence counts
 //
-// Occurrence counts for a fault, bucketed over an explicit window.
+// Returns a fault's occurrence counts over a window, set with `occurred_after` and `occurred_before`. With neither, the window is the last hour; with only `occurred_before`, the hour before it; with only `occurred_after`, from then until now. A start older than the project's retention is moved up to it.
 //
-// The window is given by `occurred_after` and `occurred_before` — the same names the fault list uses for the same filter. Omit both for the last hour; `occurred_before` alone gives the hour before it; `occurred_after` alone runs to now. The start is clamped to retention. Bucket resolution is derived from the window's length, not chosen by the caller.
-//
-// `meta.window` reports the window actually served, which is narrower than the one requested when retention clamped the start, and `meta.interval_seconds` gives the spacing between the timestamps in `data`. Buckets are zero-filled, so every interval in the window is present.
+// The bucket size depends on the window's length. `meta.window` gives the window served and `meta.interval_seconds` the bucket size. Every interval is included, with 0 where there were no occurrences.
 //
 // Corresponds with GET /projects/{project_id}/faults/{fault_id}/occurrences (the `ListFaultOccurrences` operationId).
 func (c *Client) ListFaultOccurrences(ctx context.Context, projectId ProjectId, faultId FaultId, params *ListFaultOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9396,7 +12963,7 @@ func (c *Client) ListFaultOccurrences(ctx context.Context, projectId ProjectId, 
 
 // PauseFaultRecordingWithBody Pause fault recording
 //
-// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
+// Stops recording a fault's notices for a given duration; notices during the pause are discarded. Pausing again replaces the end time. The first occurrence after the pause notifies as usual.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9415,7 +12982,7 @@ func (c *Client) PauseFaultRecordingWithBody(ctx context.Context, projectId Proj
 
 // PauseFaultRecording Pause fault recording
 //
-// Pauses recording of new notices for a fault for a given duration. Notices during the pause are discarded. The first occurrence after it notifies, subject to ignored, environment and integration settings. Pausing again replaces the end time.
+// Stops recording a fault's notices for a given duration; notices during the pause are discarded. Pausing again replaces the end time. The first occurrence after the pause notifies as usual.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9434,7 +13001,7 @@ func (c *Client) PauseFaultRecording(ctx context.Context, projectId ProjectId, f
 
 // ResumeFaultRecording Resume fault recording
 //
-// Resumes recording of new notices for a fault. On a fault that isn't paused, it's a 200 with no change.
+// Resumes recording a fault's notices. A fault that isn't paused is left as it is.
 //
 // Corresponds with POST /projects/{project_id}/faults/{fault_id}/resume_recording (the `ResumeFaultRecording` operationId).
 func (c *Client) ResumeFaultRecording(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9451,7 +13018,7 @@ func (c *Client) ResumeFaultRecording(ctx context.Context, projectId ProjectId, 
 
 // UnsnoozeFault Unsnooze a fault
 //
-// Removes snooze from a fault.
+// Removes a fault's snooze.
 //
 // Corresponds with DELETE /projects/{project_id}/faults/{fault_id}/snooze (the `UnsnoozeFault` operationId).
 func (c *Client) UnsnoozeFault(ctx context.Context, projectId ProjectId, faultId FaultId, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9468,7 +13035,7 @@ func (c *Client) UnsnoozeFault(ctx context.Context, projectId ProjectId, faultId
 
 // SnoozeFaultWithBody Snooze a fault
 //
-// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
+// Snoozes a fault's notifications for a `time` duration or a `count` of occurrences, replacing any existing snooze. While it's snoozed, recurrences and rate escalations don't notify, but a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. The web UI calls this "pause"; it's unrelated to Pause fault recording.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9487,7 +13054,7 @@ func (c *Client) SnoozeFaultWithBody(ctx context.Context, projectId ProjectId, f
 
 // SnoozeFault Snooze a fault
 //
-// Snoozes notifications for a fault. Requires either a `time` duration or a `count` of occurrences, and replaces any existing snooze. It suppresses notifications for recurrences and rate escalation; a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. This is the web UI's "pause", and is unrelated to `pause_recording`.
+// Snoozes a fault's notifications for a `time` duration or a `count` of occurrences, replacing any existing snooze. While it's snoozed, recurrences and rate escalations don't notify, but a resolved fault that recurs is still unresolved. With `count: N`, occurrence N+1 notifies. The web UI calls this "pause"; it's unrelated to Pause fault recording.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9523,7 +13090,7 @@ func (c *Client) ListIngestionKeys(ctx context.Context, projectId ProjectId, par
 
 // CreateIngestionKeyWithBody Create an ingestion key
 //
-// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+// Creates an ingestion key for the project.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9542,7 +13109,7 @@ func (c *Client) CreateIngestionKeyWithBody(ctx context.Context, projectId Proje
 
 // CreateIngestionKey Create an ingestion key
 //
-// Creates a new ingestion key for the project. A project may hold a limited number of keys; a request beyond that limit is refused with 403.
+// Creates an ingestion key for the project.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9561,7 +13128,7 @@ func (c *Client) CreateIngestionKey(ctx context.Context, projectId ProjectId, bo
 
 // DeleteIngestionKey Delete an ingestion key
 //
-// Deletes an ingestion key. A project's last key cannot be deleted — without one it can no longer receive errors — and that request is refused with 422 `validation_error`.
+// Deletes an ingestion key. A project's last key can't be deleted.
 //
 // Corresponds with DELETE /projects/{project_id}/ingestion_keys/{ingestion_key_id} (the `DeleteIngestionKey` operationId).
 func (c *Client) DeleteIngestionKey(ctx context.Context, projectId ProjectId, ingestionKeyId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9595,7 +13162,7 @@ func (c *Client) GetIngestionKey(ctx context.Context, projectId ProjectId, inges
 
 // UpdateIngestionKeyWithBody Update an ingestion key
 //
-// Updates a key's label. The key value itself cannot be changed.
+// Updates a key's label. The key itself can't be changed.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9614,7 +13181,7 @@ func (c *Client) UpdateIngestionKeyWithBody(ctx context.Context, projectId Proje
 
 // UpdateIngestionKey Update an ingestion key
 //
-// Updates a key's label. The key value itself cannot be changed.
+// Updates a key's label. The key itself can't be changed.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9633,11 +13200,9 @@ func (c *Client) UpdateIngestionKey(ctx context.Context, projectId ProjectId, in
 
 // RunInsightsQueryWithBody Run an Insights query
 //
-// Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
+// Runs a BadgerQL query against the project's event streams and returns the result. It's a POST, but it changes nothing.
 //
-// Selecting streams is part of the request, not the query: pass `stream_ids`, or omit it to search every stream on the project. An event class that lives on an unselected stream returns no rows, which looks exactly like the events not existing — so list the project's streams first. Unlike v2, an id that does not belong to the project is rejected rather than silently dropped, so a partial result can never be mistaken for a complete one.
-//
-// See the BadgerQL reference for the query language.
+// Pass `stream_ids` to choose streams, or leave it out to search them all. Events on a stream that isn't selected return no rows. See [BadgerQL](https://docs.honeybadger.io/guides/insights/badgerql/) for the query language.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9656,11 +13221,9 @@ func (c *Client) RunInsightsQueryWithBody(ctx context.Context, projectId Project
 
 // RunInsightsQuery Run an Insights query
 //
-// Executes a BadgerQL query against the project's event streams and returns the result. A POST because the query goes in the body, but it only reads — nothing is created.
+// Runs a BadgerQL query against the project's event streams and returns the result. It's a POST, but it changes nothing.
 //
-// Selecting streams is part of the request, not the query: pass `stream_ids`, or omit it to search every stream on the project. An event class that lives on an unselected stream returns no rows, which looks exactly like the events not existing — so list the project's streams first. Unlike v2, an id that does not belong to the project is rejected rather than silently dropped, so a partial result can never be mistaken for a complete one.
-//
-// See the BadgerQL reference for the query language.
+// Pass `stream_ids` to choose streams, or leave it out to search them all. Events on a stream that isn't selected return no rows. See [BadgerQL](https://docs.honeybadger.io/guides/insights/badgerql/) for the query language.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9696,7 +13259,7 @@ func (c *Client) ListIntegrations(ctx context.Context, projectId ProjectId, para
 
 // CreateIntegrationWithBody Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
+// Creates a notification integration. `type` picks the integration, and `config` holds its settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). An OAuth integration (Slack, GitHub, Linear and the like) sends nothing until someone connects it in the web UI at its `links.web`.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9715,7 +13278,7 @@ func (c *Client) CreateIntegrationWithBody(ctx context.Context, projectId Projec
 
 // CreateIntegration Create an integration
 //
-// Creates a notification integration for the project. `type` picks the integration, and `config` holds its settings, listed for each type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). OAuth integrations (Slack, GitHub, Linear and the like) are created active by default and send nothing until someone connects them in the web UI at the integration's `links.web`.
+// Creates a notification integration. `type` picks the integration, and `config` holds its settings, listed per type in [Integration types](https://docs.honeybadger.io/api/v3/integrations/types/). An OAuth integration (Slack, GitHub, Linear and the like) sends nothing until someone connects it in the web UI at its `links.web`.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9734,7 +13297,7 @@ func (c *Client) CreateIntegration(ctx context.Context, projectId ProjectId, bod
 
 // DeleteIntegration Delete an integration
 //
-// Permanently deletes a notification integration, including all associated tickets and configurations. Works on all integration types, including OAuth integrations.
+// Permanently deletes an integration. Faults lose their links to the issues it created (`tickets`); the issues themselves stay in the issue tracker.
 //
 // Corresponds with DELETE /projects/{project_id}/integrations/{integration_id} (the `DeleteIntegration` operationId).
 func (c *Client) DeleteIntegration(ctx context.Context, projectId ProjectId, integrationId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9768,7 +13331,7 @@ func (c *Client) GetIntegration(ctx context.Context, projectId ProjectId, integr
 
 // UpdateIntegrationWithBody Update an integration
 //
-// Updates a notification integration's settings.
+// Updates an integration's settings. A successful update also clears `error`, so an active integration starts delivering again.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9787,7 +13350,7 @@ func (c *Client) UpdateIntegrationWithBody(ctx context.Context, projectId Projec
 
 // UpdateIntegration Update an integration
 //
-// Updates a notification integration's settings.
+// Updates an integration's settings. A successful update also clears `error`, so an active integration starts delivering again.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -9804,11 +13367,9 @@ func (c *Client) UpdateIntegration(ctx context.Context, projectId ProjectId, int
 	return c.Client.Do(req)
 }
 
-// GetProjectOccurrences Get bucketed notice counts for a project
+// GetProjectOccurrences Get a project's occurrence counts
 //
-// Notice counts over a fixed window, bucketed by interval.
-//
-// The window is chosen with `period`, and each one implies its own interval. Both ends are inclusive, so a period returns one bucket more than its name suggests — `hour` returns 61 one-minute buckets, `month` 31 one-day buckets. Intervals with no notices are present with a count of zero, so the series is always the same length for a given period.
+// Returns the project's notice counts over `period`, one count per interval. Intervals with no notices are included with a count of 0.
 //
 // Corresponds with GET /projects/{project_id}/occurrences (the `GetProjectOccurrences` operationId).
 func (c *Client) GetProjectOccurrences(ctx context.Context, projectId ProjectId, params *GetProjectOccurrencesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -9842,7 +13403,7 @@ func (c *Client) ListSites(ctx context.Context, projectId ProjectId, params *Lis
 
 // CreateSiteWithBody Create a site
 //
-// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
+// Creates an uptime monitoring site. Requires uptime monitoring on the plan.
 //
 // Takes any type of body and a specified content type.
 //
@@ -9861,7 +13422,7 @@ func (c *Client) CreateSiteWithBody(ctx context.Context, projectId ProjectId, co
 
 // CreateSite Create a site
 //
-// Creates a new uptime monitoring site. Refused with 403 `feature_unavailable` on plans without uptime monitoring, and 403 `limit_reached` past the plan's site limit.
+// Creates an uptime monitoring site. Requires uptime monitoring on the plan.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10003,11 +13564,7 @@ func (c *Client) GetProjectStats(ctx context.Context, projectId ProjectId, reqEd
 
 // ListStreams List event streams
 //
-// Returns the project's Insights event streams. A project is provisioned with a `default` stream carrying events your applications send and an `internal` stream carrying events Honeybadger generates about the project — errors, deploys, uptime checks and check-ins.
-//
-// Provisioning is asynchronous, so a just-created project may return an empty or partial list for a short time. Retry before concluding that a stream is missing.
-//
-// Listing streams is a prerequisite for querying: a query against an unselected stream returns nothing, which is indistinguishable from the events not existing.
+// Returns the project's Insights event streams: `default`, for events your applications send, and `internal`, for events Honeybadger records about the project (errors, deploys, uptime checks and check-ins). A new project's streams can take a moment to appear.
 //
 // Corresponds with GET /projects/{project_id}/streams (the `ListStreams` operationId).
 func (c *Client) ListStreams(ctx context.Context, projectId ProjectId, params *ListStreamsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10041,7 +13598,7 @@ func (c *Client) ListStatusPages(ctx context.Context, params *ListStatusPagesPar
 
 // CreateStatusPageWithBody Create a status page
 //
-// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
+// Creates a status page.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10060,7 +13617,7 @@ func (c *Client) CreateStatusPageWithBody(ctx context.Context, contentType strin
 
 // CreateStatusPage Create a status page
 //
-// Creates a new status page. An account can have at most 10; past that, and on plans without status pages, it's 403.
+// Creates a status page.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10168,7 +13725,7 @@ func (c *Client) ListStatusPageIncidents(ctx context.Context, statusPageId strin
 
 // CreateStatusPageIncidentWithBody Create an incident
 //
-// Creates a new incident on a status page. An incident is a container for a thread of updates and needs at least one: its prose, status and severity all come from the updates.
+// Creates an incident on a status page. An incident needs at least one update, and its prose, status and severity come from its updates.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10187,7 +13744,7 @@ func (c *Client) CreateStatusPageIncidentWithBody(ctx context.Context, statusPag
 
 // CreateStatusPageIncident Create an incident
 //
-// Creates a new incident on a status page. An incident is a container for a thread of updates and needs at least one: its prose, status and severity all come from the updates.
+// Creates an incident on a status page. An incident needs at least one update, and its prose, status and severity come from its updates.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10240,7 +13797,7 @@ func (c *Client) GetStatusPageIncident(ctx context.Context, statusPageId string,
 
 // UpdateStatusPageIncidentWithBody Update an incident
 //
-// Updates an incident's details. current_status, current_severity and closed_at are derived from the incident's updates and cannot be written here; post or edit an update instead. build_type is fixed at creation.
+// Updates an incident's details. Its status, severity and `closed_at` come from its updates, so change those by posting or editing an update. `build_type` can't be changed.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10259,7 +13816,7 @@ func (c *Client) UpdateStatusPageIncidentWithBody(ctx context.Context, statusPag
 
 // UpdateStatusPageIncident Update an incident
 //
-// Updates an incident's details. current_status, current_severity and closed_at are derived from the incident's updates and cannot be written here; post or edit an update instead. build_type is fixed at creation.
+// Updates an incident's details. Its status, severity and `closed_at` come from its updates, so change those by posting or editing an update. `build_type` can't be changed.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10333,7 +13890,7 @@ func (c *Client) CreateIncidentUpdate(ctx context.Context, statusPageId string, 
 
 // DeleteIncidentUpdate Delete an incident update
 //
-// Deletes an incident update. An incident must keep at least one update, so deleting its only update returns 422.
+// Deletes an incident update. An incident must keep at least one update, so its only update can't be deleted.
 //
 // Corresponds with DELETE /status_pages/{status_page_id}/incidents/{incident_id}/updates/{update_id} (the `DeleteIncidentUpdate` operationId).
 func (c *Client) DeleteIncidentUpdate(ctx context.Context, statusPageId string, incidentId string, updateId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -10367,7 +13924,7 @@ func (c *Client) GetIncidentUpdate(ctx context.Context, statusPageId string, inc
 
 // UpdateIncidentUpdateWithBody Update an incident update
 //
-// Modifies an existing incident update.
+// Updates an incident update.
 //
 // Takes any type of body and a specified content type.
 //
@@ -10386,7 +13943,7 @@ func (c *Client) UpdateIncidentUpdateWithBody(ctx context.Context, statusPageId 
 
 // UpdateIncidentUpdate Update an incident update
 //
-// Modifies an existing incident update.
+// Updates an incident update.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10746,11 +14303,11 @@ func (c *Client) UpdateTeamMember(ctx context.Context, teamId string, memberId s
 	return c.Client.Do(req)
 }
 
-// GetToken Describe the current credential
+// GetToken Get the current token
 //
-// Reports what the credential making the request is and what it can reach.
-// Requires no scope: a credential must always be able to discover its own limits, or a client holding a narrow token cannot tell a missing scope from a broken endpoint without a second round trip. A credential with no scopes at all still introspects successfully.
-// `project_ids` is re-derived from the binding on every request, so a user token narrows the moment its owner loses access to a project rather than at its next rotation.
+// Returns the credential making the request and what it can reach. It needs no scope.
+//
+// `project_ids` lists the projects the token can reach now; a user token loses a project as soon as its owner does.
 //
 // Corresponds with GET /token (the `GetToken` operationId).
 func (c *Client) GetToken(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -14300,6 +17857,18 @@ func NewListNoticesRequest(server string, projectId ProjectId, faultId FaultId, 
 
 		}
 
+		if params.Breadcrumbs != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "breadcrumbs", *params.Breadcrumbs, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
 		if encoded := queryValues.Encode(); encoded != "" {
 			rawQueryFragments = append(rawQueryFragments, encoded)
 		}
@@ -17307,3 +20876,1149 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 }
 
 // ClientWithResponses is not generated: apiv3 decodes responses itself.
+// WebhookInitiator sends OpenAPI 3.1 webhook requests to target URLs.
+// Modeled on the generated Client, but with no stored Server -- the full
+// target URL is provided per-call by the caller (typically discovered
+// from a subscription registration).
+type WebhookInitiator struct {
+	// Doer for performing requests, typically a *http.Client with any
+	// customized settings, such as certificate chains.
+	Client HttpRequestDoer
+
+	// A list of callbacks for modifying requests which are generated before sending over
+	// the network.
+	RequestEditors []RequestEditorFn
+}
+
+// WebhookInitiatorOption allows setting custom parameters during construction.
+type WebhookInitiatorOption func(*WebhookInitiator) error
+
+// NewWebhookInitiator creates a new WebhookInitiator with reasonable defaults.
+func NewWebhookInitiator(opts ...WebhookInitiatorOption) (*WebhookInitiator, error) {
+	initiator := WebhookInitiator{}
+	for _, o := range opts {
+		if err := o(&initiator); err != nil {
+			return nil, err
+		}
+	}
+	if initiator.Client == nil {
+		initiator.Client = &http.Client{}
+	}
+	return &initiator, nil
+}
+
+// WithWebhookHTTPClient allows overriding the default Doer, which is
+// automatically created using http.Client. This is useful for tests.
+func WithWebhookHTTPClient(doer HttpRequestDoer) WebhookInitiatorOption {
+	return func(p *WebhookInitiator) error {
+		p.Client = doer
+		return nil
+	}
+}
+
+// WithWebhookRequestEditorFn allows setting up a callback function, which
+// will be called right before sending the webhook request. This can be
+// used to mutate the request, e.g. to add signature headers.
+func WithWebhookRequestEditorFn(fn RequestEditorFn) WebhookInitiatorOption {
+	return func(p *WebhookInitiator) error {
+		p.RequestEditors = append(p.RequestEditors, fn)
+		return nil
+	}
+}
+
+func (p *WebhookInitiator) applyWebhookEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+	for _, r := range p.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// WebhookInitiatorInterface is the interface specification for the webhook initiator.
+type WebhookInitiatorInterface interface {
+	// AlarmAlertWithBody fires the alarm_alert webhook with any body
+	AlarmAlertWithBody(ctx context.Context, targetURL string, params *AlarmAlertParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	AlarmAlert(ctx context.Context, targetURL string, params *AlarmAlertParams, body AlarmAlertJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// AlarmOkWithBody fires the alarm_ok webhook with any body
+	AlarmOkWithBody(ctx context.Context, targetURL string, params *AlarmOkParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	AlarmOk(ctx context.Context, targetURL string, params *AlarmOkParams, body AlarmOkJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// AssignedWithBody fires the assigned webhook with any body
+	AssignedWithBody(ctx context.Context, targetURL string, params *AssignedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Assigned(ctx context.Context, targetURL string, params *AssignedParams, body AssignedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CertWillExpireWithBody fires the cert_will_expire webhook with any body
+	CertWillExpireWithBody(ctx context.Context, targetURL string, params *CertWillExpireParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CertWillExpire(ctx context.Context, targetURL string, params *CertWillExpireParams, body CertWillExpireJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CheckInMissingWithBody fires the check_in_missing webhook with any body
+	CheckInMissingWithBody(ctx context.Context, targetURL string, params *CheckInMissingParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CheckInMissing(ctx context.Context, targetURL string, params *CheckInMissingParams, body CheckInMissingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CheckInReportingWithBody fires the check_in_reporting webhook with any body
+	CheckInReportingWithBody(ctx context.Context, targetURL string, params *CheckInReportingParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CheckInReporting(ctx context.Context, targetURL string, params *CheckInReportingParams, body CheckInReportingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CommentedWithBody fires the commented webhook with any body
+	CommentedWithBody(ctx context.Context, targetURL string, params *CommentedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Commented(ctx context.Context, targetURL string, params *CommentedParams, body CommentedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeployedWithBody fires the deployed webhook with any body
+	DeployedWithBody(ctx context.Context, targetURL string, params *DeployedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Deployed(ctx context.Context, targetURL string, params *DeployedParams, body DeployedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DownWithBody fires the down webhook with any body
+	DownWithBody(ctx context.Context, targetURL string, params *DownParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Down(ctx context.Context, targetURL string, params *DownParams, body DownJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OccurredWithBody fires the occurred webhook with any body
+	OccurredWithBody(ctx context.Context, targetURL string, params *OccurredParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Occurred(ctx context.Context, targetURL string, params *OccurredParams, body OccurredJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RateExceededWithBody fires the rate_exceeded webhook with any body
+	RateExceededWithBody(ctx context.Context, targetURL string, params *RateExceededParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	RateExceeded(ctx context.Context, targetURL string, params *RateExceededParams, body RateExceededJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ResolvedWithBody fires the resolved webhook with any body
+	ResolvedWithBody(ctx context.Context, targetURL string, params *ResolvedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Resolved(ctx context.Context, targetURL string, params *ResolvedParams, body ResolvedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnresolvedWithBody fires the unresolved webhook with any body
+	UnresolvedWithBody(ctx context.Context, targetURL string, params *UnresolvedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Unresolved(ctx context.Context, targetURL string, params *UnresolvedParams, body UnresolvedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpWithBody fires the up webhook with any body
+	UpWithBody(ctx context.Context, targetURL string, params *UpParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	Up(ctx context.Context, targetURL string, params *UpParams, body UpJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// VolumeSpikeWithBody fires the volume_spike webhook with any body
+	VolumeSpikeWithBody(ctx context.Context, targetURL string, params *VolumeSpikeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	VolumeSpike(ctx context.Context, targetURL string, params *VolumeSpikeParams, body VolumeSpikeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (p *WebhookInitiator) AlarmAlertWithBody(ctx context.Context, targetURL string, params *AlarmAlertParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAlarmAlertWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) AlarmAlert(ctx context.Context, targetURL string, params *AlarmAlertParams, body AlarmAlertJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAlarmAlertWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) AlarmOkWithBody(ctx context.Context, targetURL string, params *AlarmOkParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAlarmOkWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) AlarmOk(ctx context.Context, targetURL string, params *AlarmOkParams, body AlarmOkJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAlarmOkWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) AssignedWithBody(ctx context.Context, targetURL string, params *AssignedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAssignedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Assigned(ctx context.Context, targetURL string, params *AssignedParams, body AssignedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAssignedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CertWillExpireWithBody(ctx context.Context, targetURL string, params *CertWillExpireParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCertWillExpireWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CertWillExpire(ctx context.Context, targetURL string, params *CertWillExpireParams, body CertWillExpireJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCertWillExpireWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CheckInMissingWithBody(ctx context.Context, targetURL string, params *CheckInMissingParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCheckInMissingWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CheckInMissing(ctx context.Context, targetURL string, params *CheckInMissingParams, body CheckInMissingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCheckInMissingWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CheckInReportingWithBody(ctx context.Context, targetURL string, params *CheckInReportingParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCheckInReportingWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CheckInReporting(ctx context.Context, targetURL string, params *CheckInReportingParams, body CheckInReportingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCheckInReportingWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) CommentedWithBody(ctx context.Context, targetURL string, params *CommentedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCommentedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Commented(ctx context.Context, targetURL string, params *CommentedParams, body CommentedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCommentedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) DeployedWithBody(ctx context.Context, targetURL string, params *DeployedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeployedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Deployed(ctx context.Context, targetURL string, params *DeployedParams, body DeployedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeployedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) DownWithBody(ctx context.Context, targetURL string, params *DownParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDownWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Down(ctx context.Context, targetURL string, params *DownParams, body DownJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDownWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OccurredWithBody(ctx context.Context, targetURL string, params *OccurredParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOccurredWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Occurred(ctx context.Context, targetURL string, params *OccurredParams, body OccurredJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOccurredWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) RateExceededWithBody(ctx context.Context, targetURL string, params *RateExceededParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRateExceededWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) RateExceeded(ctx context.Context, targetURL string, params *RateExceededParams, body RateExceededJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRateExceededWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) ResolvedWithBody(ctx context.Context, targetURL string, params *ResolvedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewResolvedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Resolved(ctx context.Context, targetURL string, params *ResolvedParams, body ResolvedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewResolvedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) UnresolvedWithBody(ctx context.Context, targetURL string, params *UnresolvedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnresolvedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Unresolved(ctx context.Context, targetURL string, params *UnresolvedParams, body UnresolvedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnresolvedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) UpWithBody(ctx context.Context, targetURL string, params *UpParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) Up(ctx context.Context, targetURL string, params *UpParams, body UpJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) VolumeSpikeWithBody(ctx context.Context, targetURL string, params *VolumeSpikeParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVolumeSpikeWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) VolumeSpike(ctx context.Context, targetURL string, params *VolumeSpikeParams, body VolumeSpikeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVolumeSpikeWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+// NewAlarmAlertWebhookRequest builds a application/json POST request for the alarm_alert webhook
+func NewAlarmAlertWebhookRequest(targetURL string, params *AlarmAlertParams, body AlarmAlertJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAlarmAlertWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewAlarmAlertWebhookRequestWithBody builds a POST request for the alarm_alert webhook with any body
+func NewAlarmAlertWebhookRequestWithBody(targetURL string, params *AlarmAlertParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewAlarmOkWebhookRequest builds a application/json POST request for the alarm_ok webhook
+func NewAlarmOkWebhookRequest(targetURL string, params *AlarmOkParams, body AlarmOkJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAlarmOkWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewAlarmOkWebhookRequestWithBody builds a POST request for the alarm_ok webhook with any body
+func NewAlarmOkWebhookRequestWithBody(targetURL string, params *AlarmOkParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewAssignedWebhookRequest builds a application/json POST request for the assigned webhook
+func NewAssignedWebhookRequest(targetURL string, params *AssignedParams, body AssignedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAssignedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewAssignedWebhookRequestWithBody builds a POST request for the assigned webhook with any body
+func NewAssignedWebhookRequestWithBody(targetURL string, params *AssignedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewCertWillExpireWebhookRequest builds a application/json POST request for the cert_will_expire webhook
+func NewCertWillExpireWebhookRequest(targetURL string, params *CertWillExpireParams, body CertWillExpireJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCertWillExpireWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewCertWillExpireWebhookRequestWithBody builds a POST request for the cert_will_expire webhook with any body
+func NewCertWillExpireWebhookRequestWithBody(targetURL string, params *CertWillExpireParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewCheckInMissingWebhookRequest builds a application/json POST request for the check_in_missing webhook
+func NewCheckInMissingWebhookRequest(targetURL string, params *CheckInMissingParams, body CheckInMissingJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCheckInMissingWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewCheckInMissingWebhookRequestWithBody builds a POST request for the check_in_missing webhook with any body
+func NewCheckInMissingWebhookRequestWithBody(targetURL string, params *CheckInMissingParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewCheckInReportingWebhookRequest builds a application/json POST request for the check_in_reporting webhook
+func NewCheckInReportingWebhookRequest(targetURL string, params *CheckInReportingParams, body CheckInReportingJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCheckInReportingWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewCheckInReportingWebhookRequestWithBody builds a POST request for the check_in_reporting webhook with any body
+func NewCheckInReportingWebhookRequestWithBody(targetURL string, params *CheckInReportingParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewCommentedWebhookRequest builds a application/json POST request for the commented webhook
+func NewCommentedWebhookRequest(targetURL string, params *CommentedParams, body CommentedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCommentedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewCommentedWebhookRequestWithBody builds a POST request for the commented webhook with any body
+func NewCommentedWebhookRequestWithBody(targetURL string, params *CommentedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewDeployedWebhookRequest builds a application/json POST request for the deployed webhook
+func NewDeployedWebhookRequest(targetURL string, params *DeployedParams, body DeployedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewDeployedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewDeployedWebhookRequestWithBody builds a POST request for the deployed webhook with any body
+func NewDeployedWebhookRequestWithBody(targetURL string, params *DeployedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewDownWebhookRequest builds a application/json POST request for the down webhook
+func NewDownWebhookRequest(targetURL string, params *DownParams, body DownJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewDownWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewDownWebhookRequestWithBody builds a POST request for the down webhook with any body
+func NewDownWebhookRequestWithBody(targetURL string, params *DownParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewOccurredWebhookRequest builds a application/json POST request for the occurred webhook
+func NewOccurredWebhookRequest(targetURL string, params *OccurredParams, body OccurredJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOccurredWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOccurredWebhookRequestWithBody builds a POST request for the occurred webhook with any body
+func NewOccurredWebhookRequestWithBody(targetURL string, params *OccurredParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewRateExceededWebhookRequest builds a application/json POST request for the rate_exceeded webhook
+func NewRateExceededWebhookRequest(targetURL string, params *RateExceededParams, body RateExceededJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRateExceededWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewRateExceededWebhookRequestWithBody builds a POST request for the rate_exceeded webhook with any body
+func NewRateExceededWebhookRequestWithBody(targetURL string, params *RateExceededParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewResolvedWebhookRequest builds a application/json POST request for the resolved webhook
+func NewResolvedWebhookRequest(targetURL string, params *ResolvedParams, body ResolvedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewResolvedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewResolvedWebhookRequestWithBody builds a POST request for the resolved webhook with any body
+func NewResolvedWebhookRequestWithBody(targetURL string, params *ResolvedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewUnresolvedWebhookRequest builds a application/json POST request for the unresolved webhook
+func NewUnresolvedWebhookRequest(targetURL string, params *UnresolvedParams, body UnresolvedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUnresolvedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewUnresolvedWebhookRequestWithBody builds a POST request for the unresolved webhook with any body
+func NewUnresolvedWebhookRequestWithBody(targetURL string, params *UnresolvedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewUpWebhookRequest builds a application/json POST request for the up webhook
+func NewUpWebhookRequest(targetURL string, params *UpParams, body UpJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewUpWebhookRequestWithBody builds a POST request for the up webhook with any body
+func NewUpWebhookRequestWithBody(targetURL string, params *UpParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}
+
+// NewVolumeSpikeWebhookRequest builds a application/json POST request for the volume_spike webhook
+func NewVolumeSpikeWebhookRequest(targetURL string, params *VolumeSpikeParams, body VolumeSpikeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewVolumeSpikeWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewVolumeSpikeWebhookRequestWithBody builds a POST request for the volume_spike webhook with any body
+func NewVolumeSpikeWebhookRequestWithBody(targetURL string, params *VolumeSpikeParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Honeybadger-Token", params.HoneybadgerToken, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Honeybadger-Token", headerParam0)
+
+	}
+	return req, nil
+}

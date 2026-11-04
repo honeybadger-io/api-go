@@ -46,6 +46,9 @@ type requestOptions struct {
 	environment   string
 	localUsername string
 
+	// breadcrumbs asks a notice listing to include each notice's trail.
+	breadcrumbs bool
+
 	// Time filters, as Unix seconds. Zero means unset — these endpoints have no
 	// meaningful use for the epoch.
 	createdAfter   float64
@@ -311,4 +314,17 @@ func OccurredAfter(at time.Time) ListAllOption {
 // OccurredBefore filters to faults that last occurred before the given time.
 func OccurredBefore(at time.Time) ListAllOption {
 	return timeOption{field: "occurred_before", at: at}
+}
+
+// breadcrumbsOption asks a notice listing for each notice's breadcrumbs.
+type breadcrumbsOption struct{}
+
+func (breadcrumbsOption) apply(ro *requestOptions) { ro.breadcrumbs = true }
+func (breadcrumbsOption) listAll()                 {}
+
+// IncludeBreadcrumbs adds each notice's breadcrumbs to a notice listing. The
+// API leaves them out of the list by default, because a trail can add up to 40
+// entries per notice. Getting a single notice always includes them.
+func IncludeBreadcrumbs() ListAllOption {
+	return breadcrumbsOption{}
 }

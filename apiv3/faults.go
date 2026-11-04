@@ -98,6 +98,7 @@ func (s *FaultsService) AffectedUsers(ctx context.Context, projectID string, fau
 
 // ListNotices returns one page of a fault's notices, newest first. Use Limit to
 // size the page, and Before or After to position within the collection.
+// Pass IncludeBreadcrumbs to get each notice's breadcrumbs too.
 func (s *FaultsService) ListNotices(ctx context.Context, projectID string, faultID string, opts ...Option) (*ListResponse[Notice], error) {
 	return s.listNotices(ctx, projectID, faultID, resolve(opts))
 }
@@ -120,6 +121,10 @@ func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, fa
 func (s *FaultsService) listNotices(ctx context.Context, projectID string, faultID string, ro requestOptions) (*ListResponse[Notice], error) {
 	params := &gen.ListNoticesParams{}
 	ro.applyTimeSeries(&params.Limit, &params.Before, &params.After)
+	if ro.breadcrumbs {
+		include := gen.Breadcrumbs(true)
+		params.Breadcrumbs = &include
+	}
 
 	return listTimeSeries[Notice](ctx, s.client, "listNotices", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().ListNotices(ctx, projectID, faultID, params)

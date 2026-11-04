@@ -258,3 +258,38 @@ func TestZeroTimeFilterIsUnset(t *testing.T) {
 		t.Errorf("created_after = %q, want it absent for a zero time", query.Get("created_after"))
 	}
 }
+
+// The list leaves breadcrumbs out unless asked, so the option has to reach the
+// query string, and a listed notice's trail has to survive decoding.
+func TestFaultsListNoticesIncludeBreadcrumbs(t *testing.T) {
+	var queries []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		queries = append(queries, r.URL.Query().Get("breadcrumbs"))
+		writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111",
+		    "breadcrumbs":{"enabled":true,"total_entries":1,"truncated":false,
+		      "trail":[{"category":"ui.click","message":"button#buy","metadata":null,"timestamp":"2026-11-03T18:22:41.516Z"}]}}],
+		  "pagination":{"has_newer":false,"has_older":false,"limit":25},
+		  "links":{"self":"http://`+r.Host+`/v3/self"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
+	resp, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", "1", IncludeBreadcrumbs())
+	if err != nil {
+		t.Fatalf("ListNotices: %v", err)
+	}
+	if _, err := c.Faults.ListNotices(context.Background(), "Xk9mZp", "1"); err != nil {
+		t.Fatalf("ListNotices: %v", err)
+	}
+
+	if len(queries) != 2 || queries[0] != "true" || queries[1] != "" {
+		t.Errorf("breadcrumbs params = %q, want [\"true\" \"\"]", queries)
+	}
+	crumbs, err := resp.Data[0].Breadcrumbs.Get()
+	if err != nil {
+		t.Fatalf("Breadcrumbs.Get: %v", err)
+	}
+	if len(crumbs.Trail) != 1 || crumbs.Trail[0].Category.MustGet() != "ui.click" {
+		t.Errorf("trail = %+v, want one ui.click entry", crumbs.Trail)
+	}
+}
