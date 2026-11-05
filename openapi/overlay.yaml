@@ -21,3 +21,11 @@ actions:
   - target: $.components.schemas.ErrorBody.properties.details
     update:
       x-go-type: json.RawMessage
+
+  # A v2 webhook frame's line number is a string from Ruby notifiers and an
+  # integer from PHP and JavaScript, so the spec types it as both. oapi-codegen
+  # cannot render a multi-type primitive and stops, so keep the raw JSON and let
+  # the caller decide how to read it.
+  - target: $.components.schemas.WebhookV2BacktraceLine.properties.number
+    update:
+      x-go-type: json.RawMessage

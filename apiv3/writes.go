@@ -71,9 +71,9 @@ type CheckInScheduleType = gen.CheckInScheduleType
 
 const (
 	// ScheduleSimple expects a report every ReportPeriod.
-	ScheduleSimple CheckInScheduleType = gen.Simple
+	ScheduleSimple CheckInScheduleType = gen.CheckInScheduleTypeSimple
 	// ScheduleCron expects reports on CronSchedule.
-	ScheduleCron CheckInScheduleType = gen.Cron
+	ScheduleCron CheckInScheduleType = gen.CheckInScheduleTypeCron
 )
 
 // Create makes a new check-in.
