@@ -55,6 +55,62 @@ func TestDeleteAcceptsNoContent(t *testing.T) {
 	}
 }
 
+func TestSnoozeSendsTime(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"1","project_id":"Xk9mZp","snoozed":true}}`)
+	fault, err := c.Faults.Snooze(context.Background(), "Xk9mZp", "1", PauseHour)
+	if err != nil {
+		t.Fatalf("snooze: %v", err)
+	}
+	if fault.Snoozed == nil || !*fault.Snoozed {
+		t.Errorf("snoozed = %v, want true", fault.Snoozed)
+	}
+	if got.method != http.MethodPost || got.path != "/v3/projects/Xk9mZp/faults/1/snooze" {
+		t.Errorf("request = %s %s, want POST /v3/projects/Xk9mZp/faults/1/snooze", got.method, got.path)
+	}
+	// Exactly one of time or count: the API refuses both.
+	if len(got.body) != 1 || got.body["time"] != "hour" {
+		t.Errorf("body = %v, want {time: hour}", got.body)
+	}
+}
+
+func TestSnoozeOccurrencesSendsCount(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"1","project_id":"Xk9mZp","snoozed":true}}`)
+	if _, err := c.Faults.SnoozeOccurrences(context.Background(), "Xk9mZp", "1", Snooze100); err != nil {
+		t.Fatalf("snooze: %v", err)
+	}
+	// JSON numbers decode as float64.
+	if len(got.body) != 1 || got.body["count"] != float64(100) {
+		t.Errorf("body = %v, want {count: 100}", got.body)
+	}
+}
+
+func TestSnoozeRefusesInvalidValuesWithoutARequest(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"1"}}`)
+	if _, err := c.Faults.Snooze(context.Background(), "Xk9mZp", "1", PauseDuration("month")); err == nil {
+		t.Error("Snooze(month) = nil error, want refusal")
+	}
+	if _, err := c.Faults.SnoozeOccurrences(context.Background(), "Xk9mZp", "1", SnoozeCount(5)); err == nil {
+		t.Error("SnoozeOccurrences(5) = nil error, want refusal")
+	}
+	if got.method != "" {
+		t.Errorf("sent %s %s, want no request", got.method, got.path)
+	}
+}
+
+func TestUnsnoozeDeletes(t *testing.T) {
+	c, got := captureWrite(t, http.StatusOK, `{"data":{"id":"1","project_id":"Xk9mZp","snoozed":false}}`)
+	fault, err := c.Faults.Unsnooze(context.Background(), "Xk9mZp", "1")
+	if err != nil {
+		t.Fatalf("unsnooze: %v", err)
+	}
+	if fault.Snoozed == nil || *fault.Snoozed {
+		t.Errorf("snoozed = %v, want false", fault.Snoozed)
+	}
+	if got.method != http.MethodDelete || got.path != "/v3/projects/Xk9mZp/faults/1/snooze" {
+		t.Errorf("request = %s %s, want DELETE /v3/projects/Xk9mZp/faults/1/snooze", got.method, got.path)
+	}
+}
+
 func TestPauseRecordingSendsBody(t *testing.T) {
 	c, got := captureWrite(t, http.StatusOK,
 		`{"data":{"id":"1","project_id":"Xk9mZp","recording_paused_until":"2026-09-27T00:00:00Z"}}`)
