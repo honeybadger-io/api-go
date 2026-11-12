@@ -4137,13 +4137,13 @@ type IntegrationConfigZulip struct {
 	// Channel The Zulip channel notifications are posted to.
 	Channel nullable.Nullable[string] `json:"channel,omitempty"`
 
-	// ServerUrl For a self-hosted Zulip server, its HTTPS address (for example, https://chat.example.com). When set, it is used instead of the Zulip Cloud subdomain.
+	// ServerUrl For a self-hosted Zulip server, its HTTPS address (for example, https://chat.example.com). It must resolve to a public address. When set, it is used instead of the Zulip Cloud subdomain.
 	ServerUrl nullable.Nullable[string] `json:"server_url,omitempty"`
 
 	// Topic The topic within that channel.
 	Topic nullable.Nullable[string] `json:"topic,omitempty"`
 
-	// ZulipDomain For Zulip Cloud, your organization's subdomain (`example` for example.zulipchat.com). Leave blank if you run your own Zulip server.
+	// ZulipDomain For Zulip Cloud, your organization's subdomain (`example` for example.zulipchat.com). Required unless you run your own Zulip server and set its Server URL instead.
 	ZulipDomain nullable.Nullable[string] `json:"zulip_domain,omitempty"`
 }
 
