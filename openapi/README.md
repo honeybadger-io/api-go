@@ -9,10 +9,10 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | --- | --- |
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
-| Branch | `feat/v3-notice-breadcrumbs` (master at 9f35e63e7, plus the breadcrumbs commit) |
-| Commit | `3093f784a` |
-| Vendored | 2026-11-04 |
-| sha256 | `01848204bed4d4ea850e90b8c26745e05bc8a43466a5f1d9225c24ca12dc99d4` |
+| Branch | `master` |
+| Commit | `b5c72c6763` |
+| Vendored | 2026-11-12 |
+| sha256 | `82e8043ae536cb99155d1a6e16306008adad3d9786754238100f00bcaffab499` |
 
 Record the branch, commit, **and checksum** on every refresh. The bundle is
 **gitignored in the source repo** (`.gitignore:86`) — it is a build artifact of

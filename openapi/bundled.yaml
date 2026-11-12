@@ -90,8 +90,9 @@ info:
 
     ## Rate limits
 
-    360 requests per hour, unless a higher limit has been set. User tokens and
-    OAuth grants share one limit per person; account tokens share one per account.
+    3,600 requests per hour by default; a limit set for a person or account
+    replaces it. User tokens and OAuth grants share one limit per person; account
+    tokens share one per account.
     Each response reports the limit:
 
     - `X-RateLimit-Limit`: requests allowed per hour
@@ -11938,6 +11939,7 @@ components:
           - trail
           - total_entries
           - truncated
+          additionalProperties: false
           properties:
             enabled:
               type: boolean
@@ -11958,6 +11960,7 @@ components:
                 - message
                 - metadata
                 - timestamp
+                additionalProperties: false
                 properties:
                   category:
                     type:
@@ -15552,7 +15555,7 @@ components:
           title: Chatbot URL
           description: The [integration URL](https://docs.honeybadger.io/guides/integrations/campfire/#2-create-a-chatbot-integration-in-basecamp)
             for your Campfire chatbot.
-          example: https://example.com
+          example: https://campfire.example.com/rooms/1/2-AbCdEf0123/messages
     IntegrationConfigDatadog:
       type: object
       title: Datadog settings
@@ -16101,7 +16104,7 @@ components:
           - 'null'
           title: Server URL
           description: 'The full path to the project: http://redmine.yourserver.com/projects/project-name.'
-          example: https://example.com
+          example: https://redmine.example.com/projects/myapp
         api_key:
           type:
           - string
@@ -16377,7 +16380,7 @@ components:
           title: Webhook URL
           description: Please see [our documentation](https://docs.honeybadger.io/guides/integrations/google-chat/)
             for info on how to generate this.
-          example: https://example.com/hook
+          example: https://chat.googleapis.com/v1/spaces/AAAAbCdEfGh/messages?key=AbCdEf0123456789&token=AbCdEf0123456789
         label:
           type:
           - string
@@ -16908,16 +16911,17 @@ components:
           - 'null'
           title: Zulip Cloud subdomain
           description: For Zulip Cloud, your organization's subdomain (`example` for
-            example.zulipchat.com). Leave blank if you run your own Zulip server.
+            example.zulipchat.com). Required unless you run your own Zulip server
+            and set its Server URL instead.
         server_url:
           type:
           - string
           - 'null'
           title: Server URL
           description: For a self-hosted Zulip server, its HTTPS address (for example,
-            https://chat.example.com). When set, it is used instead of the Zulip Cloud
-            subdomain.
-          example: https://example.com
+            https://chat.example.com). It must resolve to a public address. When set,
+            it is used instead of the Zulip Cloud subdomain.
+          example: https://chat.example.com
         channel:
           type:
           - string
