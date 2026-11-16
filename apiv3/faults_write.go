@@ -291,6 +291,52 @@ func (s *FaultsService) ResumeRecording(ctx context.Context, projectID string, f
 	})
 }
 
+// SnoozeCount is how many more occurrences a snooze lets through silently.
+type SnoozeCount = gen.SnoozeFaultJSONBodyCount
+
+const (
+	Snooze10   SnoozeCount = gen.N10
+	Snooze100  SnoozeCount = gen.N100
+	Snooze1000 SnoozeCount = gen.N1000
+)
+
+// Snooze stops a fault's notifications for the given duration, and returns the
+// fault, whose Snoozed says the snooze is in effect.
+//
+// Snoozing is not pausing: notices are still recorded, and a resolved fault that
+// recurs is still unresolved; only the notifications stop. The web UI calls this
+// "pause", which is unrelated to PauseRecording. A new snooze replaces any
+// existing one.
+func (s *FaultsService) Snooze(ctx context.Context, projectID string, faultID string, duration PauseDuration) (*Fault, error) {
+	if !duration.Valid() {
+		return nil, fmt.Errorf("apiv3: invalid snooze duration %q (use PauseHour, PauseDay, or PauseWeek)", duration)
+	}
+	return s.snooze(ctx, projectID, faultID, gen.SnoozeFaultJSONRequestBody{Time: &duration})
+}
+
+// SnoozeOccurrences stops a fault's notifications until count more occurrences
+// arrive: with Snooze10, the eleventh notifies. Otherwise it behaves like Snooze.
+func (s *FaultsService) SnoozeOccurrences(ctx context.Context, projectID string, faultID string, count SnoozeCount) (*Fault, error) {
+	if !count.Valid() {
+		return nil, fmt.Errorf("apiv3: invalid snooze count %d (use Snooze10, Snooze100, or Snooze1000)", count)
+	}
+	return s.snooze(ctx, projectID, faultID, gen.SnoozeFaultJSONRequestBody{Count: &count})
+}
+
+func (s *FaultsService) snooze(ctx context.Context, projectID, faultID string, body gen.SnoozeFaultJSONRequestBody) (*Fault, error) {
+	return getOne[Fault](ctx, s.client, "snoozeFault", func(ctx context.Context) (*http.Response, error) {
+		return s.client.gen().SnoozeFault(ctx, projectID, faultID, body)
+	})
+}
+
+// Unsnooze ends a fault's snooze, so its notifications resume, and returns the
+// fault as it now stands.
+func (s *FaultsService) Unsnooze(ctx context.Context, projectID string, faultID string) (*Fault, error) {
+	return getOne[Fault](ctx, s.client, "unsnoozeFault", func(ctx context.Context) (*http.Response, error) {
+		return s.client.gen().UnsnoozeFault(ctx, projectID, faultID)
+	})
+}
+
 // Delete removes a fault and its notices.
 func (s *FaultsService) Delete(ctx context.Context, projectID string, faultID string) error {
 	return noContent(ctx, s.client, "deleteFault", func(ctx context.Context) (*http.Response, error) {
