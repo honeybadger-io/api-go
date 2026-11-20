@@ -7124,6 +7124,15 @@ type GetAccountUsage200JSONResponseBody_Data_Quota struct {
 	// ErrorsLimit Errors allowed this billing period
 	ErrorsLimit int `json:"errors_limit"`
 
+	// InsightsDailyConsumed Insights bytes ingested today (UTC)
+	InsightsDailyConsumed int64 `json:"insights_daily_consumed"`
+
+	// InsightsDailyLimit Insights bytes allowed per day; 0 means unlimited unless insights_limited is true
+	InsightsDailyLimit int64 `json:"insights_daily_limit"`
+
+	// InsightsLimited True while Insights ingestion is being dropped for exceeding the quota
+	InsightsLimited bool `json:"insights_limited"`
+
 	// UptimeConsumed Uptime monitors in use
 	UptimeConsumed int `json:"uptime_consumed"`
 

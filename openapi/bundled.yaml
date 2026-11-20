@@ -446,6 +446,9 @@ paths:
                         - uptime_consumed
                         - check_ins_limit
                         - check_ins_consumed
+                        - insights_daily_limit
+                        - insights_daily_consumed
+                        - insights_limited
                         properties:
                           errors_limit:
                             type: integer
@@ -469,6 +472,19 @@ paths:
                           check_ins_consumed:
                             type: integer
                             description: Check-ins in use
+                          insights_daily_limit:
+                            type: integer
+                            format: int64
+                            description: Insights bytes allowed per day; 0 means unlimited
+                              unless insights_limited is true
+                          insights_daily_consumed:
+                            type: integer
+                            format: int64
+                            description: Insights bytes ingested today (UTC)
+                          insights_limited:
+                            type: boolean
+                            description: True while Insights ingestion is being dropped
+                              for exceeding the quota
                   meta:
                     "$ref": "#/components/schemas/ResponseMeta"
         '401':
@@ -479,6 +495,8 @@ paths:
           "$ref": "#/components/responses/NotFound"
         '422':
           "$ref": "#/components/responses/AmbiguousAccount"
+        '503':
+          "$ref": "#/components/responses/ServiceUnavailable"
       security:
       - bearer_auth:
         - account:read

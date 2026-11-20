@@ -103,6 +103,9 @@ type Client struct {
 	// Tokens describes the credential making the request.
 	Tokens *TokensService
 
+	// Account reads the account the credential resolves to.
+	Account *AccountService
+
 	// Insights runs BadgerQL queries and lists event streams.
 	Insights *InsightsService
 
@@ -187,6 +190,7 @@ func (c *Client) rebind() *Client {
 	c.Projects = &ProjectsService{client: c}
 	c.Faults = &FaultsService{client: c}
 	c.Tokens = &TokensService{client: c}
+	c.Account = &AccountService{client: c}
 	c.Insights = &InsightsService{client: c}
 	c.CheckIns = &CheckInsService{client: c}
 	c.Alarms = &AlarmsService{client: c}
