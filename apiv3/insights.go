@@ -55,6 +55,12 @@ type InsightsResult struct {
 	Meta      map[string]any `json:"meta,omitempty"`
 	RequestID string         `json:"request_id,omitempty"`
 
+	// Warnings say what a caller should know before drawing conclusions from
+	// the result, such as events Insights dropped over its daily quota during
+	// the queried range. Nil when the API sent none. Meta keeps them too, as
+	// the raw block the API sent.
+	Warnings []ResponseWarning `json:"warnings,omitempty"`
+
 	// Links.Web re-runs the query in the Honeybadger web UI, with the same time
 	// range, streams and timezone. Present even when Data carries a query error.
 	Links WebLinks `json:"links"`
@@ -96,7 +102,16 @@ func (s *InsightsService) Query(ctx context.Context, projectID string, q Insight
 		return nil, malformed(status, raw, err)
 	}
 
-	result := &InsightsResult{Data: envelope.Data, Meta: envelope.Meta, Links: envelope.Links}
+	// Meta passes through as the raw block; a second, typed read of it gives
+	// the warnings.
+	var typed struct {
+		Meta responseMeta `json:"meta"`
+	}
+	if err := json.Unmarshal(raw, &typed); err != nil {
+		return nil, malformed(status, raw, err)
+	}
+
+	result := &InsightsResult{Data: envelope.Data, Meta: envelope.Meta, Links: envelope.Links, Warnings: typed.Meta.Warnings}
 	if id, ok := envelope.Meta["request_id"].(string); ok {
 		result.RequestID = id
 	}

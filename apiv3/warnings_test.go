@@ -215,3 +215,53 @@ func TestProjectOccurrencesWithoutWarningsOmitThem(t *testing.T) {
 		t.Errorf("serialized series = %s, want {\"buckets\":[],\"project_id\":\"Xk9mZp\"}", out)
 	}
 }
+
+const insightsQuotaWarning = `{"code":"insights_quota_exceeded","message":"Insights dropped events.","start_at":"2026-11-18T14:12:00Z","end_at":"2026-11-19T00:00:00Z"}`
+
+// A query covering a period when Insights dropped events says so, so missing
+// rows aren't read as nothing happening. Meta stays the raw block.
+func TestInsightsQueryCarriesWarnings(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":{"results":[]},"links":{"web":"https://app.honeybadger.io/x"},"meta":{"request_id":"req_q","warnings":[`+insightsQuotaWarning+`]}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	result, err := c.Insights.Query(context.Background(), "Xk9mZp", InsightsQuery{Query: "fields @ts"})
+	if err != nil {
+		t.Fatalf("Query: %v", err)
+	}
+	if len(result.Warnings) != 1 || result.Warnings[0].Code != "insights_quota_exceeded" || result.Warnings[0].LimitPerMinute != nil {
+		t.Errorf("Warnings = %+v, want the insights_quota_exceeded warning with no limit_per_minute", result.Warnings)
+	}
+	if _, ok := result.Meta["warnings"]; !ok {
+		t.Errorf("Meta = %v, want the raw warnings kept", result.Meta)
+	}
+	if result.RequestID != "req_q" {
+		t.Errorf("RequestID = %q, want req_q", result.RequestID)
+	}
+}
+
+// Without warnings the serialized result has no top-level warnings key.
+func TestInsightsQueryWithoutWarningsOmitsThem(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":{"results":[]},"links":{"web":"https://app.honeybadger.io/x"},"meta":{"request_id":"req_q"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	result, err := c.Insights.Query(context.Background(), "Xk9mZp", InsightsQuery{Query: "fields @ts"})
+	if err != nil {
+		t.Fatalf("Query: %v", err)
+	}
+	if result.Warnings != nil {
+		t.Errorf("Warnings = %+v, want nil", result.Warnings)
+	}
+	out, err := json.Marshal(result)
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	if strings.Contains(string(out), "warnings") {
+		t.Errorf("serialized result = %s, want no warnings key", out)
+	}
+}
