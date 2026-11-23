@@ -107,3 +107,58 @@ func TestWarningSerializesWithAPIKeys(t *testing.T) {
 		}
 	}
 }
+
+// Fault counts covering a period when errors were dropped carry the warning,
+// and serialize flat, the way the MCP server passes them through.
+func TestFaultSummaryCarriesWarnings(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":{"total":3,"environments":[{"environment":"production","resolved":false,"ignored":false,"count":2},{"environment":null,"resolved":true,"ignored":false,"count":1}]},"meta":{"request_id":"req_1","warnings":[`+rateLimitedWarning+`]}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	summary, err := c.Faults.Summary(context.Background(), "Xk9mZp")
+	if err != nil {
+		t.Fatalf("Summary: %v", err)
+	}
+	if summary.Total != 3 || len(summary.Environments) != 2 || summary.Environments[0].Count != 2 {
+		t.Errorf("summary = %+v", summary)
+	}
+	if !summary.Environments[1].Environment.IsNull() {
+		t.Errorf("Environments[1].Environment = %v, want null", summary.Environments[1].Environment)
+	}
+	if len(summary.Warnings) != 1 || summary.Warnings[0].Code != "error_rate_limited" {
+		t.Errorf("Warnings = %+v, want the error_rate_limited warning", summary.Warnings)
+	}
+
+	out, err := json.Marshal(summary)
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	for _, key := range []string{`"total":3`, `"environments":[`, `"environment":null`, `"warnings":[{"code":"error_rate_limited"`} {
+		if !strings.Contains(string(out), key) {
+			t.Errorf("serialized summary = %s, want %s", out, key)
+		}
+	}
+}
+
+// Without warnings the serialized summary has no warnings key.
+func TestFaultSummaryWithoutWarningsOmitsThem(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":{"total":0,"environments":[]},"meta":{"request_id":"req_1"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	summary, err := c.Faults.Summary(context.Background(), "Xk9mZp")
+	if err != nil {
+		t.Fatalf("Summary: %v", err)
+	}
+	out, err := json.Marshal(summary)
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	if string(out) != `{"environments":[],"total":0}` {
+		t.Errorf("serialized summary = %s, want {\"environments\":[],\"total\":0}", out)
+	}
+}

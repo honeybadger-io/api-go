@@ -389,11 +389,28 @@ func (s *FaultsService) Unassign(ctx context.Context, projectID string, faultID 
 	})
 }
 
+// FaultCounts is the number of faults matching a filter, in total and per
+// environment/resolved/ignored combination present.
+type FaultCounts = gen.GetFaultSummary200JSONResponseBody_Data
+
+// FaultSummary is a project's fault counts, with any warnings about the period
+// they cover.
+//
+// It embeds the counts so it serializes flat, as {total,
+// environments, warnings}: callers such as the MCP server pass it straight
+// through.
+type FaultSummary struct {
+	FaultCounts
+
+	// Warnings say what a caller should know before drawing conclusions from
+	// the counts, such as errors dropped while the project was rate limited.
+	// Nil when the API sent none.
+	Warnings []ResponseWarning `json:"warnings,omitempty"`
+}
+
 // Summary returns fault counts for a project, honouring the same search filter as
 // the fault listing.
-//
-// Untyped: the endpoint's payload is a counts object the spec does not pin.
-func (s *FaultsService) Summary(ctx context.Context, projectID string, opts ...Option) (map[string]any, error) {
+func (s *FaultsService) Summary(ctx context.Context, projectID string, opts ...Option) (*FaultSummary, error) {
 	ro := resolve(opts)
 	params := &gen.GetFaultSummaryParams{}
 	if ro.query != "" {
@@ -409,11 +426,11 @@ func (s *FaultsService) Summary(ctx context.Context, projectID string, opts ...O
 		params.OccurredBefore = &ro.occurredBefore
 	}
 
-	data, err := getOne[map[string]any](ctx, s.client, "getFaultSummary", func(ctx context.Context) (*http.Response, error) {
+	data, meta, err := getOneWithMeta[FaultCounts](ctx, s.client, "getFaultSummary", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetFaultSummary(ctx, projectID, params)
 	})
 	if err != nil {
 		return nil, err
 	}
-	return *data, nil
+	return &FaultSummary{FaultCounts: *data, Warnings: meta.Warnings}, nil
 }
