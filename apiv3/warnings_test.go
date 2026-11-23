@@ -162,3 +162,56 @@ func TestFaultSummaryWithoutWarningsOmitsThem(t *testing.T) {
 		t.Errorf("serialized summary = %s, want {\"environments\":[],\"total\":0}", out)
 	}
 }
+
+// A project's occurrence counts covering a period when errors were dropped
+// carry the warning, so a dip isn't read as the app getting healthier. They
+// serialize flat, the way the MCP server passes them through.
+func TestProjectOccurrencesCarryWarnings(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":{"project_id":"Xk9mZp","buckets":[{"timestamp":1704067200,"count":4}]},"meta":{"request_id":"req_1","period":"day","interval":"hour","warnings":[`+rateLimitedWarning+`]}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	series, err := c.Projects.Occurrences(context.Background(), "Xk9mZp", OccurrenceOptions{Period: PeriodDay})
+	if err != nil {
+		t.Fatalf("Occurrences: %v", err)
+	}
+	if series.ProjectId != "Xk9mZp" || len(series.Buckets) != 1 || series.Buckets[0].Count != 4 {
+		t.Errorf("series = %+v", series)
+	}
+	if len(series.Warnings) != 1 || series.Warnings[0].Code != "error_rate_limited" {
+		t.Errorf("Warnings = %+v, want the error_rate_limited warning", series.Warnings)
+	}
+
+	out, err := json.Marshal(series)
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	for _, key := range []string{`"project_id":"Xk9mZp"`, `"buckets":[{`, `"warnings":[{"code":"error_rate_limited"`} {
+		if !strings.Contains(string(out), key) {
+			t.Errorf("serialized series = %s, want %s", out, key)
+		}
+	}
+}
+
+// Without warnings the serialized series has no warnings key.
+func TestProjectOccurrencesWithoutWarningsOmitThem(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":{"project_id":"Xk9mZp","buckets":[]},"meta":{"request_id":"req_1","period":"hour","interval":"minute"}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	series, err := c.Projects.Occurrences(context.Background(), "Xk9mZp", OccurrenceOptions{})
+	if err != nil {
+		t.Fatalf("Occurrences: %v", err)
+	}
+	out, err := json.Marshal(series)
+	if err != nil {
+		t.Fatalf("Marshal: %v", err)
+	}
+	if string(out) != `{"buckets":[],"project_id":"Xk9mZp"}` {
+		t.Errorf("serialized series = %s, want {\"buckets\":[],\"project_id\":\"Xk9mZp\"}", out)
+	}
+}
