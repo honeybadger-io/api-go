@@ -265,3 +265,85 @@ func TestInsightsQueryWithoutWarningsOmitsThem(t *testing.T) {
 		t.Errorf("serialized result = %s, want no warnings key", out)
 	}
 }
+
+const quotaWarning = `{"code":"error_quota_exceeded","message":"Errors are dropped.","start_at":"2026-11-01T00:00:00Z","end_at":"2026-12-01T00:00:00Z"}`
+
+// Walking every page keeps each page's warnings, once each: the same warning
+// on several pages collapses, and a different one is kept.
+func TestFaultListAllCollectsWarningsAcrossPages(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Query().Get("page") {
+		case "", "1":
+			writeJSON(w, 0, `{"data":[{"id":"1"}],"pagination":{"page":1,"per_page":1},"links":{"next":"/v3/projects/Xk9mZp/faults?page=2"},"meta":{"warnings":[`+rateLimitedWarning+`]}}`)
+		case "2":
+			writeJSON(w, 0, `{"data":[{"id":"2"}],"pagination":{"page":2,"per_page":1},"links":{"next":null},"meta":{"warnings":[`+rateLimitedWarning+`,`+quotaWarning+`]}}`)
+		default:
+			t.Errorf("unexpected page %q", r.URL.Query().Get("page"))
+		}
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	faults, warnings, err := c.Faults.ListAll(context.Background(), "Xk9mZp")
+	if err != nil {
+		t.Fatalf("ListAll: %v", err)
+	}
+	if len(faults) != 2 {
+		t.Errorf("got %d faults, want 2", len(faults))
+	}
+	if len(warnings) != 2 || warnings[0].Code != "error_rate_limited" || warnings[1].Code != "error_quota_exceeded" {
+		t.Errorf("warnings = %+v, want error_rate_limited then error_quota_exceeded", warnings)
+	}
+}
+
+// Two warnings with the same code but different periods are both facts about
+// the walk, so both are kept.
+func TestNoticeListAllKeepsWarningsThatDiffer(t *testing.T) {
+	later := strings.Replace(rateLimitedWarning, `"end_at":"2026-11-18T15:12:00Z"`, `"end_at":"2026-11-18T16:12:00Z"`, 1)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/v3/projects/Xk9mZp/faults/1/notices":
+			writeJSON(w, 0, `{"data":[{"id":"11111111-1111-4111-8111-111111111111"}],
+			  "pagination":{"has_older":true,"limit":1},
+			  "links":{"older":"http://`+r.Host+`/v3/notices/older"},
+			  "meta":{"warnings":[`+rateLimitedWarning+`]}}`)
+		case "/v3/notices/older":
+			writeJSON(w, 0, `{"data":[{"id":"22222222-2222-4222-8222-222222222222"}],
+			  "pagination":{"has_older":false,"limit":1},
+			  "links":{},
+			  "meta":{"warnings":[`+later+`]}}`)
+		default:
+			t.Errorf("unexpected path %q", r.URL.Path)
+		}
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	notices, warnings, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1")
+	if err != nil {
+		t.Fatalf("ListAllNotices: %v", err)
+	}
+	if len(notices) != 2 {
+		t.Errorf("got %d notices, want 2", len(notices))
+	}
+	if len(warnings) != 2 || !warnings[0].EndAt.Before(warnings[1].EndAt) {
+		t.Errorf("warnings = %+v, want both rate-limit warnings in page order", warnings)
+	}
+}
+
+// A walk with no warnings returns nil warnings.
+func TestFaultListAllWithoutWarnings(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, 0, `{"data":[{"id":"1"}],"pagination":{"page":1,"per_page":25},"links":{"next":null}}`)
+	}))
+	defer srv.Close()
+
+	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbp_x")
+	_, warnings, err := c.Faults.ListAll(context.Background(), "Xk9mZp")
+	if err != nil {
+		t.Fatalf("ListAll: %v", err)
+	}
+	if warnings != nil {
+		t.Errorf("warnings = %+v, want nil", warnings)
+	}
+}

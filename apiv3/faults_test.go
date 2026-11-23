@@ -171,7 +171,7 @@ func TestFaultsListAllNoticesFollowsOlderLinks(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
-	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", Limit(1))
+	all, _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", Limit(1))
 	if err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
@@ -194,7 +194,7 @@ func TestListAllNoticesRefusesOffHostLink(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_secret")
-	_, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1")
+	_, _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1")
 	if !errors.Is(err, ErrUntrustedLink) {
 		t.Fatalf("err = %v, want ErrUntrustedLink", err)
 	}
@@ -214,7 +214,7 @@ func TestListAllNoticesSendsNoAfterCursor(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
-	if _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1"); err != nil {
+	if _, _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1"); err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
 }
@@ -317,7 +317,7 @@ func TestFaultsListAllNoticesIncludeBreadcrumbs(t *testing.T) {
 	defer srv.Close()
 
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
-	all, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", IncludeBreadcrumbs())
+	all, _, err := c.Faults.ListAllNotices(context.Background(), "Xk9mZp", "1", IncludeBreadcrumbs())
 	if err != nil {
 		t.Fatalf("ListAllNotices: %v", err)
 	}
