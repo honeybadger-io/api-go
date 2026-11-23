@@ -13,9 +13,13 @@ type AccountUsage = gen.GetAccountUsage200JSONResponseBody_Data
 // AccountQuota is what the account is allowed and how much of it is in use.
 // Errors count over the current billing period, Insights in bytes over the
 // current UTC day, and uptime sites and check-ins as the number in use now.
-// UptimeLimit and CheckInsLimit are null when the plan doesn't limit them; an
-// InsightsDailyLimit of 0 is unlimited unless InsightsLimited is true, which it
-// is while Insights data is being dropped for exceeding the quota.
+//
+// A plan limits uptime sites and check-ins either separately, with UptimeLimit
+// and CheckInsLimit, or as one pool, with MonitorsLimit and MonitorsConsumed;
+// the other pair is absent. MonitorsLimit is null when the pool is uncapped.
+// InsightsDailyLimit is null when uncapped, and 0 blocks all ingestion.
+// InsightsLimited is true while Insights data is being dropped for exceeding
+// the quota.
 type AccountQuota = gen.GetAccountUsage200JSONResponseBody_Data_Quota
 
 // AccountService reads the account the credential resolves to. No request
