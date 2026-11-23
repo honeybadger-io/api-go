@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-// responseMeta is the part of a response's meta block a collection carries
-// back to the caller.
+// responseMeta is the part of a response's meta block the client carries back
+// to the caller.
 type responseMeta struct {
 	RequestID string            `json:"request_id"`
 	Warnings  []ResponseWarning `json:"warnings"`
@@ -33,10 +33,8 @@ type timeSeriesEnvelope[T any] struct {
 
 // singleEnvelope is the documented shape of a single-resource response.
 type singleEnvelope[T any] struct {
-	Data *T `json:"data"`
-	Meta struct {
-		RequestID string `json:"request_id"`
-	} `json:"meta"`
+	Data *T           `json:"data"`
+	Meta responseMeta `json:"meta"`
 }
 
 // errNoDataArray reports a collection response without a data array.
@@ -89,15 +87,15 @@ func decodeTimeSeriesList[T any](status int, body []byte) (*ListResponse[T], err
 // data optional on these responses, so `{}` decodes cleanly — but a caller
 // asking for one project should never receive a Project with an empty id and no
 // indication anything went wrong.
-func decodeSingle[T any](status int, body []byte) (*T, error) {
+func decodeSingle[T any](status int, body []byte) (*T, responseMeta, error) {
 	var envelope singleEnvelope[T]
 	if err := json.Unmarshal(body, &envelope); err != nil {
-		return nil, malformed(status, body, err)
+		return nil, responseMeta{}, malformed(status, body, err)
 	}
 	if envelope.Data == nil {
-		return nil, malformed(status, body, fmt.Errorf("response has no data member"))
+		return nil, responseMeta{}, malformed(status, body, fmt.Errorf("response has no data member"))
 	}
-	return envelope.Data, nil
+	return envelope.Data, envelope.Meta, nil
 }
 
 // malformed reports a response whose status said success but whose body did not

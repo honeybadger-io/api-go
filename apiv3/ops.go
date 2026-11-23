@@ -14,9 +14,16 @@ import (
 
 // getOne runs an operation returning a single resource.
 func getOne[T any](ctx context.Context, c *Client, opID string, op operation) (*T, error) {
+	data, _, err := getOneWithMeta[T](ctx, c, opID, op)
+	return data, err
+}
+
+// getOneWithMeta is getOne for a resource whose meta block carries something
+// the caller needs, such as warnings.
+func getOneWithMeta[T any](ctx context.Context, c *Client, opID string, op operation) (*T, responseMeta, error) {
 	status, body, err := c.run(ctx, opID, op)
 	if err != nil {
-		return nil, err
+		return nil, responseMeta{}, err
 	}
 	return decodeSingle[T](status, body)
 }
