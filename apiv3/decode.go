@@ -6,14 +6,19 @@ import (
 	"fmt"
 )
 
+// responseMeta is the part of a response's meta block a collection carries
+// back to the caller.
+type responseMeta struct {
+	RequestID string            `json:"request_id"`
+	Warnings  []ResponseWarning `json:"warnings"`
+}
+
 // offsetEnvelope is the documented shape of an offset-paginated collection.
 type offsetEnvelope[T any] struct {
 	Data       []T          `json:"data"`
 	Pagination *Pagination  `json:"pagination"`
 	Links      *OffsetLinks `json:"links"`
-	Meta       struct {
-		RequestID string `json:"request_id"`
-	} `json:"meta"`
+	Meta       responseMeta `json:"meta"`
 }
 
 // timeSeriesEnvelope is the shape of a time-ordered collection. v3 uses the same
@@ -23,9 +28,7 @@ type timeSeriesEnvelope[T any] struct {
 	Data       []T                   `json:"data"`
 	Pagination *TimeSeriesPagination `json:"pagination"`
 	Links      *TimeSeriesLinks      `json:"links"`
-	Meta       struct {
-		RequestID string `json:"request_id"`
-	} `json:"meta"`
+	Meta       responseMeta          `json:"meta"`
 }
 
 // singleEnvelope is the documented shape of a single-resource response.
@@ -57,6 +60,7 @@ func decodeOffsetList[T any](status int, body []byte) (*ListResponse[T], error) 
 		Pagination: envelope.Pagination,
 		Links:      envelope.Links,
 		RequestID:  envelope.Meta.RequestID,
+		Warnings:   envelope.Meta.Warnings,
 	}, nil
 }
 
@@ -75,6 +79,7 @@ func decodeTimeSeriesList[T any](status int, body []byte) (*ListResponse[T], err
 		TimeSeries:      envelope.Pagination,
 		TimeSeriesLinks: envelope.Links,
 		RequestID:       envelope.Meta.RequestID,
+		Warnings:        envelope.Meta.Warnings,
 	}, nil
 }
 

@@ -68,6 +68,11 @@ type ListResponse[T any] struct {
 	Data      []T    `json:"data"`
 	RequestID string `json:"request_id,omitempty"`
 
+	// Warnings say what a caller should know before drawing conclusions from
+	// this page, such as errors dropped during the period it covers. Nil when
+	// the API sent none.
+	Warnings []ResponseWarning `json:"warnings,omitempty"`
+
 	// Pagination is set for offset-paginated endpoints (page / per_page).
 	Pagination *Pagination `json:"pagination,omitempty"`
 
