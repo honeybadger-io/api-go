@@ -528,7 +528,7 @@ func TestFaultsListSendsOrderAndTimeFilters(t *testing.T) {
 	c := NewClient().WithBaseURL(srv.URL).WithBearerToken("hbu_x")
 	at := time.Unix(1704067200, 500*1000*1000) // fractional seconds are significant
 
-	_, err := c.Faults.ListAll(context.Background(), "Xk9mZp",
+	_, _, err := c.Faults.ListAll(context.Background(), "Xk9mZp",
 		OrderBy("frequent"), CreatedAfter(at), OccurredAfter(at), OccurredBefore(at))
 	if err != nil {
 		t.Fatalf("ListAll: %v", err)

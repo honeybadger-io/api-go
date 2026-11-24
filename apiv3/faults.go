@@ -27,13 +27,25 @@ func (s *FaultsService) List(ctx context.Context, projectID string, opts ...Opti
 	return s.list(ctx, projectID, resolve(opts))
 }
 
-// ListAll returns every fault matching the options, walking pagination.
-func (s *FaultsService) ListAll(ctx context.Context, projectID string, opts ...ListAllOption) ([]Fault, error) {
+// ListAll returns every fault matching the options, walking pagination, and
+// the distinct warnings the pages carried, such as errors dropped while the
+// project was rate limited. Warnings is nil when no page had any.
+func (s *FaultsService) ListAll(ctx context.Context, projectID string, opts ...ListAllOption) ([]Fault, []ResponseWarning, error) {
 	ro := resolveListAll(opts)
-	return CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[Fault], error) {
+	var warnings warningSet
+	faults, err := CollectPages(ctx, func(ctx context.Context, page int) (*ListResponse[Fault], error) {
 		ro.page = page
-		return s.list(ctx, projectID, ro)
+		resp, err := s.list(ctx, projectID, ro)
+		if err != nil {
+			return nil, err
+		}
+		warnings.add(resp.Warnings)
+		return resp, nil
 	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return faults, warnings.list, nil
 }
 
 func (s *FaultsService) list(ctx context.Context, projectID string, ro requestOptions) (*ListResponse[Fault], error) {
@@ -103,19 +115,34 @@ func (s *FaultsService) ListNotices(ctx context.Context, projectID string, fault
 	return s.listNotices(ctx, projectID, faultID, resolve(opts))
 }
 
-// ListAllNotices returns every notice for a fault, walking from newest to oldest.
+// ListAllNotices returns every notice for a fault, walking from newest to
+// oldest, and the distinct warnings the pages carried. Warnings is nil when no
+// page had any.
 //
 // After the first page it follows links.older rather than re-deriving a cursor,
 // which is what the spec instructs and the only mechanism that also works for
 // collections that page on a timestamp.
-func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, faultID string, opts ...ListAllOption) ([]Notice, error) {
+func (s *FaultsService) ListAllNotices(ctx context.Context, projectID string, faultID string, opts ...ListAllOption) ([]Notice, []ResponseWarning, error) {
 	ro := resolveListAll(opts)
-	return CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[Notice], error) {
+	var warnings warningSet
+	notices, err := CollectTimeSeries(ctx, func(ctx context.Context, link string) (*ListResponse[Notice], error) {
+		var resp *ListResponse[Notice]
+		var err error
 		if link != "" {
-			return followTimeSeries[Notice](ctx, s.client, link)
+			resp, err = followTimeSeries[Notice](ctx, s.client, link)
+		} else {
+			resp, err = s.listNotices(ctx, projectID, faultID, ro)
 		}
-		return s.listNotices(ctx, projectID, faultID, ro)
+		if err != nil {
+			return nil, err
+		}
+		warnings.add(resp.Warnings)
+		return resp, nil
 	})
+	if err != nil {
+		return nil, nil, err
+	}
+	return notices, warnings.list, nil
 }
 
 func (s *FaultsService) listNotices(ctx context.Context, projectID string, faultID string, ro requestOptions) (*ListResponse[Notice], error) {

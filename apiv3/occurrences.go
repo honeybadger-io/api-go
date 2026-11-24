@@ -30,8 +30,22 @@ type OccurrenceOptions struct {
 	Environment string
 }
 
+// ProjectOccurrences is one project's occurrence series, with any warnings
+// about the window it covers.
+//
+// It embeds the series so it serializes flat, as {buckets, project_id,
+// warnings}: callers such as the MCP server pass it straight through.
+type ProjectOccurrences struct {
+	OccurrenceSeries
+
+	// Warnings say what a caller should know before drawing conclusions from
+	// the counts, such as errors dropped while the project was rate limited, so
+	// a dip isn't read as fewer errors happening. Nil when the API sent none.
+	Warnings []ResponseWarning `json:"warnings,omitempty"`
+}
+
 // Occurrences returns notice counts over time for one project.
-func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o OccurrenceOptions) (*OccurrenceSeries, error) {
+func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o OccurrenceOptions) (*ProjectOccurrences, error) {
 	params := &gen.GetProjectOccurrencesParams{}
 	if o.Period != "" {
 		period := gen.GetProjectOccurrencesParamsPeriod(o.Period)
@@ -42,9 +56,13 @@ func (s *ProjectsService) Occurrences(ctx context.Context, projectID string, o O
 		params.Environment = &env
 	}
 
-	return getOne[OccurrenceSeries](ctx, s.client, "getProjectOccurrences", func(ctx context.Context) (*http.Response, error) {
+	series, meta, err := getOneWithMeta[OccurrenceSeries](ctx, s.client, "getProjectOccurrences", func(ctx context.Context) (*http.Response, error) {
 		return s.client.gen().GetProjectOccurrences(ctx, projectID, params)
 	})
+	if err != nil {
+		return nil, err
+	}
+	return &ProjectOccurrences{OccurrenceSeries: *series, Warnings: meta.Warnings}, nil
 }
 
 // OccurrenceSeries is one project's notice counts, bucketed over the requested

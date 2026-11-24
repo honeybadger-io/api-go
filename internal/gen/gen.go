@@ -4389,6 +4389,9 @@ type OccurrenceMeta struct {
 	// Period The window used, which is `hour` when none was requested
 	Period    *OccurrenceMetaPeriod `json:"period,omitempty"`
 	RequestId *string               `json:"request_id,omitempty"`
+
+	// Warnings Present only when something about this result needs saying, such as errors dropped by a plan limit during the period it covers. Only on a single project's occurrences.
+	Warnings *[]ResponseWarning `json:"warnings,omitempty"`
 }
 
 // OccurrenceMetaInterval Bucket width implied by the period
@@ -4607,6 +4610,32 @@ type ProjectInput struct {
 type ResponseMeta struct {
 	// RequestId Unique identifier for the request, for correlating with support
 	RequestId *string `json:"request_id,omitempty"`
+
+	// Warnings Present only when something about this result needs saying, such as data dropped by a plan limit during the period it covers.
+	Warnings *[]ResponseWarning `json:"warnings,omitempty"`
+}
+
+// ResponseWarning Something about this result a caller should know before drawing
+// conclusions from it. `code` names the warning and is stable; branch on it.
+// `message` is for people and may change.
+//
+// `start_at` and `end_at` bound the period the warning is about, in UTC.
+// `end_at` is in the future while the limit is still in force: data is
+// accepted again from then, unless the limit is lifted sooner.
+//
+// | `code` | Meaning |
+// | --- | --- |
+// | `insights_quota_exceeded` | The account reached its daily Insights ingestion quota and Insights dropped the events sent between `start_at` and `end_at`. Results covering that period are incomplete. When the time the quota was reached isn't known, `start_at` is the start of that UTC day. Covers the last 14 days. |
+// | `error_quota_exceeded` | The account's monthly error quota is used up, and errors reported for this project between `start_at` and `end_at` are dropped. Only reported while in force. |
+// | `error_rate_limited` | Between `start_at` and `end_at`, this project accepts `limit_per_minute` errors a minute from each of its API keys and drops the rest. Only reported while in force. |
+type ResponseWarning struct {
+	Code  string    `json:"code"`
+	EndAt time.Time `json:"end_at"`
+
+	// LimitPerMinute On `error_rate_limited`, the errors a minute the project accepts from each API key.
+	LimitPerMinute *int      `json:"limit_per_minute,omitempty"`
+	Message        string    `json:"message"`
+	StartAt        time.Time `json:"start_at"`
 }
 
 // Site A URL Honeybadger checks for uptime from several locations on a schedule, alerting when it goes down and when it recovers.
@@ -7115,8 +7144,8 @@ type GetAccountUsage200JSONResponseBody_Data_Quota struct {
 	// CheckInsConsumed Check-ins in use
 	CheckInsConsumed int `json:"check_ins_consumed"`
 
-	// CheckInsLimit Check-ins allowed; null when unlimited
-	CheckInsLimit nullable.Nullable[int] `json:"check_ins_limit"`
+	// CheckInsLimit Check-ins allowed. Present only on plans without a monitor pool; otherwise see monitors_limit.
+	CheckInsLimit *int `json:"check_ins_limit,omitempty"`
 
 	// ErrorsConsumed Errors recorded this billing period
 	ErrorsConsumed int `json:"errors_consumed"`
@@ -7127,17 +7156,23 @@ type GetAccountUsage200JSONResponseBody_Data_Quota struct {
 	// InsightsDailyConsumed Insights bytes ingested today (UTC)
 	InsightsDailyConsumed int64 `json:"insights_daily_consumed"`
 
-	// InsightsDailyLimit Insights bytes allowed per day; 0 means unlimited unless insights_limited is true
-	InsightsDailyLimit int64 `json:"insights_daily_limit"`
+	// InsightsDailyLimit Insights bytes allowed per day; null when uncapped. 0 blocks all ingestion.
+	InsightsDailyLimit nullable.Nullable[int64] `json:"insights_daily_limit"`
 
 	// InsightsLimited True while Insights ingestion is being dropped for exceeding the quota
 	InsightsLimited bool `json:"insights_limited"`
 
-	// UptimeConsumed Uptime monitors in use
+	// MonitorsConsumed Uptime monitors and check-ins in use. Present with monitors_limit.
+	MonitorsConsumed *int `json:"monitors_consumed,omitempty"`
+
+	// MonitorsLimit Uptime monitors and check-ins allowed together. Present only on plans where both share one pool, in place of uptime_limit and check_ins_limit; null when the pool is uncapped (metered plans bill each monitor beyond those included).
+	MonitorsLimit nullable.Nullable[int] `json:"monitors_limit,omitempty"`
+
+	// UptimeConsumed Uptime monitors in use across the account, including on plans where uptime_limit applies to each project
 	UptimeConsumed int `json:"uptime_consumed"`
 
-	// UptimeLimit Uptime monitors allowed; null when unlimited
-	UptimeLimit nullable.Nullable[int] `json:"uptime_limit"`
+	// UptimeLimit Uptime monitors allowed. Present only on plans without a monitor pool; otherwise see monitors_limit. On plans with a project limit, this cap applies to each project.
+	UptimeLimit *int `json:"uptime_limit,omitempty"`
 }
 
 // GetAccountUsage200JSONResponseBody_Data defines parameters for GetAccountUsage.
@@ -7801,6 +7836,9 @@ type ListFaultOccurrences200JSONResponseBody_Meta struct {
 
 	// RetentionTruncated Whether retention narrowed the requested window.
 	RetentionTruncated *bool `json:"retention_truncated,omitempty"`
+
+	// Warnings Present only when something about this result needs saying, such as data dropped by a plan limit during the period it covers.
+	Warnings *[]ResponseWarning `json:"warnings,omitempty"`
 
 	// Window The window actually served.
 	Window *ListFaultOccurrences200JSONResponseBody_Meta_Window `json:"window,omitempty"`
