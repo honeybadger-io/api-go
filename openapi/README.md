@@ -9,8 +9,8 @@ input to `make generate`, which writes `internal/gen/gen.go`.
 | --- | --- |
 | Source repo | `honeybadger` (the Rails app) |
 | Path | `openapi/v3/bundled.yaml` |
-| Branch | `dropped-data-warnings` (honeybadger#7051, not yet merged) |
-| Commit | `56dff1209a` |
+| Branch | `master` |
+| Commit | `4d078e38e4` |
 | Vendored | 2026-11-23 |
 | sha256 | `75a3e76a82c6309aab5812d7d479706135dabcd425c8a314ebd1336560227cf8` |
 
